@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import axios from 'axios';
+import { ActionTree } from 'vuex';
 import config from '../../config';
+import { StateInterface } from '../index';
+import { AuthStateInterface } from './state';
 
-export default {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+const actions: ActionTree<AuthStateInterface, StateInterface> = {
   async login(context : any, payload: any) {
     const response = await axios.post(
       `${config.baseURL}/users/authenticate`,
@@ -32,3 +34,5 @@ export default {
     localStorage.setItem('token', responseData.Token);
   },
 };
+
+export default actions;

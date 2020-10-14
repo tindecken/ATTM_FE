@@ -1,7 +1,9 @@
 import { store } from 'quasar/wrappers';
 import Vuex from 'vuex';
-
 import auth from './auth';
+import { AuthStateInterface } from './auth/state';
+
+// import example from './module-example';
 // import { ExampleStateInterface } from './module-example/state';
 
 /*
@@ -9,10 +11,17 @@ import auth from './auth';
  * directly export the Store instantiation
  */
 
+export interface StateInterface {
+  // Define your own store structure, using submodules if needed
+  // example: ExampleStateInterface;
+  // Declared as unknown to avoid linting issue. Best to strongly type as per the line above.
+  auth: AuthStateInterface;
+}
+
 export default store(({ Vue }) => {
   Vue.use(Vuex);
 
-  const Store = new Vuex.Store({
+  const Store = new Vuex.Store<StateInterface>({
     modules: {
       auth,
     },
@@ -21,5 +30,6 @@ export default store(({ Vue }) => {
     // for dev mode only
     strict: !!process.env.DEV,
   });
+
   return Store;
 });
