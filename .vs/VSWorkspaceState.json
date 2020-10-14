@@ -1,0 +1,12 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\components",
+    "\\src\\css",
+    "\\src\\store",
+    "\\src\\store\\auth"
+  ],
+  "SelectedNode": "\\src\\store\\auth\\mutations.ts",
+  "PreviewInSolutionExplorer": false
+}
