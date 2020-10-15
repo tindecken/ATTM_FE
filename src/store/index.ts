@@ -1,5 +1,6 @@
 import { store } from 'quasar/wrappers';
 import Vuex from 'vuex';
+import VuexPersistence from 'vuex-persist';
 import auth from './auth';
 import { AuthStateInterface } from './auth/state';
 
@@ -21,10 +22,15 @@ export interface StateInterface {
 export default store(({ Vue }) => {
   Vue.use(Vuex);
 
+  const persistAuth = new VuexPersistence({
+    key: 'auth',
+    modules: ['auth'],
+  });
   const Store = new Vuex.Store<StateInterface>({
     modules: {
       auth,
     },
+    plugins: [persistAuth.plugin],
 
     // enable strict mode (adds overhead!)
     // for dev mode only

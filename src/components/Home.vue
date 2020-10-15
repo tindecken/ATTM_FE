@@ -35,18 +35,25 @@
 </template>
 
 <script lang="ts">
-
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { defineComponent, ref } from '@vue/composition-api';
+import config from '../config';
 
 export default defineComponent({
   name: 'Home',
   components: { },
-  setup() {
+  async setup(props, context) {
     const leftDrawerOpen = ref(false);
     const rightDrawerOpen = ref(false);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    console.log('HOMEEEE');
-    return { leftDrawerOpen, rightDrawerOpen };
+    const err = ref('');
+    try {
+      const users = await context.root.$axios.get(`${config.baseURL}/users`, {
+        headers: { Authorization: `Bearer ${context.root.$store.getters['auth/token']}` },
+      });
+    } catch (error) {
+      err.value = error.message || 'Failed to authenticate, try later.';
+    }
+    return { leftDrawerOpen, rightDrawerOpen, err };
   },
 });
 </script>

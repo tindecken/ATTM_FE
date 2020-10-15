@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import axios from 'axios';
 import { ActionTree } from 'vuex';
@@ -5,15 +7,19 @@ import config from '../../config';
 import { StateInterface } from '../index';
 import { AuthStateInterface } from './state';
 
+function setAxiosHeaders(token: string) {
+  axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+}
+
 const actions: ActionTree<AuthStateInterface, StateInterface> = {
   async login(context : any, payload: any) {
     const response = await axios.post(
       `${config.baseURL}/users/authenticate`,
       {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        Username: payload.username,
+        username: payload.username,
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        Password: payload.password,
+        password: payload.password,
       },
       {
         headers: {
@@ -31,20 +37,12 @@ const actions: ActionTree<AuthStateInterface, StateInterface> = {
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-call
     context.commit('setUser', {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      token: responseData.Token,
+      token: responseData.token,
+      username: responseData.username,
+      email: responseData.email,
+      role: responseData.role,
     });
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    localStorage.setItem('token', responseData.Token);
-  },
-  trylogin(context) {
-    const token = localStorage.getItem('token');
-    if (token) {
-      console.log('token', token);
-      context.commit('setUser', { token });
-    } else {
-      context.commit('clearUser');
-    }
+    setAxiosHeaders(responseData.token);
   },
 };
 
