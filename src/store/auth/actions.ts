@@ -29,9 +29,22 @@ const actions: ActionTree<AuthStateInterface, StateInterface> = {
       );
       throw error;
     }
-
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-call
+    context.commit('setUser', {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      token: responseData.Token,
+    });
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     localStorage.setItem('token', responseData.Token);
+  },
+  trylogin(context) {
+    const token = localStorage.getItem('token');
+    if (token) {
+      console.log('token', token);
+      context.commit('setUser', { token });
+    } else {
+      context.commit('clearUser');
+    }
   },
 };
 

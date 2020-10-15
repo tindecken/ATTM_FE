@@ -1,6 +1,8 @@
-import { AuthStateInterface } from "./state";
+import { GetterTree } from 'vuex';
+import { StateInterface } from '../index';
+import { AuthStateInterface } from './state';
 
-export default {
+const getters: GetterTree<AuthStateInterface, StateInterface> = {
   email(state: AuthStateInterface) {
     return state.email;
   },
@@ -17,3 +19,5 @@ export default {
     return state.didAutoLogout;
   },
 };
+
+export default getters;

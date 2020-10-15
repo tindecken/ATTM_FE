@@ -44,7 +44,8 @@ export default defineComponent({
   setup() {
     const leftDrawerOpen = ref(false);
     const rightDrawerOpen = ref(false);
-
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    console.log('HOMEEEE');
     return { leftDrawerOpen, rightDrawerOpen };
   },
 });

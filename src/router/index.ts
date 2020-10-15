@@ -9,7 +9,7 @@ import routes from './routes';
  * directly export the Router instantiation
  */
 
-export default route<Store<StateInterface>>(({ Vue }) => {
+export default route<Store<StateInterface>>(({ store, Vue }) => {
   Vue.use(VueRouter);
 
   const Router = new VueRouter({
@@ -22,6 +22,22 @@ export default route<Store<StateInterface>>(({ Vue }) => {
     mode: process.env.VUE_ROUTER_MODE,
     base: process.env.VUE_ROUTER_BASE,
   });
-
+  Router.beforeEach((to, from, next) => {
+    store.dispatch('auth/trylogin');
+    console.log('to.meta.requiresAuth', to.meta.requiresAuth);
+    console.log('store.getters[\'auth/isAuthenticated\']', store.getters['auth/isAuthenticated']);
+    console.log('store.getters[\'auth/token\']', store.getters['auth/token']);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if (to.meta.requiresAuth && !store.getters['auth/isAuthenticated']) {
+      console.log('aaaaaaaaaa');
+      next({ path: '/login' });
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    } else if (to.meta.requiresUnAuth && store.getters['auth/isAuthenticated']) {
+      console.log('from.fullPath', from.fullPath);
+      next({ path: '/home' });
+    } else {
+      next();
+    }
+  });
   return Router;
 });
