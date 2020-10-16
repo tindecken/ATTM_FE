@@ -101,6 +101,9 @@ module.exports = configure((ctx) => ({
         size: '4px',
         position: 'top',
       },
+      notify: {
+        position: 'bottom-right',
+      },
     },
 
     // Possible values for "importStrategy":
@@ -118,6 +121,7 @@ module.exports = configure((ctx) => ({
     // Quasar plugins
     plugins: [
       'LoadingBar',
+      'Notify',
     ],
   },
 

@@ -70,6 +70,7 @@ export default defineComponent({
         context.root.$router.replace(redirectUrl);
       } catch (error) {
         err.value = error.message || 'Failed to authenticate, try later.';
+        context.root.$q.notify({ message: err.value });
       }
     };
     function onReset() {
