@@ -20,7 +20,6 @@ const actions: ActionTree<AuthStateInterface, StateInterface> = {
           },
         },
       );
-      console.log('response', response);
       const responseData = await response.data;
       context.commit('setUser', {
         token: responseData.token,
@@ -29,8 +28,7 @@ const actions: ActionTree<AuthStateInterface, StateInterface> = {
         role: responseData.role,
       });
     } catch (error) {
-      console.log(error);
-      throw error;
+      throw error.response;
     }
   },
   logout(context) {

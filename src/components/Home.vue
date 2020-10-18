@@ -1,7 +1,7 @@
 <template>
   <q-layout view="hHh LpR fFf">
     <q-header bordered class="bg-primary text-white">
-      <q-toolbar>
+      <q-toolbar style="height: 24px">
         <q-btn dense flat round icon="menu" @click="leftDrawerOpen = !leftDrawerOpen" />
         <q-toolbar-title>
           Auto Test Management v0.0.1
@@ -11,9 +11,8 @@
         <q-btn dense flat round icon="menu" @click="rightDrawerOpen = !rightDrawerOpen"/>
       </q-toolbar>
     </q-header>
-
     <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered>
-      <!-- drawer content -->
+      <left-drawer></left-drawer>
     </q-drawer>
 
     <q-drawer v-model="rightDrawerOpen" side="right" overlay bordered>
@@ -23,13 +22,8 @@
     <q-page-container>
       <router-view />
     </q-page-container>
-
-    <q-footer reveal bordered class="bg-grey-8 text-white">
-      <q-toolbar>
-        <q-toolbar-title>
-          Title
-        </q-toolbar-title>
-      </q-toolbar>
+    <q-footer reveal bordered class="text-white" style="height: 24px">
+      Tindecken
     </q-footer>
 
   </q-layout>
@@ -37,11 +31,11 @@
 
 <script lang="ts">
 import { defineComponent, ref } from '@vue/composition-api';
-import config from '../config';
+import LeftDrawer from './LeftDrawer.vue';
 
 export default defineComponent({
   name: 'Home',
-  components: { },
+  components: { LeftDrawer },
   setup(props, context) {
     const leftDrawerOpen = ref(false);
     const rightDrawerOpen = ref(false);

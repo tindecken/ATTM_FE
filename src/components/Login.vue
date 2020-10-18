@@ -1,8 +1,8 @@
 <template>
   <q-layout view="hHh LpR fFf">
-    <q-page-container>
-      <div class="q-pa-md" style="max-width: 400px">
-        <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
+    <q-page-container class="row justify-center">
+      <div class="col-auto">
+        <q-form @submit="onSubmit" @reset="onReset" style="min-width: 400px" class="q-mt-xl">
           <q-input
             filled
             v-model="username"
@@ -33,13 +33,8 @@
         </q-form>
       </div>
     </q-page-container>
-
-    <q-footer reveal bordered class="bg-grey-8 text-white">
-      <q-toolbar>
-        <q-toolbar-title>
-          @Tindecken 2020
-        </q-toolbar-title>
-      </q-toolbar>
+    <q-footer reveal bordered class="text-white" style="height: 24px">
+      Tindecken
     </q-footer>
   </q-layout>
 </template>
@@ -68,9 +63,16 @@ export default defineComponent({
         await context.root.$store.dispatch('auth/login', actionPayload);
         const redirectUrl = `/${context.root.$route.query.redirect || 'home'}`;
         context.root.$router.replace(redirectUrl);
+        context.root.$q.notify({
+          type: 'positive',
+          message: 'Login success !',
+        });
       } catch (error) {
-        err.value = error.message || 'Failed to authenticate, try later.';
-        context.root.$q.notify({ message: err.value });
+        err.value = error.data.message || 'Failed to authenticate, try later.';
+        context.root.$q.notify({
+          type: 'warning',
+          message: err.value,
+        });
       }
     };
     function onReset() {
