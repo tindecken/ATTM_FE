@@ -16,7 +16,7 @@
     </q-drawer>
 
     <q-drawer v-model="rightDrawerOpen" side="right" overlay bordered>
-      <!-- drawer content -->
+      <right-drawer></right-drawer>
     </q-drawer>
 
     <q-page-container>
@@ -30,17 +30,40 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from '@vue/composition-api';
+import { defineComponent, ref, onMounted } from '@vue/composition-api';
 import LeftDrawer from './LeftDrawer.vue';
+import RightDrawer from './RightDrawer.vue';
 
 export default defineComponent({
   name: 'Home',
-  components: { LeftDrawer },
+  components: { LeftDrawer, RightDrawer },
   setup(props, context) {
     const leftDrawerOpen = ref(false);
     const rightDrawerOpen = ref(false);
     const currentUser = ref('');
     const err = ref('');
+    onMounted(async () => {
+      try {
+        await context.root.$store.dispatch('keyword/getKeywords');
+      } catch (error) {
+        console.log(error);
+        context.root.$q.notify({
+          type: 'negative',
+          message: `${error}`,
+        });
+      }
+    });
+    // onMounted(async () => {
+    //   try {
+    //     await context.root.$store.dispatch('keyword/getKeywords');
+    //   } catch (error) {
+    //     context.root.$q.notify({
+    //       type: 'negative',
+    //       message: 'Can\'t get list keywords !',
+    //     });
+    //   }
+    // });
+    // get lastest keyword
     const logout = async () => {
       try {
         await context.root.$store.dispatch('auth/logout');

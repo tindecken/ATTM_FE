@@ -3,8 +3,10 @@ import Vuex from 'vuex';
 import VuexPersistence from 'vuex-persist';
 import auth from './auth';
 import global from './global';
+import keyword from './keyword';
 import { AuthStateInterface } from './auth/state';
 import { GlobalStateInterface } from './global/state';
+import { KeywordStateInterface } from './keyword/state';
 
 // import example from './module-example';
 // import { ExampleStateInterface } from './module-example/state';
@@ -20,6 +22,7 @@ export interface StateInterface {
   // Declared as unknown to avoid linting issue. Best to strongly type as per the line above.
   auth: AuthStateInterface;
   global: GlobalStateInterface;
+  keyword: KeywordStateInterface;
 }
 
 export default store(({ Vue }) => {
@@ -33,12 +36,17 @@ export default store(({ Vue }) => {
     key: 'auth',
     modules: ['auth'],
   });
+  const persistKeyword = new VuexPersistence({
+    key: 'keyword',
+    modules: ['keyword'],
+  });
   const Store = new Vuex.Store<StateInterface>({
     modules: {
       auth,
       global,
+      keyword,
     },
-    plugins: [persistGlobal.plugin, persistAuth.plugin],
+    plugins: [persistGlobal.plugin, persistAuth.plugin, persistKeyword.plugin],
 
     // enable strict mode (adds overhead!)
     // for dev mode only
