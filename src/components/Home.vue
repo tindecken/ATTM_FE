@@ -13,9 +13,9 @@
     </q-header>
     <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered>
       <left-drawer></left-drawer>
-    </q-drawer>
+    </q-drawer>x
 
-    <q-drawer v-model="rightDrawerOpen" side="right" overlay bordered>
+    <q-drawer v-model="rightDrawerOpen" side="right" overlay bordered :width="850">
       <right-drawer></right-drawer>
     </q-drawer>
 
@@ -46,24 +46,12 @@ export default defineComponent({
       try {
         await context.root.$store.dispatch('keyword/getKeywords');
       } catch (error) {
-        console.log(error);
         context.root.$q.notify({
           type: 'negative',
           message: `${error}`,
         });
       }
     });
-    // onMounted(async () => {
-    //   try {
-    //     await context.root.$store.dispatch('keyword/getKeywords');
-    //   } catch (error) {
-    //     context.root.$q.notify({
-    //       type: 'negative',
-    //       message: 'Can\'t get list keywords !',
-    //     });
-    //   }
-    // });
-    // get lastest keyword
     const logout = async () => {
       try {
         await context.root.$store.dispatch('auth/logout');

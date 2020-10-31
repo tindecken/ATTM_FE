@@ -17,14 +17,16 @@ const actions: ActionTree<KeywordStateInterface, StateInterface> = {
           },
         },
       );
-      console.log('response', response);
       const responseData = await response.data;
       context.commit('setKeywords', {
         keywords: responseData,
       });
     } catch (error) {
-      throw error.response;
+      throw error;
     }
+  },
+  setSelectedKeyword(context, payload) {
+    context.commit('setSelectedKeyword', payload);
   },
 };
 

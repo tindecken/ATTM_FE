@@ -80,7 +80,9 @@ module.exports = {
     'import/no-extraneous-dependencies': 'off',
     'import/prefer-default-export': 'off',
     'prefer-promise-reject-errors': 'off',
-
+    'no-console': 'off',
+    'semi': 'off',
+    'max-len': 'off',
     // TypeScript
     quotes: ['warn', 'single', { avoidEscape: true }],
     '@typescript-eslint/explicit-function-return-type': 'off',
@@ -90,6 +92,7 @@ module.exports = {
     '@typescript-eslint/no-unsafe-member-access': 'off',
     '@typescript-eslint/no-floating-promises': 'off',
     '@typescript-eslint/restrict-template-expressions': 'off',
+    '@typescript-eslint/no-unsafe-call': 'off',
 
     // allow debugger during development only
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
