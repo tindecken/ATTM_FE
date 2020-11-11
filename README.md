@@ -1,6 +1,6 @@
 # Quasar App (attm_fe)
 
-A Quasar Framework app
+Front end part for Test Case Automation Framework
 
 ## Install the dependencies
 ```bash

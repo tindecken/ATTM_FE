@@ -39,8 +39,6 @@
         />
       </div>
       <div class="col">
-        <q-checkbox v-model="isShowOwner" label="Owner" />
-        <q-checkbox v-model="isShowCreatedDate" label="Created Date" />
       </div>
     </div>
     <q-separator class="q-mb-sm q-mt-sm" />
@@ -53,7 +51,42 @@
           :columns="keywordColumns"
           row-key="name"
           :hide-pagination="true"
-        />
+          :filter = "kwFilter"
+          separator="cell"
+          :visible-columns="keywordVisibleColumns"
+        >
+        <template v-slot:top>
+          <div class="col-2 q-table__title">Keywords</div>
+          <q-toggle v-model="keywordVisibleColumns" val="owner" label="Owner" />
+          <q-toggle v-model="keywordVisibleColumns" val="createdDate" label="CreatedDate" />
+        </template>
+          <template v-slot:body="props">
+            <q-tr
+              :props="props"
+              @click="onSelectKeyword(props.row)"
+              class="cursor-pointer"
+              >
+              <q-td key="no" :props="props">
+                {{ props.row.rowIndex }}
+              </q-td>
+              <q-td key="name" :props="props">
+                {{ props.row.Name }}
+              </q-td>
+              <q-td key="description" :props="props" style="white-space: normal;">
+                <div>{{ props.row.Description }}</div>
+              </q-td>
+              <q-td key="owner" :props="props">
+                {{ props.row.Owner }}
+              </q-td>
+              <q-td key="updatedMessage" :props="props">
+                {{ props.row.UpdatedMessage }}
+              </q-td>
+              <q-td key="createdDate" :props="props">
+                {{ props.row.CreatedDate }}
+              </q-td>
+            </q-tr>
+          </template>
+        </q-table>
       </div>
     </div>
     <q-separator class="q-mb-sm q-mt-sm" />
@@ -62,11 +95,37 @@
         <q-table
           dense
           title="Parameters"
-          :data="keywordDatas"
-          :columns="keywordColumns"
+          :data="paramDatas"
+          :columns="paramColumns"
           row-key="name"
           :hide-pagination="true"
-        />
+          separator="cell"
+        >
+          <template v-slot:body="props">
+            <q-tr
+              :props="props"
+              >
+              <q-td key="no" :props="props" class="q-c-input">
+                {{ props.row.rowIndex }}
+              </q-td>
+              <q-td key="name" :props="props" class="q-c-input">
+                {{ props.row.Name }}
+              </q-td>
+              <q-td key="value" :props="props" class="q-c-input">
+                <q-input v-model="props.row.Value" dense borderless/>
+              </q-td>
+              <q-td key="testBed" :props="props" class="q-c-input">
+                {{ props.row.TestBed }}
+              </q-td>
+              <q-td key="description" :props="props" style="white-space: normal;" class="q-c-input">
+                {{ props.row.Description }}
+              </q-td>
+              <q-td key="example" :props="props" class="q-c-input" style="white-space: normal;">
+                {{ props.row.ExampleValue }}
+              </q-td>
+            </q-tr>
+          </template>
+        </q-table>
       </div>
     </div>
   </div>
@@ -90,21 +149,75 @@ export default defineComponent({
       selectedFeature: null,
       options: [],
     })
+    const selectedKeyword = ref()
     const kwFilter = ref('');
-    const selectedCategory = ref();
-    const selectedFeature = ref();
     const isShowOwner = ref(true);
     const isShowCreatedDate = ref(false);
     const allKeyword = ref();
+    const paramDatas: Ref<any[]> = ref([]);
+    const paramColumns = [
+      {
+        name: 'no',
+        required: true,
+        label: 'No',
+        align: 'left',
+        field: 'rowIndex',
+        sortable: false,
+        style: 'max-width: 40px',
+        headerStyle: 'max-width: 40px',
+      },
+      {
+        name: 'name',
+        required: true,
+        label: 'Name',
+        align: 'left',
+        field: 'Name',
+        format: (val: any) => `${val}`,
+        sortable: false,
+      },
+      {
+        name: 'value',
+        align: 'left',
+        label: 'Value',
+        field: 'Value',
+        sortable: false,
+        style: 'min-width: 100px',
+        headerStyle: 'min-width: 100px',
+      },
+      {
+        name: 'testBed',
+        align: 'left',
+        label: 'TestBed',
+        field: 'TestBed',
+        sortable: false,
+      },
+      {
+        name: 'description',
+        align: 'left',
+        label: 'Description',
+        field: 'Description',
+        sortable: false,
+      },
+      {
+        name: 'example',
+        align: 'left',
+        label: 'Example',
+        field: 'ExampleValue',
+        sortable: false,
+        style: 'max-width: 100px',
+        headerStyle: 'max-width: 100px',
+      },
+    ]
     const keywordColumns = [
       {
         name: 'no',
         required: true,
         label: 'No',
         align: 'left',
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         field: 'rowIndex',
         sortable: true,
+        style: 'max-width: 40px',
+        headerStyle: 'max-width: 40px',
       },
       {
         name: 'name',
@@ -122,6 +235,15 @@ export default defineComponent({
         label: 'Description',
         field: 'Description',
         sortable: true,
+        style: 'max-width: 500px',
+        headerStyle: 'max-width: 500px',
+      },
+      {
+        name: 'owner',
+        align: 'left',
+        label: 'Owner',
+        field: 'Owner',
+        sortable: false,
       },
       {
         name: 'updatedMessage',
@@ -130,13 +252,31 @@ export default defineComponent({
         field: 'UpdatedMessage',
         sortable: true,
       },
+      {
+        name: 'createdDate',
+        align: 'left',
+        label: 'CreatedDate',
+        field: 'CreatedDate',
+        sortable: false,
+      },
     ];
+    const keywordVisibleColumns: Ref<string[]> = ref(['no', 'name', 'description', 'owner', 'updatedMessage', 'createdDate']);
     const keywordDatas: Ref<any[]> = ref([]);
     allKeyword.value = context.root.$store.getters['keyword/keywords'];
     categories.options = allKeyword.value.categories.map((c: { Name: string; }) => c.Name);
     allKeyword.value.categories.forEach((c: { Features: []; }) => {
       c.Features.forEach((f: { Name: never; }) => features.options.push(f.Name));
+    })
+    allKeyword.value.categories.forEach((c: any) => {
+      c.Features.forEach((f: any) => {
+        f.Keywords.forEach((k: any) => {
+          k = { ...k, Category: c.Name, Feature: f.Name }
+          keywordDatas.value.push(k);
+        })
+      });
     });
+    keywordDatas.value = keywordDatas.value.map((v: any, i: number) => ({ ...v, rowIndex: i + 1 }))
+
     function filterCategory(val: string, update: any) {
       setTimeout(() => {
         update(
@@ -166,6 +306,63 @@ export default defineComponent({
       console.log('delayed filter aborted')
     }
 
+    function onFeatureChange() {
+      console.log('selectedFeature', features.selectedFeature)
+      keywordDatas.value = [];
+      if (categories.selectedCategory == null) {
+        if (features.selectedFeature == null) {
+          // Todo: Load all keywords
+          allKeyword.value.categories.forEach((c: any) => {
+            c.Features.forEach((f: any) => {
+              f.Keywords.forEach((k: any) => {
+                k = { ...k, Category: c.Name, Feature: f.Name }
+                keywordDatas.value.push(k);
+              })
+            });
+          });
+        } else {
+          // Todo: Load all keywords base on Feature
+          allKeyword.value.categories.forEach((c: any) => {
+            c.Features.forEach((f: any) => {
+              if (f.Name === features.selectedFeature) {
+                f.Keywords.forEach((k: any) => {
+                  k = { ...k, Category: c.Name, Feature: f.Name }
+                  keywordDatas.value.push(k)
+                })
+              }
+            });
+          });
+        }
+      } else if (features.selectedFeature == null) {
+        // Load all keyword that contains category
+        allKeyword.value.categories.forEach((c: any) => {
+          if (c.Name === categories.selectedCategory) {
+            c.Features.forEach((f: any) => {
+              f.Keywords.forEach((k: any) => {
+                k = { ...k, Category: c.Name, Feature: f.Name }
+                keywordDatas.value.push(k);
+              })
+            });
+          }
+        });
+      } else {
+        // Load all keyword that contains both category and feature
+        allKeyword.value.categories.forEach((c: any) => {
+          if (c.Name === categories.selectedCategory) {
+            c.Features.forEach((f: any) => {
+              if (f.Name === features.selectedFeature) {
+                f.Keywords.forEach((k: any) => {
+                  k = { ...k, Category: c.Name, Feature: f.Name }
+                  keywordDatas.value.push(k)
+                })
+              }
+            });
+          }
+        });
+      }
+      keywordDatas.value = keywordDatas.value.map((v: any, i: number) => ({ ...v, rowIndex: i + 1 }))
+    }
+
     function onCategoryChange() {
       console.log('selectedCategory', categories.selectedCategory)
       features.options = []
@@ -181,6 +378,7 @@ export default defineComponent({
           }
         });
       }
+      onFeatureChange();
     }
 
     function filterFeature(val: string, update: any) {
@@ -212,59 +410,51 @@ export default defineComponent({
       console.log('delayed filter aborted')
     }
 
-    function onFeatureChange() {
-      console.log('selectedFeature', features.selectedFeature)
-      keywordDatas.value = [];
-      if (categories.selectedCategory == null) {
-        if (features.selectedFeature == null) {
-          // Todo: Load all keywords
-          allKeyword.value.categories.forEach((c: { Features: []; }) => {
-            c.Features.forEach((f: { Keywords: []; }) => {
-              f.Keywords.forEach((k: any) => {
-                keywordDatas.value.push(k);
-              })
-            });
-          });
-          keywordDatas.value = keywordDatas.value.map((v: any, i: number) => ({ ...v, rowIndex: i + 1 }))
-        } else {
-          // Todo: Load all keywords base on Feature
-          allKeyword.value.categories.forEach((c: { Features: []; }) => {
-            c.Features.forEach((f: any) => {
-              if (f.Name === features.selectedFeature) {
-                f.Keywords.forEach((k: any) => {
-                  keywordDatas.value.push(k)
-                })
-              }
-            });
-          });
-          console.log('keywordDatas', keywordDatas.value)
-          keywordDatas.value = keywordDatas.value.map((v: any, i: number) => ({ ...v, rowIndex: i + 1 }))
-          console.log('keywordDatas', keywordDatas.value)
-        }
-      } else if (features.selectedFeature == null) {
-        // Todo
-      } else {
-        // Todo
-      }
+    function showParams(selectedKw: any) {
+      paramDatas.value = []
+      selectedKw.Params.forEach((p: any) => {
+        paramDatas.value.push(p)
+      });
+      paramDatas.value = paramDatas.value.map((v: any, i: number) => ({ ...v, rowIndex: i + 1 }))
+    }
+
+    function onSelectKeyword(row: any) {
+      // todo
+      console.log('selectedKw', row)
+      selectedKeyword.value = row
+      showParams(selectedKeyword.value)
     }
 
     return {
       kwFilter,
-      selectedCategory,
       categories,
-      selectedFeature,
       features,
       isShowOwner,
       isShowCreatedDate,
       keywordDatas,
       keywordColumns,
+      keywordVisibleColumns,
       filterCategory,
       abortFilterCategory,
       onCategoryChange,
       filterFeature,
       abortFilterFeature,
       onFeatureChange,
+      onSelectKeyword,
+      paramDatas,
+      paramColumns,
+      selectedKeyword,
     };
   },
 });
 </script>
+<style scoped lang="scss">
+::v-deep .q-c-input {
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+  input {
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+  }
+}
+</style>

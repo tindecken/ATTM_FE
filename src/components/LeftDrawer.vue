@@ -1,7 +1,25 @@
 <template>
   <q-list>
+      <q-item clickable v-ripple class="cursor-pointer">
+        <q-item-section avatar>
+          <q-avatar rounded color="primary" text-color="white" icon="swap_horiz" />
+        </q-item-section>
+        <q-item-section>Test Plan</q-item-section>
+      </q-item>
+      <q-item clickable v-ripple class="cursor-pointer">
+        <q-item-section avatar>
+          <q-avatar rounded color="primary" text-color="white" icon="swap_horiz" />
+        </q-item-section>
+        <q-item-section>Debug</q-item-section>
+      </q-item>
+      <q-item clickable v-ripple class="cursor-pointer">
+        <q-item-section avatar>
+          <q-avatar rounded color="primary" text-color="white" icon="swap_horiz" />
+        </q-item-section>
+        <q-item-section>Regression</q-item-section>
+      </q-item>
       <q-separator />
-      <q-item clickable v-ripple @click="switchTheme()">
+      <q-item clickable v-ripple @click="switchTheme()" class="cursor-pointer">
         <q-item-section avatar>
           <q-avatar rounded color="primary" text-color="white" icon="swap_horiz" />
         </q-item-section>
