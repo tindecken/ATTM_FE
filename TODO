@@ -1,2 +1,9 @@
 Todo:
   ☐ create new directive for format the @@ variable, and maybe the testbed
+  ✔ layout the test plan, should or should not use vue splitter? @done(20-11-12 22:24)
+  ☐ maybe need to use dynamic component for every test case tab?
+  ✔ left drawer should push the content to the right (not overlap) @done(20-11-12 22:24)
+  ✔ fix routing @done(20-11-12 22:24)
+  ☐ treeview in testplan
+API:
+  ☐ bug - sometime the keyword.json is used by other process --> can't get keyword list

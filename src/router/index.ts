@@ -26,10 +26,12 @@ export default route<Store<StateInterface>>(({ store, Vue }) => {
   Router.beforeEach((to, from, next) => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (to.meta.requiresAuth && !store.getters['auth/isAuthenticated']) {
-      next({ path: '/login' });
+      // if require login but no token --> go to login
+      next({ path: 'login' });
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     } else if (to.meta.requiresUnAuth && store.getters['auth/isAuthenticated']) {
-      next({ path: '/home' });
+      // if no require and has token --> home
+      next({ path: '/' });
     } else {
       next();
     }

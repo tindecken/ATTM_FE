@@ -13,8 +13,7 @@
     </q-header>
     <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered :width="180">
       <left-drawer></left-drawer>
-    </q-drawer>x
-
+    </q-drawer>
     <q-drawer v-model="rightDrawerOpen" side="right" overlay bordered :width="850">
       <right-drawer></right-drawer>
     </q-drawer>

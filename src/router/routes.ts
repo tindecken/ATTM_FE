@@ -3,10 +3,34 @@ import { RouteConfig } from 'vue-router';
 const routes: RouteConfig[] = [
   {
     path: '/',
-    redirect: '/home',
+    component: () => import('components/Home.vue'),
     meta: {
       requiresAuth: true,
     },
+    children: [
+      {
+        path: '',
+        redirect: '/testplan',
+      },
+      {
+        path: '/home',
+        redirect: '/testplan',
+      },
+      {
+        path: '/testplan',
+        component: () => import('components/TestPlan/TestPlan.vue'),
+        meta: {
+          requiresAuth: true,
+        },
+      },
+      {
+        path: '/regression',
+        component: () => import('components/Regression/Regression.vue'),
+        meta: {
+          requiresAuth: true,
+        },
+      },
+    ],
   },
   {
     path: '/login',
@@ -16,15 +40,8 @@ const routes: RouteConfig[] = [
     },
   },
   {
-    path: '/home',
-    component: () => import('components/Home.vue'),
-    meta: {
-      requiresAuth: true,
-    },
-  },
-  {
     path: '*',
-    redirect: '/',
+    redirect: '/login',
   },
 ];
 

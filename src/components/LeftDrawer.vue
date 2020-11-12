@@ -1,6 +1,6 @@
 <template>
   <q-list>
-      <q-item clickable v-ripple class="cursor-pointer">
+      <q-item clickable v-ripple class="cursor-pointer" router-link to="/testplan">
         <q-item-section avatar>
           <q-avatar rounded color="primary" text-color="white" icon="swap_horiz" />
         </q-item-section>
@@ -12,7 +12,7 @@
         </q-item-section>
         <q-item-section>Debug</q-item-section>
       </q-item>
-      <q-item clickable v-ripple class="cursor-pointer">
+      <q-item clickable v-ripple class="cursor-pointer" router-link to="/regression">
         <q-item-section avatar>
           <q-avatar rounded color="primary" text-color="white" icon="swap_horiz" />
         </q-item-section>
@@ -29,14 +29,12 @@
 </template>
 <script lang="ts">
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { defineComponent } from '@vue/composition-api';
 import { Dark } from 'quasar';
 
 export default defineComponent({
   name: 'LeftDrawer',
   props: {},
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setup(props, context) {
     function switchTheme() {
       context.root.$store.dispatch('global/switchDarkTheme');
