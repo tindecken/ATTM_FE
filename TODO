@@ -4,6 +4,13 @@ Todo:
   ☐ maybe need to use dynamic component for every test case tab?
   ✔ left drawer should push the content to the right (not overlap) @done(20-11-12 22:24)
   ✔ fix routing @done(20-11-12 22:24)
-  ☐ treeview in testplan
+  ✔ treeview in testplan @done(20-11-13 22:02)
+  treeview - paint the category
+  treeview - paint the category --> testsuite
+  treeview - paint the category --> testsuite --> testgroup
+  treewiew - paint the category --> testsuite --> testgroup --> testcase
+  treeview - reformat, using slot for it
 API:
   ☐ bug - sometime the keyword.json is used by other process --> can't get keyword list
+Node:
+  In store keyword, currently not use selectedKeyword
