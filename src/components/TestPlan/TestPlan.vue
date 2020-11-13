@@ -18,7 +18,7 @@
 <script lang="ts">
 import { defineComponent, ref } from '@vue/composition-api';
 import Tree from './Tree.vue';
-import Detail from './Detail'
+import Detail from './Detail.vue'
 
 export default defineComponent({
   name: 'TestPlan',
