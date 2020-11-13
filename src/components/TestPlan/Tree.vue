@@ -1,33 +1,36 @@
 <template>
   <div class="q-pa-md q-gutter-sm">
-    <q-input ref="filter" filled v-model="filter" label="Filter">
-      <template v-slot:append>
-        <q-icon v-if="filter !== ''" name="clear" class="cursor-pointer" @click="resetFilter" />
-      </template>
-    </q-input>
-
-    <q-tree
-      :nodes="simple"
-      node-key="label"
-      :filter="filter"
-      default-expand-all
-    />
+    <div class="row q-col-gutter-xs">
+      <div class="col">
+        <q-input ref='filterInput' v-model="filter" label="Filter" dense outlined>
+          <template v-slot:append>
+            <q-icon v-if="filter !== ''" name="clear" class="cursor-pointer" @click="resetFilter" />
+          </template>
+        </q-input>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <q-tree
+          :nodes="simple"
+          node-key="label"
+          :filter="filter"
+          default-expand-all
+        />
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-floating-promises */
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-import { defineComponent, ref } from '@vue/composition-api';
+import { defineComponent, ref, Ref } from '@vue/composition-api';
 
 export default defineComponent({
   name: 'Tree',
   components: {},
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setup() {
-    const filter = ref('');
+    const filter: Ref<string> = ref('');
+    const filterInput: Ref<any> = ref(null)
     const simple = ref([
       {
         label: 'Satisfied customers',
@@ -60,11 +63,13 @@ export default defineComponent({
     ])
     function resetFilter() {
       filter.value = ''
+      filterInput.value.focus();
     }
     return {
       filter,
       resetFilter,
       simple,
+      filterInput,
     }
   },
 });

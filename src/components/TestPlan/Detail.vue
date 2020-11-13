@@ -1,42 +1,20 @@
 <template>
-  <q-layout view="hHh LpR fFf">
-    <q-page-container class="row justify-center">
-      <div class="col-auto">
-        <q-form @submit="onSubmit" @reset="onReset" style="min-width: 400px" class="q-mt-xl">
-          <q-input
-            filled
-            v-model="username"
-            label="User Name *"
-            lazy-rules
-            :rules="[val => (val && val.length > 0) || 'Username is required']"
-          />
-
-          <q-input
-            filled
-            type="password"
-            v-model="password"
-            label="Your password *"
-            lazy-rules
-            :rules="[val => (val && val.length > 0) || 'Password is required']"
-          />
-
-          <div>
-            <q-btn label="Submit" type="submit" color="primary" />
-            <q-btn
-              label="Reset"
-              type="reset"
-              color="primary"
-              flat
-              class="q-ml-sm"
-            />
-          </div>
-        </q-form>
+  <div class="q-pa-md q-gutter-sm">
+    <div class="row q-col-gutter-xs">
+      <div class="col">
       </div>
-    </q-page-container>
-    <q-footer reveal bordered class="text-white" style="height: 24px">
-      Tindecken
-    </q-footer>
-  </q-layout>
+    </div>
+    <div class="row">
+      <div class="col">
+        <q-table
+          title="Detail"
+          :data="data"
+          :columns="columns"
+          row-key="name"
+        />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -47,44 +25,143 @@
 import { defineComponent, ref } from '@vue/composition-api';
 
 export default defineComponent({
-  name: 'Login',
+  name: 'Detail',
   components: {},
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  setup(props, context) {
-    console.log('login')
-    const username = ref('');
-    const password = ref('');
-    const err = ref('');
-    const onSubmit = async () => {
-      const actionPayload = {
-        username: username.value,
-        password: password.value,
-      };
-      try {
-        await context.root.$store.dispatch('auth/login', actionPayload);
-        const redirectUrl = `/${context.root.$route.query.redirect || 'home'}`;
-        context.root.$router.replace(redirectUrl);
-        context.root.$q.notify({
-          type: 'positive',
-          message: 'Login success !',
-        });
-      } catch (error) {
-        err.value = error.data.message || 'Failed to authenticate, try later.';
-        context.root.$q.notify({
-          type: 'warning',
-          message: err.value,
-        });
-      }
-    };
-    function onReset() {
-      username.value = '';
-      password.value = '';
-    }
+  setup() {
+    const columns = ref(
+      [
+        {
+          name: 'name',
+          required: true,
+          label: 'Dessert (100g serving)',
+          align: 'left',
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+          field: (row: any) => row.name,
+          format: (val: any) => `${val}`,
+          sortable: true,
+        },
+        {
+          name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true,
+        },
+        {
+          name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true,
+        },
+        { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
+        { name: 'protein', label: 'Protein (g)', field: 'protein' },
+        { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' },
+        {
+          name: 'calcium', label: 'Calcium (%)', field: 'calcium', sortable: true, sort: (a: any, b: any) => parseInt(a, 10) - parseInt(b, 10),
+        },
+        {
+          name: 'iron', label: 'Iron (%)', field: 'iron', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
+        },
+      ],
+    )
+    const data = ref([
+      {
+        name: 'Frozen Yogurt',
+        calories: 159,
+        fat: 6.0,
+        carbs: 24,
+        protein: 4.0,
+        sodium: 87,
+        calcium: '14%',
+        iron: '1%',
+      },
+      {
+        name: 'Ice cream sandwich',
+        calories: 237,
+        fat: 9.0,
+        carbs: 37,
+        protein: 4.3,
+        sodium: 129,
+        calcium: '8%',
+        iron: '1%',
+      },
+      {
+        name: 'Eclair',
+        calories: 262,
+        fat: 16.0,
+        carbs: 23,
+        protein: 6.0,
+        sodium: 337,
+        calcium: '6%',
+        iron: '7%',
+      },
+      {
+        name: 'Cupcake',
+        calories: 305,
+        fat: 3.7,
+        carbs: 67,
+        protein: 4.3,
+        sodium: 413,
+        calcium: '3%',
+        iron: '8%',
+      },
+      {
+        name: 'Gingerbread',
+        calories: 356,
+        fat: 16.0,
+        carbs: 49,
+        protein: 3.9,
+        sodium: 327,
+        calcium: '7%',
+        iron: '16%',
+      },
+      {
+        name: 'Jelly bean',
+        calories: 375,
+        fat: 0.0,
+        carbs: 94,
+        protein: 0.0,
+        sodium: 50,
+        calcium: '0%',
+        iron: '0%',
+      },
+      {
+        name: 'Lollipop',
+        calories: 392,
+        fat: 0.2,
+        carbs: 98,
+        protein: 0,
+        sodium: 38,
+        calcium: '0%',
+        iron: '2%',
+      },
+      {
+        name: 'Honeycomb',
+        calories: 408,
+        fat: 3.2,
+        carbs: 87,
+        protein: 6.5,
+        sodium: 562,
+        calcium: '0%',
+        iron: '45%',
+      },
+      {
+        name: 'Donut',
+        calories: 452,
+        fat: 25.0,
+        carbs: 51,
+        protein: 4.9,
+        sodium: 326,
+        calcium: '2%',
+        iron: '22%',
+      },
+      {
+        name: 'KitKat',
+        calories: 518,
+        fat: 26.0,
+        carbs: 65,
+        protein: 7,
+        sodium: 54,
+        calcium: '12%',
+        iron: '6%',
+      },
+    ])
     return {
-      username,
-      password,
-      onSubmit,
-      onReset,
+      columns,
+      data,
     };
   },
 });
