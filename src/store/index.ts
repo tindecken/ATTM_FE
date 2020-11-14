@@ -4,9 +4,11 @@ import VuexPersistence from 'vuex-persist';
 import auth from './auth';
 import global from './global';
 import keyword from './keyword';
+import category from './category';
 import { AuthStateInterface } from './auth/state';
 import { GlobalStateInterface } from './global/state';
 import { KeywordStateInterface } from './keyword/state';
+import { CategoryStateInterface } from './category/state';
 
 // import example from './module-example';
 // import { ExampleStateInterface } from './module-example/state';
@@ -23,6 +25,7 @@ export interface StateInterface {
   auth: AuthStateInterface;
   global: GlobalStateInterface;
   keyword: KeywordStateInterface;
+  category: CategoryStateInterface;
 }
 
 export default store(({ Vue }) => {
@@ -45,6 +48,7 @@ export default store(({ Vue }) => {
       auth,
       global,
       keyword,
+      category,
     },
     plugins: [persistGlobal.plugin, persistAuth.plugin, persistKeyword.plugin],
 

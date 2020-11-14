@@ -1,15 +1,15 @@
 import { ActionTree } from 'vuex';
 import axios from 'axios';
 import { StateInterface } from '../index';
-import { KeywordStateInterface } from './state';
+import { CategoryStateInterface } from './state';
 import config from '../../config';
 
-const actions: ActionTree<KeywordStateInterface, StateInterface> = {
-  async getKeywords(context) {
+const actions: ActionTree<CategoryStateInterface, StateInterface> = {
+  async getCategories(context) {
     // eslint-disable-next-line no-useless-catch
     try {
       const response = await axios.get(
-        `${config.baseURL}/keywords/refresh`,
+        `${config.baseURL}/categories`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -18,8 +18,8 @@ const actions: ActionTree<KeywordStateInterface, StateInterface> = {
         },
       );
       const responseData = await response.data;
-      context.commit('setKeywords', {
-        keywords: responseData,
+      context.commit('setCategories', {
+        categories: responseData,
       });
     } catch (error) {
       throw error;
