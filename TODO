@@ -12,6 +12,7 @@ Todo:
   treeview - reformat, using slot for it
 API:
   ☐ bug - sometime the keyword.json is used by other process --> can't get keyword list
-  ☐ write api to display all category, it will include category, testsuite, testgroup, testcase
+  ☐ Ongoing - write api to display all category, it will include category, testsuite, testgroup, testcase
+  ☐ api create testsuite, testgroup, testcase haven't checking the input id is correct, exist or not
 Node:
   In store keyword, currently not use selectedKeyword
