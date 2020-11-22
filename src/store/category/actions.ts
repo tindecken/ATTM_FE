@@ -5,11 +5,11 @@ import { CategoryStateInterface } from './state';
 import config from '../../config';
 
 const actions: ActionTree<CategoryStateInterface, StateInterface> = {
-  async getCategories(context) {
+  async getAllCategories(context) {
     // eslint-disable-next-line no-useless-catch
     try {
       const response = await axios.get(
-        `${config.baseURL}/categories`,
+        `${config.baseURL}/categories/getAll`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -19,14 +19,14 @@ const actions: ActionTree<CategoryStateInterface, StateInterface> = {
       );
       const responseData = await response.data;
       context.commit('setCategories', {
-        categories: responseData,
+        categories: responseData.result,
       });
     } catch (error) {
       throw error;
     }
   },
-  setSelectedKeyword(context, payload) {
-    context.commit('setSelectedKeyword', payload);
+  setSelectedCategory(context, payload) {
+    context.commit('setSelectedCategory', payload);
   },
 };
 

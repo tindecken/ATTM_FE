@@ -12,8 +12,8 @@
     <div class="row">
       <div class="col">
         <q-tree
-          :nodes="simple"
-          node-key="label"
+          :nodes="allCat"
+          node-key="_id"
           :filter="filter"
           default-expand-all
         />
@@ -23,52 +23,35 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, Ref } from '@vue/composition-api';
+import { defineComponent, onMounted, ref, Ref } from '@vue/composition-api';
 
 export default defineComponent({
   name: 'Tree',
   components: {},
-  setup() {
+  setup(props, context) {
     const filter: Ref<string> = ref('');
     const filterInput: Ref<any> = ref(null)
-    const simple = ref([
-      {
-        label: 'Satisfied customers',
-        children: [
-          {
-            label: 'Good food',
-            children: [
-              { label: 'Quality ingredients' },
-              { label: 'Good recipe' },
-            ],
-          },
-          {
-            label: 'Good service (disabled node)',
-            disabled: true,
-            children: [
-              { label: 'Prompt attention' },
-              { label: 'Professional waiter' },
-            ],
-          },
-          {
-            label: 'Pleasant surroundings',
-            children: [
-              { label: 'Happy atmosphere' },
-              { label: 'Good table presentation' },
-              { label: 'Pleasing decor' },
-            ],
-          },
-        ],
-      },
-    ])
+    const allCat: Ref<any[]> = ref([]);
+    allCat.value = context.root.$store.getters['category/categories'];
+    console.log('allCat', allCat.value)
     function resetFilter() {
       filter.value = ''
       filterInput.value.focus();
     }
+    onMounted(async () => {
+      try {
+        await context.root.$store.dispatch('category/getAllCategories');
+      } catch (error) {
+        context.root.$q.notify({
+          type: 'negative',
+          message: `${error}`,
+        });
+      }
+    });
     return {
       filter,
       resetFilter,
-      simple,
+      allCat,
       filterInput,
     }
   },
