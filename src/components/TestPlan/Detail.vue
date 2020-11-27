@@ -2,16 +2,37 @@
   <div class="q-pa-md q-gutter-sm">
     <div class="row q-col-gutter-xs">
       <div class="col">
+        <q-tabs
+          v-model="selectedTC"
+          dense
+          class="bg-grey-3 text-grey-7"
+          active-color="primary"
+          indicator-color="purple"
+          align="justify"
+        >
+          <q-tab v-for="testcase in testcases" :key="testcase.Id" :name="testcase.Id" :label="testcase.Name"></q-tab>
+        </q-tabs>
+
+        <q-tab-panels
+          v-model="selectedTC"
+          animated
+          keep-alive
+          >
+          <q-tab-panel v-for="tc in testcases" :key="tc.Id" :name="tc.Id">
+            <div>dddddddddddddddddd</div>
+            <div>{{tc.Name}}</div>
+          </q-tab-panel>
+        </q-tab-panels>
       </div>
     </div>
     <div class="row">
       <div class="col">
-        <q-table
+        <!-- <q-table
           title="Detail"
           :data="data"
           :columns="columns"
           row-key="name"
-        />
+        /> -->
       </div>
     </div>
   </div>
@@ -22,12 +43,15 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-import { defineComponent, ref } from '@vue/composition-api';
+import {
+  computed,
+  defineComponent, onMounted, Ref, ref,
+} from '@vue/composition-api';
 
 export default defineComponent({
   name: 'Detail',
   components: {},
-  setup() {
+  setup(props, context) {
     const columns = ref(
       [
         {
@@ -159,9 +183,24 @@ export default defineComponent({
         iron: '6%',
       },
     ])
+    const testcases: Ref<any[]> = ref([])
+    const selectedTC = computed({
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      get: () => context.root.$store.getters['testcase/opennedSelectedTC'],
+      set: (val) => {
+        console.log('val', val)
+        context.root.$store.commit('testcase/setOpennedSelectedTC', val);
+      },
+    })
+    onMounted(async () => {
+      testcases.value = context.root.$store.getters['testcase/opennedTCs'];
+      await context.root.$nextTick();
+    })
     return {
       columns,
       data,
+      testcases,
+      selectedTC,
     };
   },
 });

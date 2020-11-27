@@ -1,11 +1,11 @@
 import { Module } from 'vuex';
 import { StateInterface } from '../index';
-import state, { KeywordStateInterface } from './state';
+import state, { TestCaseStateInterface } from './state';
 import actions from './actions';
 import getters from './getters';
 import mutations from './mutations';
 
-const keywordModule: Module<KeywordStateInterface, StateInterface> = {
+const testCaseModule: Module<TestCaseStateInterface, StateInterface> = {
   namespaced: true,
   actions,
   getters,
@@ -13,4 +13,4 @@ const keywordModule: Module<KeywordStateInterface, StateInterface> = {
   state,
 };
 
-export default keywordModule;
+export default testCaseModule;

@@ -5,10 +5,12 @@ import auth from './auth';
 import global from './global';
 import keyword from './keyword';
 import category from './category';
+import testcase from './testcase';
 import { AuthStateInterface } from './auth/state';
 import { GlobalStateInterface } from './global/state';
 import { KeywordStateInterface } from './keyword/state';
 import { CategoryStateInterface } from './category/state';
+import { TestCaseStateInterface } from './testcase/state';
 
 // import example from './module-example';
 // import { ExampleStateInterface } from './module-example/state';
@@ -26,6 +28,7 @@ export interface StateInterface {
   global: GlobalStateInterface;
   keyword: KeywordStateInterface;
   category: CategoryStateInterface;
+  testcase: TestCaseStateInterface;
 }
 
 export default store(({ Vue }) => {
@@ -43,14 +46,19 @@ export default store(({ Vue }) => {
     key: 'keyword',
     modules: ['keyword'],
   });
+  const persistTestCase = new VuexPersistence({
+    key: 'testcase',
+    modules: ['testcase'],
+  });
   const Store = new Vuex.Store<StateInterface>({
     modules: {
       auth,
       global,
       keyword,
       category,
+      testcase,
     },
-    plugins: [persistGlobal.plugin, persistAuth.plugin, persistKeyword.plugin],
+    plugins: [persistGlobal.plugin, persistAuth.plugin, persistKeyword.plugin, persistTestCase.plugin],
 
     // enable strict mode (adds overhead!)
     // for dev mode only
