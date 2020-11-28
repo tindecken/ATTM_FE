@@ -5,12 +5,14 @@
         <q-tabs
           v-model="selectedTC"
           dense
-          class="bg-grey-3 text-grey-7"
           active-color="primary"
-          indicator-color="purple"
-          align="justify"
+          align="left"
+          inline-label
         >
-          <q-tab v-for="testcase in testcases" :key="testcase.Id" :name="testcase.Id" :label="testcase.Name"></q-tab>
+          <q-tab v-for="testcase in testcases" :key="testcase.Id" :name="testcase.Id" :ripple="false" @mouseover="showByIndex = testcase.Id" @mouseout="showByIndex = null">
+            <div class="q-mr-xs">{{testcase.Name}}</div>
+            <q-btn dense flat icon="close" size="xs" :style="{visibility: showByIndex === testcase.Id ? 'visible' : 'hidden'}"></q-btn>
+          </q-tab>
         </q-tabs>
 
         <q-tab-panels
@@ -52,6 +54,7 @@ export default defineComponent({
   name: 'Detail',
   components: {},
   setup(props, context) {
+    const showByIndex = ref(null)
     const columns = ref(
       [
         {
@@ -197,6 +200,7 @@ export default defineComponent({
       await context.root.$nextTick();
     })
     return {
+      showByIndex,
       columns,
       data,
       testcases,
@@ -205,3 +209,10 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped lang="scss">
+::v-deep .q-tab {
+  padding-right: 2px;
+  padding-left: 4px;
+}
+</style>
