@@ -316,7 +316,6 @@ export default defineComponent({
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       get: () => context.root.$store.getters['testcase/opennedSelectedTC'],
       set: (val) => {
-        debugger
         context.root.$store.commit('testcase/setOpennedSelectedTC', val);
       },
     })
