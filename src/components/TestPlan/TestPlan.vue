@@ -24,7 +24,7 @@ export default defineComponent({
   name: 'TestPlan',
   components: { Tree, Detail },
   setup() {
-    const splitterModel = ref(30);
+    const splitterModel = ref(20);
     return {
       splitterModel,
     };

@@ -9,8 +9,27 @@ const mutation: MutationTree<TestCaseStateInterface> = {
     }
     state.opennedSelectedTC = testcase.Id;
   },
+  updateOpennedTCs(state: TestCaseStateInterface, value) {
+    state.opennedTCs = value
+  },
   setOpennedSelectedTC(state: TestCaseStateInterface, payload) {
     state.opennedSelectedTC = payload;
+  },
+  removeOpennedTC(state: TestCaseStateInterface, testCaseId) {
+    const index = state.opennedTCs.findIndex((el: any) => el.Id === testCaseId);
+    if (index !== -1) {
+      state.opennedTCs.splice(index, 1)
+      // set selectedTestCase --> next tab
+      if (state.opennedTCs.length === 0) {
+        state.opennedSelectedTC = ''
+        return
+      }
+      if (index >= state.opennedTCs.length) {
+        state.opennedSelectedTC = state.opennedTCs[state.opennedTCs.length - 1].Id
+      } else {
+        state.opennedSelectedTC = state.opennedTCs[index].Id
+      }
+    }
   },
 };
 

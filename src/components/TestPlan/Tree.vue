@@ -82,8 +82,23 @@ export default defineComponent({
           console.log('TestGroup')
           break
         case 'TestCase':
-          console.log('TestCase')
-          await context.root.$store.dispatch('testcase/getTestCasebyId', currentNode.Id);
+          // // get currentTest
+          // await context.root.$store.dispatch('testcase/getTestCasebyId', currentNode.Id);
+          // const currentTest = context.root.$store.getters['testcase/opennedSelectedTC'];
+          // console.log('currTest', currentTest);
+          // // set rowIndex for testSteps
+          // // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+          // currentTest.TestSteps = currentTest.TestSteps.map((teststep: any, i: number) => ({ ...teststep, rowIndex: i + 1 }))
+          // console.log('currTest', currentTest)
+          // check is already open or not
+          const opennedTCs = context.root.$store.getters['testcase/opennedTCs'];
+          const found = opennedTCs.some((el: any) => el.Id === currentNode.Id);
+          if (found) {
+            const testcase = opennedTCs.find((el: any) => el.Id === currentNode.Id)
+            context.root.$store.commit('testcase/setOpennedTCs', testcase);
+          } else {
+            await context.root.$store.dispatch('testcase/getTestCasebyId', currentNode.Id);
+          }
           break
         default:
           break

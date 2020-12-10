@@ -69,7 +69,6 @@ module.exports = {
   // add your custom rules here
   rules: {
     'no-param-reassign': 'off',
-
     'import/first': 'off',
     'import/named': 'error',
     'import/namespace': 'error',
@@ -81,6 +80,7 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'prefer-promise-reject-errors': 'off',
     'no-console': 'off',
+    'no-case-declarations': 'off',
     'semi': 'off',
     'max-len': 'off',
     // TypeScript

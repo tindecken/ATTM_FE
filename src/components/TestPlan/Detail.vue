@@ -1,5 +1,6 @@
+/* eslint-disable no-sequences */
 <template>
-  <div class="q-pa-md q-gutter-sm">
+  <div class="q-pa-xs">
     <div class="row q-col-gutter-xs">
       <div class="col">
         <q-tabs
@@ -11,7 +12,7 @@
         >
           <q-tab v-for="testcase in testcases" :key="testcase.Id" :name="testcase.Id" :ripple="false" @mouseover="showByIndex = testcase.Id" @mouseout="showByIndex = null">
             <div class="q-mr-xs">{{testcase.Name}}</div>
-            <q-btn dense flat icon="close" size="xs" :style="{visibility: showByIndex === testcase.Id ? 'visible' : 'hidden'}"></q-btn>
+            <q-btn dense flat icon="close" size="xs" :style="{visibility: showByIndex === testcase.Id ? 'visible' : 'hidden'}" @click.stop="closeTab(testcase)"></q-btn>
           </q-tab>
         </q-tabs>
 
@@ -21,33 +22,107 @@
           keep-alive
           >
           <q-tab-panel v-for="tc in testcases" :key="tc.Id" :name="tc.Id">
-            <div>dddddddddddddddddd</div>
-            <div>{{tc.Name}}</div>
+            <q-table
+              dense
+              :data="tc.TestSteps"
+              :columns="columns"
+              row-key="name"
+              :hide-pagination="true"
+              separator="cell"
+              :wrap-cells="false"
+            >
+              <template v-slot:body="props">
+                <q-tr
+                  :props="props"
+                  >
+                  <q-td key="no" :props="props" class="q-c-input">
+                    {{ props.row.TestClient }}
+                  </q-td>
+                  <q-td key="client" :props="props" class="q-c-input">
+                    {{ props.row.TestClient }}
+                  </q-td>
+                  <q-td key="keyword" :props="props" class="q-c-input">
+                    <q-input v-model="props.row.Keyword" dense borderless/>
+                  </q-td>
+                  <q-td key="param1" :props="props" class="q-c-input">
+                    {{ props.row.Params[0].Value }}
+                  </q-td>
+                  <q-td key="param2" :props="props" class="q-c-input">
+                    {{ props.row.Description }}
+                  </q-td>
+                  <q-td key="param3" :props="props" class="q-c-input" style="white-space: normal;">
+                    {{ props.row.ExampleValue }}
+                  </q-td>
+                  <q-td key="param4" :props="props" class="q-c-input" style="white-space: normal;">
+                    {{ props.row.ExampleValue }}
+                  </q-td>
+                  <q-td key="param5" :props="props" class="q-c-input" style="white-space: normal;">
+                    {{ props.row.ExampleValue }}
+                  </q-td>
+                  <q-td key="param6" :props="props" class="q-c-input" style="white-space: normal;">
+                    {{ props.row.ExampleValue }}
+                  </q-td>
+                  <q-td key="param7" :props="props" class="q-c-input" style="white-space: normal;">
+                    {{ props.row.ExampleValue }}
+                  </q-td>
+                  <q-td key="param8" :props="props" class="q-c-input" style="white-space: normal;">
+                    {{ props.row.ExampleValue }}
+                  </q-td>
+                  <q-td key="param9" :props="props" class="q-c-input" style="white-space: normal;">
+                    {{ props.row.ExampleValue }}
+                  </q-td>
+                  <q-td key="param10" :props="props" class="q-c-input" style="white-space: normal;">
+                    {{ props.row.ExampleValue }}
+                  </q-td>
+                  <q-td key="param11" :props="props" class="q-c-input" style="white-space: normal;">
+                    {{ props.row.ExampleValue }}
+                  </q-td>
+                  <q-td key="param12" :props="props" class="q-c-input" style="white-space: normal;">
+                    {{ props.row.ExampleValue }}
+                  </q-td>
+                  <q-td key="param13" :props="props" class="q-c-input" style="white-space: normal;">
+                    {{ props.row.ExampleValue }}
+                  </q-td>
+                  <q-td key="param14" :props="props" class="q-c-input" style="white-space: normal;">
+                    {{ props.row.ExampleValue }}
+                  </q-td>
+                  <q-td key="param15" :props="props" class="q-c-input" style="white-space: normal;">
+                    {{ props.row.ExampleValue }}
+                  </q-td>
+                  <q-td key="param16" :props="props" class="q-c-input" style="white-space: normal;">
+                    {{ props.row.ExampleValue }}
+                  </q-td>
+                  <q-td key="param17" :props="props" class="q-c-input" style="white-space: normal;">
+                    {{ props.row.ExampleValue }}
+                  </q-td>
+                  <q-td key="param18" :props="props" class="q-c-input" style="white-space: normal;">
+                    {{ props.row.ExampleValue }}
+                  </q-td>
+                  <q-td key="param19" :props="props" class="q-c-input" style="white-space: normal;">
+                    {{ props.row.ExampleValue }}
+                  </q-td>
+                  <q-td key="param20" :props="props" class="q-c-input" style="white-space: normal;">
+                    {{ props.row.ExampleValue }}
+                  </q-td>
+
+                </q-tr>
+              </template>
+            </q-table>
           </q-tab-panel>
         </q-tab-panels>
       </div>
     </div>
     <div class="row">
       <div class="col">
-        <!-- <q-table
-          title="Detail"
-          :data="data"
-          :columns="columns"
-          row-key="name"
-        /> -->
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-floating-promises */
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import {
   computed,
-  defineComponent, onMounted, Ref, ref,
+  defineComponent, ref,
 } from '@vue/composition-api';
 
 export default defineComponent({
@@ -58,29 +133,80 @@ export default defineComponent({
     const columns = ref(
       [
         {
-          name: 'name',
+          name: 'no',
           required: true,
-          label: 'Dessert (100g serving)',
+          label: 'No',
           align: 'left',
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-          field: (row: any) => row.name,
-          format: (val: any) => `${val}`,
-          sortable: true,
+          field: 'rowIndex',
+          sortable: false,
+          style: 'max-width: 40px',
+          headerStyle: 'max-width: 40px',
         },
         {
-          name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true,
+          name: 'client', align: 'center', label: 'Client', field: 'calories', sortable: false,
         },
         {
-          name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true,
-        },
-        { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
-        { name: 'protein', label: 'Protein (g)', field: 'protein' },
-        { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' },
-        {
-          name: 'calcium', label: 'Calcium (%)', field: 'calcium', sortable: true, sort: (a: any, b: any) => parseInt(a, 10) - parseInt(b, 10),
+          name: 'keyword', label: 'Keyword', field: 'fat', sortable: false,
         },
         {
-          name: 'iron', label: 'Iron (%)', field: 'iron', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
+          name: 'param1', label: 'Param 1', field: 'carbs', sortable: false,
+        },
+        {
+          name: 'param2', label: 'Param 2', field: 'protein', sortable: false,
+        },
+        {
+          name: 'param3', label: 'Param 3', field: 'sodium', sortable: false,
+        },
+        {
+          name: 'param4', label: 'Param 4', field: 'calcium', sortable: false,
+        },
+        {
+          name: 'param5', label: 'Param 5', field: 'iron', sortable: false,
+        },
+        {
+          name: 'param6', label: 'Param 6', field: 'iron', sortable: false,
+        },
+        {
+          name: 'param7', label: 'Param 7', field: 'iron', sortable: false,
+        },
+        {
+          name: 'param8', label: 'Param 8', field: 'iron', sortable: false,
+        },
+        {
+          name: 'param9', label: 'Param 9', field: 'iron', sortable: false,
+        },
+        {
+          name: 'param10', label: 'Param 10', field: 'iron', sortable: false,
+        },
+        {
+          name: 'param11', label: 'Param 11', field: 'iron', sortable: false,
+        },
+        {
+          name: 'param12', label: 'Param 12', field: 'iron', sortable: false,
+        },
+        {
+          name: 'param13', label: 'Param 13', field: 'iron', sortable: false,
+        },
+        {
+          name: 'param14', label: 'Param 14', field: 'iron', sortable: false,
+        },
+        {
+          name: 'param15', label: 'Param 15', field: 'iron', sortable: false,
+        },
+        {
+          name: 'param16', label: 'Param 16', field: 'iron', sortable: false,
+        },
+        {
+          name: 'param17', label: 'Param 17', field: 'iron', sortable: false,
+        },
+        {
+          name: 'param18', label: 'Param 18', field: 'iron', sortable: false,
+        },
+        {
+          name: 'param19', label: 'Param 19', field: 'iron', sortable: false,
+        },
+        {
+          name: 'param20', label: 'Param 20', field: 'iron', sortable: false,
         },
       ],
     )
@@ -186,25 +312,37 @@ export default defineComponent({
         iron: '6%',
       },
     ])
-    const testcases: Ref<any[]> = ref([])
     const selectedTC = computed({
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       get: () => context.root.$store.getters['testcase/opennedSelectedTC'],
       set: (val) => {
-        console.log('val', val)
+        debugger
         context.root.$store.commit('testcase/setOpennedSelectedTC', val);
       },
     })
-    onMounted(async () => {
-      testcases.value = context.root.$store.getters['testcase/opennedTCs'];
-      await context.root.$nextTick();
+    const testcases = computed({
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      get: () => context.root.$store.getters['testcase/opennedTCs'],
+      set: (val) => {
+        context.root.$store.dispatch('testcase/updateOpennedTCs', val)
+      },
     })
+    function closeTab(testcase: any) {
+      console.log('testcase', testcase)
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      context.root.$store.commit('testcase/removeOpennedTC', testcase.Id)
+    }
+    // onMounted(async () => {
+    //   testcases.value = context.root.$store.getters['testcase/opennedTCs'];
+    //   await context.root.$nextTick();
+    // })
     return {
       showByIndex,
       columns,
       data,
       testcases,
       selectedTC,
+      closeTab,
     };
   },
 });
@@ -214,5 +352,8 @@ export default defineComponent({
 ::v-deep .q-tab {
   padding-right: 2px;
   padding-left: 4px;
+}
+::v-deep .q-tab-panel {
+  padding: 1px;
 }
 </style>
