@@ -6,7 +6,7 @@
           <q-input
             filled
             v-model="username"
-            label="User Name *"
+            label="User Name"
             lazy-rules
             :rules="[val => (val && val.length > 0) || 'Username is required']"
           />
@@ -15,7 +15,7 @@
             filled
             type="password"
             v-model="password"
-            label="Your password *"
+            label="Your password"
             lazy-rules
             :rules="[val => (val && val.length > 0) || 'Password is required']"
           />
