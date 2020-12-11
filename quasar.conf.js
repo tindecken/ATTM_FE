@@ -82,13 +82,18 @@ module.exports = configure((ctx) => ({
         });
       }
     },
+    env: {
+      API_URL: ctx.dev
+        ? 'http://localhost:5000/api'
+        : 'http://localhost:9999/api',
+    },
   },
 
   // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-devServer
   devServer: {
     https: false,
     port: 8080,
-    open: true, // opens browser window automatically
+    open: false, // opens browser window automatically
   },
 
   // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-framework
