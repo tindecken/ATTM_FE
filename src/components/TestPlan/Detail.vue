@@ -4,7 +4,7 @@
     <div class="row q-col-gutter-xs">
       <div class="col">
         <q-tabs
-          v-model="selectedTC"
+          v-model="opennedSelectedTC"
           dense
           active-color="primary"
           align="left"
@@ -17,7 +17,7 @@
         </q-tabs>
 
         <q-tab-panels
-          v-model="selectedTC"
+          v-model="opennedSelectedTC"
           animated
           keep-alive
           >
@@ -44,13 +44,16 @@
                   <q-td key="keyword" :props="props" class="q-c-input">
                     <q-input v-model="props.row.Keyword" dense borderless/>
                   </q-td>
-                  <q-td key="param1" :props="props" class="q-c-input">
+                  <q-td v-for="index  in 20" :key="index" class="q-c-input">
+                    {{ props.row.Params[index-1] ? props.row.Params[index-1].Value : ""}}
+                  </q-td>
+                  <!-- <q-td key="param1" :props="props" class="q-c-input">
                     {{ props.row.Params[0].Value }}
                   </q-td>
                   <q-td key="param2" :props="props" class="q-c-input">
                     {{ props.row.Description }}
                   </q-td>
-                  <q-td key="param3" :props="props" class="q-c-input" style="white-space: normal;">
+                  <q-td key="param3" :props="props" class="q-c-input">
                     {{ props.row.ExampleValue }}
                   </q-td>
                   <q-td key="param4" :props="props" class="q-c-input" style="white-space: normal;">
@@ -103,7 +106,7 @@
                   </q-td>
                   <q-td key="param20" :props="props" class="q-c-input" style="white-space: normal;">
                     {{ props.row.ExampleValue }}
-                  </q-td>
+                  </q-td> -->
 
                 </q-tr>
               </template>
@@ -312,7 +315,7 @@ export default defineComponent({
         iron: '6%',
       },
     ])
-    const selectedTC = computed({
+    const opennedSelectedTC = computed({
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       get: () => context.root.$store.getters['testcase/opennedSelectedTC'],
       set: (val) => {
@@ -323,6 +326,7 @@ export default defineComponent({
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       get: () => context.root.$store.getters['testcase/opennedTCs'],
       set: (val) => {
+        console.log('val', val)
         context.root.$store.dispatch('testcase/updateOpennedTCs', val)
       },
     })
@@ -331,16 +335,12 @@ export default defineComponent({
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       context.root.$store.commit('testcase/removeOpennedTC', testcase.Id)
     }
-    // onMounted(async () => {
-    //   testcases.value = context.root.$store.getters['testcase/opennedTCs'];
-    //   await context.root.$nextTick();
-    // })
     return {
       showByIndex,
       columns,
       data,
       testcases,
-      selectedTC,
+      opennedSelectedTC,
       closeTab,
     };
   },
@@ -353,6 +353,9 @@ export default defineComponent({
   padding-left: 4px;
 }
 ::v-deep .q-tab-panel {
+  padding: 1px;
+}
+::v-deep td.q-c-input {
   padding: 1px;
 }
 </style>

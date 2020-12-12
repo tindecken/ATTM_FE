@@ -22,7 +22,7 @@ const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
       const testcase = await response.data;
       console.log('response data', testcase);
       context.commit('setOpennedTCs', testcase);
-      context.commit('setOpennedSelectedTC', testcase)
+      context.commit('setOpennedSelectedTC', testcase.Id)
     } catch (error) {
       throw error;
     }

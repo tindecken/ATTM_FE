@@ -1,11 +1,11 @@
 export interface TestCaseStateInterface {
   opennedTCs: any;
-  opennedSelectedTC: any
+  opennedSelectedTC: string
 }
 
 const state: TestCaseStateInterface = {
   opennedTCs: [],
-  opennedSelectedTC: null,
+  opennedSelectedTC: '',
 };
 
 export default state;
