@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import { MutationTree } from 'vuex';
 import { TestCaseStateInterface } from './state';
 
@@ -9,8 +10,11 @@ const mutation: MutationTree<TestCaseStateInterface> = {
     }
     state.opennedSelectedTC = testcase.Id;
   },
-  updateOpennedTCs(state: TestCaseStateInterface, value) {
-    state.opennedTCs = value
+  updateOpennedTCs(state: TestCaseStateInterface, payload) {
+    payload.testcase.TestSteps[payload.stepIndex][payload.property] = payload.newValue;
+    const index = state.opennedTCs.findIndex((tc: any) => tc.Id === payload.testcase.Id);
+    Vue.set(state.opennedTCs, index, payload.testcase)
+    console.log('state.opennedTCs', state.opennedTCs)
   },
   setOpennedSelectedTC(state: TestCaseStateInterface, payload) {
     state.opennedSelectedTC = payload;

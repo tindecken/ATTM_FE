@@ -26,7 +26,7 @@
               dense
               :data="tc.TestSteps"
               :columns="columns"
-              row-key="name"
+              row-key="Name"
               :hide-pagination="true"
               separator="cell"
               :wrap-cells="false"
@@ -42,72 +42,12 @@
                     {{ props.row.TestClient }}
                   </q-td>
                   <q-td key="keyword" :props="props" class="q-c-input">
-                    <q-input v-model="props.row.Keyword" dense borderless/>
+                    <q-input :debounce="300" :value="props.row.Keyword" dense borderless @input="changeValue({testcase: tc, stepIndex: props.rowIndex, property: 'Keyword'}, $event)"/>
                   </q-td>
-                  <q-td v-for="index  in 20" :key="index" class="q-c-input">
+                  <q-td v-for="index in 20" :key="index" class="q-c-input">
+                    <q-input :debounce="300" :value="props.row.Params[index-1]" dense borderless @input="changeValue({testcase: tc, stepIndex: props.rowIndex, property: 'Keyword'}, $event)"/>
                     {{ props.row.Params[index-1] ? props.row.Params[index-1].Value : ""}}
                   </q-td>
-                  <!-- <q-td key="param1" :props="props" class="q-c-input">
-                    {{ props.row.Params[0].Value }}
-                  </q-td>
-                  <q-td key="param2" :props="props" class="q-c-input">
-                    {{ props.row.Description }}
-                  </q-td>
-                  <q-td key="param3" :props="props" class="q-c-input">
-                    {{ props.row.ExampleValue }}
-                  </q-td>
-                  <q-td key="param4" :props="props" class="q-c-input" style="white-space: normal;">
-                    {{ props.row.ExampleValue }}
-                  </q-td>
-                  <q-td key="param5" :props="props" class="q-c-input" style="white-space: normal;">
-                    {{ props.row.ExampleValue }}
-                  </q-td>
-                  <q-td key="param6" :props="props" class="q-c-input" style="white-space: normal;">
-                    {{ props.row.ExampleValue }}
-                  </q-td>
-                  <q-td key="param7" :props="props" class="q-c-input" style="white-space: normal;">
-                    {{ props.row.ExampleValue }}
-                  </q-td>
-                  <q-td key="param8" :props="props" class="q-c-input" style="white-space: normal;">
-                    {{ props.row.ExampleValue }}
-                  </q-td>
-                  <q-td key="param9" :props="props" class="q-c-input" style="white-space: normal;">
-                    {{ props.row.ExampleValue }}
-                  </q-td>
-                  <q-td key="param10" :props="props" class="q-c-input" style="white-space: normal;">
-                    {{ props.row.ExampleValue }}
-                  </q-td>
-                  <q-td key="param11" :props="props" class="q-c-input" style="white-space: normal;">
-                    {{ props.row.ExampleValue }}
-                  </q-td>
-                  <q-td key="param12" :props="props" class="q-c-input" style="white-space: normal;">
-                    {{ props.row.ExampleValue }}
-                  </q-td>
-                  <q-td key="param13" :props="props" class="q-c-input" style="white-space: normal;">
-                    {{ props.row.ExampleValue }}
-                  </q-td>
-                  <q-td key="param14" :props="props" class="q-c-input" style="white-space: normal;">
-                    {{ props.row.ExampleValue }}
-                  </q-td>
-                  <q-td key="param15" :props="props" class="q-c-input" style="white-space: normal;">
-                    {{ props.row.ExampleValue }}
-                  </q-td>
-                  <q-td key="param16" :props="props" class="q-c-input" style="white-space: normal;">
-                    {{ props.row.ExampleValue }}
-                  </q-td>
-                  <q-td key="param17" :props="props" class="q-c-input" style="white-space: normal;">
-                    {{ props.row.ExampleValue }}
-                  </q-td>
-                  <q-td key="param18" :props="props" class="q-c-input" style="white-space: normal;">
-                    {{ props.row.ExampleValue }}
-                  </q-td>
-                  <q-td key="param19" :props="props" class="q-c-input" style="white-space: normal;">
-                    {{ props.row.ExampleValue }}
-                  </q-td>
-                  <q-td key="param20" :props="props" class="q-c-input" style="white-space: normal;">
-                    {{ props.row.ExampleValue }}
-                  </q-td> -->
-
                 </q-tr>
               </template>
             </q-table>
@@ -126,7 +66,7 @@
 import {
   computed,
   defineComponent, ref,
-} from '@vue/composition-api';
+} from '@vue/composition-api'
 
 export default defineComponent({
   name: 'Detail',
@@ -152,64 +92,164 @@ export default defineComponent({
           name: 'keyword', label: 'Keyword', field: 'fat', sortable: false,
         },
         {
-          name: 'param1', label: 'Param 1', field: 'carbs', sortable: false,
+          name: 'param1',
+          label: 'Param 1',
+          field: 'carbs',
+          sortable: false,
+          style: 'max-width: 120px',
+          headerStyle: 'max-width: 120px',
         },
         {
-          name: 'param2', label: 'Param 2', field: 'protein', sortable: false,
+          name: 'param2',
+          label: 'Param 2',
+          field: 'protein',
+          sortable: false,
+          style: 'max-width: 120px',
+          headerStyle: 'max-width: 120px',
         },
         {
-          name: 'param3', label: 'Param 3', field: 'sodium', sortable: false,
+          name: 'param3',
+          label: 'Param 3',
+          field: 'sodium',
+          sortable: false,
+          style: 'max-width: 120px',
+          headerStyle: 'max-width: 120px',
         },
         {
-          name: 'param4', label: 'Param 4', field: 'calcium', sortable: false,
+          name: 'param4',
+          label: 'Param 4',
+          field: 'calcium',
+          sortable: false,
+          style: 'max-width: 120px',
+          headerStyle: 'max-width: 120px',
         },
         {
-          name: 'param5', label: 'Param 5', field: 'iron', sortable: false,
+          name: 'param5',
+          label: 'Param 5',
+          field: 'iron',
+          sortable: false,
+          style: 'max-width: 120px',
+          headerStyle: 'max-width: 120px',
         },
         {
-          name: 'param6', label: 'Param 6', field: 'iron', sortable: false,
+          name: 'param6',
+          label: 'Param 6',
+          field: 'iron',
+          sortable: false,
+          style: 'max-width: 120px',
+          headerStyle: 'max-width: 120px',
         },
         {
-          name: 'param7', label: 'Param 7', field: 'iron', sortable: false,
+          name: 'param7',
+          label: 'Param 7',
+          field: 'iron',
+          sortable: false,
+          style: 'max-width: 120px',
+          headerStyle: 'max-width: 120px',
         },
         {
-          name: 'param8', label: 'Param 8', field: 'iron', sortable: false,
+          name: 'param8',
+          label: 'Param 8',
+          field: 'iron',
+          sortable: false,
+          style: 'max-width: 120px',
+          headerStyle: 'max-width: 120px',
         },
         {
-          name: 'param9', label: 'Param 9', field: 'iron', sortable: false,
+          name: 'param9',
+          label: 'Param 9',
+          field: 'iron',
+          sortable: false,
+          style: 'max-width: 120px',
+          headerStyle: 'max-width: 120px',
         },
         {
-          name: 'param10', label: 'Param 10', field: 'iron', sortable: false,
+          name: 'param10',
+          label: 'Param 10',
+          field: 'iron',
+          sortable: false,
+          style: 'max-width: 120px',
+          headerStyle: 'max-width: 120px',
         },
         {
-          name: 'param11', label: 'Param 11', field: 'iron', sortable: false,
+          name: 'param11',
+          label: 'Param 11',
+          field: 'iron',
+          sortable: false,
+          style: 'max-width: 120px',
+          headerStyle: 'max-width: 120px',
         },
         {
-          name: 'param12', label: 'Param 12', field: 'iron', sortable: false,
+          name: 'param12',
+          label: 'Param 12',
+          field: 'iron',
+          sortable: false,
+          style: 'max-width: 120px',
+          headerStyle: 'max-width: 120px',
         },
         {
-          name: 'param13', label: 'Param 13', field: 'iron', sortable: false,
+          name: 'param13',
+          label: 'Param 13',
+          field: 'iron',
+          sortable: false,
+          style: 'max-width: 120px',
+          headerStyle: 'max-width: 120px',
         },
         {
-          name: 'param14', label: 'Param 14', field: 'iron', sortable: false,
+          name: 'param14',
+          label: 'Param 14',
+          field: 'iron',
+          sortable: false,
+          style: 'max-width: 120px',
+          headerStyle: 'max-width: 120px',
         },
         {
-          name: 'param15', label: 'Param 15', field: 'iron', sortable: false,
+          name: 'param15',
+          label: 'Param 15',
+          field: 'iron',
+          sortable: false,
+          style: 'max-width: 120px',
+          headerStyle: 'max-width: 120px',
         },
         {
-          name: 'param16', label: 'Param 16', field: 'iron', sortable: false,
+          name: 'param16',
+          label: 'Param 16',
+          field: 'iron',
+          sortable: false,
+          style: 'max-width: 120px',
+          headerStyle: 'max-width: 120px',
         },
         {
-          name: 'param17', label: 'Param 17', field: 'iron', sortable: false,
+          name: 'param17',
+          label: 'Param 17',
+          field: 'iron',
+          sortable: false,
+          style: 'max-width: 120px',
+          headerStyle: 'max-width: 120px',
         },
         {
-          name: 'param18', label: 'Param 18', field: 'iron', sortable: false,
+          name: 'param18',
+          label: 'Param 18',
+          field: 'iron',
+          sortable: false,
+          style: 'max-width: 120px',
+          headerStyle: 'max-width: 120px',
         },
         {
-          name: 'param19', label: 'Param 19', field: 'iron', sortable: false,
+          name: 'param19',
+          label: 'Param 19',
+          field: 'iron',
+          sortable: false,
+          style: 'max-width: 120px',
+          headerStyle: 'max-width: 120px',
         },
         {
-          name: 'param20', label: 'Param 20', field: 'iron', sortable: false,
+          name: 'param20',
+          label: 'Param 20',
+          field: 'iron',
+          sortable: false,
+          style: 'max-width: 120px',
+          headerStyle: 'max-width: 120px',
         },
       ],
     )
@@ -322,18 +362,22 @@ export default defineComponent({
         context.root.$store.commit('testcase/setOpennedSelectedTC', val);
       },
     })
-    const testcases = computed({
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      get: () => context.root.$store.getters['testcase/opennedTCs'],
-      set: (val) => {
-        console.log('val', val)
-        context.root.$store.dispatch('testcase/updateOpennedTCs', val)
-      },
-    })
+    const testcases = context.root.$store.getters['testcase/opennedTCs']
     function closeTab(testcase: any) {
       console.log('testcase', testcase)
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       context.root.$store.commit('testcase/removeOpennedTC', testcase.Id)
+    }
+    function changeValue(payload, e) {
+      console.log('testcaseee', payload)
+      // eslint-disable-next-line no-multi-assign
+      // payload.testcase.TestSteps[0].payload.property = e;
+      // eslint-disable-next-line no-multi-assign
+      // payload.testcase.TestSteps[payload.stepIndex][payload.property] = e;
+      // const tc = payload.testcase
+      // console.log('e', e)
+      payload.newValue = e;
+      context.root.$store.commit('testcase/updateOpennedTCs', payload)
     }
     return {
       showByIndex,
@@ -342,6 +386,7 @@ export default defineComponent({
       testcases,
       opennedSelectedTC,
       closeTab,
+      changeValue,
     };
   },
 });
@@ -351,11 +396,16 @@ export default defineComponent({
 ::v-deep .q-tab {
   padding-right: 2px;
   padding-left: 4px;
+  padding-top: 0px;
+  padding-bottom: 0px;
 }
 ::v-deep .q-tab-panel {
   padding: 1px;
 }
 ::v-deep td.q-c-input {
-  padding: 1px;
+  padding-right: 1px;
+  padding-left: 1px;
+  padding-top: 0px;
+  padding-bottom: 0px;
 }
 </style>
