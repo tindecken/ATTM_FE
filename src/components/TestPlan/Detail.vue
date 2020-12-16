@@ -31,22 +31,40 @@
               separator="cell"
               :wrap-cells="false"
             >
+              <template v-slot:header="props">
+                <q-tr :props="props">
+                  <q-th
+                    v-for="col in props.cols"
+                    :key="col.name"
+                    :props="props"
+                    class="text-italic text-purple"
+                  >
+                    {{ col.label }}
+                    {{ col.name }}
+                  </q-th>
+                </q-tr>
+              </template>
               <template v-slot:body="props">
                 <q-tr
                   :props="props"
+                  @mouseover="test(props.cols)"
                   >
                   <q-td key="no" :props="props" class="q-c-input">
-                    {{ props.row.TestClient }}
+                    {{ props.rowIndex + 1 }}
                   </q-td>
                   <q-td key="client" :props="props" class="q-c-input">
                     {{ props.row.TestClient }}
                   </q-td>
                   <q-td key="keyword" :props="props" class="q-c-input">
-                    <q-input :debounce="300" :value="props.row.Keyword" dense borderless @input="changeValue({testcase: tc, stepIndex: props.rowIndex, property: 'Keyword'}, $event)"/>
+                    <q-input :debounce="300" :value="props.row.Keyword" dense borderless @input="changeKeyword({testcase: tc, stepIndex: props.rowIndex, property: 'Keyword'}, $event)"/>
                   </q-td>
                   <q-td v-for="index in 20" :key="index" class="q-c-input">
-                    <q-input :debounce="300" :value="props.row.Params[index-1]" dense borderless @input="changeValue({testcase: tc, stepIndex: props.rowIndex, property: 'Keyword'}, $event)"/>
-                    {{ props.row.Params[index-1] ? props.row.Params[index-1].Value : ""}}
+                    <q-input
+                      :debounce="300"
+                      :value="props.row.Params[index-1] ? props.row.Params[index-1].Value : ''" dense borderless
+                      @input="changeParam({testcase: tc, stepIndex: props.rowIndex, paramIndex: index-1}, $event)"
+                      :readonly="index > props.row.Params.length"
+                    />
                   </q-td>
                 </q-tr>
               </template>
@@ -67,6 +85,7 @@ import {
   computed,
   defineComponent, ref,
 } from '@vue/composition-api'
+import _ from 'lodash'
 
 export default defineComponent({
   name: 'Detail',
@@ -368,16 +387,30 @@ export default defineComponent({
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       context.root.$store.commit('testcase/removeOpennedTC', testcase.Id)
     }
-    function changeValue(payload, e) {
-      console.log('testcaseee', payload)
-      // eslint-disable-next-line no-multi-assign
-      // payload.testcase.TestSteps[0].payload.property = e;
-      // eslint-disable-next-line no-multi-assign
-      // payload.testcase.TestSteps[payload.stepIndex][payload.property] = e;
-      // const tc = payload.testcase
-      // console.log('e', e)
+    function changeKeyword(payload: any, e: any) {
       payload.newValue = e;
-      context.root.$store.commit('testcase/updateOpennedTCs', payload)
+      const tempTC = _.cloneDeep(payload.testcase)
+      console.log(tempTC)
+      console.log('payload.stepIndex', payload.stepIndex)
+      console.log('payload.property', payload.property)
+      console.log('payload.newValue', payload.newValue)
+      tempTC.TestSteps[payload.stepIndex][payload.property] = payload.newValue;
+      context.root.$store.commit('testcase/updateOpennedTCs', tempTC)
+    }
+    function changeParam(payload: any, e: any) {
+      payload.newValue = e;
+      const tempTC = _.cloneDeep(payload.testcase)
+      console.log(tempTC)
+      console.log('payload.stepIndex', payload.stepIndex)
+      console.log('payload.paramIndex', payload.paramIndex)
+      console.log('payload.newValue', payload.newValue)
+      tempTC.TestSteps[payload.stepIndex].Params[payload.paramIndex].Value = payload.newValue;
+      context.root.$store.commit('testcase/updateOpennedTCs', tempTC)
+    }
+    function test(cols) {
+      console.log("Hi", cols[3].label);
+      cols[3].label = 'labelddddddddd'
+      columns.value[3].label = 'labelddddddddd'
     }
     return {
       showByIndex,
@@ -386,7 +419,9 @@ export default defineComponent({
       testcases,
       opennedSelectedTC,
       closeTab,
-      changeValue,
+      changeParam,
+      changeKeyword,
+      test,
     };
   },
 });
