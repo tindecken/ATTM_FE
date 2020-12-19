@@ -1,7 +1,7 @@
 /* eslint-disable no-sequences */
 <template>
-  <div class="q-pa-xs">
-    <div class="row q-col-gutter-xs">
+  <div>
+    <div class="row">
       <div class="col">
         <q-tabs
           v-model="opennedSelectedTC"
@@ -37,17 +37,16 @@
                     v-for="col in props.cols"
                     :key="col.name"
                     :props="props"
-                    class="text-italic text-purple"
+                    class="text-bold text-purple"
                   >
                     {{ col.label }}
-                    {{ col.name }}
                   </q-th>
                 </q-tr>
               </template>
               <template v-slot:body="props">
                 <q-tr
                   :props="props"
-                  @mouseover="test(props.cols)"
+                  @mouseover="test(props.row.Params)"
                   >
                   <q-td key="no" :props="props" class="q-c-input">
                     {{ props.rowIndex + 1 }}
@@ -407,10 +406,12 @@ export default defineComponent({
       tempTC.TestSteps[payload.stepIndex].Params[payload.paramIndex].Value = payload.newValue;
       context.root.$store.commit('testcase/updateOpennedTCs', tempTC)
     }
-    function test(cols) {
-      console.log("Hi", cols[3].label);
-      cols[3].label = 'labelddddddddd'
-      columns.value[3].label = 'labelddddddddd'
+    function test(params: []) {
+      params.forEach((pr: any, index: number) => {
+        columns.value[index + 3].label = pr.Name;
+      });
+      // cols[3].label = 'labelddddddddd'
+      // columns.value[3].label = 'labelddddddddd'
     }
     return {
       showByIndex,

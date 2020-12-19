@@ -1,6 +1,6 @@
 <template>
-  <div class="q-pa-md q-gutter-sm">
-    <div class="row q-col-gutter-xs">
+  <div class="q-pa-xs">
+    <div class="row">
       <div class="col-8">
         <q-input ref='filterInput' v-model="filter" label="Filter" dense outlined>
           <template v-slot:append>
