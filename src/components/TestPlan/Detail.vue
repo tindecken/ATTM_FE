@@ -26,7 +26,7 @@
               dense
               :data="tc.TestSteps"
               :columns="columns"
-              row-key="Keyword"
+              row-key="UUID"
               :hide-pagination="true"
               separator="cell"
               :wrap-cells="false"
@@ -51,6 +51,7 @@
                   style="height: 20px;"
                   @click.ctrl="toggleSelectedRow(props.row)"
                   @click.exact="toggleSingleRow(props.row)"
+                  @click.shift="toggleRowGroup(props.row)"
                   >
                   <q-td key="no" :props="props" class="q-c-input">
                     {{ props.rowIndex + 1 }}
@@ -470,7 +471,7 @@ export default defineComponent({
           console.log('item', item)
           console.log('row', row)
           i = index
-          return item.Name === row.Name
+          return item.UUID === row.UUID
         })
         if (matched) { // This row was already selected, so remove it
           selected.value.splice(i, 1)
@@ -489,7 +490,7 @@ export default defineComponent({
         let i = 0
         const matched = selected.value.find((item: any, index: number) => {
           i = index
-          return item.Name === row.Name
+          return item.UUID === row.UUID
         })
         if (matched) { // Had already selected this one
           // Remove any selected since that one

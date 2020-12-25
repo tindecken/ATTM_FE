@@ -12,7 +12,8 @@ Todo:
   ☐ fix the mousemove on test step, while changing tab to another tab, should reset header name
   ✔ layout the columns of parameter, fix it with 10 first params and wait for new change in Quasar to allow resize column @done(20-12-23 22:32)
   ☐ datatable - allow multiple selection with ctrl: reference: https://codepen.io/crawfordw/pen/oNXOMKg?editors=1010
-  ☐ Add Id or somethings like it (UUID) in every teststep to make it unique (support selection in datagrid view)
+  ✔ Add Id or somethings like it (UUID) in every teststep to make it unique (support selection in datagrid view) @done(20-12-25 23:41)
+  ☐ datatable = detail support multiple select with shift
   treeview - paint the category
   treeview - paint the category --> testsuite
   treeview - paint the category --> testsuite --> testgroup
