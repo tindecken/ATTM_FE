@@ -26,10 +26,11 @@
               dense
               :data="tc.TestSteps"
               :columns="columns"
-              row-key="Name"
+              row-key="Keyword"
               :hide-pagination="true"
               separator="cell"
               :wrap-cells="false"
+              :selected.sync="selected"
             >
               <template v-slot:header="props">
                 <q-tr :props="props">
@@ -37,7 +38,7 @@
                     v-for="col in props.cols"
                     :key="col.name"
                     :props="props"
-                    class="text-bold text-purple"
+                    class="text-bold text-primary"
                   >
                     {{ col.label }}
                   </q-th>
@@ -47,6 +48,9 @@
                 <q-tr
                   :props="props"
                   @mouseover="test(props.row.Params)"
+                  style="height: 20px;"
+                  @click.ctrl="toggleSelectedRow(props.row)"
+                  @click.exact="toggleSingleRow(props.row)"
                   >
                   <q-td key="no" :props="props" class="q-c-input">
                     {{ props.rowIndex + 1 }}
@@ -82,7 +86,7 @@
 <script lang="ts">
 import {
   computed,
-  defineComponent, ref,
+  defineComponent, Ref, ref,
 } from '@vue/composition-api'
 import _ from 'lodash'
 
@@ -91,6 +95,7 @@ export default defineComponent({
   components: {},
   setup(props, context) {
     const showByIndex = ref(null)
+    const selected: Ref<any[]> = ref([])
     const columns = ref(
       [
         {
@@ -98,176 +103,209 @@ export default defineComponent({
           required: true,
           label: 'No',
           align: 'left',
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
           field: 'rowIndex',
           sortable: false,
           style: 'max-width: 40px',
           headerStyle: 'max-width: 40px',
         },
         {
-          name: 'client', align: 'center', label: 'Client', field: 'calories', sortable: false,
+          name: 'client',
+          align: 'center',
+          label: 'Client',
+          field: 'Client',
+          sortable: false,
+          style: 'min-width: 80px;',
+          headerStyle: 'min-width: 80px',
         },
         {
-          name: 'keyword', label: 'Keyword', field: 'fat', sortable: false,
+          name: 'keyword',
+          label: 'Keyword',
+          field: 'Keyword',
+          sortable: false,
+          align: 'left',
+          style: 'min-width: 150px;',
+          headerStyle: 'min-width: 150px',
         },
         {
           name: 'param1',
           label: 'Param 1',
-          field: 'carbs',
+          field: 'Param1',
           sortable: false,
-          style: 'max-width: 120px',
-          headerStyle: 'max-width: 120px',
+          align: 'left',
+          style: 'min-width: 135px;',
+          headerStyle: 'min-width: 135px',
         },
         {
           name: 'param2',
           label: 'Param 2',
-          field: 'protein',
+          field: 'Param2',
           sortable: false,
-          style: 'max-width: 120px',
-          headerStyle: 'max-width: 120px',
+          align: 'left',
+          style: 'min-width: 135px;',
+          headerStyle: 'min-width: 135px',
         },
         {
           name: 'param3',
           label: 'Param 3',
-          field: 'sodium',
+          field: 'Param3',
           sortable: false,
-          style: 'max-width: 120px',
-          headerStyle: 'max-width: 120px',
+          align: 'left',
+          style: 'min-width: 135px;',
+          headerStyle: 'min-width: 135px',
         },
         {
           name: 'param4',
           label: 'Param 4',
-          field: 'calcium',
+          field: 'Param4',
           sortable: false,
-          style: 'max-width: 120px',
-          headerStyle: 'max-width: 120px',
+          align: 'left',
+          style: 'min-width: 135px;',
+          headerStyle: 'min-width: 135px',
         },
         {
           name: 'param5',
           label: 'Param 5',
-          field: 'iron',
+          field: 'Param5',
           sortable: false,
-          style: 'max-width: 120px',
-          headerStyle: 'max-width: 120px',
+          align: 'left',
+          style: 'min-width: 135px;',
+          headerStyle: 'min-width: 135px',
         },
         {
           name: 'param6',
           label: 'Param 6',
-          field: 'iron',
+          field: 'Param6',
           sortable: false,
-          style: 'max-width: 120px',
-          headerStyle: 'max-width: 120px',
+          align: 'left',
+          style: 'min-width: 135px;',
+          headerStyle: 'min-width: 135px',
         },
         {
           name: 'param7',
           label: 'Param 7',
-          field: 'iron',
+          field: 'Param7',
           sortable: false,
-          style: 'max-width: 120px',
-          headerStyle: 'max-width: 120px',
+          align: 'left',
+          style: 'min-width: 135px;',
+          headerStyle: 'min-width: 135px',
         },
         {
           name: 'param8',
           label: 'Param 8',
-          field: 'iron',
+          field: 'Param8',
           sortable: false,
-          style: 'max-width: 120px',
-          headerStyle: 'max-width: 120px',
+          align: 'left',
+          style: 'min-width: 135px;',
+          headerStyle: 'min-width: 135px',
         },
         {
           name: 'param9',
           label: 'Param 9',
-          field: 'iron',
+          field: 'Param9',
           sortable: false,
-          style: 'max-width: 120px',
-          headerStyle: 'max-width: 120px',
+          align: 'left',
+          style: 'min-width: 135px;',
+          headerStyle: 'min-width: 135px',
         },
         {
           name: 'param10',
           label: 'Param 10',
-          field: 'iron',
+          field: 'Param10',
           sortable: false,
-          style: 'max-width: 120px',
-          headerStyle: 'max-width: 120px',
+          align: 'left',
+          style: 'min-width: 135px;',
+          headerStyle: 'min-width: 135px',
         },
         {
           name: 'param11',
           label: 'Param 11',
-          field: 'iron',
+          field: 'Param11',
           sortable: false,
-          style: 'max-width: 120px',
-          headerStyle: 'max-width: 120px',
+          align: 'left',
+          style: 'min-width: 135px;',
+          headerStyle: 'min-width: 135px',
         },
         {
           name: 'param12',
           label: 'Param 12',
-          field: 'iron',
+          field: 'Param12',
           sortable: false,
-          style: 'max-width: 120px',
-          headerStyle: 'max-width: 120px',
+          align: 'left',
+          style: 'min-width: 135px;',
+          headerStyle: 'min-width: 135px',
         },
         {
           name: 'param13',
           label: 'Param 13',
-          field: 'iron',
+          field: 'Param13',
           sortable: false,
-          style: 'max-width: 120px',
-          headerStyle: 'max-width: 120px',
+          align: 'left',
+          style: 'min-width: 135px;',
+          headerStyle: 'min-width: 135px',
         },
         {
           name: 'param14',
           label: 'Param 14',
-          field: 'iron',
+          field: 'Param14',
           sortable: false,
-          style: 'max-width: 120px',
-          headerStyle: 'max-width: 120px',
+          align: 'left',
+          style: 'min-width: 135px;',
+          headerStyle: 'min-width: 135px',
         },
         {
           name: 'param15',
           label: 'Param 15',
-          field: 'iron',
+          field: 'Param15',
           sortable: false,
-          style: 'max-width: 120px',
-          headerStyle: 'max-width: 120px',
+          align: 'left',
+          style: 'min-width: 135px;',
+          headerStyle: 'min-width: 135px',
         },
         {
           name: 'param16',
           label: 'Param 16',
-          field: 'iron',
+          field: 'Param16',
           sortable: false,
-          style: 'max-width: 120px',
-          headerStyle: 'max-width: 120px',
+          align: 'left',
+          style: 'min-width: 135px;',
+          headerStyle: 'min-width: 135px',
         },
         {
           name: 'param17',
           label: 'Param 17',
-          field: 'iron',
+          field: 'Param17',
           sortable: false,
-          style: 'max-width: 120px',
-          headerStyle: 'max-width: 120px',
+          align: 'left',
+          style: 'min-width: 135px;',
+          headerStyle: 'min-width: 135px',
         },
         {
           name: 'param18',
           label: 'Param 18',
-          field: 'iron',
+          field: 'Param18',
           sortable: false,
-          style: 'max-width: 120px',
-          headerStyle: 'max-width: 120px',
+          align: 'left',
+          style: 'min-width: 135px;',
+          headerStyle: 'min-width: 135px',
         },
         {
           name: 'param19',
           label: 'Param 19',
-          field: 'iron',
+          field: 'Param19',
           sortable: false,
-          style: 'max-width: 120px',
-          headerStyle: 'max-width: 120px',
+          align: 'left',
+          style: 'min-width: 135px;',
+          headerStyle: 'min-width: 135px',
         },
         {
           name: 'param20',
           label: 'Param 20',
-          field: 'iron',
+          field: 'Param20',
           sortable: false,
-          style: 'max-width: 120px',
-          headerStyle: 'max-width: 120px',
+          align: 'left',
+          style: 'min-width: 135px;',
+          headerStyle: 'min-width: 135px',
         },
       ],
     )
@@ -406,13 +444,73 @@ export default defineComponent({
       tempTC.TestSteps[payload.stepIndex].Params[payload.paramIndex].Value = payload.newValue;
       context.root.$store.commit('testcase/updateOpennedTCs', tempTC)
     }
-    function test(params: []) {
-      params.forEach((pr: any, index: number) => {
-        columns.value[index + 3].label = pr.Name;
-      });
-      // cols[3].label = 'labelddddddddd'
-      // columns.value[3].label = 'labelddddddddd'
+    function test(params: any) {
+      // params.forEach((pr: any, index: number) => {
+      //   columns.value[index + 3].label = pr.Name;
+      // });
+      columns.value.forEach((col: any, index: number) => {
+        if (index >= 3) {
+          if (params.length > index - 3) {
+            columns.value[index].label = params[index - 3].Name
+          } else {
+            columns.value[index].label = ''
+          }
+        } else {
+          // console.log('next', index)
+        }
+      })
     }
+
+    function toggleSelectedRow(row: any) {
+      if (selected.value.length > 0) { // We can add another row
+        console.log('selected.value.length', selected.value.length)
+        // But if clicking one already selected, we'll remove it instead
+        let i = 0
+        const matched = selected.value.find((item: any, index: number) => {
+          console.log('item', item)
+          console.log('row', row)
+          i = index
+          return item.Name === row.Name
+        })
+        if (matched) { // This row was already selected, so remove it
+          selected.value.splice(i, 1)
+        } else { // Add to selection
+          selected.value.push(row)
+        }
+      } else { // First selection - add it
+        selected.value.push(row)
+      }
+    }
+    // With Shift pressed, select contiguous group
+    function toggleRowGroup(row: any) {
+      if (selected.value.length > 0) { // There is a previous selection
+        // Select contiguous block from previous selection to this one
+        // But if clicked one already selected, remove any selected since then
+        let i = 0
+        const matched = selected.value.find((item: any, index: number) => {
+          i = index
+          return item.Name === row.Name
+        })
+        if (matched) { // Had already selected this one
+          // Remove any selected since that one
+          const selectedIndex = selected.value.indexOf(row)
+          console.log(`removing item beyond ${selectedIndex.toString()}`)
+          // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+          selected.value = selected.value.slice(0, selectedIndex + 1)
+        } else { // New selection - add it and any between
+          selected.value.push(row)
+        }
+      } else { // No previous selection - just select this one
+        selected.value = []
+        selected.value.push(row)
+      }
+    }
+    // With no key pressed - single selection
+    function toggleSingleRow(row: any) {
+      selected.value = []
+      selected.value.push(row)
+    }
+
     return {
       showByIndex,
       columns,
@@ -423,6 +521,10 @@ export default defineComponent({
       changeParam,
       changeKeyword,
       test,
+      selected,
+      toggleSelectedRow,
+      toggleRowGroup,
+      toggleSingleRow,
     };
   },
 });
