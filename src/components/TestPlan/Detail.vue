@@ -9,6 +9,7 @@
           active-color="primary"
           align="left"
           inline-label
+          @input="onTabChanging"
         >
           <q-tab v-for="testcase in testcases" :key="testcase.Id" :name="testcase.Id" :ripple="false" @mouseover="showByIndex = testcase.Id" @mouseout="showByIndex = null">
             <div class="q-mr-xs">{{testcase.Name}}</div>
@@ -512,6 +513,16 @@ export default defineComponent({
       selected.value.push(row)
     }
 
+    function onTabChanging() {
+      columns.value.forEach((col: any, index: number) => {
+        if (index >= 3) {
+          columns.value[index].label = `Param ${index - 2}`
+        } else {
+          // console.log('next', index)
+        }
+      })
+    }
+
     return {
       showByIndex,
       columns,
@@ -526,6 +537,7 @@ export default defineComponent({
       toggleSelectedRow,
       toggleRowGroup,
       toggleSingleRow,
+      onTabChanging,
     };
   },
 });

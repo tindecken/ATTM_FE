@@ -9,7 +9,7 @@ Todo:
   ✔ add datatable for teststep @done(20-12-05 22:50)
   ✔ re-design what happen when cliking on a testcase in tree and change the tab in the data-table. @done(20-12-19 17:15)
   ✔ try to edit teststep and fix computed set function @done(20-12-19 17:15)
-  ☐ fix the mousemove on test step, while changing tab to another tab, should reset header name
+  ✔ fix the mousemove on test step, while changing tab to another tab, should reset header name @done(20-12-27 18:40)
   ✔ layout the columns of parameter, fix it with 10 first params and wait for new change in Quasar to allow resize column @done(20-12-23 22:32)
   ☐ datatable - allow multiple selection with ctrl: reference: https://codepen.io/crawfordw/pen/oNXOMKg?editors=1010
   ✔ Add Id or somethings like it (UUID) in every teststep to make it unique (support selection in datagrid view) @done(20-12-25 23:41)
