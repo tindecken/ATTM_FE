@@ -48,20 +48,22 @@
               <template v-slot:body="props">
                 <q-tr
                   :props="props"
-                  @mouseover="test(props.row.Params)"
-                  style="height: 20px;"
+                  @mouseover="onRowHover(props.row.Params)"
                   @click.ctrl="toggleSelectedRow(props.row)"
                   @click.exact="toggleSingleRow(props.row)"
                   @click.shift="toggleRowGroup(props.row)"
                   >
                   <q-td key="no" :props="props" class="q-c-input">
                     {{ props.rowIndex + 1 }}
+                    <detail-context-menu></detail-context-menu>
                   </q-td>
                   <q-td key="client" :props="props" class="q-c-input">
                     {{ props.row.TestClient }}
+                    <detail-context-menu></detail-context-menu>
                   </q-td>
                   <q-td key="keyword" :props="props" class="q-c-input">
                     <q-input :debounce="300" :value="props.row.Keyword" dense borderless @input="changeKeyword({testcase: tc, stepIndex: props.rowIndex, property: 'Keyword'}, $event)"/>
+                    <detail-context-menu></detail-context-menu>
                   </q-td>
                   <q-td v-for="index in 20" :key="index" class="q-c-input">
                     <q-input
@@ -70,10 +72,12 @@
                       @input="changeParam({testcase: tc, stepIndex: props.rowIndex, paramIndex: index-1}, $event)"
                       :readonly="index > props.row.Params.length"
                     />
+                    <detail-context-menu v-if="index <= props.row.Params.length"></detail-context-menu>
                   </q-td>
                 </q-tr>
               </template>
             </q-table>
+            <q-btn color="primary" label="Add" @click="addNewStep()"></q-btn>
           </q-tab-panel>
         </q-tab-panels>
       </div>
@@ -91,10 +95,11 @@ import {
   defineComponent, Ref, ref,
 } from '@vue/composition-api'
 import _ from 'lodash'
+import DetailContextMenu from './ContextMenu/DetailContextMenu.vue'
 
 export default defineComponent({
   name: 'Detail',
-  components: {},
+  components: { DetailContextMenu },
   setup(props, context) {
     const showByIndex = ref(null)
     const selected: Ref<any[]> = ref([])
@@ -422,34 +427,22 @@ export default defineComponent({
     })
     const testcases = context.root.$store.getters['testcase/opennedTCs']
     function closeTab(testcase: any) {
-      console.log('testcase', testcase)
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       context.root.$store.commit('testcase/removeOpennedTC', testcase.Id)
     }
     function changeKeyword(payload: any, e: any) {
       payload.newValue = e;
       const tempTC = _.cloneDeep(payload.testcase)
-      console.log(tempTC)
-      console.log('payload.stepIndex', payload.stepIndex)
-      console.log('payload.property', payload.property)
-      console.log('payload.newValue', payload.newValue)
       tempTC.TestSteps[payload.stepIndex][payload.property] = payload.newValue;
       context.root.$store.commit('testcase/updateOpennedTCs', tempTC)
     }
     function changeParam(payload: any, e: any) {
       payload.newValue = e;
       const tempTC = _.cloneDeep(payload.testcase)
-      console.log(tempTC)
-      console.log('payload.stepIndex', payload.stepIndex)
-      console.log('payload.paramIndex', payload.paramIndex)
-      console.log('payload.newValue', payload.newValue)
       tempTC.TestSteps[payload.stepIndex].Params[payload.paramIndex].Value = payload.newValue;
       context.root.$store.commit('testcase/updateOpennedTCs', tempTC)
     }
-    function test(params: any) {
-      // params.forEach((pr: any, index: number) => {
-      //   columns.value[index + 3].label = pr.Name;
-      // });
+    function onRowHover(params: any) {
       columns.value.forEach((col: any, index: number) => {
         if (index >= 3) {
           if (params.length > index - 3) {
@@ -457,8 +450,6 @@ export default defineComponent({
           } else {
             columns.value[index].label = ''
           }
-        } else {
-          // console.log('next', index)
         }
       })
     }
@@ -496,6 +487,7 @@ export default defineComponent({
         if (matched) { // Had already selected this one
           // Remove any selected since that one
           const selectedIndex = selected.value.indexOf(row)
+          console.log(`selectedIndex ${selectedIndex}`)
           console.log(`removing item beyond ${selectedIndex.toString()}`)
           // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
           selected.value = selected.value.slice(0, selectedIndex + 1)
@@ -517,10 +509,31 @@ export default defineComponent({
       columns.value.forEach((col: any, index: number) => {
         if (index >= 3) {
           columns.value[index].label = `Param ${index - 2}`
-        } else {
-          // console.log('next', index)
         }
       })
+    }
+
+    function addNewStep() {
+      // find selected testcases
+      console.log('tests', testcases)
+      console.log('opennedSelectedTC', opennedSelectedTC.value)
+      // eslint-disable-next-line array-callback-return
+      const index = _.findIndex(testcases, (tc: any) => tc.Id === opennedSelectedTC.value)
+
+      console.log('index', index)
+      console.log('3', testcases[index])
+      testcases[index].TestSteps.push({
+        Description: '',
+        Keywords: '',
+        Name: '',
+        Params: [],
+        TestClient: '',
+        UUID: 'dsfsdfsd',
+      })
+    }
+
+    function test() {
+      console.log('test')
     }
 
     return {
@@ -532,12 +545,14 @@ export default defineComponent({
       closeTab,
       changeParam,
       changeKeyword,
-      test,
+      onRowHover,
       selected,
       toggleSelectedRow,
       toggleRowGroup,
       toggleSingleRow,
       onTabChanging,
+      addNewStep,
+      test,
     };
   },
 });
