@@ -30,6 +30,9 @@ const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
   updateOpennedTCs(context, value) {
     context.commit('updateOpennedTCs', value)
   },
+  addNewStep(context, value) {
+    context.commit('addNewStep', value)
+  },
 };
 
 export default actions;

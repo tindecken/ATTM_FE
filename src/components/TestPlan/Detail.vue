@@ -11,7 +11,7 @@
           inline-label
           @input="onTabChanging"
         >
-          <q-tab v-for="testcase in testcases" :key="testcase.Id" :name="testcase.Id" :ripple="false" @mouseover="showByIndex = testcase.Id" @mouseout="showByIndex = null">
+          <q-tab v-for="testcase in opennedTCs" :key="testcase.Id" :name="testcase.Id" :ripple="false" @mouseover="showByIndex = testcase.Id" @mouseout="showByIndex = null">
             <div class="q-mr-xs">{{testcase.Name}}</div>
             <q-btn dense flat icon="close" size="xs" :style="{visibility: showByIndex === testcase.Id ? 'visible' : 'hidden'}" @click.stop="closeTab(testcase)"></q-btn>
           </q-tab>
@@ -22,7 +22,7 @@
           animated
           keep-alive
           >
-          <q-tab-panel v-for="tc in testcases" :key="tc.Id" :name="tc.Id">
+          <q-tab-panel v-for="tc in opennedTCs" :key="tc.Id" :name="tc.Id">
             <q-table
               dense
               :data="tc.TestSteps"
@@ -32,6 +32,8 @@
               separator="cell"
               :wrap-cells="false"
               :selected.sync="selected"
+              :rows-per-page-options="[0]"
+              no-data-label="Test case has no step"
             >
               <template v-slot:header="props">
                 <q-tr :props="props">
@@ -55,14 +57,15 @@
                   >
                   <q-td key="no" :props="props" class="q-c-input">
                     {{ props.rowIndex + 1 }}
-                    <detail-context-menu></detail-context-menu>
+                    <detail-context-menu :row="props.row"></detail-context-menu>
                   </q-td>
                   <q-td key="client" :props="props" class="q-c-input">
                     {{ props.row.TestClient }}
                     <detail-context-menu></detail-context-menu>
                   </q-td>
                   <q-td key="keyword" :props="props" class="q-c-input">
-                    <q-input :debounce="300" :value="props.row.Keyword" dense borderless @input="changeKeyword({testcase: tc, stepIndex: props.rowIndex, property: 'Keyword'}, $event)"/>
+                    <q-select dense :value="props.row.Keyword" :options="keywordDatas" option-label="Name" @input="changeKeyword({testcase: tc, stepIndex: props.rowIndex, property: 'Keyword'}, $event)"/>
+                    <!-- <q-input :debounce="300" :value="props.row.Keyword" dense borderless @input="changeKeyword({testcase: tc, stepIndex: props.rowIndex, property: 'Keyword'}, $event)"/> -->
                     <detail-context-menu></detail-context-menu>
                   </q-td>
                   <q-td v-for="index in 20" :key="index" class="q-c-input">
@@ -72,12 +75,12 @@
                       @input="changeParam({testcase: tc, stepIndex: props.rowIndex, paramIndex: index-1}, $event)"
                       :readonly="index > props.row.Params.length"
                     />
-                    <detail-context-menu v-if="index <= props.row.Params.length"></detail-context-menu>
+                    <detail-context-menu></detail-context-menu>
                   </q-td>
                 </q-tr>
               </template>
             </q-table>
-            <q-btn color="primary" label="Add" @click="addNewStep()"></q-btn>
+            <q-btn color="primary" label="New Step" @click="addNewStep()"></q-btn>
           </q-tab-panel>
         </q-tab-panels>
       </div>
@@ -102,6 +105,7 @@ export default defineComponent({
   components: { DetailContextMenu },
   setup(props, context) {
     const showByIndex = ref(null)
+    const selectedKeyword = ref('')
     const selected: Ref<any[]> = ref([])
     const columns = ref(
       [
@@ -316,108 +320,6 @@ export default defineComponent({
         },
       ],
     )
-    const data = ref([
-      {
-        name: 'Frozen Yogurt',
-        calories: 159,
-        fat: 6.0,
-        carbs: 24,
-        protein: 4.0,
-        sodium: 87,
-        calcium: '14%',
-        iron: '1%',
-      },
-      {
-        name: 'Ice cream sandwich',
-        calories: 237,
-        fat: 9.0,
-        carbs: 37,
-        protein: 4.3,
-        sodium: 129,
-        calcium: '8%',
-        iron: '1%',
-      },
-      {
-        name: 'Eclair',
-        calories: 262,
-        fat: 16.0,
-        carbs: 23,
-        protein: 6.0,
-        sodium: 337,
-        calcium: '6%',
-        iron: '7%',
-      },
-      {
-        name: 'Cupcake',
-        calories: 305,
-        fat: 3.7,
-        carbs: 67,
-        protein: 4.3,
-        sodium: 413,
-        calcium: '3%',
-        iron: '8%',
-      },
-      {
-        name: 'Gingerbread',
-        calories: 356,
-        fat: 16.0,
-        carbs: 49,
-        protein: 3.9,
-        sodium: 327,
-        calcium: '7%',
-        iron: '16%',
-      },
-      {
-        name: 'Jelly bean',
-        calories: 375,
-        fat: 0.0,
-        carbs: 94,
-        protein: 0.0,
-        sodium: 50,
-        calcium: '0%',
-        iron: '0%',
-      },
-      {
-        name: 'Lollipop',
-        calories: 392,
-        fat: 0.2,
-        carbs: 98,
-        protein: 0,
-        sodium: 38,
-        calcium: '0%',
-        iron: '2%',
-      },
-      {
-        name: 'Honeycomb',
-        calories: 408,
-        fat: 3.2,
-        carbs: 87,
-        protein: 6.5,
-        sodium: 562,
-        calcium: '0%',
-        iron: '45%',
-      },
-      {
-        name: 'Donut',
-        calories: 452,
-        fat: 25.0,
-        carbs: 51,
-        protein: 4.9,
-        sodium: 326,
-        calcium: '2%',
-        iron: '22%',
-      },
-      {
-        name: 'KitKat',
-        calories: 518,
-        fat: 26.0,
-        carbs: 65,
-        protein: 7,
-        sodium: 54,
-        calcium: '12%',
-        iron: '6%',
-      },
-    ])
     const opennedSelectedTC = computed({
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       get: () => context.root.$store.getters['testcase/opennedSelectedTC'],
@@ -425,15 +327,37 @@ export default defineComponent({
         context.root.$store.commit('testcase/setOpennedSelectedTC', val);
       },
     })
-    const testcases = context.root.$store.getters['testcase/opennedTCs']
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    const opennedTCs = computed(() => context.root.$store.getters['testcase/opennedTCs'])
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    const keywords = computed(() => context.root.$store.getters['keyword/keywords'])
+    const keywordDatas: Ref<any[]> = ref([]);
+    keywords.value.categories.forEach((c: any) => {
+      c.Features.forEach((f: any) => {
+        f.Keywords.forEach((k: any) => {
+          k = { ...k, Category: c.Name, Feature: f.Name }
+          keywordDatas.value.push(k);
+        })
+      });
+    });
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    keywordDatas.value = keywordDatas.value.map((v: any, i: number) => ({ ...v, rowIndex: i + 1 }))
+    console.log('keywordDatas.value', keywordDatas.value)
+
     function closeTab(testcase: any) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       context.root.$store.commit('testcase/removeOpennedTC', testcase.Id)
     }
-    function changeKeyword(payload: any, e: any) {
-      payload.newValue = e;
+    function changeKeyword(payload: any, newKeyword: any) {
+      console.log('newKeyword', newKeyword)
       const tempTC = _.cloneDeep(payload.testcase)
-      tempTC.TestSteps[payload.stepIndex][payload.property] = payload.newValue;
+      tempTC.TestSteps[payload.stepIndex][payload.property] = newKeyword.Name;
+      tempTC.TestSteps[payload.stepIndex].Params = []
+      newKeyword.Params.forEach((pr: any) => {
+        tempTC.TestSteps[payload.stepIndex].Params.push(pr)
+      })
+      console.log('payload.testcase', payload.testcase)
+      console.log('tempTC', tempTC)
       context.root.$store.commit('testcase/updateOpennedTCs', tempTC)
     }
     function changeParam(payload: any, e: any) {
@@ -474,31 +398,63 @@ export default defineComponent({
         selected.value.push(row)
       }
     }
+    function getRowIndexByUUID(currentTest: any, uuid: any) {
+      console.log('uuid', uuid)
+      console.log('currentTest', currentTest)
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      const index: number = currentTest.TestSteps.findIndex((step: any) => step.UUID === uuid)
+      if (index === -1) return 0
+      return index
+    }
+
     // With Shift pressed, select contiguous group
     function toggleRowGroup(row: any) {
-      if (selected.value.length > 0) { // There is a previous selection
+      if (selected.value.length === 1) { // There is a previous selection
         // Select contiguous block from previous selection to this one
         // But if clicked one already selected, remove any selected since then
-        let i = 0
-        const matched = selected.value.find((item: any, index: number) => {
-          i = index
+        const matched = selected.value.find((item: any) => {
           return item.UUID === row.UUID
         })
-        if (matched) { // Had already selected this one
-          // Remove any selected since that one
-          const selectedIndex = selected.value.indexOf(row)
-          console.log(`selectedIndex ${selectedIndex}`)
-          console.log(`removing item beyond ${selectedIndex.toString()}`)
-          // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-          selected.value = selected.value.slice(0, selectedIndex + 1)
+        if (matched) { // Had already selected this one --> do nothing
         } else { // New selection - add it and any between
+          // find selected testcase
+          const currTestCase = opennedTCs.value.find((tc: any) => tc.Id === opennedSelectedTC.value)
+
+          // find previous selected teststep
+          const previousSelectedStep = currTestCase.TestSteps.find((step: any) => step.UUID === selected.value[0].UUID)
+
+          // get index for previousSelectedStep and currentSelectedStep
+          const previousIndex = getRowIndexByUUID(currTestCase, previousSelectedStep.UUID)
+          const currentIndex = getRowIndexByUUID(currTestCase, row.UUID)
+
+          let first: number
+          let last: number
+
+          if (previousIndex < currentIndex) {
+            first = previousIndex
+            last = currentIndex
+          } else {
+            first = currentIndex
+            last = previousIndex
+          }
+
+          // row Index need to push
+          // eslint-disable-next-line no-plusplus
+          for (let index = first + 1; index < last; index++) {
+            selected.value.push(currTestCase.TestSteps[index])
+          }
+
           selected.value.push(row)
         }
+      } else if (selected.value.length > 1) { // there're multiple row previous selection
+        selected.value = []
+        selected.value.push(row)
       } else { // No previous selection - just select this one
         selected.value = []
         selected.value.push(row)
       }
     }
+
     // With no key pressed - single selection
     function toggleSingleRow(row: any) {
       selected.value = []
@@ -514,22 +470,7 @@ export default defineComponent({
     }
 
     function addNewStep() {
-      // find selected testcases
-      console.log('tests', testcases)
-      console.log('opennedSelectedTC', opennedSelectedTC.value)
-      // eslint-disable-next-line array-callback-return
-      const index = _.findIndex(testcases, (tc: any) => tc.Id === opennedSelectedTC.value)
-
-      console.log('index', index)
-      console.log('3', testcases[index])
-      testcases[index].TestSteps.push({
-        Description: '',
-        Keywords: '',
-        Name: '',
-        Params: [],
-        TestClient: '',
-        UUID: 'dsfsdfsd',
-      })
+      context.root.$store.commit('testcase/addNewStep');
     }
 
     function test() {
@@ -539,8 +480,7 @@ export default defineComponent({
     return {
       showByIndex,
       columns,
-      data,
-      testcases,
+      opennedTCs,
       opennedSelectedTC,
       closeTab,
       changeParam,
@@ -553,6 +493,9 @@ export default defineComponent({
       onTabChanging,
       addNewStep,
       test,
+      keywords,
+      selectedKeyword,
+      keywordDatas,
     };
   },
 });

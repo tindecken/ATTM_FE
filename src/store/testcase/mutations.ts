@@ -1,5 +1,7 @@
 import Vue from 'vue';
 import { MutationTree } from 'vuex';
+import uuid from 'uuid-random';
+import _ from 'lodash'
 import { TestCaseStateInterface } from './state';
 
 const mutation: MutationTree<TestCaseStateInterface> = {
@@ -32,6 +34,26 @@ const mutation: MutationTree<TestCaseStateInterface> = {
       } else {
         state.opennedSelectedTC = state.opennedTCs[index].Id
       }
+    }
+  },
+  addNewStep(state: TestCaseStateInterface) {
+    console.log('abc')
+    // get last item to get Client Name
+    const index = state.opennedTCs.findIndex((el: any) => el.Id === state.opennedSelectedTC);
+    console.log('index', index)
+    if (index !== -1) {
+      const tempTC = _.cloneDeep(state.opennedTCs[index])
+      const lastClient = tempTC.TestSteps[tempTC.TestSteps.length - 1].TestClient
+      console.log('lastClient', lastClient)
+      tempTC.TestSteps.push({
+        UUID: uuid(),
+        TestClient: lastClient,
+        Keyword: '',
+        Description: '',
+        Params: [],
+        Name: null,
+      })
+      Vue.set(state.opennedTCs, index, tempTC)
     }
   },
 };

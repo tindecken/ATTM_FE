@@ -11,14 +11,18 @@ Todo:
   ✔ try to edit teststep and fix computed set function @done(20-12-19 17:15)
   ✔ fix the mousemove on test step, while changing tab to another tab, should reset header name @done(20-12-27 18:40)
   ✔ layout the columns of parameter, fix it with 10 first params and wait for new change in Quasar to allow resize column @done(20-12-23 22:32)
-  ☐ datatable - allow multiple selection with ctrl: reference: https://codepen.io/crawfordw/pen/oNXOMKg?editors=1010
+  ✔ datatable - allow multiple selection with ctrl: reference: https://codepen.io/crawfordw/pen/oNXOMKg?editors=1010 @done(20-12-29 22:05)
+  ☐ datatable - allow multiple selection with shift: reference: https://codepen.io/crawfordw/pen/oNXOMKg?editors=1010
   ✔ Add Id or somethings like it (UUID) in every teststep to make it unique (support selection in datagrid view) @done(20-12-25 23:41)
-  ☐ datatable = detail support multiple select with shift
-  treeview - paint the category
-  treeview - paint the category --> testsuite
-  treeview - paint the category --> testsuite --> testgroup
-  treewiew - paint the category --> testsuite --> testgroup --> testcase
-  treeview - reformat, using slot for it
+  ✔ datatable - select keyword from keywork list @done(20-12-29 22:54)
+  ☐ datatable - delete single step and multiple steps
+  ☐ fix: error while add new step in empty testcase
+  ☐ treeview - paint the category
+  ☐ treeview - paint the category --> testsuite
+  ☐ treeview - paint the category --> testsuite --> testgroup
+  ☐ treewiew - paint the category --> testsuite --> testgroup --> testcase
+  ☐ treeview - reformat, using slot for it
+  ☐ treeview - testcase without step should highlight to know it.
 API:
   ✔ .net 5.0 support openAPI by default (swagger) ==> implement it. @done(20-12-19 17:17)
   ☐ bug - sometime the keyword.json is used by other process --> can't get keyword list

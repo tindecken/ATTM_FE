@@ -25,7 +25,7 @@
         <q-item-section>Insert Comment</q-item-section>
       </q-item>
       <q-item clickable v-close-popup>
-        <q-item-section>Delete</q-item-section>
+        <q-item-section @click="deleteRows()">Delete</q-item-section>
       </q-item>
       <q-separator />
       <q-item clickable v-close-popup>
@@ -43,8 +43,19 @@ import { defineComponent } from "@vue/composition-api";
 
 export default defineComponent({
   name: "DetailContextMenu",
+  props: {
+    row: Object,
+  },
   components: {},
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  setup() {}
+  setup(props) {
+    console.log(`props: ${props.row}`)
+    function deleteRows() {
+      console.log('delete:', props.row)
+    }
+    return {
+      deleteRows,
+    };
+  },
 })
 </script>
