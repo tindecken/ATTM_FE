@@ -12,13 +12,12 @@ Todo:
   ✔ fix the mousemove on test step, while changing tab to another tab, should reset header name @done(20-12-27 18:40)
   ✔ layout the columns of parameter, fix it with 10 first params and wait for new change in Quasar to allow resize column @done(20-12-23 22:32)
   ✔ datatable - allow multiple selection with ctrl: reference: https://codepen.io/crawfordw/pen/oNXOMKg?editors=1010 @done(20-12-29 22:05)
-  ☐ datatable - allow multiple selection with shift: reference: https://codepen.io/crawfordw/pen/oNXOMKg?editors=1010
+  ✔ datatable - allow multiple selection with shift: reference: https://codepen.io/crawfordw/pen/oNXOMKg?editors=1010 @done(21-01-02 11:05)
   ✔ Add Id or somethings like it (UUID) in every teststep to make it unique (support selection in datagrid view) @done(20-12-25 23:41)
   ✔ datatable - select keyword from keywork list @done(20-12-29 22:54)
+  ✔ datatable - fix add new teststep on empty testcase doesn't work @done(21-01-02 16:38)
+  fix - click testcase on tree not create new tab, but refresh page will display
   ☐ datatable - delete single step and multiple steps
-  ☐ fix: error while add new step in empty testcase
-  ☐ treeview - paint the category
-  ☐ treeview - paint the category --> testsuite
   ☐ treeview - paint the category --> testsuite --> testgroup
   ☐ treewiew - paint the category --> testsuite --> testgroup --> testcase
   ☐ treeview - reformat, using slot for it
