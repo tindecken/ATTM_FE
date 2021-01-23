@@ -155,6 +155,8 @@ export default defineComponent({
       });
     }
     function onGenerateCode() {
+      const tickedNodes = tree.value.getTickedNodes()
+      console.log('tickedNodes', tickedNodes);
       context.root.$q.notify({
         type: 'negative',
         message: `Not develop yet`,

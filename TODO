@@ -18,12 +18,13 @@ Todo:
   ✔ datatable - fix add new teststep on empty testcase doesn't work @done(21-01-02 16:38)
   ✔ fix - click testcase on tree not create new tab, but refresh page will display @done(21-01-04 22:41)
   ✔ datatable - delete single step and multiple steps @done(21-01-04 22:41)
+  ☐ generate code for multiple selections
   ☐ treeview - paint the category --> testsuite --> testgroup
   ☐ treewiew - paint the category --> testsuite --> testgroup --> testcase
   ☐ treeview - reformat, using slot for it
   ☐ treeview - testcase without step should highlight to know it.
 API:
-  ☐ api for saving testcase
+  ✔ api for saving testcase @done(21-01-23 22:28)
   ☐ api for generate code from testcase
   ✔ .net 5.0 support openAPI by default (swagger) ==> implement it. @done(20-12-19 17:17)
   ☐ bug - sometime the keyword.json is used by other process --> can't get keyword list
