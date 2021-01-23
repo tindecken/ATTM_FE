@@ -31,7 +31,18 @@
             <div style="display: inherit">
               <q-icon :name="prop.node.icon || 'share'" class="q-mr-sm" />
               <div>{{ prop.node.label }}</div>
-              <tree-context-menu></tree-context-menu>
+              <tree-context-menu
+                :node="prop.node"
+                @generateCode="onGenerateCode()"
+                @run="onRun()"
+                @runOn="onRunOn()"
+                @debug="onDebug()"
+                @debugOn="onDebugOn()"
+                @newTestSuite="onNewTestSuite()"
+                @edit="onEdit()"
+                @deleteNode="onDeleteNode(prop.node)"
+                >
+              </tree-context-menu>
             </div>
           </div>
         </template>
@@ -77,15 +88,6 @@ export default defineComponent({
           console.log('TestGroup')
           break
         case 'TestCase':
-          // // get currentTest
-          // await context.root.$store.dispatch('testcase/getTestCasebyId', currentNode.Id);
-          // const currentTest = context.root.$store.getters['testcase/opennedSelectedTC'];
-          // console.log('currTest', currentTest);
-          // // set rowIndex for testSteps
-          // // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-          // currentTest.TestSteps = currentTest.TestSteps.map((teststep: any, i: number) => ({ ...teststep, rowIndex: i + 1 }))
-          // console.log('currTest', currentTest)
-          // check is already open or not
           const opennedTCs = context.root.$store.getters['testcase/opennedTCs'];
           const found = opennedTCs.some((el: any) => el.Id === currentNode.Id);
           if (found) {
@@ -116,6 +118,54 @@ export default defineComponent({
     function toogleTree() {
       tree.value.collapseAll();
     }
+    function onRun() {
+      context.root.$q.notify({
+        type: 'negative',
+        message: `Not develop yet`,
+      });
+    }
+    function onRunOn() {
+      context.root.$q.notify({
+        type: 'negative',
+        message: `Not develop yet`,
+      });
+    }
+    function onDebug() {
+      context.root.$q.notify({
+        type: 'negative',
+        message: `Not develop yet`,
+      });
+    }
+    function onDebugOn() {
+      context.root.$q.notify({
+        type: 'negative',
+        message: `Not develop yet`,
+      });
+    }
+    function onNewTestSuite() {
+      context.root.$q.notify({
+        type: 'negative',
+        message: `Not develop yet`,
+      });
+    }
+    function onEdit() {
+      context.root.$q.notify({
+        type: 'negative',
+        message: `Not develop yet`,
+      });
+    }
+    function onGenerateCode() {
+      context.root.$q.notify({
+        type: 'negative',
+        message: `Not develop yet`,
+      });
+    }
+    function onDeleteNode(value: any) {
+      context.root.$q.notify({
+        type: 'negative',
+        message: `Not develop yet`,
+      });
+    }
     return {
       filter,
       resetFilter,
@@ -126,6 +176,14 @@ export default defineComponent({
       fnSelectedNode,
       tree,
       toogleTree,
+      onDeleteNode,
+      onGenerateCode,
+      onRun,
+      onRunOn,
+      onDebug,
+      onDebugOn,
+      onNewTestSuite,
+      onEdit,
     }
   },
 });
