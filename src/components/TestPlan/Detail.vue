@@ -57,16 +57,24 @@
                   >
                   <q-td key="no" :props="props" class="q-c-input">
                     {{ props.rowIndex + 1 }}
-                    <detail-context-menu :row="props.row"></detail-context-menu>
+                    <detail-context-menu
+                     :selected.sync="selected"
+                     @deleteRows="onDeleteRows()">
+                    </detail-context-menu>
                   </q-td>
                   <q-td key="client" :props="props" class="q-c-input">
                     {{ props.row.TestClient }}
-                    <detail-context-menu></detail-context-menu>
+                    <detail-context-menu
+                     :selected.sync="selected"
+                     @deleteRows="onDeleteRows()">
+                    </detail-context-menu>
                   </q-td>
                   <q-td key="keyword" :props="props" class="q-c-input">
                     <q-select dense :value="props.row.Keyword" :options="keywordDatas" option-label="Name" @input="changeKeyword({testcase: tc, stepIndex: props.rowIndex, property: 'Keyword'}, $event)"/>
-                    <!-- <q-input :debounce="300" :value="props.row.Keyword" dense borderless @input="changeKeyword({testcase: tc, stepIndex: props.rowIndex, property: 'Keyword'}, $event)"/> -->
-                    <detail-context-menu></detail-context-menu>
+                    <detail-context-menu
+                     :selected.sync="selected"
+                     @deleteRows="onDeleteRows()">
+                    </detail-context-menu>
                   </q-td>
                   <q-td v-for="index in 20" :key="index" class="q-c-input">
                     <q-input
@@ -75,12 +83,16 @@
                       @input="changeParam({testcase: tc, stepIndex: props.rowIndex, paramIndex: index-1}, $event)"
                       :readonly="index > props.row.Params.length"
                     />
-                    <detail-context-menu></detail-context-menu>
+                    <detail-context-menu
+                     :selected.sync="selected"
+                     @deleteRows="onDeleteRows()">
+                    </detail-context-menu>
                   </q-td>
                 </q-tr>
               </template>
             </q-table>
             <q-btn color="primary" label="New Step" @click="addNewStep()"></q-btn>
+            <q-btn color="primary" label="Save" @click="saveTestCase()"></q-btn>
           </q-tab-panel>
         </q-tab-panels>
       </div>
@@ -473,6 +485,37 @@ export default defineComponent({
       context.root.$store.commit('testcase/addNewStep');
     }
 
+    function onDeleteRows() {
+      console.log('onDeleteRows')
+      const currTestCase = opennedTCs.value.find((tc: any) => tc.Id === opennedSelectedTC.value)
+      selected.value.forEach((selectedRow: any) => {
+        currTestCase.TestSteps.forEach((testStep: any) => {
+          if (testStep.UUID === selectedRow.UUID) {
+            console.log('delete me', testStep)
+            context.root.$store.commit('testcase/deleteStep', { testCaseId: opennedSelectedTC.value, stepUUID: selectedRow.UUID });
+          }
+        })
+      })
+    }
+
+    async function saveTestCase() {
+      try {
+        const currTestCase = opennedTCs.value.find((tc: any) => tc.Id === opennedSelectedTC.value)
+        console.log('currTestCase', currTestCase)
+        const result = await context.root.$store.dispatch('testcase/saveTestCase', currTestCase)
+        console.log('result', result)
+        context.root.$q.notify({
+          type: 'positive',
+          message: result.message,
+        });
+      } catch (error) {
+        context.root.$q.notify({
+          type: 'warning',
+          message: error.error,
+        });
+      }
+    }
+
     function test() {
       console.log('test')
     }
@@ -496,6 +539,8 @@ export default defineComponent({
       keywords,
       selectedKeyword,
       keywordDatas,
+      onDeleteRows,
+      saveTestCase,
     };
   },
 });

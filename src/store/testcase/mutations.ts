@@ -37,13 +37,14 @@ const mutation: MutationTree<TestCaseStateInterface> = {
     }
   },
   addNewStep(state: TestCaseStateInterface) {
-    console.log('abc')
     // get last item to get Client Name
     const index = state.opennedTCs.findIndex((el: any) => el.Id === state.opennedSelectedTC);
-    console.log('index', index)
     if (index !== -1) {
       const tempTC = _.cloneDeep(state.opennedTCs[index])
-      const lastClient = tempTC.TestSteps[tempTC.TestSteps.length - 1].TestClient
+      let lastClient = ''
+      if (tempTC.TestSteps.length > 0) { // incase there's no teststeps
+        lastClient = tempTC.TestSteps[tempTC.TestSteps.length - 1].TestClient
+      }
       console.log('lastClient', lastClient)
       tempTC.TestSteps.push({
         UUID: uuid(),
@@ -56,6 +57,19 @@ const mutation: MutationTree<TestCaseStateInterface> = {
       Vue.set(state.opennedTCs, index, tempTC)
     }
   },
+  deleteStep(state: TestCaseStateInterface, payload: any) {
+    const { testCaseId } = payload
+    const { stepUUID } = payload
+    console.log('testCaseId', testCaseId)
+    console.log('stepUUID', stepUUID)
+    const index = state.opennedTCs.findIndex((el: any) => el.Id === testCaseId);
+    const tempTC = _.cloneDeep(state.opennedTCs[index])
+    if (tempTC.TestSteps.length > 0) { // incase there's no test steps
+      tempTC.TestSteps = tempTC.TestSteps.filter((step: any) => step.UUID !== stepUUID)
+    }
+    Vue.set(state.opennedTCs, index, tempTC)
+  },
+
 };
 
 export default mutation;

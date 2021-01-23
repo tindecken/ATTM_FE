@@ -30,8 +30,28 @@ const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
   updateOpennedTCs(context, value) {
     context.commit('updateOpennedTCs', value)
   },
-  addNewStep(context, value) {
-    context.commit('addNewStep', value)
+  async saveTestCase(context, tc) {
+    // eslint-disable-next-line no-useless-catch
+    try {
+      console.log('context', context)
+      console.log('testcase', tc)
+      const response = await axios.post(
+        `${config.baseURL}/testcases/savetestcase`,
+        tc,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${context.rootGetters['auth/token']}`,
+          },
+        },
+      );
+      const responseData = await response.data;
+      console.log('response data', responseData);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return responseData;
+    } catch (error) {
+      throw error.response.data;
+    }
   },
 };
 

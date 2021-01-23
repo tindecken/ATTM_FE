@@ -16,13 +16,15 @@ Todo:
   ✔ Add Id or somethings like it (UUID) in every teststep to make it unique (support selection in datagrid view) @done(20-12-25 23:41)
   ✔ datatable - select keyword from keywork list @done(20-12-29 22:54)
   ✔ datatable - fix add new teststep on empty testcase doesn't work @done(21-01-02 16:38)
-  fix - click testcase on tree not create new tab, but refresh page will display
-  ☐ datatable - delete single step and multiple steps
+  ✔ fix - click testcase on tree not create new tab, but refresh page will display @done(21-01-04 22:41)
+  ✔ datatable - delete single step and multiple steps @done(21-01-04 22:41)
   ☐ treeview - paint the category --> testsuite --> testgroup
   ☐ treewiew - paint the category --> testsuite --> testgroup --> testcase
   ☐ treeview - reformat, using slot for it
   ☐ treeview - testcase without step should highlight to know it.
 API:
+  ☐ api for saving testcase
+  ☐ api for generate code from testcase
   ✔ .net 5.0 support openAPI by default (swagger) ==> implement it. @done(20-12-19 17:17)
   ☐ bug - sometime the keyword.json is used by other process --> can't get keyword list
   ✔ Ongoing - write api to display all category, it will include category, testsuite, testgroup, testcase @done(20-11-29 21:14)

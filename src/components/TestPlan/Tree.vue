@@ -31,15 +31,8 @@
             <div style="display: inherit">
               <q-icon :name="prop.node.icon || 'share'" class="q-mr-sm" />
               <div>{{ prop.node.label }}</div>
-              <q-popup-proxy context-menu>
-                <q-banner>
-                  <template v-slot:avatar>
-                    <q-icon name="signal_wifi_off" color="primary" />
-                  </template>
-                  You have lost connection to the internet. This app is offline.
-                </q-banner>
-              </q-popup-proxy>
-              </div>
+              <tree-context-menu></tree-context-menu>
+            </div>
           </div>
         </template>
         </q-tree>
@@ -53,9 +46,11 @@ import {
   defineComponent, onMounted, ref, Ref,
 } from '@vue/composition-api';
 
+import TreeContextMenu from './ContextMenu/TreeContextMenu.vue'
+
 export default defineComponent({
   name: 'Tree',
-  components: {},
+  components: { TreeContextMenu },
   setup(props, context) {
     const filter: Ref<string> = ref('');
     const filterInput: Ref<any> = ref(null)
