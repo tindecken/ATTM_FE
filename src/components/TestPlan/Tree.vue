@@ -156,6 +156,14 @@ export default defineComponent({
     }
     function onGenerateCode() {
       const tickedNodes = tree.value.getTickedNodes()
+      const numberOfTestCase = tickedNodes.filter((n:any) => n.type === 'TestCase').length
+      if (numberOfTestCase === 0) {
+        context.root.$q.notify({
+          type: 'negative',
+          message: `No test case is slected`,
+        });
+        return
+      }
       console.log('tickedNodes', tickedNodes);
       context.root.$q.notify({
         type: 'negative',
@@ -163,6 +171,7 @@ export default defineComponent({
       });
     }
     function onDeleteNode(value: any) {
+      console.log(value)
       context.root.$q.notify({
         type: 'negative',
         message: `Not develop yet`,

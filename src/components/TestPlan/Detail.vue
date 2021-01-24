@@ -424,9 +424,7 @@ export default defineComponent({
       if (selected.value.length === 1) { // There is a previous selection
         // Select contiguous block from previous selection to this one
         // But if clicked one already selected, remove any selected since then
-        const matched = selected.value.find((item: any) => {
-          return item.UUID === row.UUID
-        })
+        const matched = selected.value.find((item: any) => item.UUID === row.UUID)
         if (matched) { // Had already selected this one --> do nothing
         } else { // New selection - add it and any between
           // find selected testcase

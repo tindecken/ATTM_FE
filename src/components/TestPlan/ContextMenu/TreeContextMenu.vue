@@ -1,7 +1,6 @@
 <template>
   <q-menu touch-position context-menu>
     <q-list dense style="min-width: 100px">
-      <template v-if="node.type == 'Category'">
         <q-item clickable v-close-popup>
           <q-item-section @click="run()">Run</q-item-section>
         </q-item>
@@ -18,9 +17,11 @@
           <q-item-section @click="generateCode()">Generate Code</q-item-section>
         </q-item>
         <q-separator />
-        <q-item clickable v-close-popup>
-          <q-item-section @click="newTestSuite()">New Test Suite</q-item-section>
-        </q-item>
+        <template v-if="node.type == 'Category'">
+          <q-item clickable v-close-popup>
+            <q-item-section @click="newTestSuite()">New Test Suite</q-item-section>
+          </q-item>
+        </template>
         <q-separator />
         <q-item clickable v-close-popup>
           <q-item-section @click="edit()">Edit</q-item-section>
@@ -29,7 +30,6 @@
           <q-item-section @click="deleteNode()">Delete</q-item-section>
         </q-item>
         <q-separator />
-      </template>
     </q-list>
   </q-menu>
 </template>
