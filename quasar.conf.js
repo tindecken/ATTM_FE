@@ -85,7 +85,7 @@ module.exports = configure((ctx) => ({
     env: {
       API_URL: ctx.dev
         ? 'http://localhost:5000/api'
-        : 'http://116.102.133.128:5000/api',
+        : 'https://116.102.133.128:5000/api',
     },
   },
 
