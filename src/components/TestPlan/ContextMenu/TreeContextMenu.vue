@@ -2,31 +2,55 @@
   <q-menu touch-position context-menu>
     <q-list dense style="min-width: 100px">
         <q-item clickable v-close-popup>
+          <q-item-section avatar>
+            <q-icon color="primary" name="play_arrow" />
+          </q-item-section>
           <q-item-section @click="run()">Run</q-item-section>
         </q-item>
         <q-item clickable v-close-popup>
+          <q-item-section avatar>
+            <q-icon color="primary" name="play_circle" />
+          </q-item-section>
           <q-item-section @click="debug()">Debug</q-item-section>
         </q-item>
         <q-item clickable v-close-popup>
+          <q-item-section avatar>
+            <q-icon color="primary" name="play_arrow" />
+          </q-item-section>
           <q-item-section @click="runOn()">Run On</q-item-section>
         </q-item>
         <q-item clickable v-close-popup>
+          <q-item-section avatar>
+            <q-icon color="primary" name="play_circle" />
+          </q-item-section>
           <q-item-section @click="debugOn()">Debug On</q-item-section>
         </q-item>
         <q-item clickable v-close-popup>
+          <q-item-section avatar>
+            <q-icon color="primary" name="code" />
+          </q-item-section>
           <q-item-section @click="generateCode()">Generate Code</q-item-section>
         </q-item>
         <q-separator />
         <template v-if="node.type == 'Category'">
           <q-item clickable v-close-popup>
+            <q-item-section avatar>
+              <q-icon color="primary" name="playlist_add" />
+            </q-item-section>
             <q-item-section @click="newTestSuite()">New Test Suite</q-item-section>
           </q-item>
         </template>
         <q-separator />
         <q-item clickable v-close-popup>
+          <q-item-section avatar>
+            <q-icon color="primary" name="create" />
+          </q-item-section>
           <q-item-section @click="edit()">Edit</q-item-section>
         </q-item>
         <q-item clickable v-close-popup>
+          <q-item-section avatar>
+            <q-icon color="primary" name="delete_outline" />
+          </q-item-section>
           <q-item-section @click="deleteNode()">Delete</q-item-section>
         </q-item>
         <q-separator />

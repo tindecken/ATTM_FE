@@ -18,6 +18,9 @@ Todo:
   ✔ datatable - fix add new teststep on empty testcase doesn't work @done(21-01-02 16:38)
   ✔ fix - click testcase on tree not create new tab, but refresh page will display @done(21-01-04 22:41)
   ✔ datatable - delete single step and multiple steps @done(21-01-04 22:41)
+  ✔ move mongodb data (collection, record) from local to cloud, support running over internet by using netifly and raspberry @done(21-01-25 14:25)
+  ✔ fix refresh keyword api can't run on mongodb cloud @done(21-01-25 15:37)
+  ✔ bring test project to raspberry so the demo can work perfectly @done(21-01-25 16:41)
   ☐ generate code for multiple selections
   ☐ treeview - paint the category --> testsuite --> testgroup
   ☐ treewiew - paint the category --> testsuite --> testgroup --> testcase
