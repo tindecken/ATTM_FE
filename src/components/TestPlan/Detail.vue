@@ -62,8 +62,8 @@
                      @deleteRows="onDeleteRows()">
                     </detail-context-menu>
                   </q-td>
-                  <q-td key="client" :props="props" class="q-c-input">
-                    {{ props.row.TestClient }}
+                  <q-td key="testAUT" :props="props" class="q-c-input">
+                    {{ props.row.TestAUT }}
                     <detail-context-menu
                      :selected.sync="selected"
                      @deleteRows="onDeleteRows()">
@@ -133,10 +133,10 @@ export default defineComponent({
           headerStyle: 'max-width: 40px',
         },
         {
-          name: 'client',
+          name: 'testAUT',
           align: 'center',
-          label: 'Client',
-          field: 'Client',
+          label: 'TestAUT',
+          field: 'TestAUT',
           sortable: false,
           style: 'min-width: 80px;',
           headerStyle: 'min-width: 80px',

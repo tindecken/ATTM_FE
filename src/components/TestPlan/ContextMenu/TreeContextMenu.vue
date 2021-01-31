@@ -32,7 +32,7 @@
           <q-item-section @click="generateCode()">Generate Code</q-item-section>
         </q-item>
         <q-separator />
-        <template v-if="node.type == 'Category'">
+        <template v-if="node.nodeType == 'Category'">
           <q-item clickable v-close-popup>
             <q-item-section avatar>
               <q-icon color="primary" name="playlist_add" />

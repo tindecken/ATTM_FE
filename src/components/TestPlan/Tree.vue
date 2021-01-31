@@ -76,7 +76,7 @@ export default defineComponent({
     async function fnSelectedNode(target: any) {
       const currentNode = tree.value.getNodeByKey(target);
       if (currentNode == null) return
-      switch (currentNode.type) {
+      switch (currentNode.nodeType) {
         case 'Category':
           console.log('Category')
           // get testcase detail
@@ -154,9 +154,10 @@ export default defineComponent({
         message: `Not develop yet`,
       });
     }
-    function onGenerateCode() {
+    async function onGenerateCode() {
       const tickedNodes = tree.value.getTickedNodes()
-      const numberOfTestCase = tickedNodes.filter((n:any) => n.type === 'TestCase').length
+      const testcases = tickedNodes.filter((n:any) => n.nodeType === 'TestCase')
+      const numberOfTestCase = tickedNodes.filter((n:any) => n.nodeType === 'TestCase').length
       if (numberOfTestCase === 0) {
         context.root.$q.notify({
           type: 'negative',
@@ -164,11 +165,16 @@ export default defineComponent({
         });
         return
       }
-      console.log('tickedNodes', tickedNodes);
-      context.root.$q.notify({
-        type: 'negative',
-        message: `Not develop yet`,
-      });
+      try {
+        await context.root.$store.dispatch('global/generateCode', testcases);
+      } catch (error) {
+        context.root.$q.notify({
+          type: 'negative',
+          message: `${error.error}`,
+        });
+      }
+      
+      
     }
     function onDeleteNode(value: any) {
       console.log(value)

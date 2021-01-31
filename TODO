@@ -28,7 +28,7 @@ Todo:
   ☐ treeview - testcase without step should highlight to know it.
 API:
   ✔ api for saving testcase @done(21-01-23 22:28)
-  ☐ api for generate code from testcase
+  ☐ api for generate code from testcases
   ✔ .net 5.0 support openAPI by default (swagger) ==> implement it. @done(20-12-19 17:17)
   ☐ bug - sometime the keyword.json is used by other process --> can't get keyword list
   ✔ Ongoing - write api to display all category, it will include category, testsuite, testgroup, testcase @done(20-11-29 21:14)
