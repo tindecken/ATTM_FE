@@ -5,6 +5,9 @@ const mutation: MutationTree<GlobalStateInterface> = {
   switchTheme(state: GlobalStateInterface) {
     state.darkTheme = !state.darkTheme;
   },
+  setTestAUTs(state: GlobalStateInterface, payload) {
+    state.testAUTs = payload;
+  }
 };
 
 export default mutation;

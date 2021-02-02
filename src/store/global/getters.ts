@@ -6,6 +6,9 @@ const getters: GetterTree<GlobalStateInterface, StateInterface> = {
   darkTheme(state: GlobalStateInterface) {
     return state.darkTheme;
   },
+  testAuTs(state: GlobalStateInterface) {
+    return state.testAUTs;
+  }
 };
 
 export default getters;

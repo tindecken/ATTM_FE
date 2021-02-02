@@ -29,5 +29,24 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
       throw error.response.data;
     }
   },
+  async getTestAUT(context) {
+    try {
+      const response = await axios.get(
+        `${config.baseURL}/testauts`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${context.rootGetters['auth/token']}`,
+          },
+        },
+      );
+      const responseData = await response.data;
+      context.commit('setTestAUTs', {
+        testAUTs: responseData,
+      });
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 export default actions;

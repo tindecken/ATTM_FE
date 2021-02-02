@@ -70,7 +70,19 @@
                     </detail-context-menu>
                   </q-td>
                   <q-td key="keyword" :props="props" class="q-c-input">
-                    <q-select dense :value="props.row.Keyword" :options="keywordDatas" option-label="Name" @input="changeKeyword({testcase: tc, stepIndex: props.rowIndex, property: 'Keyword'}, $event)"/>
+                    <q-select 
+                      dense 
+                      :value="props.row.Keyword" 
+                      :options="optionKeywordDatas"
+                      option-label="Name" 
+                      @input="changeKeyword({testcase: tc, stepIndex: props.rowIndex, property: 'Keyword'}, $event)"
+                      @filter="filterKeywordFn"
+                      input-debounce="0"
+                      use-input
+                      fill-input
+                      hide-selected
+                      options-dense
+                      />
                     <detail-context-menu
                      :selected.sync="selected"
                      @deleteRows="onDeleteRows()">
@@ -116,6 +128,7 @@ export default defineComponent({
   name: 'Detail',
   components: { DetailContextMenu },
   setup(props, context) {
+    const optionKeywordDatas: Ref<any[]> = ref([])
     const showByIndex = ref(null)
     const selectedKeyword = ref('')
     const selected: Ref<any[]> = ref([])
@@ -514,11 +527,20 @@ export default defineComponent({
       }
     }
 
+    function filterKeywordFn (val: any, update: any, abort: any) {
+      update(() => {
+        const needle = val.toLowerCase()
+        optionKeywordDatas.value = keywordDatas.value.filter(v => v.Name.toLowerCase().indexOf(needle) > -1)
+      })
+    }
+
     function test() {
       console.log('test')
     }
 
     return {
+      optionKeywordDatas,
+      filterKeywordFn,
       showByIndex,
       columns,
       opennedTCs,
