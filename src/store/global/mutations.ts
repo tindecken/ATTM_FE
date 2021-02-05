@@ -6,7 +6,8 @@ const mutation: MutationTree<GlobalStateInterface> = {
     state.darkTheme = !state.darkTheme;
   },
   setTestAUTs(state: GlobalStateInterface, payload) {
-    state.testAUTs = payload;
+    console.log('payload', payload)
+    state.testAUTs = payload.testAUTs;
   }
 };
 

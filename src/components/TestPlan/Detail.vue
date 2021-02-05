@@ -63,7 +63,19 @@
                     </detail-context-menu>
                   </q-td>
                   <q-td key="testAUT" :props="props" class="q-c-input">
-                    {{ props.row.TestAUT }}
+                    <q-select
+                      dense 
+                      :value="props.row.TestAUT" 
+                      :options="optionTestAUTDatas"
+                      option-label="Name" 
+                      @input="changeTestAUT({testcase: tc, stepIndex: props.rowIndex, property: 'TestAUT'}, $event)"
+                      @filter="filterTestAUTFn"
+                      input-debounce="0"
+                      use-input
+                      fill-input
+                      hide-selected
+                      options-dense
+                    />
                     <detail-context-menu
                      :selected.sync="selected"
                      @deleteRows="onDeleteRows()">
@@ -82,7 +94,7 @@
                       fill-input
                       hide-selected
                       options-dense
-                      />
+                    />
                     <detail-context-menu
                      :selected.sync="selected"
                      @deleteRows="onDeleteRows()">
@@ -129,6 +141,7 @@ export default defineComponent({
   components: { DetailContextMenu },
   setup(props, context) {
     const optionKeywordDatas: Ref<any[]> = ref([])
+    const optionTestAUTDatas: Ref<any[]> = ref([])
     const showByIndex = ref(null)
     const selectedKeyword = ref('')
     const selected: Ref<any[]> = ref([])
@@ -151,8 +164,8 @@ export default defineComponent({
           label: 'TestAUT',
           field: 'TestAUT',
           sortable: false,
-          style: 'min-width: 80px;',
-          headerStyle: 'min-width: 80px',
+          style: 'min-width: 80px; max-width: 100px',
+          headerStyle: 'min-width: 80px; max-width: 100px',
         },
         {
           name: 'keyword',
@@ -357,6 +370,9 @@ export default defineComponent({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const keywords = computed(() => context.root.$store.getters['keyword/keywords'])
     const keywordDatas: Ref<any[]> = ref([]);
+    const testAUTs = computed(() => context.root.$store.getters['global/testAuTs'])
+    const testAUTDatas: Ref<any[]> = ref([]);
+    testAUTDatas.value = testAUTs.value
     keywords.value.categories.forEach((c: any) => {
       c.Features.forEach((f: any) => {
         f.Keywords.forEach((k: any) => {
@@ -365,7 +381,6 @@ export default defineComponent({
         })
       });
     });
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     keywordDatas.value = keywordDatas.value.map((v: any, i: number) => ({ ...v, rowIndex: i + 1 }))
     console.log('keywordDatas.value', keywordDatas.value)
 
@@ -381,6 +396,15 @@ export default defineComponent({
       newKeyword.Params.forEach((pr: any) => {
         tempTC.TestSteps[payload.stepIndex].Params.push(pr)
       })
+      console.log('payload.testcase', payload.testcase)
+      console.log('tempTC', tempTC)
+      context.root.$store.commit('testcase/updateOpennedTCs', tempTC)
+    }
+    function changeTestAUT(payload: any, newTestAUT: any) {
+      console.log('newTestAUT', newTestAUT)
+      const tempTC = _.cloneDeep(payload.testcase)
+      tempTC.TestSteps[payload.stepIndex][payload.property] = newTestAUT.Name;
+      tempTC.TestSteps[payload.stepIndex].Params = []
       console.log('payload.testcase', payload.testcase)
       console.log('tempTC', tempTC)
       context.root.$store.commit('testcase/updateOpennedTCs', tempTC)
@@ -533,6 +557,12 @@ export default defineComponent({
         optionKeywordDatas.value = keywordDatas.value.filter(v => v.Name.toLowerCase().indexOf(needle) > -1)
       })
     }
+    function filterTestAUTFn (val: any, update: any, abort: any) {
+      update(() => {
+        const needle = val.toLowerCase()
+        optionTestAUTDatas.value = testAUTDatas.value.filter(v => v.Name.toLowerCase().indexOf(needle) > -1)
+      })
+    }
 
     function test() {
       console.log('test')
@@ -540,7 +570,9 @@ export default defineComponent({
 
     return {
       optionKeywordDatas,
+      optionTestAUTDatas,
       filterKeywordFn,
+      filterTestAUTFn,
       showByIndex,
       columns,
       opennedTCs,
@@ -559,8 +591,10 @@ export default defineComponent({
       keywords,
       selectedKeyword,
       keywordDatas,
+      testAUTDatas,
       onDeleteRows,
       saveTestCase,
+      changeTestAUT,
     };
   },
 });

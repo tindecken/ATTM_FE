@@ -21,8 +21,12 @@ Todo:
   ✔ move mongodb data (collection, record) from local to cloud, support running over internet by using netifly and raspberry @done(21-01-25 14:25)
   ✔ fix refresh keyword api can't run on mongodb cloud @done(21-01-25 15:37)
   ✔ bring test project to raspberry so the demo can work perfectly @done(21-01-25 16:41)
-  ☐ detail view --> testAUT should be a selection instead of input string
+  ✔ detail view --> testAUT should be a selection instead of input string @done(21-02-05 22:47)
+  ✔ get list of testAUT then store in vuex when open testplan (same with Keyword List) @done(21-02-05 22:47)
   ✔ detail view - configure autocomplete for keyword column (able to search) @done(21-02-02 22:49)
+  ☐ add menu new testsuite in category, implement this feature
+  ☐ add menu new testgroup in testsuite, implement this feature
+  ☐ add menu new testcase in testgroup, implement this feature
   ☐ add mockdata for multiple category, multiple t-est suite, multiple test groups, allow generate code from multiple categories
   ☐ generate code for multiple category
   ☐ treeview - paint the category --> testsuite --> testgroup
@@ -31,7 +35,7 @@ Todo:
   ☐ treeview - testcase without step should highlight to know it.
 API:
   ✔ api for saving testcase @done(21-01-23 22:28)
-  ☐ api for generate code from testcases
+  ☐ api for generate code from testcases, 
   ✔ api for list all testAUT @done(21-02-02 18:47)
   ✔ .net 5.0 support openAPI by default (swagger) ==> implement it. @done(20-12-19 17:17)
   ☐ bug - sometime the keyword.json is used by other process --> can't get keyword list

@@ -41,6 +41,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
         },
       );
       const responseData = await response.data;
+      console.log('response data', responseData);
       context.commit('setTestAUTs', {
         testAUTs: responseData,
       });

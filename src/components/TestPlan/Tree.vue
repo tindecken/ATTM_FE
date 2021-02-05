@@ -66,6 +66,7 @@ export default defineComponent({
     const filter: Ref<string> = ref('');
     const filterInput: Ref<any> = ref(null)
     const allCat: Ref<any[]> = ref([]);
+    const allTestAUT: Ref<any[]> = ref([]);
     const selectedNode: Ref<any> = ref(null)
     const ticked: Ref<any[]> = ref([])
     const tree: Ref<any> = ref(null)
@@ -103,9 +104,14 @@ export default defineComponent({
     }
     onMounted(async () => {
       try {
+        // get category
         await context.root.$store.dispatch('category/getAllCategories');
         allCat.value = context.root.$store.getters['category/categories'];
         console.log('allCat', allCat.value)
+        // gt all TestAUT
+        await context.root.$store.dispatch('global/getTestAUT');
+        allTestAUT.value = context.root.$store.getters['global/testAuTs']
+        console.log('allTestAUT', allTestAUT.value)
         await context.root.$nextTick()
         tree.value.expandAll();
       } catch (error) {
@@ -187,6 +193,7 @@ export default defineComponent({
       filter,
       resetFilter,
       allCat,
+      allTestAUT,
       filterInput,
       selectedNode,
       ticked,
