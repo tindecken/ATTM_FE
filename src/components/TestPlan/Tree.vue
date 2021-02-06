@@ -38,7 +38,7 @@
                 @runOn="onRunOn()"
                 @debug="onDebug()"
                 @debugOn="onDebugOn()"
-                @newTestSuite="onNewTestSuite()"
+                @newTestSuite="onNewTestSuite(prop.node)"
                 @edit="onEdit()"
                 @deleteNode="onDeleteNode(prop.node)"
                 >
@@ -49,6 +49,7 @@
         </q-tree>
       </div>
     </div>
+    <new-test-suite-dialog></new-test-suite-dialog>
   </div>
 </template>
 
@@ -58,10 +59,14 @@ import {
 } from '@vue/composition-api';
 
 import TreeContextMenu from './ContextMenu/TreeContextMenu.vue'
+import NewTestSuiteDialog from './Dialog/NewTestSuiteDialog.vue'
 
 export default defineComponent({
   name: 'Tree',
-  components: { TreeContextMenu },
+  components: { 
+    TreeContextMenu,
+    NewTestSuiteDialog
+  },
   setup(props, context) {
     const filter: Ref<string> = ref('');
     const filterInput: Ref<any> = ref(null)
@@ -148,11 +153,18 @@ export default defineComponent({
         message: `Not develop yet`,
       });
     }
-    function onNewTestSuite() {
-      context.root.$q.notify({
-        type: 'negative',
-        message: `Not develop yet`,
-      });
+    function onNewTestSuite(node: any) {
+      console.log('node', node)
+      // check if current node is not Category --> return
+      if(node.nodeType !== 'Category') {
+        context.root.$q.notify({
+          type: 'negative',
+          message: `Something errors, node Type is not Category`,
+        });
+        return
+      }
+      // open new testsuite dialog
+      
     }
     function onEdit() {
       context.root.$q.notify({
