@@ -1,89 +1,49 @@
 <template>
-  <q-menu touch-position context-menu>
-    <q-list dense style="min-width: 100px">
-      <q-item clickable v-close-popup>
-        <q-item-section avatar>
-          <q-icon color="primary" name="create" />
-        </q-item-section>
-        <q-item-section>Edit</q-item-section>
-      </q-item>
-      <q-item clickable v-close-popup>
-        <q-item-section avatar>
-          <q-icon color="primary" name="content_copy" />
-        </q-item-section>
-        <q-item-section>Copy</q-item-section>
-      </q-item>
-      <q-item clickable v-close-popup>
-        <q-item-section avatar>
-          <q-icon color="primary" name="content_cut" />
-        </q-item-section>
-        <q-item-section>Cut</q-item-section>
-      </q-item>
-      <q-separator />
-      <q-item clickable v-close-popup>
-        <q-item-section avatar>
-          <q-icon color="primary" name="content_paste" />
-        </q-item-section>
-        <q-item-section>Paste</q-item-section>
-      </q-item>
-      <q-item clickable v-close-popup>
-        <q-item-section avatar>
-          <q-icon color="primary" name="add" />
-        </q-item-section>
-        <q-item-section>Insert</q-item-section>
-      </q-item>
-      <q-item clickable v-close-popup>
-        <q-item-section avatar>
-          <q-icon color="primary" name="post_add" />
-        </q-item-section>
-        <q-item-section>Insert and Paste</q-item-section>
-      </q-item>
-      <q-separator />
-      <q-item clickable v-close-popup>
-        <q-item-section avatar>
-          <q-icon color="primary" name="insert_comment" />
-        </q-item-section>
-        <q-item-section>Insert Comment</q-item-section>
-      </q-item>
-      <q-item clickable v-close-popup>
-        <q-item-section avatar>
-          <q-icon color="primary" name="delete_outline" />
-        </q-item-section>
-        <q-item-section @click="deleteRows()">Delete</q-item-section>
-      </q-item>
-      <q-separator />
-      <q-item clickable v-close-popup>
-        <q-item-section avatar>
-          <q-icon color="primary" name="toggle_on" />
-        </q-item-section>
-        <q-item-section>Enable</q-item-section>
-      </q-item>
-      <q-item clickable v-close-popup>
-        <q-item-section avatar>
-          <q-icon color="primary" name="toggle_off" />
-        </q-item-section>
-        <q-item-section>Disable</q-item-section>
-      </q-item>
-    </q-list>
-  </q-menu>
+  <q-dialog v-model="isShowed" persistent>
+      <q-card style="min-width: 350px">
+        <q-card-section>
+          <div class="text-h6">New Test Suite</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-input dense autofocus @keyup.enter="prompt = false" />
+        </q-card-section>
+
+        <q-card-actions align="right" class="text-primary">
+          <q-btn flat label="Cancel" @click="cancelDialog()" v-close-popup />
+          <q-btn flat label="Create" @click="createTestSuite()" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "@vue/composition-api";
+import { defineComponent, ref } from "@vue/composition-api";
 
 export default defineComponent({
-  name: 'NewTestSuite',
+  name: 'NewTestSuiteDialog',
   props: {
-    selected: Array,
+    category: {
+      type: Object,
+      required: true,
+    },
+    isShowed: {
+      type: Boolean,
+      required: true,
+    }
   },
   components: {},
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setup(props, { emit }) {
-    function deleteRows() {
-      emit('deleteRows')
+    function createTestSuite() {
+      console.log('create TestSuite')
+      emit('createTestSuite')
+    }
+    function cancelDialog() {
+      emit('cancelDialog')
     }
     return {
-      deleteRows,
+      createTestSuite,
+      cancelDialog
     };
   },
 })

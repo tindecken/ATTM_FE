@@ -43,13 +43,20 @@
                 @deleteNode="onDeleteNode(prop.node)"
                 >
               </tree-context-menu>
+              <template v-if="prop.node.nodeType === 'Category'">
+                <new-test-suite-dialog 
+                  :category="prop.node" 
+                  :isShowed="isShowedNewTestSuiteDialog"
+                  @createTestSuite="onCreateTestSuite()"
+                  @cancelDialog="isShowedNewTestSuiteDialog = false"
+                ></new-test-suite-dialog>
+              </template>
             </div>
           </div>
         </template>
         </q-tree>
       </div>
     </div>
-    <new-test-suite-dialog></new-test-suite-dialog>
   </div>
 </template>
 
@@ -75,6 +82,7 @@ export default defineComponent({
     const selectedNode: Ref<any> = ref(null)
     const ticked: Ref<any[]> = ref([])
     const tree: Ref<any> = ref(null)
+    const isShowedNewTestSuiteDialog = ref(false)
     function resetFilter() {
       filter.value = ''
       filterInput.value.focus();
@@ -164,7 +172,7 @@ export default defineComponent({
         return
       }
       // open new testsuite dialog
-      
+      isShowedNewTestSuiteDialog.value = true
     }
     function onEdit() {
       context.root.$q.notify({
@@ -191,8 +199,6 @@ export default defineComponent({
           message: `${error.error}`,
         });
       }
-      
-      
     }
     function onDeleteNode(value: any) {
       console.log(value)
@@ -200,6 +206,10 @@ export default defineComponent({
         type: 'negative',
         message: `Not develop yet`,
       });
+    }
+    function onCreateTestSuite() {
+      console.log('onCreateTestSuite')
+      isShowedNewTestSuiteDialog.value = false
     }
     return {
       filter,
@@ -220,6 +230,8 @@ export default defineComponent({
       onDebugOn,
       onNewTestSuite,
       onEdit,
+      onCreateTestSuite,
+      isShowedNewTestSuiteDialog,
     }
   },
 });
