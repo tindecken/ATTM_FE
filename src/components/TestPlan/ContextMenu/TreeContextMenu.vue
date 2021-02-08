@@ -40,6 +40,22 @@
             <q-item-section @click="newTestSuite()">New Test Suite</q-item-section>
           </q-item>
         </template>
+        <template v-else-if="node.nodeType == 'TestSuite'">
+          <q-item clickable v-close-popup>
+            <q-item-section avatar>
+              <q-icon color="primary" name="playlist_add" />
+            </q-item-section>
+            <q-item-section @click="newTestGroup()">New Test Group</q-item-section>
+          </q-item>
+        </template>
+        <template v-else-if="node.nodeType == 'TestGroup'">
+          <q-item clickable v-close-popup>
+            <q-item-section avatar>
+              <q-icon color="primary" name="playlist_add" />
+            </q-item-section>
+            <q-item-section @click="newTestCase()">New Test Case</q-item-section>
+          </q-item>
+        </template>
         <q-separator />
         <q-item clickable v-close-popup>
           <q-item-section avatar>
@@ -95,6 +111,12 @@ export default defineComponent({
     function newTestSuite() {
       emit('newTestSuite')
     }
+    function newTestGroup() {
+      emit('newTestGroup')
+    }
+    function newTestCase() {
+      emit('newTestCase')
+    }
     function edit() {
       emit('edit')
     }
@@ -106,6 +128,8 @@ export default defineComponent({
       debug,
       debugOn,
       newTestSuite,
+      newTestGroup,
+      newTestCase,
       edit,
     };
   },

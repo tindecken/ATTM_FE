@@ -39,6 +39,8 @@
                 @debug="onDebug()"
                 @debugOn="onDebugOn()"
                 @newTestSuite="onNewTestSuite(prop.node)"
+                @newTestGroup="onNewTestGroup(prop.node)"
+                @newTestCase="onNewTestCase(prop.node)"
                 @edit="onEdit()"
                 @deleteNode="onDeleteNode(prop.node)"
                 >
@@ -50,6 +52,22 @@
                   @createTestSuite="onCreateTestSuite()"
                   @cancelDialog="isShowedNewTestSuiteDialog = false"
                 ></new-test-suite-dialog>
+              </template>
+              <template v-else-if="prop.node.nodeType === 'TestSuite'">
+                <new-test-group-dialog 
+                  :testsuite="prop.node" 
+                  :isShowed="isShowedNewTestGroupDialog"
+                  @createTestGroup="onCreateTestGroup()"
+                  @cancelDialog="isShowedNewTestGroupDialog = false"
+                ></new-test-group-dialog>
+              </template>
+              <template v-else-if="prop.node.nodeType === 'TestGroup'">
+                <new-test-case-dialog 
+                  :testgroup="prop.node" 
+                  :isShowed="isShowedNewTestCaseDialog"
+                  @createTestCase="onCreateTestCase()"
+                  @cancelDialog="isShowedNewTestCaseDialog = false"
+                ></new-test-case-dialog>
               </template>
             </div>
           </div>
@@ -67,12 +85,16 @@ import {
 
 import TreeContextMenu from './ContextMenu/TreeContextMenu.vue'
 import NewTestSuiteDialog from './Dialog/NewTestSuiteDialog.vue'
+import NewTestGroupDialog from './Dialog/NewTestGroupDialog.vue'
+import NewTestCaseDialog from './Dialog/NewTestCaseDialog.vue'
 
 export default defineComponent({
   name: 'Tree',
   components: { 
     TreeContextMenu,
-    NewTestSuiteDialog
+    NewTestSuiteDialog,
+    NewTestGroupDialog,
+    NewTestCaseDialog
   },
   setup(props, context) {
     const filter: Ref<string> = ref('');
@@ -83,6 +105,8 @@ export default defineComponent({
     const ticked: Ref<any[]> = ref([])
     const tree: Ref<any> = ref(null)
     const isShowedNewTestSuiteDialog = ref(false)
+    const isShowedNewTestGroupDialog = ref(false)
+    const isShowedNewTestCaseDialog = ref(false)
     function resetFilter() {
       filter.value = ''
       filterInput.value.focus();
@@ -174,6 +198,32 @@ export default defineComponent({
       // open new testsuite dialog
       isShowedNewTestSuiteDialog.value = true
     }
+    function onNewTestGroup(node: any) {
+      console.log('node', node)
+      // check if current node is not TestSuite --> return
+      if(node.nodeType !== 'TestSuite') {
+        context.root.$q.notify({
+          type: 'negative',
+          message: `Something errors, node Type is not TestSuite`,
+        });
+        return
+      }
+      // open new testgroup dialog
+      isShowedNewTestGroupDialog.value = true
+    }
+    function onNewTestCase(node: any) {
+      console.log('node', node)
+      // check if current node is not TestGroup --> return
+      if(node.nodeType !== 'TestGroup') {
+        context.root.$q.notify({
+          type: 'negative',
+          message: `Something errors, node Type is not TestGroup`,
+        });
+        return
+      }
+      // open new testcase dialog
+      isShowedNewTestCaseDialog.value = true
+    }
     function onEdit() {
       context.root.$q.notify({
         type: 'negative',
@@ -211,6 +261,14 @@ export default defineComponent({
       console.log('onCreateTestSuite')
       isShowedNewTestSuiteDialog.value = false
     }
+    function onCreateTestGroup() {
+      console.log('onCreateTestGroup')
+      isShowedNewTestGroupDialog.value = false
+    }
+    function onCreateTestCase() {
+      console.log('onCreateTestCase')
+      isShowedNewTestCaseDialog.value = false
+    }
     return {
       filter,
       resetFilter,
@@ -228,10 +286,16 @@ export default defineComponent({
       onRunOn,
       onDebug,
       onDebugOn,
-      onNewTestSuite,
       onEdit,
+      onNewTestSuite,
+      onNewTestGroup,
+      onNewTestCase,
       onCreateTestSuite,
+      onCreateTestGroup,
+      onCreateTestCase,
       isShowedNewTestSuiteDialog,
+      isShowedNewTestGroupDialog,
+      isShowedNewTestCaseDialog,
     }
   },
 });

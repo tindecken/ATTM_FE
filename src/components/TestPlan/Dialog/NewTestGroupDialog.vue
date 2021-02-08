@@ -2,7 +2,7 @@
   <q-dialog v-model="isShowed" persistent square>
       <q-card style="min-width: 350px">
         <q-card-section>
-          <div class="text-h6">New Test Suite</div>
+          <div class="text-h6">New Test Group</div>
         </q-card-section>
 
         <q-card-section class="q-pt-none">
@@ -11,7 +11,7 @@
 
         <q-card-actions align="right" class="text-primary">
           <q-btn flat label="Cancel" @click="cancelDialog()" v-close-popup />
-          <q-btn flat label="Create" @click="createTestSuite()" v-close-popup />
+          <q-btn flat label="Create" @click="createTestGroup()" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -21,9 +21,9 @@
 import { defineComponent, ref } from "@vue/composition-api";
 
 export default defineComponent({
-  name: 'NewTestSuiteDialog',
+  name: 'NewTestGroupDialog',
   props: {
-    category: {
+    testsuite: {
       type: Object,
       required: true,
     },
@@ -34,15 +34,15 @@ export default defineComponent({
   },
   components: {},
   setup(props, { emit }) {
-    function createTestSuite() {
-      console.log('create TestSuite')
-      emit('createTestSuite')
+    function createTestGroup() {
+      console.log('create TestGroup')
+      emit('createTestGroup')
     }
     function cancelDialog() {
       emit('cancelDialog')
     }
     return {
-      createTestSuite,
+      createTestGroup,
       cancelDialog
     };
   },
