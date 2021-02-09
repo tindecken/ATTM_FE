@@ -6,7 +6,10 @@
         </q-card-section>
 
         <q-card-section class="q-pt-none">
-          <q-input dense autofocus @keyup.enter="prompt = false" />
+          <q-input label="Id" outlined dense autofocus @keyup.enter="prompt = false" />
+        </q-card-section>
+        <q-card-section class="q-pt-none">
+          <q-input label="Name" outlined dense @keyup.enter="prompt = false" />
         </q-card-section>
 
         <q-card-actions align="right" class="text-primary">
