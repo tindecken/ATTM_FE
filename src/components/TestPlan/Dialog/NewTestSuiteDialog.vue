@@ -1,27 +1,52 @@
 <template>
-  <q-dialog v-model="isShowed" persistent square>
-      <q-card style="min-width: 350px">
-        <q-card-section>
-          <div class="text-h6">New Test Suite</div>
-        </q-card-section>
-
-        <q-card-section class="q-pt-none">
-          <q-input label="Id" outlined dense autofocus @keyup.enter="prompt = false" />
-        </q-card-section>
-        <q-card-section class="q-pt-none">
-          <q-input label="Name" outlined dense @keyup.enter="prompt = false" />
-        </q-card-section>
-
-        <q-card-actions align="right" class="text-primary">
-          <q-btn flat label="Cancel" @click="cancelDialog()" v-close-popup />
-          <q-btn flat label="Create" @click="createTestSuite()" v-close-popup />
-        </q-card-actions>
-      </q-card>
+  <q-dialog ref="dialogRef" @hide="onDialogHide" persistent>
+    <q-layout class="q-pa-sm" :class="isDark ? 'bg-grey-9': 'bg-grey-3'" style="max-height: 300px; min-height: 100px !important;">
+      <div class="row q-mb-sm">
+        <span class="text-h6">New Test Suite</span>
+      </div>    
+      <div class="row">
+        <div class="col-4 q-mr-sm">
+          <q-input label="Id" outlined dense autofocus @keyup.enter="prompt = false" 
+            v-model="id"
+            :rules="[
+              val => !!val || '* Required',
+              val => val.length < 15 || 'Maximum is 15 chars',
+              val => isNaN(val.charAt(0)) || 'First char can not a number'
+            ]"
+            lazy-rules
+          />
+        </div>
+        <div class="col">
+          <q-input label="Name" outlined dense @keyup.enter="prompt = false" v-model="name"/>
+        </div>
+      </div> 
+      <div class="row q-mt-sm">
+        <div class="col-8 q-mr-sm">
+          <q-input label="WorkItem" outlined dense v-model="workItem"/>
+        </div>
+        <div class="col">
+          <q-input label="Author" outlined dense v-model="author"/>
+        </div>
+      </div>
+      <div class="row q-mt-sm">
+        <div class="col">
+          <q-input label="Description" outlined dense type="textarea" rows="3" v-model="description"/>
+        </div>
+      </div>
+      <div class="column items-end q-mt-md">
+        <div class="col">
+          <q-btn outline label="Cancel" @click="onCancelClick()" v-close-popup class="q-mr-sm"/>
+          <q-btn outline label="Create" @click="onOKClick()" v-close-popup />
+        </div>
+      </div>    
+    </q-layout>
+    
+      
     </q-dialog>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "@vue/composition-api";
+import { computed, defineComponent, Ref, ref } from "@vue/composition-api";
 
 export default defineComponent({
   name: 'NewTestSuiteDialog',
@@ -30,23 +55,76 @@ export default defineComponent({
       type: Object,
       required: true,
     },
-    isShowed: {
-      type: Boolean,
-      required: true,
-    }
+    // isShowed: {
+    //   type: Boolean,
+    //   required: true,
+    // }
   },
   components: {},
-  setup(props, { emit }) {
-    function createTestSuite() {
-      console.log('create TestSuite')
-      emit('createTestSuite')
+  setup(props, context) {
+    const dialogRef: Ref<any> = ref(null)
+    const id = ref(null)
+    const name = ref(null)
+    const author = ref(null)
+    const description = ref(null)
+    const workItem = ref(null)
+    const isDark = computed(() => context.root.$store.getters['global/darkTheme'])
+    // const isDark = true
+    // function createTestSuite() {
+    //   console.log('create TestSuite')
+    //   emit('createTestSuite')
+    // }
+    // function cancelDialog() {
+    //   emit('cancelDialog')
+    // }
+    // following method is REQUIRED
+    // (don't change its name --> "show")
+    function show () {
+      console.log(dialogRef.value)
+      dialogRef.value.show()
     }
-    function cancelDialog() {
-      emit('cancelDialog')
+
+    // following method is REQUIRED
+    // (don't change its name --> "hide")
+    function hide () {
+      dialogRef.value.hide()
+    }
+
+    function onDialogHide () {
+      // required to be emitted
+      // when QDialog emits "hide" event
+      context.emit('hide')
+    }
+
+    function onOKClick () {
+      // on OK, it is REQUIRED to
+      // emit "ok" event (with optional payload)
+      // before hiding the QDialog
+      // console.log('sdfsd', context.root.$emit)
+      context.emit('ok', { id: id.value, name: name.value, author: author.value, workItem: workItem.value, description: description.value })
+      // or with payload: this.$emit('ok', { ... })
+
+      // then hiding dialog
+      hide()
+    }
+
+    function onCancelClick () {
+      // we just need to hide dialog
+      hide()
     }
     return {
-      createTestSuite,
-      cancelDialog
+      dialogRef,
+      id,
+      name,
+      show,
+      hide,
+      onDialogHide,
+      onOKClick,
+      onCancelClick,
+      isDark,
+      author,
+      description,
+      workItem
     };
   },
 })

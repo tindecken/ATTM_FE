@@ -46,12 +46,12 @@
                 >
               </tree-context-menu>
               <template v-if="prop.node.nodeType === 'Category'">
-                <new-test-suite-dialog 
+                <!-- <new-test-suite-dialog 
                   :category="prop.node" 
                   :isShowed="isShowedNewTestSuiteDialog"
                   @createTestSuite="onCreateTestSuite()"
                   @cancelDialog="isShowedNewTestSuiteDialog = false"
-                ></new-test-suite-dialog>
+                ></new-test-suite-dialog> -->
               </template>
               <template v-else-if="prop.node.nodeType === 'TestSuite'">
                 <new-test-group-dialog 
@@ -92,7 +92,6 @@ export default defineComponent({
   name: 'Tree',
   components: { 
     TreeContextMenu,
-    NewTestSuiteDialog,
     NewTestGroupDialog,
     NewTestCaseDialog
   },
@@ -151,6 +150,7 @@ export default defineComponent({
         console.log('allTestAUT', allTestAUT.value)
         await context.root.$nextTick()
         tree.value.expandAll();
+        
       } catch (error) {
         context.root.$q.notify({
           type: 'negative',
@@ -196,7 +196,20 @@ export default defineComponent({
         return
       }
       // open new testsuite dialog
-      isShowedNewTestSuiteDialog.value = true
+      context.root.$q.dialog({
+        component: NewTestSuiteDialog,
+        parent: context.root,
+        category: node,
+      }).onOk((tsInfo: any) => {
+        console.log('dddddddddddd')
+        console.log('OK', tsInfo)
+        onCreateTestSuite(tsInfo)
+      }).onCancel(() => {
+        console.log('Cancel')
+      }).onDismiss(() => {
+        console.log('Called on OK or Cancel')
+      })
+      // isShowedNewTestSuiteDialog.value = true
     }
     function onNewTestGroup(node: any) {
       console.log('node', node)
@@ -257,9 +270,8 @@ export default defineComponent({
         message: `Not develop yet`,
       });
     }
-    function onCreateTestSuite() {
-      console.log('onCreateTestSuite')
-      isShowedNewTestSuiteDialog.value = false
+    function onCreateTestSuite(tsInfo: any) {
+      console.log('onCreateTestSuite', tsInfo)
     }
     function onCreateTestGroup() {
       console.log('onCreateTestGroup')
