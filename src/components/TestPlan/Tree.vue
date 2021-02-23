@@ -46,24 +46,24 @@
                 >
               </tree-context-menu>
               <template v-if="prop.node.nodeType === 'Category'">
-                <!-- <new-test-suite-dialog 
-                  :category="prop.node" 
+                <!-- <new-test-suite-dialog
+                  :category="prop.node"
                   :isShowed="isShowedNewTestSuiteDialog"
                   @createTestSuite="onCreateTestSuite()"
                   @cancelDialog="isShowedNewTestSuiteDialog = false"
                 ></new-test-suite-dialog> -->
               </template>
               <template v-else-if="prop.node.nodeType === 'TestSuite'">
-                <new-test-group-dialog 
-                  :testsuite="prop.node" 
+                <!-- <new-test-group-dialog
+                  :testsuite="prop.node"
                   :isShowed="isShowedNewTestGroupDialog"
                   @createTestGroup="onCreateTestGroup()"
                   @cancelDialog="isShowedNewTestGroupDialog = false"
-                ></new-test-group-dialog>
+                ></new-test-group-dialog> -->
               </template>
               <template v-else-if="prop.node.nodeType === 'TestGroup'">
-                <new-test-case-dialog 
-                  :testgroup="prop.node" 
+                <new-test-case-dialog
+                  :testgroup="prop.node"
                   :isShowed="isShowedNewTestCaseDialog"
                   @createTestCase="onCreateTestCase()"
                   @cancelDialog="isShowedNewTestCaseDialog = false"
@@ -90,10 +90,10 @@ import NewTestCaseDialog from './Dialog/NewTestCaseDialog.vue'
 
 export default defineComponent({
   name: 'Tree',
-  components: { 
+  components: {
     TreeContextMenu,
     NewTestGroupDialog,
-    NewTestCaseDialog
+    NewTestCaseDialog,
   },
   setup(props, context) {
     const filter: Ref<string> = ref('');
@@ -150,7 +150,6 @@ export default defineComponent({
         console.log('allTestAUT', allTestAUT.value)
         await context.root.$nextTick()
         tree.value.expandAll();
-        
       } catch (error) {
         context.root.$q.notify({
           type: 'negative',
@@ -185,10 +184,40 @@ export default defineComponent({
         message: `Not develop yet`,
       });
     }
+
+    async function onCreateTestSuite(tsInfo: any) {
+      try {
+        const res = await context.root.$store.dispatch('category/createTestSuite', tsInfo);
+        context.root.$q.notify({
+          type: 'positive',
+          message: `Created new test suite !`,
+        });
+      } catch (error) {
+        context.root.$q.notify({
+          type: 'negative',
+          message: `${error}`,
+        });
+      }
+    }
+    async function onCreateTestGroup(tgInfo: any) {
+      try {
+        const res = await context.root.$store.dispatch('testsuite/createTestGroup', tgInfo);
+        context.root.$q.notify({
+          type: 'positive',
+          message: `Created new test group !`,
+        });
+      } catch (error) {
+        context.root.$q.notify({
+          type: 'negative',
+          message: `${error}`,
+        });
+      }
+    }
+
     function onNewTestSuite(node: any) {
       console.log('node', node)
       // check if current node is not Category --> return
-      if(node.nodeType !== 'Category') {
+      if (node.nodeType !== 'Category') {
         context.root.$q.notify({
           type: 'negative',
           message: `Something errors, node Type is not Category`,
@@ -201,33 +230,40 @@ export default defineComponent({
         parent: context.root,
         category: node,
       }).onOk((tsInfo: any) => {
-        console.log('dddddddddddd')
-        console.log('OK', tsInfo)
         onCreateTestSuite(tsInfo)
       }).onCancel(() => {
         console.log('Cancel')
       }).onDismiss(() => {
         console.log('Called on OK or Cancel')
       })
-      // isShowedNewTestSuiteDialog.value = true
     }
     function onNewTestGroup(node: any) {
       console.log('node', node)
-      // check if current node is not TestSuite --> return
-      if(node.nodeType !== 'TestSuite') {
+      // check if current node is not TestGroup --> return
+      if (node.nodeType !== 'TestGroup') {
         context.root.$q.notify({
           type: 'negative',
-          message: `Something errors, node Type is not TestSuite`,
+          message: `Something errors, node Type is not TestGroup`,
         });
         return
       }
-      // open new testgroup dialog
-      isShowedNewTestGroupDialog.value = true
+      // open new testsuite dialog
+      context.root.$q.dialog({
+        component: NewTestSuiteDialog,
+        parent: context.root,
+        category: node,
+      }).onOk((tgInfo: any) => {
+        onCreateTestGroup(tgInfo)
+      }).onCancel(() => {
+        console.log('Cancel')
+      }).onDismiss(() => {
+        console.log('Called on OK or Cancel')
+      })
     }
     function onNewTestCase(node: any) {
       console.log('node', node)
       // check if current node is not TestGroup --> return
-      if(node.nodeType !== 'TestGroup') {
+      if (node.nodeType !== 'TestGroup') {
         context.root.$q.notify({
           type: 'negative',
           message: `Something errors, node Type is not TestGroup`,
@@ -269,13 +305,6 @@ export default defineComponent({
         type: 'negative',
         message: `Not develop yet`,
       });
-    }
-    function onCreateTestSuite(tsInfo: any) {
-      console.log('onCreateTestSuite', tsInfo)
-    }
-    function onCreateTestGroup() {
-      console.log('onCreateTestGroup')
-      isShowedNewTestGroupDialog.value = false
     }
     function onCreateTestCase() {
       console.log('onCreateTestCase')

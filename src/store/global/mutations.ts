@@ -8,7 +8,7 @@ const mutation: MutationTree<GlobalStateInterface> = {
   setTestAUTs(state: GlobalStateInterface, payload) {
     console.log('payload', payload)
     state.testAUTs = payload.testAUTs;
-  }
+  },
 };
 
 export default mutation;

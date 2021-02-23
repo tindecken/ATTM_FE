@@ -30,6 +30,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
     }
   },
   async getTestAUT(context) {
+    // eslint-disable-next-line no-useless-catch
     try {
       const response = await axios.get(
         `${config.baseURL}/testauts`,

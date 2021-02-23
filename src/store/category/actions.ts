@@ -28,6 +28,29 @@ const actions: ActionTree<CategoryStateInterface, StateInterface> = {
   setSelectedCategory(context, payload) {
     context.commit('setSelectedCategory', payload);
   },
+  async createTestSuite(context, payload) {
+    try {
+      // create in database
+      const response = await axios.post(
+        `${config.baseURL}/categories/${payload.categoryId}/testsuites`,
+        payload,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${context.rootGetters['auth/token']}`,
+          },
+        },
+      )
+      const responseData = await response.data;
+      // create in vuex
+      context.commit('createTestSuite', {
+        catId: payload.categoryId,
+        ts: responseData,
+      });
+    } catch (error) {
+      throw error.response.data;
+    }
+  },
 };
 
 export default actions;

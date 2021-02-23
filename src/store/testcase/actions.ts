@@ -31,10 +31,7 @@ const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
     context.commit('updateOpennedTCs', value)
   },
   async saveTestCase(context, tc) {
-    // eslint-disable-next-line no-useless-catch
     try {
-      console.log('context', context)
-      console.log('testcase', tc)
       const response = await axios.post(
         `${config.baseURL}/testcases/savetestcase`,
         tc,
