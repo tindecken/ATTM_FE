@@ -20,10 +20,12 @@ const actions: ActionTree<TestSuiteStateInterface, StateInterface> = {
       )
       const responseData = await response.data;
       // create in vuex
-      context.commit('createTestGroup', {
+      // commit to category module
+      context.commit('category/createTestGroup', {
+        catId: payload.catId,
         tsId: payload.testSuiteId,
         tg: responseData,
-      });
+      }, { root: true });
     } catch (error) {
       throw error.response.data;
     }

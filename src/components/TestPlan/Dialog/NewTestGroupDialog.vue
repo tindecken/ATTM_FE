@@ -122,6 +122,10 @@ export default defineComponent({
       type: Object,
       required: true,
     },
+    catId: {
+      type: String,
+      required: true,
+    },
   },
   components: {},
   setup(props, context) {
@@ -155,14 +159,15 @@ export default defineComponent({
     }
 
     function onOKClick() {
-      console.log('category', props.category);
+      console.log('testsuite', props.testsuite);
       // on OK, it is REQUIRED to
       // emit "ok" event (with optional payload)
       // before hiding the QDialog
       // console.log('sdfsd', context.root.$emit)
       context.emit('ok', {
-        categoryId: props.category.Id,
-        tsId: id.value,
+        testSuiteId: props.testsuite.Id,
+        catId: props.catId,
+        tgId: id.value,
         name: name.value,
         author: author.value,
         workItem: workItem.value,
