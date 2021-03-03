@@ -64,10 +64,10 @@
                   </q-td>
                   <q-td key="testAUT" :props="props" class="q-c-input">
                     <q-select
-                      dense 
-                      :value="props.row.TestAUT" 
+                      dense
+                      :value="props.row.TestAUT"
                       :options="optionTestAUTDatas"
-                      option-label="Name" 
+                      option-label="Name"
                       @input="changeTestAUT({testcase: tc, stepIndex: props.rowIndex, property: 'TestAUT'}, $event)"
                       @filter="filterTestAUTFn"
                       input-debounce="0"
@@ -82,11 +82,11 @@
                     </detail-context-menu>
                   </q-td>
                   <q-td key="keyword" :props="props" class="q-c-input">
-                    <q-select 
-                      dense 
-                      :value="props.row.Keyword" 
+                    <q-select
+                      dense
+                      :value="props.row.Keyword"
                       :options="optionKeywordDatas"
-                      option-label="Name" 
+                      option-label="Name"
                       @input="changeKeyword({testcase: tc, stepIndex: props.rowIndex, property: 'Keyword'}, $event)"
                       @filter="filterKeywordFn"
                       input-debounce="0"
@@ -370,6 +370,7 @@ export default defineComponent({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const keywords = computed(() => context.root.$store.getters['keyword/keywords'])
     const keywordDatas: Ref<any[]> = ref([]);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const testAUTs = computed(() => context.root.$store.getters['global/testAuTs'])
     const testAUTDatas: Ref<any[]> = ref([]);
     testAUTDatas.value = testAUTs.value
@@ -381,6 +382,7 @@ export default defineComponent({
         })
       });
     });
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     keywordDatas.value = keywordDatas.value.map((v: any, i: number) => ({ ...v, rowIndex: i + 1 }))
     console.log('keywordDatas.value', keywordDatas.value)
 
@@ -551,16 +553,16 @@ export default defineComponent({
       }
     }
 
-    function filterKeywordFn (val: any, update: any, abort: any) {
+    function filterKeywordFn(val: any, update: any, abort: any) {
       update(() => {
         const needle = val.toLowerCase()
-        optionKeywordDatas.value = keywordDatas.value.filter(v => v.Name.toLowerCase().indexOf(needle) > -1)
+        optionKeywordDatas.value = keywordDatas.value.filter((v) => v.Name.toLowerCase().indexOf(needle) > -1)
       })
     }
-    function filterTestAUTFn (val: any, update: any, abort: any) {
+    function filterTestAUTFn(val: any, update: any, abort: any) {
       update(() => {
         const needle = val.toLowerCase()
-        optionTestAUTDatas.value = testAUTDatas.value.filter(v => v.Name.toLowerCase().indexOf(needle) > -1)
+        optionTestAUTDatas.value = testAUTDatas.value.filter((v) => v.Name.toLowerCase().indexOf(needle) > -1)
       })
     }
 

@@ -12,57 +12,53 @@
         <q-btn dense @click="toogleTree">Toogle</q-btn>
       </div>
     </div>
-    <div class="row">
-      <div class="col">
-        <q-tree
-          :nodes="allCat"
-          node-key="Id"
-          :filter="filter"
-          default-expand-all
-          tick-strategy="leaf"
-          :selected.sync="selectedNode"
-          :ticked.sync="ticked"
-          @update:selected="fnSelectedNode(selectedNode)"
-          ref="tree"
-          selected-color="primary"
-        >
-        <template v-slot:default-header="prop">
-          <div class="row items-center">
-            <div style="display: inherit">
-              <q-icon :name="prop.node.icon || 'share'" class="q-mr-sm" />
-              <div>{{ prop.node.label }}</div>
-              <tree-context-menu
-                :node="prop.node"
-                @generateCode="onGenerateCode()"
-                @run="onRun()"
-                @runOn="onRunOn()"
-                @debug="onDebug()"
-                @debugOn="onDebugOn()"
-                @newTestSuite="onNewTestSuite(prop.node)"
-                @newTestGroup="onNewTestGroup(prop.node)"
-                @newTestCase="onNewTestCase(prop.node)"
-                @edit="onEdit()"
-                @deleteNode="onDeleteNode(prop.node)"
-                >
-              </tree-context-menu>
-              <template v-if="prop.node.nodeType === 'Category'">
-              </template>
-              <template v-else-if="prop.node.nodeType === 'TestSuite'">
-              </template>
-              <template v-else-if="prop.node.nodeType === 'TestGroup'">
-                <new-test-case-dialog
-                  :testgroup="prop.node"
-                  :isShowed="isShowedNewTestCaseDialog"
-                  @createTestCase="onCreateTestCase()"
-                  @cancelDialog="isShowedNewTestCaseDialog = false"
-                ></new-test-case-dialog>
-              </template>
+    <q-scroll-area style="height: 85vh; max-width: 600px;">
+    <div class="row q-mt-md">
+        <div class="col">
+          <q-tree
+            :nodes="allCat"
+            node-key="Id"
+            :filter="filter"
+            default-expand-all
+            tick-strategy="leaf"
+            :selected.sync="selectedNode"
+            :ticked.sync="ticked"
+            @update:selected="fnSelectedNode(selectedNode)"
+            ref="tree"
+            selected-color="primary"
+          >
+          <template v-slot:default-header="prop">
+            <div class="row items-center">
+              <div style="display: inherit">
+                <q-icon :name="prop.node.icon || 'share'" class="q-mr-sm" />
+                <div>{{ prop.node.label }}</div>
+                <tree-context-menu
+                  :node="prop.node"
+                  @generateCode="onGenerateCode()"
+                  @run="onRun()"
+                  @runOn="onRunOn()"
+                  @debug="onDebug()"
+                  @debugOn="onDebugOn()"
+                  @newTestSuite="onNewTestSuite(prop.node)"
+                  @newTestGroup="onNewTestGroup(prop.node)"
+                  @newTestCase="onNewTestCase(prop.node)"
+                  @edit="onEdit()"
+                  @deleteNode="onDeleteNode(prop.node)"
+                  >
+                </tree-context-menu>
+                <template v-if="prop.node.nodeType === 'Category'">
+                </template>
+                <template v-else-if="prop.node.nodeType === 'TestSuite'">
+                </template>
+                <template v-else-if="prop.node.nodeType === 'TestGroup'">
+                </template>
+              </div>
             </div>
-          </div>
-        </template>
-        </q-tree>
-      </div>
+          </template>
+          </q-tree>
+        </div>
     </div>
+    </q-scroll-area>
   </div>
 </template>
 
@@ -148,25 +144,25 @@ export default defineComponent({
     function onRun() {
       context.root.$q.notify({
         type: 'negative',
-        message: `Not develop yet`,
+        message: 'Not develop yet',
       });
     }
     function onRunOn() {
       context.root.$q.notify({
         type: 'negative',
-        message: `Not develop yet`,
+        message: 'Not develop yet',
       });
     }
     function onDebug() {
       context.root.$q.notify({
         type: 'negative',
-        message: `Not develop yet`,
+        message: 'Not develop yet',
       });
     }
     function onDebugOn() {
       context.root.$q.notify({
         type: 'negative',
-        message: `Not develop yet`,
+        message: 'Not develop yet',
       });
     }
 
@@ -175,7 +171,7 @@ export default defineComponent({
         await context.root.$store.dispatch('category/createTestSuite', tsInfo);
         context.root.$q.notify({
           type: 'positive',
-          message: `Created new test suite !`,
+          message: 'Created new test suite !',
         });
       } catch (error) {
         context.root.$q.notify({
@@ -200,13 +196,29 @@ export default defineComponent({
       }
     }
 
+    async function onCreateTestCase(tcInfo: any) {
+      try {
+        console.log('tcInfo', tcInfo);
+        await context.root.$store.dispatch('testgroup/createTestCase', tcInfo);
+        context.root.$q.notify({
+          type: 'positive',
+          message: 'Created new test case !',
+        });
+      } catch (error) {
+        context.root.$q.notify({
+          type: 'negative',
+          message: `${error}`,
+        });
+      }
+    }
+
     function onNewTestSuite(node: any) {
       console.log('node', node)
       // check if current node is not Category --> return
       if (node.nodeType !== 'Category') {
         context.root.$q.notify({
           type: 'negative',
-          message: `Something errors, node Type is not Category`,
+          message: 'Something errors, node Type is not Category',
         });
         return
       }
@@ -229,7 +241,7 @@ export default defineComponent({
       if (node.nodeType !== 'TestSuite') {
         context.root.$q.notify({
           type: 'negative',
-          message: `Something errors, node Type is not TestSuite`,
+          message: 'Something errors, node Type is not TestSuite',
         });
         return
       }
@@ -253,17 +265,30 @@ export default defineComponent({
       if (node.nodeType !== 'TestGroup') {
         context.root.$q.notify({
           type: 'negative',
-          message: `Something errors, node Type is not TestGroup`,
+          message: 'Something errors, node Type is not TestGroup',
         });
         return
       }
       // open new testcase dialog
-      isShowedNewTestCaseDialog.value = true
+      context.root.$q.dialog({
+        component: NewTestCaseDialog,
+        parent: context.root,
+        testGroup: node,
+        catId: node.catId,
+        tsId: node.tsId,
+        tgId: node.tgId,
+      }).onOk((tcInfo: any) => {
+        onCreateTestCase(tcInfo)
+      }).onCancel(() => {
+        console.log('Cancel')
+      }).onDismiss(() => {
+        console.log('Called on OK or Cancel')
+      })
     }
     function onEdit() {
       context.root.$q.notify({
         type: 'negative',
-        message: `Not develop yet`,
+        message: 'Not develop yet',
       });
     }
     async function onGenerateCode() {
@@ -290,13 +315,10 @@ export default defineComponent({
       console.log(value)
       context.root.$q.notify({
         type: 'negative',
-        message: `Not develop yet`,
+        message: 'Not develop yet',
       });
     }
-    function onCreateTestCase() {
-      console.log('onCreateTestCase')
-      isShowedNewTestCaseDialog.value = false
-    }
+
     return {
       filter,
       resetFilter,

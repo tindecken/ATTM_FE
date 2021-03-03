@@ -22,7 +22,8 @@ const actions: ActionTree<CategoryStateInterface, StateInterface> = {
         categories: responseData.result,
       });
     } catch (error) {
-      throw error;
+      console.log(error.response.data)
+      throw error.response.data.error;
     }
   },
   setSelectedCategory(context, payload) {
