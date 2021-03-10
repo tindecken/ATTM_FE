@@ -44,7 +44,7 @@ const mutation: MutationTree<CategoryStateInterface> = {
     Vue.set(state.categories, catIndex, tempCat)
   },
   createTestCase(state: CategoryStateInterface, payload) {
-    console.log('payload', payload)
+    console.log('payloaddddddd', payload)
     const catIndex = state.categories.findIndex((cat: any) => cat.Id === payload.catId);
     const tempCat = _.cloneDeep(state.categories[catIndex])
     console.log('tempCat', tempCat)
@@ -52,7 +52,7 @@ const mutation: MutationTree<CategoryStateInterface> = {
     const tsIndex = tempCat.children.findIndex((ts: any) => ts.Id === payload.tsId)
     console.log('tsIndex', tsIndex)
     // find tgIndex
-    const tgIndex = tempCat.children[tsIndex].children.findIndex((tg: any) => tg.Id === payload.tgId)
+    const tgIndex = tempCat.children[tsIndex].children.findIndex((tg: any) => tg.Id === payload.tgMongoId)
     console.log('tgIndex', tgIndex)
     const testCase = payload.tc
     // add some need property related to treeNode

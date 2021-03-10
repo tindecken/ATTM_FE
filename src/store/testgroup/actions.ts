@@ -30,14 +30,14 @@ const actions: ActionTree<TestGroupStateInterface, StateInterface> = {
         },
       )
       const tsData = await tsResponse.data
-      console.log('tsData', catData)
+      console.log('tsData', tsData)
       // create in database
       payload.CategoryName = catData.name
-      payload.TestSuiteId = tsData.name
-      payload.TestGroupId = payload.tgName
+      payload.TestSuiteId = tsData.tsId
+      payload.TestGroupId = payload.tgId
       console.log('payload', payload)
       const response = await axios.post(
-        `${config.baseURL}/testgroups/${payload.tgId}/testcases`,
+        `${config.baseURL}/testgroups/${payload.tgMongoId}/testcases`,
         payload,
         {
           headers: {
@@ -54,6 +54,7 @@ const actions: ActionTree<TestGroupStateInterface, StateInterface> = {
         tsId: payload.tsId,
         tgId: payload.tgId,
         tc: responseData,
+        tgMongoId: payload.tgMongoId,
       }, { root: true });
     } catch (error) {
       throw error.response.data;

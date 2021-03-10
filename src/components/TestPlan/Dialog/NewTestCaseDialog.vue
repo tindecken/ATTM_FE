@@ -142,6 +142,10 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    tgId: {
+      type: String,
+      required: true,
+    },
   },
   components: {},
   setup(props, context) {
@@ -182,7 +186,7 @@ export default defineComponent({
       // before hiding the QDialog
       // console.log('sdfsd', context.root.$emit)
       context.emit('ok', {
-        tgId: props.testGroup.Id,
+        tgMongoId: props.testGroup.Id,
         catId: props.catId,
         tsId: props.tsId,
         tcId: id.value,
@@ -191,6 +195,7 @@ export default defineComponent({
         workItem: workItem.value,
         type: type.value,
         description: description.value,
+        tgId: props.tgId,
         tgName: props.testGroup.Name,
       });
       // or with payload: this.$emit('ok', { ... })

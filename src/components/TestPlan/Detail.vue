@@ -394,6 +394,7 @@ export default defineComponent({
       console.log('newKeyword', newKeyword)
       const tempTC = _.cloneDeep(payload.testcase)
       tempTC.TestSteps[payload.stepIndex][payload.property] = newKeyword.Name;
+      tempTC.TestSteps[payload.stepIndex].Feature = newKeyword.Feature;
       tempTC.TestSteps[payload.stepIndex].Params = []
       newKeyword.Params.forEach((pr: any) => {
         tempTC.TestSteps[payload.stepIndex].Params.push(pr)
