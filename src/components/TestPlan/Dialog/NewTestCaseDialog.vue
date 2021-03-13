@@ -193,7 +193,7 @@ export default defineComponent({
         name: name.value,
         author: author.value,
         workItem: workItem.value,
-        type: type.value,
+        testCaseType: type.value,
         description: description.value,
         tgId: props.tgId,
         tgName: props.testGroup.Name,

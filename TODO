@@ -40,6 +40,7 @@ Todo:
   ☐ rewrite create new testcase api, that will include category, testsuite, testgroup in it
   ☐ treeview - do not show testcase with attribute isDeleted: true
   ☐ calling api generate code should return success or failure message (same with the other api)
+  ☐ bug - transfer testcases to generateCode error https://i.imgur.com/PrgkhW8.png
 Test:
   ☐ one flow from create category, testsuite, testgroup, testcase from beginning
 API:
