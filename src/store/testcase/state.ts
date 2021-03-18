@@ -1,11 +1,13 @@
+import { TestCaseInterface } from "src/Models/TestCase";
+
 export interface TestCaseStateInterface {
-  opennedTCs: any;
-  opennedSelectedTC: string
+  openedTCs: TestCaseInterface[];
+  openedSelectedTC?: TestCaseInterface
 }
 
 const state: TestCaseStateInterface = {
-  opennedTCs: [],
-  opennedSelectedTC: '',
+  openedTCs: [],
+  openedSelectedTC: undefined,
 };
 
 export default state;

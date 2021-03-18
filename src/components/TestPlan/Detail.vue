@@ -4,25 +4,25 @@
     <div class="row">
       <div class="col">
         <q-tabs
-          v-model="opennedSelectedTC"
+          v-model="openedSelectedTC"
           dense
           active-color="primary"
           align="left"
           inline-label
           @input="onTabChanging"
         >
-          <q-tab v-for="testcase in opennedTCs" :key="testcase.Id" :name="testcase.Id" :ripple="false" @mouseover="showByIndex = testcase.Id" @mouseout="showByIndex = null">
+          <q-tab v-for="testcase in openedTCs" :key="testcase.Id" :name="testcase.Id" :ripple="false" @mouseover="showByIndex = testcase.Id" @mouseout="showByIndex = null">
             <div class="q-mr-xs">{{testcase.Name}}</div>
             <q-btn dense flat icon="close" size="xs" :style="{visibility: showByIndex === testcase.Id ? 'visible' : 'hidden'}" @click.stop="closeTab(testcase)"></q-btn>
           </q-tab>
         </q-tabs>
 
         <q-tab-panels
-          v-model="opennedSelectedTC"
+          v-model="openedSelectedTC"
           animated
           keep-alive
           >
-          <q-tab-panel v-for="tc in opennedTCs" :key="tc.Id" :name="tc.Id">
+          <q-tab-panel v-for="tc in openedTCs" :key="tc.Id" :name="tc.Id">
             <q-table
               dense
               :data="tc.TestSteps"
@@ -134,6 +134,7 @@ import {
   defineComponent, Ref, ref,
 } from '@vue/composition-api'
 import _ from 'lodash'
+import { TestCaseInterface } from 'src/Models/TestCase';
 import DetailContextMenu from './ContextMenu/DetailContextMenu.vue'
 
 export default defineComponent({
@@ -358,15 +359,15 @@ export default defineComponent({
         },
       ],
     )
-    const opennedSelectedTC = computed({
+    const openedSelectedTC = computed({
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      get: () => context.root.$store.getters['testcase/opennedSelectedTC'],
+      get: () => context.root.$store.getters['testcase/openedSelectedTC'],
       set: (val) => {
-        context.root.$store.commit('testcase/setOpennedSelectedTC', val);
+        context.root.$store.commit('testcase/setopenedSelectedTC', val);
       },
     })
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const opennedTCs = computed(() => context.root.$store.getters['testcase/opennedTCs'])
+    const openedTCs = computed(() => context.root.$store.getters['testcase/openedTCs'])
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const keywords = computed(() => context.root.$store.getters['keyword/keywords'])
     const keywordDatas: Ref<any[]> = ref([]);
@@ -401,7 +402,8 @@ export default defineComponent({
       })
       console.log('payload.testcase', payload.testcase)
       console.log('tempTC', tempTC)
-      context.root.$store.commit('testcase/updateOpennedTCs', tempTC)
+      context.root.$store.commit('testcase/updateOpenedTCs', tempTC)
+      context.root.$store.commit('category/updateTestCase', tempTC)
     }
     function changeTestAUT(payload: any, newTestAUT: any) {
       console.log('newTestAUT', newTestAUT)
@@ -410,13 +412,15 @@ export default defineComponent({
       tempTC.TestSteps[payload.stepIndex].Params = []
       console.log('payload.testcase', payload.testcase)
       console.log('tempTC', tempTC)
-      context.root.$store.commit('testcase/updateOpennedTCs', tempTC)
+      context.root.$store.commit('testcase/updateOpenedTCs', tempTC)
+      context.root.$store.commit('category/updateTestCase', tempTC)
     }
     function changeParam(payload: any, e: any) {
       payload.newValue = e;
       const tempTC = _.cloneDeep(payload.testcase)
       tempTC.TestSteps[payload.stepIndex].Params[payload.paramIndex].Value = payload.newValue;
-      context.root.$store.commit('testcase/updateOpennedTCs', tempTC)
+      context.root.$store.commit('testcase/updateOpenedTCs', tempTC)
+      context.root.$store.commit('category/updateTestCase', tempTC)
     }
     function onRowHover(params: any) {
       columns.value.forEach((col: any, index: number) => {
@@ -468,7 +472,7 @@ export default defineComponent({
         if (matched) { // Had already selected this one --> do nothing
         } else { // New selection - add it and any between
           // find selected testcase
-          const currTestCase = opennedTCs.value.find((tc: any) => tc.Id === opennedSelectedTC.value)
+          const currTestCase = openedTCs.value.find((tc: any) => tc.Id === openedSelectedTC.value)
 
           // find previous selected teststep
           const previousSelectedStep = currTestCase.TestSteps.find((step: any) => step.UUID === selected.value[0].UUID)
@@ -525,12 +529,12 @@ export default defineComponent({
 
     function onDeleteRows() {
       console.log('onDeleteRows')
-      const currTestCase = opennedTCs.value.find((tc: any) => tc.Id === opennedSelectedTC.value)
+      const currTestCase = openedTCs.value.find((tc: any) => tc.Id === openedSelectedTC.value)
       selected.value.forEach((selectedRow: any) => {
         currTestCase.TestSteps.forEach((testStep: any) => {
           if (testStep.UUID === selectedRow.UUID) {
             console.log('delete me', testStep)
-            context.root.$store.commit('testcase/deleteStep', { testCaseId: opennedSelectedTC.value, stepUUID: selectedRow.UUID });
+            context.root.$store.commit('testcase/deleteStep', { testCaseId: openedSelectedTC.value, stepUUID: selectedRow.UUID });
           }
         })
       })
@@ -538,7 +542,7 @@ export default defineComponent({
 
     async function saveTestCase() {
       try {
-        const currTestCase = opennedTCs.value.find((tc: any) => tc.Id === opennedSelectedTC.value)
+        const currTestCase = openedTCs.value.find((tc: any) => tc.Id === openedSelectedTC.value)
         console.log('currTestCase', currTestCase)
         const result = await context.root.$store.dispatch('testcase/saveTestCase', currTestCase)
         console.log('result', result)
@@ -578,8 +582,8 @@ export default defineComponent({
       filterTestAUTFn,
       showByIndex,
       columns,
-      opennedTCs,
-      opennedSelectedTC,
+      openedTCs,
+      openedSelectedTC,
       closeTab,
       changeParam,
       changeKeyword,

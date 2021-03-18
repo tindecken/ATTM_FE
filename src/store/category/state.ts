@@ -1,11 +1,13 @@
+import { CategoryInterface } from "src/Models/Category";
+
 export interface CategoryStateInterface {
-  categories: any;
-  selectedCategory: any
+  Categories: CategoryInterface[];
+  SelectedCategory?: CategoryInterface;
 }
 
 const state: CategoryStateInterface = {
-  categories: null,
-  selectedCategory: null,
+  Categories: [],
+  SelectedCategory: undefined,
 };
 
 export default state;

@@ -67,6 +67,7 @@ import {
   defineComponent, onMounted, ref, Ref,
 } from '@vue/composition-api';
 
+import { CategoryInterface } from 'src/Models/Category';
 import TreeContextMenu from './ContextMenu/TreeContextMenu.vue'
 import NewTestSuiteDialog from './Dialog/NewTestSuiteDialog.vue'
 import NewTestGroupDialog from './Dialog/NewTestGroupDialog.vue'
@@ -82,7 +83,7 @@ export default defineComponent({
   setup(props, context) {
     const filter: Ref<string> = ref('');
     const filterInput: Ref<any> = ref(null)
-    const allCat: Ref<any[]> = ref([]);
+    const allCat: Ref<CategoryInterface[]> = ref([]);
     const allTestAUT: Ref<any[]> = ref([]);
     const selectedNode: Ref<any> = ref(null)
     const ticked: Ref<any[]> = ref([])
@@ -106,11 +107,11 @@ export default defineComponent({
         case 'TestGroup':
           break
         case 'TestCase':
-          const opennedTCs = context.root.$store.getters['testcase/opennedTCs'];
-          const found = opennedTCs.some((el: any) => el.Id === currentNode.Id);
+          const openedTCs = context.root.$store.getters['testcase/openedTCs'];
+          const found = openedTCs.some((el: any) => el.Id === currentNode.Id);
           if (found) {
-            const testcase = opennedTCs.find((el: any) => el.Id === currentNode.Id)
-            context.root.$store.commit('testcase/setOpennedTCs', testcase);
+            const testcase = openedTCs.find((el: any) => el.Id === currentNode.Id)
+            context.root.$store.commit('testcase/setopenedTCs', testcase);
           } else {
             await context.root.$store.dispatch('testcase/getTestCasebyId', currentNode.Id);
           }

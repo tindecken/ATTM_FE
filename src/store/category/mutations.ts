@@ -1,37 +1,38 @@
 import Vue from 'vue';
 import _ from 'lodash'
 import { MutationTree } from 'vuex';
+import { CategoryInterface } from 'src/Models/Category';
 import { CategoryStateInterface } from './state';
 
 const mutation: MutationTree<CategoryStateInterface> = {
   setSelectedCategory(state: CategoryStateInterface, payload) {
-    state.selectedCategory = payload.selectedCategory;
+    state.SelectedCategory = payload.selectedCategory;
   },
-  setCategories(state: CategoryStateInterface, payload) {
-    state.categories = payload.categories;
+  setCategories(state: CategoryStateInterface, categories: CategoryInterface[]) {
+    state.Categories = categories;
   },
   createTestSuite(state: CategoryStateInterface, payload) {
-    const catIndex = state.categories.findIndex((cat: any) => cat.Id === payload.catId);
+    const catIndex = state.Categories.findIndex((cat: CategoryInterface) => cat.Id === payload.catId);
     console.log('catIndex', catIndex);
-    const tempCat = _.cloneDeep(state.categories[catIndex])
+    const tempCat = _.cloneDeep(state.Categories[catIndex])
     console.log('tempCat', tempCat)
     tempCat.TestSuites.push(payload.ts.Id)
-    const testSuite = payload.ts
+    const testSuite: any = payload.ts
     // add some need property related to treeNode
     testSuite.label = `${testSuite.tsId}: ${testSuite.name}`
     testSuite.nodeType = 'TestSuite'
     testSuite.children = []
     testSuite.catId = payload.catId
-    tempCat.children.push(testSuite)
-    Vue.set(state.categories, catIndex, tempCat)
+    tempCat.TestSuites.push(testSuite)
+    Vue.set(state.Categories, catIndex, tempCat)
   },
   createTestGroup(state: CategoryStateInterface, payload) {
     console.log('payload', payload)
-    const catIndex = state.categories.findIndex((cat: any) => cat.Id === payload.catId);
-    const tempCat = _.cloneDeep(state.categories[catIndex])
+    const catIndex = state.Categories.findIndex((cat: any) => cat.Id === payload.catId);
+    const tempCat = _.cloneDeep(state.Categories[catIndex])
     console.log('tempCat', tempCat)
     // find tsIndex
-    const tsIndex = tempCat.children.findIndex((ts: any) => ts.Id === payload.tsId)
+    const tsIndex = tempCat.TestSuites.findIndex((ts: any) => ts.Id === payload.tsId)
     console.log('tsIndex', tsIndex)
     const testGroup = payload.tg
     // add some need property related to treeNode
@@ -40,19 +41,19 @@ const mutation: MutationTree<CategoryStateInterface> = {
     testGroup.children = []
     testGroup.catId = payload.catId
     testGroup.tsId = payload.tsId
-    tempCat.children[tsIndex].children.push(testGroup)
-    Vue.set(state.categories, catIndex, tempCat)
+    tempCat.TestSuites[tsIndex].TestGroups.push(testGroup)
+    Vue.set(state.Categories, catIndex, tempCat)
   },
   createTestCase(state: CategoryStateInterface, payload) {
     console.log('payloaddddddd', payload)
-    const catIndex = state.categories.findIndex((cat: any) => cat.Id === payload.catId);
-    const tempCat = _.cloneDeep(state.categories[catIndex])
+    const catIndex = state.Categories.findIndex((cat: CategoryInterface) => cat.Id === payload.catId);
+    const tempCat = _.cloneDeep(state.Categories[catIndex])
     console.log('tempCat', tempCat)
     // find tsIndex
-    const tsIndex = tempCat.children.findIndex((ts: any) => ts.Id === payload.tsId)
+    const tsIndex = tempCat.TestSuites.findIndex((ts: any) => ts.Id === payload.tsId)
     console.log('tsIndex', tsIndex)
     // find tgIndex
-    const tgIndex = tempCat.children[tsIndex].children.findIndex((tg: any) => tg.Id === payload.tgMongoId)
+    const tgIndex = tempCat.TestSuites[tsIndex].TestGroups.findIndex((tg: any) => tg.Id === payload.tgMongoId)
     console.log('tgIndex', tgIndex)
     const testCase = payload.tc
     // add some need property related to treeNode
@@ -61,8 +62,23 @@ const mutation: MutationTree<CategoryStateInterface> = {
     testCase.catId = payload.catId
     testCase.tsId = payload.tsId
     testCase.tgId = payload.tgId
-    tempCat.children[tsIndex].children[tgIndex].children.push(testCase)
-    Vue.set(state.categories, catIndex, tempCat)
+    tempCat.TestSuites[tsIndex].TestGroups[tgIndex].TestCases.push(testCase)
+    Vue.set(state.Categories, catIndex, tempCat)
+  },
+  updateTestCase(state: CategoryStateInterface, testcase) {
+    console.log('updateTestCase, testcase:', testcase)
+    const catIndex = state.Categories.findIndex((cat: any) => cat.name === testcase.CategoryName);
+    const tempCat = _.cloneDeep(state.Categories[catIndex])
+    console.log('tempCat', tempCat)
+    // find tsIndex
+    const tsIndex = tempCat.TestSuites.findIndex((ts: any) => ts.Id === testcase.TestSuiteId)
+    console.log('tsIndex', tsIndex)
+    // find tgIndex
+    const tgIndex = tempCat.TestSuites[tsIndex].TestGroups.findIndex((tg: any) => tg.Id === testcase.TestGroupId)
+    console.log('tgIndex', tgIndex)
+    const tcIndex = tempCat.TestSuites[tsIndex].TestGroups[tgIndex].TestCases.findIndex((tc: any) => tc.Id === testcase.Id)
+    tempCat.TestSuites[tsIndex].TestGroups[tgIndex].TestCases[tcIndex] = testcase
+    Vue.set(state.Categories, catIndex, tempCat)
   },
 }
 

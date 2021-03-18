@@ -1,8 +1,10 @@
 import { ActionTree } from 'vuex';
 import axios from 'axios';
+import { CategoryInterface } from 'src/Models/Category';
 import { StateInterface } from '../index';
 import { CategoryStateInterface } from './state';
 import config from '../../config';
+import { paintCategories } from '../../components/Utils/TreeUtils'
 
 const actions: ActionTree<CategoryStateInterface, StateInterface> = {
   async getAllCategories(context) {
@@ -17,12 +19,12 @@ const actions: ActionTree<CategoryStateInterface, StateInterface> = {
           },
         },
       );
-      const responseData = await response.data;
-      context.commit('setCategories', {
-        categories: responseData.result,
-      });
+      let categories: CategoryInterface[] = await response.data.result;
+      categories = paintCategories(categories)
+      console.log('getAllCategories', categories)
+      context.commit('setCategories', categories);
     } catch (error) {
-      console.log(error.response.data)
+      console.log('getAllCategories', error.response.data)
       throw error.response.data.error;
     }
   },

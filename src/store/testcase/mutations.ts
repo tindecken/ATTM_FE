@@ -5,42 +5,42 @@ import _ from 'lodash'
 import { TestCaseStateInterface } from './state';
 
 const mutation: MutationTree<TestCaseStateInterface> = {
-  setOpennedTCs(state: TestCaseStateInterface, testcase) {
-    const found = state.opennedTCs.some((el: any) => el.Id === testcase.Id);
+  setopenedTCs(state: TestCaseStateInterface, testcase) {
+    const found = state.openedTCs.some((el: any) => el.Id === testcase.Id);
     if (!found) {
-      state.opennedTCs.push(testcase);
+      state.openedTCs.push(testcase);
     }
-    state.opennedSelectedTC = testcase.Id;
+    state.openedSelectedTC = testcase.Id;
   },
-  updateOpennedTCs(state: TestCaseStateInterface, testcase) {
-    const index = state.opennedTCs.findIndex((tc: any) => tc.Id === testcase.Id);
-    Vue.set(state.opennedTCs, index, testcase)
-    console.log('state.opennedTCs', state.opennedTCs)
+  updateopenedTCs(state: TestCaseStateInterface, testcase) {
+    const index = state.openedTCs.findIndex((tc: any) => tc.Id === testcase.Id);
+    Vue.set(state.openedTCs, index, testcase)
+    console.log('state.openedTCs', state.openedTCs)
   },
-  setOpennedSelectedTC(state: TestCaseStateInterface, payload) {
-    state.opennedSelectedTC = payload;
+  setopenedSelectedTC(state: TestCaseStateInterface, payload) {
+    state.openedSelectedTC = payload;
   },
   removeOpennedTC(state: TestCaseStateInterface, testCaseId) {
-    const index = state.opennedTCs.findIndex((el: any) => el.Id === testCaseId);
+    const index = state.openedTCs.findIndex((el: any) => el.Id === testCaseId);
     if (index !== -1) {
-      state.opennedTCs.splice(index, 1)
+      state.openedTCs.splice(index, 1)
       // set selectedTestCase --> next tab
-      if (state.opennedTCs.length === 0) {
-        state.opennedSelectedTC = ''
+      if (state.openedTCs.length === 0) {
+        state.openedSelectedTC = ''
         return
       }
-      if (index >= state.opennedTCs.length) {
-        state.opennedSelectedTC = state.opennedTCs[state.opennedTCs.length - 1].Id
+      if (index >= state.openedTCs.length) {
+        state.openedSelectedTC = state.openedTCs[state.openedTCs.length - 1].Id
       } else {
-        state.opennedSelectedTC = state.opennedTCs[index].Id
+        state.openedSelectedTC = state.openedTCs[index].Id
       }
     }
   },
   addNewStep(state: TestCaseStateInterface) {
     // get last item to get Client Name
-    const index = state.opennedTCs.findIndex((el: any) => el.Id === state.opennedSelectedTC);
+    const index = state.openedTCs.findIndex((el: any) => el.Id === state.openedSelectedTC);
     if (index !== -1) {
-      const tempTC = _.cloneDeep(state.opennedTCs[index])
+      const tempTC = _.cloneDeep(state.openedTCs[index])
       let lastClient = ''
       if (tempTC.TestSteps.length > 0) { // incase there's no teststeps
         lastClient = tempTC.TestSteps[tempTC.TestSteps.length - 1].TestClient
@@ -54,7 +54,7 @@ const mutation: MutationTree<TestCaseStateInterface> = {
         Params: [],
         Name: null,
       })
-      Vue.set(state.opennedTCs, index, tempTC)
+      Vue.set(state.openedTCs, index, tempTC)
     }
   },
   deleteStep(state: TestCaseStateInterface, payload: any) {
@@ -62,12 +62,12 @@ const mutation: MutationTree<TestCaseStateInterface> = {
     const { stepUUID } = payload
     console.log('testCaseId', testCaseId)
     console.log('stepUUID', stepUUID)
-    const index = state.opennedTCs.findIndex((el: any) => el.Id === testCaseId);
-    const tempTC = _.cloneDeep(state.opennedTCs[index])
+    const index = state.openedTCs.findIndex((el: any) => el.Id === testCaseId);
+    const tempTC = _.cloneDeep(state.openedTCs[index])
     if (tempTC.TestSteps.length > 0) { // incase there's no test steps
       tempTC.TestSteps = tempTC.TestSteps.filter((step: any) => step.UUID !== stepUUID)
     }
-    Vue.set(state.opennedTCs, index, tempTC)
+    Vue.set(state.openedTCs, index, tempTC)
   },
 
 };

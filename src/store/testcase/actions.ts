@@ -21,14 +21,14 @@ const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
       );
       const testcase = await response.data;
       console.log('response data', testcase);
-      context.commit('setOpennedTCs', testcase);
-      context.commit('setOpennedSelectedTC', testcase.Id)
+      context.commit('setopenedTCs', testcase);
+      context.commit('setopenedSelectedTC', testcase.Id)
     } catch (error) {
       throw error;
     }
   },
-  updateOpennedTCs(context, value) {
-    context.commit('updateOpennedTCs', value)
+  updateopenedTCs(context, value) {
+    context.commit('updateopenedTCs', value)
   },
   async saveTestCase(context, tc) {
     try {
