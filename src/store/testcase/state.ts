@@ -2,7 +2,7 @@ import { TestCaseInterface } from "src/Models/TestCase";
 
 export interface TestCaseStateInterface {
   openedTCs: TestCaseInterface[];
-  openedSelectedTC?: TestCaseInterface
+  openedSelectedTC?: ''
 }
 
 const state: TestCaseStateInterface = {

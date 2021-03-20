@@ -5,6 +5,7 @@ import { StateInterface } from '../index';
 import { CategoryStateInterface } from './state';
 import config from '../../config';
 import { paintCategories } from '../../components/Utils/TreeUtils'
+import { TestSuiteInterface } from 'src/Models/TestSuite';
 
 const actions: ActionTree<CategoryStateInterface, StateInterface> = {
   async getAllCategories(context) {
@@ -31,12 +32,12 @@ const actions: ActionTree<CategoryStateInterface, StateInterface> = {
   setSelectedCategory(context, payload) {
     context.commit('setSelectedCategory', payload);
   },
-  async createTestSuite(context, payload) {
+  async createTestSuite(context, newTestSuite: TestSuiteInterface) {
     try {
       // create in database
       const response = await axios.post(
-        `${config.baseURL}/categories/${payload.categoryId}/testsuites`,
-        payload,
+        `${config.baseURL}/categories/${newTestSuite.CategoryId}/testsuites`,
+        newTestSuite,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -44,12 +45,9 @@ const actions: ActionTree<CategoryStateInterface, StateInterface> = {
           },
         },
       )
-      const responseData = await response.data;
+      const responseTestSuite = await response.data as TestSuiteInterface;
       // create in vuex
-      context.commit('createTestSuite', {
-        catId: payload.categoryId,
-        ts: responseData,
-      });
+      context.commit('createTestSuite', responseTestSuite);
     } catch (error) {
       throw error.response.data;
     }

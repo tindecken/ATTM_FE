@@ -2,10 +2,11 @@ import Vue from 'vue';
 import _ from 'lodash'
 import { MutationTree } from 'vuex';
 import { CategoryInterface } from 'src/Models/Category';
-import { CategoryStateInterface } from './state';
 import { TestSuiteInterface } from 'src/Models/TestSuite';
 import { TestGroupInterface } from 'src/Models/TestGroup';
 import { TestCaseInterface } from 'src/Models/TestCase';
+import { CategoryStateInterface } from './state';
+import { paintTestSuite } from '../../components/Utils/TreeUtils'
 
 const mutation: MutationTree<CategoryStateInterface> = {
   setSelectedCategory(state: CategoryStateInterface, payload) {
@@ -14,19 +15,15 @@ const mutation: MutationTree<CategoryStateInterface> = {
   setCategories(state: CategoryStateInterface, categories: CategoryInterface[]) {
     state.Categories = categories;
   },
-  createTestSuite(state: CategoryStateInterface, payload) {
-    const catIndex = state.Categories.findIndex((cat: CategoryInterface) => cat.Id === payload.catId);
+  createTestSuite(state: CategoryStateInterface, responseTestSuite: TestSuiteInterface) {
+    console.log('responseTestSuite', responseTestSuite)
+    const catIndex = state.Categories.findIndex((cat: CategoryInterface) => cat.Id === responseTestSuite.CategoryId);
     console.log('catIndex', catIndex);
-    const tempCat = _.cloneDeep(state.Categories[catIndex])
+    const tempCat = _.cloneDeep(state.Categories[catIndex]);
     console.log('tempCat', tempCat)
-    tempCat.TestSuites.push(payload.ts.Id)
-    const testSuite: any = payload.ts
-    // add some need property related to treeNode
-    testSuite.label = `${testSuite.tsId}: ${testSuite.name}`
-    testSuite.nodeType = 'TestSuite'
-    testSuite.children = []
-    testSuite.catId = payload.catId
-    tempCat.TestSuites.push(testSuite)
+    responseTestSuite = paintTestSuite(responseTestSuite)
+    tempCat.TestSuiteIds.push(responseTestSuite.Id)
+    tempCat.children.push(responseTestSuite)
     Vue.set(state.Categories, catIndex, tempCat)
   },
   createTestGroup(state: CategoryStateInterface, payload) {

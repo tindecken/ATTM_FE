@@ -26,7 +26,7 @@ const mutation: MutationTree<TestCaseStateInterface> = {
       state.openedTCs.splice(index, 1)
       // set selectedTestCase --> next tab
       if (state.openedTCs.length === 0) {
-        state.openedSelectedTC = ''
+        state.openedSelectedTC.Id = ''
         return
       }
       if (index >= state.openedTCs.length) {

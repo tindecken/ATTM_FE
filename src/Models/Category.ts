@@ -5,7 +5,7 @@ export interface CategoryInterface {
     Name: string;
     Description: string;
     WorkItem: string;
-    TestSuites: string[];
+    TestSuiteIds: string[];
     // treeNode
     nodeKey: string;
     children: TestSuiteInterface[];

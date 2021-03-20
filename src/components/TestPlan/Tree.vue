@@ -216,9 +216,9 @@ export default defineComponent({
       }
     }
 
-    function onNewTestSuite(category: CategoryInterface) {
+    function onNewTestSuite(Category: CategoryInterface) {
       // check if current node is not Category --> return
-      if (category.nodeType !== 'Category') {
+      if (Category.nodeType !== 'Category') {
         context.root.$q.notify({
           type: 'negative',
           message: 'Something errors, node Type is not Category',
@@ -229,7 +229,7 @@ export default defineComponent({
       context.root.$q.dialog({
         component: NewTestSuiteDialog,
         parent: context.root,
-        category,
+        Category,
       }).onOk((newTestSuite: TestSuiteInterface) => {
         onCreateTestSuite(newTestSuite)
       }).onCancel(() => {

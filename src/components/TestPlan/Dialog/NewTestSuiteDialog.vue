@@ -18,11 +18,11 @@
         <div class="row">
           <div class="col-4 q-mr-sm">
             <q-input
-              label="Id"
+              label="Code Name"
               outlined
               dense
               autofocus
-              v-model="id"
+              v-model="codeName"
               @blur="validateForm()"
               :rules="[
                 val => !!val || '* Required',
@@ -114,11 +114,13 @@
 import {
   computed, defineComponent, Ref, ref,
 } from '@vue/composition-api';
+import { CategoryInterface } from 'src/Models/Category';
+import { TestSuiteInterface } from 'src/Models/TestSuite';
 
 export default defineComponent({
   name: 'NewTestSuiteDialog',
   props: {
-    category: {
+    Category: {
       type: Object,
       required: true,
     },
@@ -126,7 +128,7 @@ export default defineComponent({
   components: {},
   setup(props, context) {
     const dialogRef: Ref<any> = ref(null);
-    const id = ref('');
+    const codeName = ref('');
     const name = ref('');
     const author = ref('');
     const description = ref('');
@@ -155,19 +157,22 @@ export default defineComponent({
     }
 
     function onOKClick() {
-      console.log('category', props.category);
+      console.log('Category', props.Category);
+      const Category = props.Category as CategoryInterface
       // on OK, it is REQUIRED to
       // emit "ok" event (with optional payload)
       // before hiding the QDialog
       // console.log('sdfsd', context.root.$emit)
-      context.emit('ok', {
-        categoryId: props.category.Id,
-        tsId: id.value,
-        name: name.value,
-        author: author.value,
-        workItem: workItem.value,
-        description: description.value,
-      });
+      const newTestSuite: TestSuiteInterface = {
+        Id: '',
+        CodeName: codeName.value.trim(),
+        Name: name.value.trim(),
+        TestGroupIds: [],
+        Description: description.value.trim(),
+        WorkItem: workItem.value.trim(),
+        CategoryId: Category.Id,
+      }
+      context.emit('ok', newTestSuite);
       // or with payload: this.$emit('ok', { ... })
 
       // then hiding dialog
@@ -183,7 +188,7 @@ export default defineComponent({
     }
     return {
       dialogRef,
-      id,
+      codeName,
       name,
       show,
       hide,

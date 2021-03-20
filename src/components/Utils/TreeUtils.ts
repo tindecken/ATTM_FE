@@ -39,7 +39,16 @@ function paintTestCase(testCase: TestCaseInterface): TestCaseInterface {
   return { ...testCase }
 }
 
+function paintTestSuite(testSuite: TestSuiteInterface): TestSuiteInterface {
+  testSuite.nodeKey = testSuite.Id
+  testSuite.label = `${testSuite.CodeName}: ${testSuite.Name}`
+  testSuite.icon = 'reorder'
+  testSuite.nodeType = 'TestSuite'
+  return { ...testSuite }
+}
+
 export {
   paintCategories,
   paintTestCase,
+  paintTestSuite,
 }
