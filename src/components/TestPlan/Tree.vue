@@ -72,6 +72,9 @@ import TreeContextMenu from './ContextMenu/TreeContextMenu.vue'
 import NewTestSuiteDialog from './Dialog/NewTestSuiteDialog.vue'
 import NewTestGroupDialog from './Dialog/NewTestGroupDialog.vue'
 import NewTestCaseDialog from './Dialog/NewTestCaseDialog.vue'
+import { TestGroupInterface } from 'src/Models/TestGroup';
+import { TestCaseInterface } from 'src/Models/TestCase';
+import { TestSuiteInterface } from 'src/Models/TestSuite';
 
 export default defineComponent({
   name: 'Tree',
@@ -213,10 +216,9 @@ export default defineComponent({
       }
     }
 
-    function onNewTestSuite(node: any) {
-      console.log('node', node)
+    function onNewTestSuite(category: CategoryInterface) {
       // check if current node is not Category --> return
-      if (node.nodeType !== 'Category') {
+      if (category.nodeType !== 'Category') {
         context.root.$q.notify({
           type: 'negative',
           message: 'Something errors, node Type is not Category',
@@ -227,9 +229,9 @@ export default defineComponent({
       context.root.$q.dialog({
         component: NewTestSuiteDialog,
         parent: context.root,
-        category: node,
-      }).onOk((tsInfo: any) => {
-        onCreateTestSuite(tsInfo)
+        category,
+      }).onOk((newTestSuite: TestSuiteInterface) => {
+        onCreateTestSuite(newTestSuite)
       }).onCancel(() => {
         console.log('Cancel')
       }).onDismiss(() => {
@@ -260,10 +262,9 @@ export default defineComponent({
         console.log('Called on OK or Cancel')
       })
     }
-    function onNewTestCase(node: any) {
-      console.log('node', node)
+    function onNewTestCase(testGroup: TestGroupInterface) {
       // check if current node is not TestGroup --> return
-      if (node.nodeType !== 'TestGroup') {
+      if (testGroup.nodeType !== 'TestGroup') {
         context.root.$q.notify({
           type: 'negative',
           message: 'Something errors, node Type is not TestGroup',
@@ -274,12 +275,9 @@ export default defineComponent({
       context.root.$q.dialog({
         component: NewTestCaseDialog,
         parent: context.root,
-        testGroup: node,
-        catId: node.catId,
-        tsId: node.tsId,
-        tgId: node.tgId,
-      }).onOk((tcInfo: any) => {
-        onCreateTestCase(tcInfo)
+        testGroup,
+      }).onOk((newTestCase: TestCaseInterface) => {
+        onCreateTestCase(newTestCase)
       }).onCancel(() => {
         console.log('Cancel')
       }).onDismiss(() => {

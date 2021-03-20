@@ -31,6 +31,15 @@ function paintCategories(cats: CategoryInterface[]): CategoryInterface[] {
   })
 }
 
+function paintTestCase(testCase: TestCaseInterface): TestCaseInterface {
+  testCase.nodeKey = testCase.Id
+  testCase.label = `${testCase.CodeName}: ${testCase.Name}`
+  testCase.icon = 'list_alt'
+  testCase.nodeType = 'TestCase'
+  return { ...testCase }
+}
+
 export {
   paintCategories,
+  paintTestCase,
 }

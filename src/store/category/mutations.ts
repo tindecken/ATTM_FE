@@ -3,6 +3,9 @@ import _ from 'lodash'
 import { MutationTree } from 'vuex';
 import { CategoryInterface } from 'src/Models/Category';
 import { CategoryStateInterface } from './state';
+import { TestSuiteInterface } from 'src/Models/TestSuite';
+import { TestGroupInterface } from 'src/Models/TestGroup';
+import { TestCaseInterface } from 'src/Models/TestCase';
 
 const mutation: MutationTree<CategoryStateInterface> = {
   setSelectedCategory(state: CategoryStateInterface, payload) {
@@ -62,22 +65,22 @@ const mutation: MutationTree<CategoryStateInterface> = {
     testCase.catId = payload.catId
     testCase.tsId = payload.tsId
     testCase.tgId = payload.tgId
-    tempCat.TestSuites[tsIndex].TestGroups[tgIndex].TestCases.push(testCase)
+    tempCat.children[tsIndex].children[tgIndex].TestCases.push(testCase)
     Vue.set(state.Categories, catIndex, tempCat)
   },
   updateTestCase(state: CategoryStateInterface, testcase) {
     console.log('updateTestCase, testcase:', testcase)
-    const catIndex = state.Categories.findIndex((cat: any) => cat.name === testcase.CategoryName);
+    const catIndex = state.Categories.findIndex((cat: CategoryInterface) => cat.Name === testcase.CategoryName);
     const tempCat = _.cloneDeep(state.Categories[catIndex])
     console.log('tempCat', tempCat)
     // find tsIndex
-    const tsIndex = tempCat.TestSuites.findIndex((ts: any) => ts.Id === testcase.TestSuiteId)
+    const tsIndex = tempCat.children.findIndex((ts: TestSuiteInterface) => ts.CodeName === testcase.TestSuiteCodeName)
     console.log('tsIndex', tsIndex)
     // find tgIndex
-    const tgIndex = tempCat.TestSuites[tsIndex].TestGroups.findIndex((tg: any) => tg.Id === testcase.TestGroupId)
+    const tgIndex = tempCat.children[tsIndex].children.findIndex((tg: TestGroupInterface) => tg.CodeName === testcase.TestGroupCodeName)
     console.log('tgIndex', tgIndex)
-    const tcIndex = tempCat.TestSuites[tsIndex].TestGroups[tgIndex].TestCases.findIndex((tc: any) => tc.Id === testcase.Id)
-    tempCat.TestSuites[tsIndex].TestGroups[tgIndex].TestCases[tcIndex] = testcase
+    const tcIndex = tempCat.children[tsIndex].children[tgIndex].children.findIndex((tc: TestCaseInterface) => tc.Id === testcase.Id)
+    tempCat.children[tsIndex].children[tgIndex].children[tcIndex] = testcase
     Vue.set(state.Categories, catIndex, tempCat)
   },
 }

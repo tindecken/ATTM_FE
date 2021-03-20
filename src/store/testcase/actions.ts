@@ -3,6 +3,7 @@ import axios from 'axios';
 import { StateInterface } from '../index';
 import { TestCaseStateInterface } from './state';
 import config from '../../config';
+import { paintTestCase } from '../../components/Utils/TreeUtils'
 
 const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
   async getTestCasebyId(context, id) {
@@ -19,16 +20,19 @@ const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
           },
         },
       );
-      const testcase = await response.data;
+      let testcase = await response.data;
       console.log('response data', testcase);
+
+      testcase = paintTestCase(testcase);
+
       context.commit('setopenedTCs', testcase);
       context.commit('setopenedSelectedTC', testcase.Id)
     } catch (error) {
       throw error;
     }
   },
-  updateopenedTCs(context, value) {
-    context.commit('updateopenedTCs', value)
+  updateOpenedTCs(context, value) {
+    context.commit('updateOpenedTCs', value)
   },
   async saveTestCase(context, tc) {
     try {

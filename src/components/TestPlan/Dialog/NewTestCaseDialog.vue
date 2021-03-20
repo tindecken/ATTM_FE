@@ -18,11 +18,11 @@
         <div class="row">
           <div class="col-4 q-mr-sm">
             <q-input
-              label="Id"
+              label="Code Name"
               outlined
               dense
               autofocus
-              v-model="id"
+              v-model="codeName"
               @blur="validateForm()"
               :rules="[
                 val => !!val || '* Required',
@@ -126,6 +126,8 @@
 import {
   computed, defineComponent, Ref, ref,
 } from '@vue/composition-api';
+import { TestCaseInterface } from 'src/Models/TestCase';
+import { TestGroupInterface } from 'src/Models/TestGroup';
 
 export default defineComponent({
   name: 'NewTestCaseDialog',
@@ -134,23 +136,11 @@ export default defineComponent({
       type: Object,
       required: true,
     },
-    catId: {
-      type: String,
-      required: true,
-    },
-    tsId: {
-      type: String,
-      required: true,
-    },
-    tgId: {
-      type: String,
-      required: true,
-    },
   },
   components: {},
   setup(props, context) {
     const dialogRef: Ref<any> = ref(null);
-    const id = ref('');
+    const codeName = ref('');
     const name = ref('');
     const author = ref('');
     const description = ref('');
@@ -181,23 +171,39 @@ export default defineComponent({
 
     function onOKClick() {
       console.log('testgroup', props.testGroup);
+      const testGroup = props.testGroup as TestGroupInterface
       // on OK, it is REQUIRED to
       // emit "ok" event (with optional payload)
       // before hiding the QDialog
       // console.log('sdfsd', context.root.$emit)
-      context.emit('ok', {
-        tgMongoId: props.testGroup.Id,
-        catId: props.catId,
-        tsId: props.tsId,
-        tcId: id.value,
-        name: name.value,
-        author: author.value,
-        workItem: workItem.value,
-        testCaseType: type.value,
-        description: description.value,
-        tgId: props.tgId,
-        tgName: props.testGroup.Name,
-      });
+      const newTestCase: TestCaseInterface = {
+        CodeName: codeName.value,
+        Id: '',
+        Name: name.value,
+        TestSteps: [],
+        WorkItem: workItem.value,
+        Description: description.value,
+        TestCaseType: type.value,
+        Designer: author.value,
+        CategoryId: testGroup.CategoryId,
+        TestSuiteId: testGroup.TestSuiteId,
+        TestGroupId: testGroup.Id,
+      }
+      context.emit('ok', newTestCase)
+      // {
+      //   // tgMongoId: props.testGroup.Id,
+      //   // catId: props.catId,
+      //   // tsId: props.tsId,
+      //   // tcId: id.value,
+      //   // name: name.value,
+      //   // author: author.value,
+      //   // workItem: workItem.value,
+      //   // testCaseType: type.value,
+      //   // description: description.value,
+      //   // tgId: props.tgId,
+      //   // tgName: props.testGroup.Name,
+      // }
+      // );
       // or with payload: this.$emit('ok', { ... })
 
       // then hiding dialog
@@ -213,7 +219,7 @@ export default defineComponent({
     }
     return {
       dialogRef,
-      id,
+      codeName,
       name,
       show,
       hide,

@@ -7,6 +7,8 @@ export interface TestGroupInterface {
     Description: string;
     WorkItem: string;
     TestCases: TestCaseInterface[];
+    CategoryId: string;
+    TestSuiteId: string;
     children: TestCaseInterface[];
     nodeKey: string;
     label: string;
