@@ -6,7 +6,7 @@ import config from '../../config';
 import { paintTestCase } from '../../components/Utils/TreeUtils'
 
 const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
-  async getTestCasebyId(context, id) {
+  async getTestCaseById(context, id) {
     // eslint-disable-next-line no-useless-catch
     try {
       console.log('context', context)
@@ -20,13 +20,13 @@ const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
           },
         },
       );
-      let testcase = await response.data;
-      console.log('response data', testcase);
+      let testCase = await response.data;
+      console.log('response data', testCase);
 
-      testcase = paintTestCase(testcase);
+      testCase = paintTestCase(testCase);
 
-      context.commit('setopenedTCs', testcase);
-      context.commit('setopenedSelectedTC', testcase.Id)
+      context.commit('setOpenedTCs', testCase);
+      context.commit('setOpenedSelectedTC', testCase.Id)
     } catch (error) {
       throw error;
     }

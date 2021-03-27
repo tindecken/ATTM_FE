@@ -5,6 +5,10 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "vetur.experimental.templateInterpolationService": true,
   "cSpell.words": [
-    "testsuite"
+    "testsuite",
+    "testsuites"
+  ],
+  "cSpell.ignoreWords": [
+    "testgroups"
   ]
 }

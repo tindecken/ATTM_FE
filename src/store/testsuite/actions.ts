@@ -1,16 +1,17 @@
 import { ActionTree } from 'vuex';
 import axios from 'axios';
+import { TestGroupInterface } from 'src/Models/TestGroup';
 import { StateInterface } from '../index';
 import { TestSuiteStateInterface } from './state';
 import config from '../../config';
 
 const actions: ActionTree<TestSuiteStateInterface, StateInterface> = {
-  async createTestGroup(context, payload) {
+  async createTestGroup(context, newTestGroup: TestGroupInterface) {
     try {
       // create in database
       const response = await axios.post(
-        `${config.baseURL}/testsuites/${payload.testSuiteId}/testgroups`,
-        payload,
+        `${config.baseURL}/testsuites/${newTestGroup.TestSuiteId}/testgroups`,
+        newTestGroup,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -18,14 +19,11 @@ const actions: ActionTree<TestSuiteStateInterface, StateInterface> = {
           },
         },
       )
-      const responseData = await response.data;
+      console.log('response', response)
+      const responseTestGroup = await response.data as TestGroupInterface;
       // create in vuex
       // commit to category module
-      context.commit('category/createTestGroup', {
-        catId: payload.catId,
-        tsId: payload.testSuiteId,
-        tg: responseData,
-      }, { root: true });
+      context.commit('category/createTestGroup', responseTestGroup, { root: true });
     } catch (error) {
       throw error.response.data;
     }

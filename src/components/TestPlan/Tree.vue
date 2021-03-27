@@ -68,13 +68,13 @@ import {
 } from '@vue/composition-api';
 
 import { CategoryInterface } from 'src/Models/Category';
+import { TestGroupInterface } from 'src/Models/TestGroup';
+import { TestCaseInterface } from 'src/Models/TestCase';
+import { TestSuiteInterface } from 'src/Models/TestSuite';
 import TreeContextMenu from './ContextMenu/TreeContextMenu.vue'
 import NewTestSuiteDialog from './Dialog/NewTestSuiteDialog.vue'
 import NewTestGroupDialog from './Dialog/NewTestGroupDialog.vue'
 import NewTestCaseDialog from './Dialog/NewTestCaseDialog.vue'
-import { TestGroupInterface } from 'src/Models/TestGroup';
-import { TestCaseInterface } from 'src/Models/TestCase';
-import { TestSuiteInterface } from 'src/Models/TestSuite';
 
 export default defineComponent({
   name: 'Tree',
@@ -114,9 +114,9 @@ export default defineComponent({
           const found = openedTCs.some((el: any) => el.Id === currentNode.Id);
           if (found) {
             const testcase = openedTCs.find((el: any) => el.Id === currentNode.Id)
-            context.root.$store.commit('testcase/setopenedTCs', testcase);
+            context.root.$store.commit('testcase/setOpenedTCs', testcase);
           } else {
-            await context.root.$store.dispatch('testcase/getTestCasebyId', currentNode.Id);
+            await context.root.$store.dispatch('testcase/getTestCaseById', currentNode.Id);
           }
           break
         default:
@@ -184,10 +184,10 @@ export default defineComponent({
         });
       }
     }
-    async function onCreateTestGroup(tgInfo: any) {
+    async function onCreateTestGroup(newTestGroup: TestGroupInterface) {
       try {
-        console.log('tgInfo', tgInfo);
-        await context.root.$store.dispatch('testsuite/createTestGroup', tgInfo);
+        console.log('newTestGroup', newTestGroup);
+        await context.root.$store.dispatch('testsuite/createTestGroup', newTestGroup);
         context.root.$q.notify({
           type: 'positive',
           message: 'Created new test group !',
@@ -238,10 +238,10 @@ export default defineComponent({
         console.log('Called on OK or Cancel')
       })
     }
-    function onNewTestGroup(node: any) {
-      console.log('node', node)
+    function onNewTestGroup(TestSuite: TestSuiteInterface) {
+      console.log('TestSuite', TestSuite)
       // check if current node is not TestSuite --> return
-      if (node.nodeType !== 'TestSuite') {
+      if (TestSuite.nodeType !== 'TestSuite') {
         context.root.$q.notify({
           type: 'negative',
           message: 'Something errors, node Type is not TestSuite',
@@ -252,10 +252,9 @@ export default defineComponent({
       context.root.$q.dialog({
         component: NewTestGroupDialog,
         parent: context.root,
-        testsuite: node,
-        catId: node.catId,
-      }).onOk((tgInfo: any) => {
-        onCreateTestGroup(tgInfo)
+        TestSuite,
+      }).onOk((newTestGroup: TestGroupInterface) => {
+        onCreateTestGroup(newTestGroup)
       }).onCancel(() => {
         console.log('Cancel')
       }).onDismiss(() => {

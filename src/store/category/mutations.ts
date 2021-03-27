@@ -6,7 +6,7 @@ import { TestSuiteInterface } from 'src/Models/TestSuite';
 import { TestGroupInterface } from 'src/Models/TestGroup';
 import { TestCaseInterface } from 'src/Models/TestCase';
 import { CategoryStateInterface } from './state';
-import { paintTestSuite } from '../../components/Utils/TreeUtils'
+import { paintTestSuite, paintTestGroup } from '../../components/Utils/TreeUtils'
 
 const mutation: MutationTree<CategoryStateInterface> = {
   setSelectedCategory(state: CategoryStateInterface, payload) {
@@ -26,22 +26,17 @@ const mutation: MutationTree<CategoryStateInterface> = {
     tempCat.children.push(responseTestSuite)
     Vue.set(state.Categories, catIndex, tempCat)
   },
-  createTestGroup(state: CategoryStateInterface, payload) {
-    console.log('payload', payload)
-    const catIndex = state.Categories.findIndex((cat: any) => cat.Id === payload.catId);
+  createTestGroup(state: CategoryStateInterface, testGroup: TestGroupInterface) {
+    console.log('testGroup', testGroup)
+    const catIndex = state.Categories.findIndex((cat: CategoryInterface) => cat.Id === testGroup.CategoryId);
     const tempCat = _.cloneDeep(state.Categories[catIndex])
     console.log('tempCat', tempCat)
     // find tsIndex
-    const tsIndex = tempCat.TestSuites.findIndex((ts: any) => ts.Id === payload.tsId)
+    const tsIndex = tempCat.TestSuiteIds.findIndex((tsId: string) => tsId === testGroup.TestSuiteId)
     console.log('tsIndex', tsIndex)
-    const testGroup = payload.tg
-    // add some need property related to treeNode
-    testGroup.label = `${testGroup.tgId}: ${testGroup.Name}`
-    testGroup.nodeType = 'TestGroup'
-    testGroup.children = []
-    testGroup.catId = payload.catId
-    testGroup.tsId = payload.tsId
-    tempCat.TestSuites[tsIndex].TestGroups.push(testGroup)
+    testGroup = paintTestGroup(testGroup)
+    tempCat.children[tsIndex].TestGroupIds.push(testGroup.Id)
+    tempCat.children[tsIndex].children.push(testGroup)
     Vue.set(state.Categories, catIndex, tempCat)
   },
   createTestCase(state: CategoryStateInterface, payload) {

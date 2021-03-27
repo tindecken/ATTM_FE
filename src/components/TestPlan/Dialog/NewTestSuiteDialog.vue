@@ -159,10 +159,6 @@ export default defineComponent({
     function onOKClick() {
       console.log('Category', props.Category);
       const Category = props.Category as CategoryInterface
-      // on OK, it is REQUIRED to
-      // emit "ok" event (with optional payload)
-      // before hiding the QDialog
-      // console.log('sdfsd', context.root.$emit)
       const newTestSuite: TestSuiteInterface = {
         Id: '',
         CodeName: codeName.value.trim(),
@@ -171,6 +167,7 @@ export default defineComponent({
         Description: description.value.trim(),
         WorkItem: workItem.value.trim(),
         CategoryId: Category.Id,
+        children: [],
       }
       context.emit('ok', newTestSuite);
       // or with payload: this.$emit('ok', { ... })

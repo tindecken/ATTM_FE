@@ -5,7 +5,7 @@ import _ from 'lodash'
 import { TestCaseStateInterface } from './state';
 
 const mutation: MutationTree<TestCaseStateInterface> = {
-  setopenedTCs(state: TestCaseStateInterface, testcase) {
+  setOpenedTCs(state: TestCaseStateInterface, testcase) {
     const found = state.openedTCs.some((el: any) => el.Id === testcase.Id);
     if (!found) {
       state.openedTCs.push(testcase);
@@ -17,7 +17,7 @@ const mutation: MutationTree<TestCaseStateInterface> = {
     Vue.set(state.openedTCs, index, testcase)
     console.log('state.openedTCs', state.openedTCs)
   },
-  setopenedSelectedTC(state: TestCaseStateInterface, payload) {
+  setOpenedSelectedTC(state: TestCaseStateInterface, payload) {
     state.openedSelectedTC = payload;
   },
   removeOpennedTC(state: TestCaseStateInterface, testCaseId) {

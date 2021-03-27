@@ -4,14 +4,14 @@ export interface TestGroupInterface {
     Id: string;
     CodeName: string;
     Name: string;
-    Description: string;
-    WorkItem: string;
-    TestCases: TestCaseInterface[];
+    Description?: string;
+    WorkItem?: string;
+    TestCaseIds?: string[];
     CategoryId: string;
     TestSuiteId: string;
     children: TestCaseInterface[];
-    nodeKey: string;
-    label: string;
-    icon: string;
-    nodeType: string;
+    nodeKey?: string;
+    label?: string;
+    icon?: string;
+    nodeType?: string;
 }

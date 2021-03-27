@@ -18,11 +18,11 @@
         <div class="row">
           <div class="col-4 q-mr-sm">
             <q-input
-              label="Id"
+              label="Code Name"
               outlined
               dense
               autofocus
-              v-model="id"
+              v-model="codeName"
               @blur="validateForm()"
               :rules="[
                 val => !!val || '* Required',
@@ -114,23 +114,21 @@
 import {
   computed, defineComponent, Ref, ref,
 } from '@vue/composition-api';
+import { TestGroupInterface } from 'src/Models/TestGroup';
+import { TestSuiteInterface } from 'src/Models/TestSuite';
 
 export default defineComponent({
   name: 'NewTestGroupDialog',
   props: {
-    testsuite: {
+    TestSuite: {
       type: Object,
-      required: true,
-    },
-    catId: {
-      type: String,
       required: true,
     },
   },
   components: {},
   setup(props, context) {
     const dialogRef: Ref<any> = ref(null);
-    const id = ref('');
+    const codeName = ref('');
     const name = ref('');
     const author = ref('');
     const description = ref('');
@@ -159,20 +157,20 @@ export default defineComponent({
     }
 
     function onOKClick() {
-      console.log('testsuite', props.testsuite);
-      // on OK, it is REQUIRED to
-      // emit "ok" event (with optional payload)
-      // before hiding the QDialog
-      // console.log('sdfsd', context.root.$emit)
-      context.emit('ok', {
-        testSuiteId: props.testsuite.Id,
-        catId: props.catId,
-        tgId: id.value,
-        name: name.value,
-        author: author.value,
-        workItem: workItem.value,
-        description: description.value,
-      });
+      const TestSuite = props.TestSuite as TestSuiteInterface
+      const newTestGroup: TestGroupInterface = {
+        Id: '',
+        CodeName: codeName.value.trim(),
+        Name: name.value.trim(),
+        TestCaseIds: [],
+        Description: description.value.trim(),
+        WorkItem: workItem.value.trim(),
+        TestSuiteId: TestSuite.Id,
+        CategoryId: TestSuite.CategoryId,
+        children: [],
+      }
+      console.log('newTestGroup', newTestGroup)
+      context.emit('ok', newTestGroup);
       // or with payload: this.$emit('ok', { ... })
 
       // then hiding dialog
@@ -188,7 +186,7 @@ export default defineComponent({
     }
     return {
       dialogRef,
-      id,
+      codeName,
       name,
       show,
       hide,

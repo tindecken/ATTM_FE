@@ -6,9 +6,9 @@ export interface TestSuiteInterface {
     Name: string;
     Description?: string;
     WorkItem?: string;
-    TestGroupIds: TestGroupInterface[];
+    TestGroupIds: string[];
     CategoryId: string;
-    children?: TestGroupInterface[];
+    children: TestGroupInterface[];
     nodeKey?: string;
     label?: string;
     icon?: string;

@@ -31,14 +31,6 @@ function paintCategories(cats: CategoryInterface[]): CategoryInterface[] {
   })
 }
 
-function paintTestCase(testCase: TestCaseInterface): TestCaseInterface {
-  testCase.nodeKey = testCase.Id
-  testCase.label = `${testCase.CodeName}: ${testCase.Name}`
-  testCase.icon = 'list_alt'
-  testCase.nodeType = 'TestCase'
-  return { ...testCase }
-}
-
 function paintTestSuite(testSuite: TestSuiteInterface): TestSuiteInterface {
   testSuite.nodeKey = testSuite.Id
   testSuite.label = `${testSuite.CodeName}: ${testSuite.Name}`
@@ -47,8 +39,25 @@ function paintTestSuite(testSuite: TestSuiteInterface): TestSuiteInterface {
   return { ...testSuite }
 }
 
+function paintTestGroup(testGroup: TestGroupInterface): TestGroupInterface {
+  testGroup.nodeKey = testGroup.Id
+  testGroup.label = `${testGroup.CodeName}: ${testGroup.Name}`
+  testGroup.icon = 'grid_view'
+  testGroup.nodeType = 'TestGroup'
+  return { ...testGroup }
+}
+
+function paintTestCase(testCase: TestCaseInterface): TestCaseInterface {
+  testCase.nodeKey = testCase.Id
+  testCase.label = `${testCase.CodeName}: ${testCase.Name}`
+  testCase.icon = 'list_alt'
+  testCase.nodeType = 'TestCase'
+  return { ...testCase }
+}
+
 export {
   paintCategories,
-  paintTestCase,
   paintTestSuite,
+  paintTestGroup,
+  paintTestCase,
 }
