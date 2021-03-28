@@ -1,6 +1,8 @@
+import { TestAUTInterface } from "src/Models/TestAUT";
+
 export interface GlobalStateInterface {
   darkTheme: boolean,
-  testAUTs: [],
+  testAUTs: TestAUTInterface[],
 }
 
 const state: GlobalStateInterface = {

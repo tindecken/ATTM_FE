@@ -8,7 +8,7 @@ const getters: GetterTree<GlobalStateInterface, StateInterface> = {
   },
   testAuTs(state: GlobalStateInterface) {
     return state.testAUTs;
-  }
+  },
 };
 
 export default getters;
