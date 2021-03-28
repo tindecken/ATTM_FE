@@ -1,11 +1,11 @@
 import { ActionTree } from 'vuex';
 import axios from 'axios';
 import { CategoryInterface } from 'src/Models/Category';
+import { TestSuiteInterface } from 'src/Models/TestSuite';
 import { StateInterface } from '../index';
 import { CategoryStateInterface } from './state';
 import config from '../../config';
 import { paintCategories } from '../../components/Utils/TreeUtils'
-import { TestSuiteInterface } from 'src/Models/TestSuite';
 
 const actions: ActionTree<CategoryStateInterface, StateInterface> = {
   async getAllCategories(context) {

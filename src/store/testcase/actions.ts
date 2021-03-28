@@ -26,7 +26,7 @@ const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
       testCase = paintTestCase(testCase);
 
       context.commit('setOpenedTCs', testCase);
-      context.commit('setOpenedSelectedTC', testCase.Id)
+      context.commit('setSelectedTestCase', testCase)
     } catch (error) {
       throw error;
     }

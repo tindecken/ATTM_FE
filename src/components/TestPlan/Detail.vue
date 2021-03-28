@@ -4,7 +4,7 @@
     <div class="row">
       <div class="col">
         <q-tabs
-          v-model="openedSelectedTC"
+          v-model="selectedTestCase.Id"
           dense
           active-color="primary"
           align="left"
@@ -18,7 +18,7 @@
         </q-tabs>
 
         <q-tab-panels
-          v-model="openedSelectedTC"
+          v-model="selectedTestCase.Id"
           animated
           keep-alive
           >
@@ -27,7 +27,7 @@
               dense
               :data="tc.TestSteps"
               :columns="columns"
-              row-key="UUID"
+              row-key="Id"
               :hide-pagination="true"
               separator="cell"
               :wrap-cells="false"
@@ -115,8 +115,8 @@
                 </q-tr>
               </template>
             </q-table>
-            <q-btn color="primary" label="New Step" @click="addNewStep()"></q-btn>
-            <q-btn color="primary" label="Save" @click="saveTestCase()"></q-btn>
+            <q-btn color="primary" label="New Step" @click="addNewStep(selectedTestCase)"></q-btn>
+            <q-btn color="primary" label="Save" @click="saveTestCase(selectedTestCase)"></q-btn>
           </q-tab-panel>
         </q-tab-panels>
       </div>
@@ -135,6 +135,8 @@ import {
 } from '@vue/composition-api'
 import _ from 'lodash'
 import { TestCaseInterface } from 'src/Models/TestCase';
+import { TestParamInterface } from 'src/Models/TestParam';
+import { TestStepInterface } from 'src/Models/TestStep';
 import DetailContextMenu from './ContextMenu/DetailContextMenu.vue'
 
 export default defineComponent({
@@ -359,15 +361,15 @@ export default defineComponent({
         },
       ],
     )
-    const openedSelectedTC = computed({
+    const selectedTestCase: Ref<TestCaseInterface> = computed({
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      get: () => context.root.$store.getters['testcase/openedSelectedTC'],
+      get: () => context.root.$store.getters['testcase/selectedTestCase'],
       set: (val) => {
-        context.root.$store.commit('testcase/setOpenedSelectedTC', val);
+        context.root.$store.commit('testcase/setSelectedTestCase', val);
       },
     })
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const openedTCs = computed(() => context.root.$store.getters['testcase/openedTCs'])
+    const openedTCs: Ref<TestCaseInterface[]> = computed(() => context.root.$store.getters['testcase/openedTCs'])
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const keywords = computed(() => context.root.$store.getters['keyword/keywords'])
     const keywordDatas: Ref<any[]> = ref([]);
@@ -397,7 +399,7 @@ export default defineComponent({
       tempTC.TestSteps[payload.stepIndex][payload.property] = newKeyword.Name;
       tempTC.TestSteps[payload.stepIndex].Feature = newKeyword.Feature;
       tempTC.TestSteps[payload.stepIndex].Params = []
-      newKeyword.Params.forEach((pr: any) => {
+      newKeyword.Params.forEach((pr: TestParamInterface) => {
         tempTC.TestSteps[payload.stepIndex].Params.push(pr)
       })
       console.log('payload.testcase', payload.testcase)
@@ -454,11 +456,11 @@ export default defineComponent({
         selected.value.push(row)
       }
     }
-    function getRowIndexByUUID(currentTest: any, uuid: any) {
+    function getRowIndexByUUID(currentTest: TestCaseInterface, uuid: any) {
       console.log('uuid', uuid)
       console.log('currentTest', currentTest)
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      const index: number = currentTest.TestSteps.findIndex((step: any) => step.UUID === uuid)
+      const index: number = currentTest.TestSteps.findIndex((step: TestStepInterface) => step.UUID === uuid)
       if (index === -1) return 0
       return index
     }
@@ -472,10 +474,10 @@ export default defineComponent({
         if (matched) { // Had already selected this one --> do nothing
         } else { // New selection - add it and any between
           // find selected testcase
-          const currTestCase = openedTCs.value.find((tc: any) => tc.Id === openedSelectedTC.value)
+          const currTestCase = openedTCs.value.find((tc: TestCaseInterface) => tc.Id === selectedTestCase.value.Id) as TestCaseInterface
 
           // find previous selected teststep
-          const previousSelectedStep = currTestCase.TestSteps.find((step: any) => step.UUID === selected.value[0].UUID)
+          const previousSelectedStep = currTestCase.TestSteps.find((step: TestStepInterface) => step.UUID === selected.value[0].UUID) as TestStepInterface
 
           // get index for previousSelectedStep and currentSelectedStep
           const previousIndex = getRowIndexByUUID(currTestCase, previousSelectedStep.UUID)
@@ -523,28 +525,26 @@ export default defineComponent({
       })
     }
 
-    function addNewStep() {
-      context.root.$store.commit('testcase/addNewStep');
+    function addNewStep(testCase: TestCaseInterface) {
+      context.root.$store.commit('testcase/addNewStep', testCase);
     }
 
     function onDeleteRows() {
       console.log('onDeleteRows')
-      const currTestCase = openedTCs.value.find((tc: any) => tc.Id === openedSelectedTC.value)
+      const currTestCase = openedTCs.value.find((tc: any) => tc.Id === selectedTestCase.value.Id) as TestCaseInterface
       selected.value.forEach((selectedRow: any) => {
-        currTestCase.TestSteps.forEach((testStep: any) => {
+        currTestCase.TestSteps.forEach((testStep: TestStepInterface) => {
           if (testStep.UUID === selectedRow.UUID) {
             console.log('delete me', testStep)
-            context.root.$store.commit('testcase/deleteStep', { testCaseId: openedSelectedTC.value, stepUUID: selectedRow.UUID });
+            context.root.$store.commit('testcase/deleteStep', { testCaseId: selectedTestCase.value.Id, stepUUID: selectedRow.UUID });
           }
         })
       })
     }
 
-    async function saveTestCase() {
+    async function saveTestCase(testCase: TestCaseInterface) {
       try {
-        const currTestCase = openedTCs.value.find((tc: any) => tc.Id === openedSelectedTC.value)
-        console.log('currTestCase', currTestCase)
-        const result = await context.root.$store.dispatch('testcase/saveTestCase', currTestCase)
+        const result = await context.root.$store.dispatch('testcase/saveTestCase', testCase)
         console.log('result', result)
         context.root.$q.notify({
           type: 'positive',
@@ -583,7 +583,7 @@ export default defineComponent({
       showByIndex,
       columns,
       openedTCs,
-      openedSelectedTC,
+      selectedTestCase,
       closeTab,
       changeParam,
       changeKeyword,

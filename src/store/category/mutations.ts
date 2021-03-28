@@ -6,7 +6,7 @@ import { TestSuiteInterface } from 'src/Models/TestSuite';
 import { TestGroupInterface } from 'src/Models/TestGroup';
 import { TestCaseInterface } from 'src/Models/TestCase';
 import { CategoryStateInterface } from './state';
-import { paintTestSuite, paintTestGroup } from '../../components/Utils/TreeUtils'
+import { paintTestSuite, paintTestGroup, paintTestCase } from '../../components/Utils/TreeUtils'
 
 const mutation: MutationTree<CategoryStateInterface> = {
   setSelectedCategory(state: CategoryStateInterface, payload) {
@@ -39,25 +39,18 @@ const mutation: MutationTree<CategoryStateInterface> = {
     tempCat.children[tsIndex].children.push(testGroup)
     Vue.set(state.Categories, catIndex, tempCat)
   },
-  createTestCase(state: CategoryStateInterface, payload) {
-    console.log('payloaddddddd', payload)
-    const catIndex = state.Categories.findIndex((cat: CategoryInterface) => cat.Id === payload.catId);
+  createTestCase(state: CategoryStateInterface, testCase: TestCaseInterface) {
+    const catIndex = state.Categories.findIndex((cat: CategoryInterface) => cat.Id === testCase.CategoryId);
     const tempCat = _.cloneDeep(state.Categories[catIndex])
     console.log('tempCat', tempCat)
     // find tsIndex
-    const tsIndex = tempCat.TestSuites.findIndex((ts: any) => ts.Id === payload.tsId)
+    const tsIndex = tempCat.TestSuiteIds.findIndex((tsId: string) => tsId === testCase.TestSuiteId)
     console.log('tsIndex', tsIndex)
     // find tgIndex
-    const tgIndex = tempCat.TestSuites[tsIndex].TestGroups.findIndex((tg: any) => tg.Id === payload.tgMongoId)
+    const tgIndex = tempCat.children[tsIndex].TestGroupIds.findIndex((tgId: string) => tgId === testCase.TestGroupId)
     console.log('tgIndex', tgIndex)
-    const testCase = payload.tc
-    // add some need property related to treeNode
-    testCase.label = `${testCase.tcId}: ${testCase.Name}`
-    testCase.nodeType = 'TestCase'
-    testCase.catId = payload.catId
-    testCase.tsId = payload.tsId
-    testCase.tgId = payload.tgId
-    tempCat.children[tsIndex].children[tgIndex].TestCases.push(testCase)
+    testCase = paintTestCase(testCase)
+    tempCat.children[tsIndex].children[tgIndex].children.push(testCase)
     Vue.set(state.Categories, catIndex, tempCat)
   },
   updateTestCase(state: CategoryStateInterface, testcase) {

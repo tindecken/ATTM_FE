@@ -190,22 +190,6 @@ export default defineComponent({
         TestGroupId: testGroup.Id,
       }
       context.emit('ok', newTestCase)
-      // {
-      //   // tgMongoId: props.testGroup.Id,
-      //   // catId: props.catId,
-      //   // tsId: props.tsId,
-      //   // tcId: id.value,
-      //   // name: name.value,
-      //   // author: author.value,
-      //   // workItem: workItem.value,
-      //   // testCaseType: type.value,
-      //   // description: description.value,
-      //   // tgId: props.tgId,
-      //   // tgName: props.testGroup.Name,
-      // }
-      // );
-      // or with payload: this.$emit('ok', { ... })
-
       // then hiding dialog
       hide();
     }

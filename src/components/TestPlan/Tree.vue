@@ -200,10 +200,10 @@ export default defineComponent({
       }
     }
 
-    async function onCreateTestCase(tcInfo: any) {
+    async function onCreateTestCase(testCase: TestCaseInterface) {
       try {
-        console.log('tcInfo', tcInfo);
-        await context.root.$store.dispatch('testgroup/createTestCase', tcInfo);
+        console.log('testCase', testCase);
+        await context.root.$store.dispatch('testgroup/createTestCase', testCase);
         context.root.$q.notify({
           type: 'positive',
           message: 'Created new test case !',
@@ -262,7 +262,6 @@ export default defineComponent({
       })
     }
     function onNewTestCase(testGroup: TestGroupInterface) {
-      // check if current node is not TestGroup --> return
       if (testGroup.nodeType !== 'TestGroup') {
         context.root.$q.notify({
           type: 'negative',

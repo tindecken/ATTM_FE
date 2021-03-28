@@ -1,8 +1,8 @@
 import { ActionTree } from 'vuex';
+import axios from 'axios';
 import { StateInterface } from '../index';
 import { GlobalStateInterface } from './state';
 import config from '../../config';
-import axios from 'axios';
 
 const actions: ActionTree<GlobalStateInterface, StateInterface> = {
   switchDarkTheme(context) {
@@ -51,4 +51,4 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
     }
   },
 };
-export default actions;
+export default actions

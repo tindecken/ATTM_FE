@@ -1,44 +1,17 @@
 import { ActionTree } from 'vuex';
 import axios from 'axios';
+import { TestCaseInterface } from 'src/Models/TestCase';
 import { StateInterface } from '../index';
 import { TestGroupStateInterface } from './state';
 import config from '../../config';
 
 const actions: ActionTree<TestGroupStateInterface, StateInterface> = {
-  async createTestCase(context, payload) {
+  async createTestCase(context, testCase: TestCaseInterface) {
     try {
-      // get CategoryName by categoryId
-      const catResponse = await axios.get(
-        `${config.baseURL}/categories/${payload.catId}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/token']}`,
-          },
-        },
-      )
-      const catData = await catResponse.data
-      console.log('catData', catData)
-      // get TestSuiteName by testSuitId
-      const tsResponse = await axios.get(
-        `${config.baseURL}/testsuites/${payload.tsId}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/token']}`,
-          },
-        },
-      )
-      const tsData = await tsResponse.data
-      console.log('tsData', tsData)
       // create in database
-      payload.CategoryName = catData.name
-      payload.TestSuiteId = tsData.tsId
-      payload.TestGroupId = payload.tgId
-      console.log('payload', payload)
       const response = await axios.post(
-        `${config.baseURL}/testgroups/${payload.tgMongoId}/testcases`,
-        payload,
+        `${config.baseURL}/testgroups/${testCase.TestGroupId}/testcases`,
+        testCase,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -46,16 +19,11 @@ const actions: ActionTree<TestGroupStateInterface, StateInterface> = {
           },
         },
       )
-      const responseData = await response.data;
+      const responseTestCase = await response.data as TestCaseInterface;
+      console.log('responseTestCase', responseTestCase)
       // create in vuex
       // commit to category module
-      context.commit('category/createTestCase', {
-        catId: payload.catId,
-        tsId: payload.tsId,
-        tgId: payload.tgId,
-        tc: responseData,
-        tgMongoId: payload.tgMongoId,
-      }, { root: true });
+      context.commit('category/createTestCase', responseTestCase, { root: true });
     } catch (error) {
       throw error.response.data;
     }

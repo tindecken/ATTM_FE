@@ -6,7 +6,7 @@ export interface TestCaseInterface {
     Name: string;
     Description?: string;
     WorkItem?: string;
-    TestSteps?: TestStepInterface[];
+    TestSteps: TestStepInterface[];
     TestCaseType?: string;
     LastRunningStatus?: string;
     IsPrimary?: boolean;
