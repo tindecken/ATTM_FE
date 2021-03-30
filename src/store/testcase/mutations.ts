@@ -12,35 +12,36 @@ const mutation: MutationTree<TestCaseStateInterface> = {
     if (!found) {
       state.openedTCs.push(testCase);
     }
-    state.selectedTestCase = testCase;
+    state.selectedTestCaseId = testCase.Id;
   },
   updateOpenedTCs(state: TestCaseStateInterface, testcase) {
     const index = state.openedTCs.findIndex((tc: any) => tc.Id === testcase.Id);
     Vue.set(state.openedTCs, index, testcase)
     console.log('state.openedTCs', state.openedTCs)
   },
-  setSelectedTestCase(state: TestCaseStateInterface, testCase: TestCaseInterface) {
-    state.selectedTestCase = testCase;
+  setSelectedTestCaseId(state: TestCaseStateInterface, testCaseId: string) {
+    state.selectedTestCaseId = testCaseId;
   },
   removeOpennedTC(state: TestCaseStateInterface, testCase: TestCaseInterface) {
+    console.log('removeOpennedTC testCase', testCase)
     const index = state.openedTCs.findIndex((el: TestCaseInterface) => el.Id === testCase.Id);
     if (index !== -1) {
       state.openedTCs.splice(index, 1)
       // set selectedTestCase --> next tab
       if (state.openedTCs.length === 0) {
-        state.selectedTestCase = undefined;
+        state.selectedTestCaseId = '';
         return
       }
       if (index >= state.openedTCs.length) {
-        state.selectedTestCase = state.openedTCs[state.openedTCs.length - 1]
+        state.selectedTestCaseId = state.openedTCs[state.openedTCs.length - 1].Id
       } else {
-        state.selectedTestCase = state.openedTCs[index]
+        state.selectedTestCaseId = state.openedTCs[index].Id
       }
     }
   },
-  addNewStep(state: TestCaseStateInterface) {
+  addNewStep(state: TestCaseStateInterface, testCaseId: string) {
     // get last item to get Client Name
-    const index = state.openedTCs.findIndex((el: TestCaseInterface) => el.Id === state.selectedTestCase?.Id);
+    const index = state.openedTCs.findIndex((el: TestCaseInterface) => el.Id === testCaseId);
     if (index !== -1) {
       const tempTC = _.cloneDeep(state.openedTCs[index])
       let lastTestAUT: TestAUTInterface | undefined;

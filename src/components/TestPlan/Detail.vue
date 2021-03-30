@@ -4,12 +4,12 @@
     <div class="row">
       <div class="col">
         <q-tabs
-          v-model="selectedTestCase.Id"
+          v-model="selectedTestCaseId"
           dense
           active-color="primary"
           align="left"
           inline-label
-          @input="onTabChanging"
+          @input="onTabChanging()"
         >
           <q-tab v-for="testcase in openedTCs" :key="testcase.Id" :name="testcase.Id" :ripple="false" @mouseover="showByIndex = testcase.Id" @mouseout="showByIndex = null">
             <div class="q-mr-xs">{{testcase.Name}}</div>
@@ -18,7 +18,7 @@
         </q-tabs>
 
         <q-tab-panels
-          v-model="selectedTestCase.Id"
+          v-model="selectedTestCaseId"
           animated
           keep-alive
           >
@@ -27,7 +27,7 @@
               dense
               :data="tc.TestSteps"
               :columns="columns"
-              row-key="Id"
+              row-key="UUId"
               :hide-pagination="true"
               separator="cell"
               :wrap-cells="false"
@@ -63,23 +63,7 @@
                     </detail-context-menu>
                   </q-td>
                   <q-td key="testAUT" :props="props" class="q-c-input">
-                    <q-select
-                      dense
-                      :value="props.row.TestAUT"
-                      :options="optionTestAUTDatas"
-                      option-label="Name"
-                      @input="changeTestAUT({testcase: tc, stepIndex: props.rowIndex, property: 'TestAUT'}, $event)"
-                      @filter="filterTestAUTFn"
-                      input-debounce="0"
-                      use-input
-                      fill-input
-                      hide-selected
-                      options-dense
-                    />
-                    <detail-context-menu
-                     :selected.sync="selected"
-                     @deleteRows="onDeleteRows()">
-                    </detail-context-menu>
+                    <test-aut :TestStep="props.row.TestAUT"></test-aut>
                   </q-td>
                   <q-td key="keyword" :props="props" class="q-c-input">
                     <q-select
@@ -115,8 +99,8 @@
                 </q-tr>
               </template>
             </q-table>
-            <q-btn color="primary" label="New Step" @click="addNewStep(selectedTestCase)"></q-btn>
-            <q-btn color="primary" label="Save" @click="saveTestCase(selectedTestCase)"></q-btn>
+            <q-btn color="primary" label="New Step" @click="addNewStep(selectedTestCaseId)"></q-btn>
+            <q-btn color="primary" label="Save" @click="saveTestCase(selectedTestCaseId)"></q-btn>
           </q-tab-panel>
         </q-tab-panels>
       </div>
@@ -134,14 +118,19 @@ import {
   defineComponent, Ref, ref,
 } from '@vue/composition-api'
 import _ from 'lodash'
+import { TestAUTInterface } from 'src/Models/TestAUT';
 import { TestCaseInterface } from 'src/Models/TestCase';
 import { TestParamInterface } from 'src/Models/TestParam';
 import { TestStepInterface } from 'src/Models/TestStep';
 import DetailContextMenu from './ContextMenu/DetailContextMenu.vue'
+import TestAUT from './TestCaseDetail/TestAUT.vue';
 
 export default defineComponent({
   name: 'Detail',
-  components: { DetailContextMenu },
+  components: {
+    DetailContextMenu,
+    'test-aut': TestAUT,
+  },
   setup(props, context) {
     const optionKeywordDatas: Ref<any[]> = ref([])
     const optionTestAUTDatas: Ref<any[]> = ref([])
@@ -361,11 +350,11 @@ export default defineComponent({
         },
       ],
     )
-    const selectedTestCase: Ref<TestCaseInterface> = computed({
+    const selectedTestCaseId: Ref<string> = computed({
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      get: () => context.root.$store.getters['testcase/selectedTestCase'],
+      get: () => context.root.$store.getters['testcase/selectedTestCaseId'],
       set: (val) => {
-        context.root.$store.commit('testcase/setSelectedTestCase', val);
+        context.root.$store.commit('testcase/setSelectedTestCaseId', val);
       },
     })
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -389,9 +378,9 @@ export default defineComponent({
     keywordDatas.value = keywordDatas.value.map((v: any, i: number) => ({ ...v, rowIndex: i + 1 }))
     console.log('keywordDatas.value', keywordDatas.value)
 
-    function closeTab(testcase: any) {
+    function closeTab(testcase: TestCaseInterface) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      context.root.$store.commit('testcase/removeOpennedTC', testcase.Id)
+      context.root.$store.commit('testcase/removeOpennedTC', testcase)
     }
     function changeKeyword(payload: any, newKeyword: any) {
       console.log('newKeyword', newKeyword)
@@ -407,7 +396,7 @@ export default defineComponent({
       context.root.$store.commit('testcase/updateOpenedTCs', tempTC)
       context.root.$store.commit('category/updateTestCase', tempTC)
     }
-    function changeTestAUT(payload: any, newTestAUT: any) {
+    function changeTestAUT(payload: any, newTestAUT: TestAUTInterface) {
       console.log('newTestAUT', newTestAUT)
       const tempTC = _.cloneDeep(payload.testcase)
       tempTC.TestSteps[payload.stepIndex][payload.property] = newTestAUT.Name;
@@ -474,7 +463,7 @@ export default defineComponent({
         if (matched) { // Had already selected this one --> do nothing
         } else { // New selection - add it and any between
           // find selected testcase
-          const currTestCase = openedTCs.value.find((tc: TestCaseInterface) => tc.Id === selectedTestCase.value.Id) as TestCaseInterface
+          const currTestCase = openedTCs.value.find((tc: TestCaseInterface) => tc.Id === selectedTestCaseId.value) as TestCaseInterface
 
           // find previous selected teststep
           const previousSelectedStep = currTestCase.TestSteps.find((step: TestStepInterface) => step.UUID === selected.value[0].UUID) as TestStepInterface
@@ -518,6 +507,7 @@ export default defineComponent({
     }
 
     function onTabChanging() {
+      console.log('onTabChanging')
       columns.value.forEach((col: any, index: number) => {
         if (index >= 3) {
           columns.value[index].label = `Param ${index - 2}`
@@ -525,26 +515,28 @@ export default defineComponent({
       })
     }
 
-    function addNewStep(testCase: TestCaseInterface) {
-      context.root.$store.commit('testcase/addNewStep', testCase);
+    function addNewStep(testCaseId: string) {
+      context.root.$store.commit('testcase/addNewStep', testCaseId);
     }
 
     function onDeleteRows() {
       console.log('onDeleteRows')
-      const currTestCase = openedTCs.value.find((tc: any) => tc.Id === selectedTestCase.value.Id) as TestCaseInterface
+      const currTestCase = openedTCs.value.find((tc: any) => tc.Id === selectedTestCaseId.value) as TestCaseInterface
       selected.value.forEach((selectedRow: any) => {
         currTestCase.TestSteps.forEach((testStep: TestStepInterface) => {
           if (testStep.UUID === selectedRow.UUID) {
             console.log('delete me', testStep)
-            context.root.$store.commit('testcase/deleteStep', { testCaseId: selectedTestCase.value.Id, stepUUID: selectedRow.UUID });
+            context.root.$store.commit('testcase/deleteStep', { testCaseId: selectedTestCaseId.value, stepUUID: selectedRow.UUID });
           }
         })
       })
     }
 
-    async function saveTestCase(testCase: TestCaseInterface) {
+    async function saveTestCase(testCaseId: string) {
       try {
-        const result = await context.root.$store.dispatch('testcase/saveTestCase', testCase)
+        const currTestCase = openedTCs.value.find((tc: any) => tc.Id === testCaseId) as TestCaseInterface
+        console.log('currTestCase', currTestCase)
+        const result = await context.root.$store.dispatch('testcase/saveTestCase', currTestCase)
         console.log('result', result)
         context.root.$q.notify({
           type: 'positive',
@@ -564,12 +556,6 @@ export default defineComponent({
         optionKeywordDatas.value = keywordDatas.value.filter((v) => v.Name.toLowerCase().indexOf(needle) > -1)
       })
     }
-    function filterTestAUTFn(val: any, update: any, abort: any) {
-      update(() => {
-        const needle = val.toLowerCase()
-        optionTestAUTDatas.value = testAUTDatas.value.filter((v) => v.Name.toLowerCase().indexOf(needle) > -1)
-      })
-    }
 
     function test() {
       console.log('test')
@@ -579,11 +565,9 @@ export default defineComponent({
       optionKeywordDatas,
       optionTestAUTDatas,
       filterKeywordFn,
-      filterTestAUTFn,
       showByIndex,
       columns,
       openedTCs,
-      selectedTestCase,
       closeTab,
       changeParam,
       changeKeyword,
@@ -602,6 +586,7 @@ export default defineComponent({
       onDeleteRows,
       saveTestCase,
       changeTestAUT,
+      selectedTestCaseId,
     };
   },
 });

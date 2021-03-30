@@ -91,15 +91,12 @@ export default defineComponent({
     const selectedNode: Ref<any> = ref(null)
     const ticked: Ref<any[]> = ref([])
     const tree: Ref<any> = ref(null)
-    const isShowedNewTestSuiteDialog = ref(false)
-    const isShowedNewTestGroupDialog = ref(false)
-    const isShowedNewTestCaseDialog = ref(false)
     function resetFilter() {
       filter.value = ''
       filterInput.value.focus();
     }
     async function fnSelectedNode(target: any) {
-      const currentNode = tree.value.getNodeByKey(target);
+      const currentNode = tree.value.getNodeByKey(target) as TestCaseInterface;
       console.log('currentNode: ', currentNode);
       if (currentNode == null) return
       switch (currentNode.nodeType) {
@@ -116,6 +113,7 @@ export default defineComponent({
             const testcase = openedTCs.find((el: any) => el.Id === currentNode.Id)
             context.root.$store.commit('testcase/setOpenedTCs', testcase);
           } else {
+            console.log('currentNode', currentNode)
             await context.root.$store.dispatch('testcase/getTestCaseById', currentNode.Id);
           }
           break
@@ -340,9 +338,6 @@ export default defineComponent({
       onCreateTestSuite,
       onCreateTestGroup,
       onCreateTestCase,
-      isShowedNewTestSuiteDialog,
-      isShowedNewTestGroupDialog,
-      isShowedNewTestCaseDialog,
     }
   },
 });

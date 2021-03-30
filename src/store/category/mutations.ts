@@ -53,19 +53,18 @@ const mutation: MutationTree<CategoryStateInterface> = {
     tempCat.children[tsIndex].children[tgIndex].children.push(testCase)
     Vue.set(state.Categories, catIndex, tempCat)
   },
-  updateTestCase(state: CategoryStateInterface, testcase) {
-    console.log('updateTestCase, testcase:', testcase)
-    const catIndex = state.Categories.findIndex((cat: CategoryInterface) => cat.Name === testcase.CategoryName);
+  updateTestCase(state: CategoryStateInterface, testCase: TestCaseInterface) {
+    const catIndex = state.Categories.findIndex((cat: CategoryInterface) => cat.Id === testCase.CategoryId);
     const tempCat = _.cloneDeep(state.Categories[catIndex])
     console.log('tempCat', tempCat)
     // find tsIndex
-    const tsIndex = tempCat.children.findIndex((ts: TestSuiteInterface) => ts.CodeName === testcase.TestSuiteCodeName)
+    const tsIndex = tempCat.children.findIndex((ts: TestSuiteInterface) => ts.Id === testCase.TestSuiteId)
     console.log('tsIndex', tsIndex)
     // find tgIndex
-    const tgIndex = tempCat.children[tsIndex].children.findIndex((tg: TestGroupInterface) => tg.CodeName === testcase.TestGroupCodeName)
+    const tgIndex = tempCat.children[tsIndex].children.findIndex((tg: TestGroupInterface) => tg.Id === testCase.TestGroupId)
     console.log('tgIndex', tgIndex)
-    const tcIndex = tempCat.children[tsIndex].children[tgIndex].children.findIndex((tc: TestCaseInterface) => tc.Id === testcase.Id)
-    tempCat.children[tsIndex].children[tgIndex].children[tcIndex] = testcase
+    const tcIndex = tempCat.children[tsIndex].children[tgIndex].children.findIndex((tc: TestCaseInterface) => tc.Id === testCase.Id)
+    tempCat.children[tsIndex].children[tgIndex].children[tcIndex] = testCase
     Vue.set(state.Categories, catIndex, tempCat)
   },
 }

@@ -1,5 +1,6 @@
 import { ActionTree } from 'vuex';
 import axios from 'axios';
+import { TestCaseInterface } from 'src/Models/TestCase';
 import { StateInterface } from '../index';
 import { TestCaseStateInterface } from './state';
 import config from '../../config';
@@ -9,8 +10,6 @@ const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
   async getTestCaseById(context, id) {
     // eslint-disable-next-line no-useless-catch
     try {
-      console.log('context', context)
-      console.log('id', id)
       const response = await axios.get(
         `${config.baseURL}/testcases/${id}`,
         {
@@ -26,7 +25,7 @@ const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
       testCase = paintTestCase(testCase);
 
       context.commit('setOpenedTCs', testCase);
-      context.commit('setSelectedTestCase', testCase)
+      context.commit('setSelectedTestCaseId', testCase.Id)
     } catch (error) {
       throw error;
     }
@@ -34,11 +33,11 @@ const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
   updateOpenedTCs(context, value) {
     context.commit('updateOpenedTCs', value)
   },
-  async saveTestCase(context, tc) {
+  async saveTestCase(context, testCase: TestCaseInterface) {
     try {
       const response = await axios.post(
         `${config.baseURL}/testcases/savetestcase`,
-        tc,
+        testCase,
         {
           headers: {
             'Content-Type': 'application/json',

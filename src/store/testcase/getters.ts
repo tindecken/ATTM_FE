@@ -6,8 +6,8 @@ const getters: GetterTree<TestCaseStateInterface, StateInterface> = {
   openedTCs(state: TestCaseStateInterface) {
     return state.openedTCs;
   },
-  selectedTestCase(state: TestCaseStateInterface) {
-    return state.selectedTestCase;
+  selectedTestCaseId(state: TestCaseStateInterface) {
+    return state.selectedTestCaseId;
   },
 };
 
