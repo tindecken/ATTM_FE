@@ -63,22 +63,13 @@
                     </detail-context-menu>
                   </q-td>
                   <q-td key="testAUT" :props="props" class="q-c-input">
-                    <test-aut :TestStep="props.row" @ChangeTestAUT="changeTestAUT(tc, props.row, $event)"></test-aut>
+                    <test-aut :TestStep="props.row" @changeTestAUT="changeTestAUT(tc, props.row, $event)"></test-aut>
                   </q-td>
                   <q-td key="keyword" :props="props" class="q-c-input">
-                    <keyword :TestStep="props.row" @ChangeTestAUT="changeKeyword(tc, props.row, $event)"></keyword>
+                    <keyword :TestStep="props.row" @changeKeyword="changeKeyword(tc, props.row, $event)" />
                   </q-td>
                   <q-td v-for="index in 20" :key="index" class="q-c-input">
-                    <q-input
-                      :debounce="300"
-                      :value="props.row.Params[index-1] ? props.row.Params[index-1].Value : ''" dense borderless
-                      @input="changeParam({testcase: tc, stepIndex: props.rowIndex, paramIndex: index-1}, $event)"
-                      :readonly="index > props.row.Params.length"
-                    />
-                    <detail-context-menu
-                     :selected.sync="selected"
-                     @deleteRows="onDeleteRows()">
-                    </detail-context-menu>
+                    <param :TestStep="props.row" :ParamIndex="index" @changeParam="changeParam(tc, props.row)" />
                   </q-td>
                 </q-tr>
               </template>
@@ -109,6 +100,7 @@ import { TestStepInterface } from 'src/Models/TestStep';
 import DetailContextMenu from './ContextMenu/DetailContextMenu.vue'
 import TestAUT from './TestCaseDetail/TestAUT.vue';
 import Keyword from './TestCaseDetail/Keyword.vue';
+import Param from './TestCaseDetail/Param.vue';
 
 export default defineComponent({
   name: 'Detail',
@@ -116,6 +108,7 @@ export default defineComponent({
     DetailContextMenu,
     'test-aut': TestAUT,
     Keyword,
+    param: Param,
   },
   setup(props, context) {
     const showByIndex = ref(null)
@@ -348,7 +341,7 @@ export default defineComponent({
       context.root.$store.commit('testcase/removeOpennedTC', testcase)
     }
     function changeKeyword(testCase: TestCaseInterface, testStep: TestStepInterface, newKeyword: KeywordInterface) {
-      console.log('newTestAUT', newKeyword)
+      console.log('newKeyword', newKeyword)
       // find edited testStep
       const stepIndex: number = testCase.TestSteps.indexOf(testStep);
       const tempTC: TestCaseInterface = _.cloneDeep(testCase)

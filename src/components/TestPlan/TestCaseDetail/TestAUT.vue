@@ -48,7 +48,7 @@ export default defineComponent({
     }
 
     function onChangeTestAUT(newTestAUT: TestAUTInterface) {
-      context.emit('ChangeTestAUT', newTestAUT)
+      context.emit('changeTestAUT', newTestAUT)
     }
     return {
       filterTestAUTFn,

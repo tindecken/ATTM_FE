@@ -128,7 +128,7 @@ module.exports = configure((ctx) => ({
       'Cookies',
       'LoadingBar',
       'Notify',
-      'Dialog'
+      'Dialog',
     ],
   },
 

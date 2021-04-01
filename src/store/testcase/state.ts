@@ -1,4 +1,4 @@
-import { TestCaseInterface } from "src/Models/TestCase";
+import { TestCaseInterface } from 'src/Models/TestCase';
 
 export interface TestCaseStateInterface {
   openedTCs: TestCaseInterface[];

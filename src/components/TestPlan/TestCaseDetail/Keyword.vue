@@ -22,10 +22,12 @@
 
 <script lang="ts">
 import {
-  computed, defineComponent, ref, Ref,
+  computed, defineComponent, onMounted, ref, Ref,
 } from '@vue/composition-api';
+
 import { KeywordInterface } from 'src/Models/Keyword';
 import { KeywordCategoryInterface } from 'src/Models/KeywordCategory';
+import { KeywordFeatureInterface } from 'src/Models/KeywordFeature';
 
 export default defineComponent({
   name: 'Keyword',
@@ -38,20 +40,36 @@ export default defineComponent({
   },
   components: {},
   setup(props, context) {
+    onMounted(() => {
+      console.log('eeeeeeeeeeeeeeeee')
+    })
     console.log('keyword testStep', props.TestStep);
     const filteredKeywords: Ref<KeywordInterface[]> = ref([])
     const keywords: Ref<KeywordInterface[]> = computed(() => context.root.$store.getters['keyword/keywords'] as KeywordInterface[]);
-    const keywordCategories: Ref<KeywordCategoryInterface[]> = computed(() => context.root.$store.getters['keyword/keywords'] as KeywordCategoryInterface[]);
+    const keywordCategories: Ref<KeywordCategoryInterface[]> = computed(() => context.root.$store.getters['keyword/keywordCategories'] as KeywordCategoryInterface[]);
+    const allKeyword: Ref<KeywordInterface[]> = ref([])
+    keywordCategories.value.forEach((kwCategory: KeywordCategoryInterface) => {
+      if (kwCategory.Features) {
+        kwCategory.Features.forEach((kwFeature: KeywordFeatureInterface) => {
+          if (kwFeature.Keywords) {
+            kwFeature.Keywords.forEach((kw: KeywordInterface) => {
+              allKeyword.value.push(kw);
+            })
+          }
+        })
+      }
+    })
     console.log('keywordCategories', keywordCategories);
     function filterKeywordFn(val: any, update: any, abort: any) {
       update(() => {
         const needle = val.toLowerCase()
-        filteredKeywords.value = keywords.value.filter((kw: KeywordInterface) => kw.Name.toLowerCase().indexOf(needle) > -1)
+        filteredKeywords.value = allKeyword.value.filter((kw: KeywordInterface) => kw.Name.toLowerCase().indexOf(needle) > -1)
       })
     }
 
     function onChangeKeyword(newKeyword: KeywordInterface) {
-      context.emit('ChangeKeyword', newKeyword)
+      console.log('onChangeKeyword', newKeyword)
+      context.emit('changeKeyword', newKeyword)
     }
     return {
       filterKeywordFn,

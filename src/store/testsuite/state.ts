@@ -1,9 +1,11 @@
+import { TestSuiteInterface } from 'src/Models/TestSuite';
+
 export interface TestSuiteStateInterface {
-  testSuites: any;
+  testSuites: TestSuiteInterface[];
 }
 
 const state: TestSuiteStateInterface = {
-  testSuites: null,
+  testSuites: [],
 };
 
 export default state;
