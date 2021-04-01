@@ -3,9 +3,9 @@
         <q-select
         dense
         :value="TestStep.TestAUT"
-        :options="optionTestAUTDatas"
+        :options="filteredTestAUTs"
         option-label="Name"
-        @input="changeTestAUT({testcase: tc, stepIndex: props.rowIndex, property: 'TestAUT'}, $event)"
+        @input="onChangeTestAUT($event)"
         @filter="filterTestAUTFn"
         input-debounce="0"
         use-input
@@ -13,15 +13,18 @@
         hide-selected
         options-dense
     />
-    <detail-context-menu
+    <!-- <detail-context-menu
         :selected.sync="selected"
         @deleteRows="onDeleteRows()">
-    </detail-context-menu>
+    </detail-context-menu> -->
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from '@vue/composition-api';
+import {
+  computed, defineComponent, ref, Ref,
+} from '@vue/composition-api';
+import { TestAUTInterface } from 'src/Models/TestAUT';
 
 export default defineComponent({
   name: 'TestAUT',
@@ -33,17 +36,25 @@ export default defineComponent({
     },
   },
   components: {},
-  setup(props) {
+  setup(props, context) {
+    const filteredTestAUTs: Ref<TestAUTInterface[]> = ref([])
     console.log('dsfsad', props.TestStep);
+    const testAUTs: Ref<TestAUTInterface[]> = computed(() => context.root.$store.getters['global/testAuTs'] as TestAUTInterface[]);
     function filterTestAUTFn(val: any, update: any, abort: any) {
       update(() => {
         const needle = val.toLowerCase()
-        optionTestAUTDatas.value = testAUTDatas.value.filter((v) => v.Name.toLowerCase().indexOf(needle) > -1)
+        filteredTestAUTs.value = testAUTs.value.filter((v: TestAUTInterface) => v.Name.toLowerCase().indexOf(needle) > -1)
       })
+    }
+
+    function onChangeTestAUT(newTestAUT: TestAUTInterface) {
+      context.emit('ChangeTestAUT', newTestAUT)
     }
     return {
       filterTestAUTFn,
-      optionTestAUTDatas,
+      filteredTestAUTs,
+      testAUTs,
+      onChangeTestAUT,
     }
   },
 });

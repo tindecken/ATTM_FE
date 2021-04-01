@@ -1,5 +1,6 @@
 import { ActionTree } from 'vuex';
 import axios from 'axios';
+import { KeywordCategoryInterface } from 'src/Models/KeywordCategory';
 import { StateInterface } from '../index';
 import { KeywordStateInterface } from './state';
 import config from '../../config';
@@ -17,10 +18,10 @@ const actions: ActionTree<KeywordStateInterface, StateInterface> = {
           },
         },
       );
-      const responseData = await response.data;
-      context.commit('setKeywords', {
-        keywords: responseData,
-      });
+      const responseData = await response.data.categories;
+      console.log('Keyword response.data', responseData);
+      const keywordCategories: KeywordCategoryInterface[] = await response.data.categories;
+      context.commit('setKeywordCategories', keywordCategories);
     } catch (error) {
       throw error;
     }

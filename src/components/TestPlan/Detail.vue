@@ -63,26 +63,10 @@
                     </detail-context-menu>
                   </q-td>
                   <q-td key="testAUT" :props="props" class="q-c-input">
-                    <test-aut :TestStep="props.row.TestAUT"></test-aut>
+                    <test-aut :TestStep="props.row" @ChangeTestAUT="changeTestAUT(tc, props.row, $event)"></test-aut>
                   </q-td>
                   <q-td key="keyword" :props="props" class="q-c-input">
-                    <q-select
-                      dense
-                      :value="props.row.Keyword"
-                      :options="optionKeywordDatas"
-                      option-label="Name"
-                      @input="changeKeyword({testcase: tc, stepIndex: props.rowIndex, property: 'Keyword'}, $event)"
-                      @filter="filterKeywordFn"
-                      input-debounce="0"
-                      use-input
-                      fill-input
-                      hide-selected
-                      options-dense
-                    />
-                    <detail-context-menu
-                     :selected.sync="selected"
-                     @deleteRows="onDeleteRows()">
-                    </detail-context-menu>
+                    <keyword :TestStep="props.row" @ChangeTestAUT="changeKeyword(tc, props.row, $event)"></keyword>
                   </q-td>
                   <q-td v-for="index in 20" :key="index" class="q-c-input">
                     <q-input
@@ -118,22 +102,22 @@ import {
   defineComponent, Ref, ref,
 } from '@vue/composition-api'
 import _ from 'lodash'
+import { KeywordInterface } from 'src/Models/Keyword';
 import { TestAUTInterface } from 'src/Models/TestAUT';
 import { TestCaseInterface } from 'src/Models/TestCase';
-import { TestParamInterface } from 'src/Models/TestParam';
 import { TestStepInterface } from 'src/Models/TestStep';
 import DetailContextMenu from './ContextMenu/DetailContextMenu.vue'
 import TestAUT from './TestCaseDetail/TestAUT.vue';
+import Keyword from './TestCaseDetail/Keyword.vue';
 
 export default defineComponent({
   name: 'Detail',
   components: {
     DetailContextMenu,
     'test-aut': TestAUT,
+    Keyword,
   },
   setup(props, context) {
-    const optionKeywordDatas: Ref<any[]> = ref([])
-    const optionTestAUTDatas: Ref<any[]> = ref([])
     const showByIndex = ref(null)
     const selectedKeyword = ref('')
     const selected: Ref<any[]> = ref([])
@@ -359,50 +343,25 @@ export default defineComponent({
     })
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const openedTCs: Ref<TestCaseInterface[]> = computed(() => context.root.$store.getters['testcase/openedTCs'])
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const keywords = computed(() => context.root.$store.getters['keyword/keywords'])
-    const keywordDatas: Ref<any[]> = ref([]);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const testAUTs = computed(() => context.root.$store.getters['global/testAuTs'])
-    const testAUTDatas: Ref<any[]> = ref([]);
-    testAUTDatas.value = testAUTs.value
-    keywords.value.categories.forEach((c: any) => {
-      c.Features.forEach((f: any) => {
-        f.Keywords.forEach((k: any) => {
-          k = { ...k, Category: c.Name, Feature: f.Name }
-          keywordDatas.value.push(k);
-        })
-      });
-    });
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    keywordDatas.value = keywordDatas.value.map((v: any, i: number) => ({ ...v, rowIndex: i + 1 }))
-    console.log('keywordDatas.value', keywordDatas.value)
-
     function closeTab(testcase: TestCaseInterface) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       context.root.$store.commit('testcase/removeOpennedTC', testcase)
     }
-    function changeKeyword(payload: any, newKeyword: any) {
-      console.log('newKeyword', newKeyword)
-      const tempTC = _.cloneDeep(payload.testcase)
-      tempTC.TestSteps[payload.stepIndex][payload.property] = newKeyword.Name;
-      tempTC.TestSteps[payload.stepIndex].Feature = newKeyword.Feature;
-      tempTC.TestSteps[payload.stepIndex].Params = []
-      newKeyword.Params.forEach((pr: TestParamInterface) => {
-        tempTC.TestSteps[payload.stepIndex].Params.push(pr)
-      })
-      console.log('payload.testcase', payload.testcase)
-      console.log('tempTC', tempTC)
+    function changeKeyword(testCase: TestCaseInterface, testStep: TestStepInterface, newKeyword: KeywordInterface) {
+      console.log('newTestAUT', newKeyword)
+      // find edited testStep
+      const stepIndex: number = testCase.TestSteps.indexOf(testStep);
+      const tempTC: TestCaseInterface = _.cloneDeep(testCase)
+      tempTC.TestSteps[stepIndex].Keyword = newKeyword;
       context.root.$store.commit('testcase/updateOpenedTCs', tempTC)
       context.root.$store.commit('category/updateTestCase', tempTC)
     }
-    function changeTestAUT(payload: any, newTestAUT: TestAUTInterface) {
+    function changeTestAUT(testCase: TestCaseInterface, testStep: TestStepInterface, newTestAUT: TestAUTInterface) {
       console.log('newTestAUT', newTestAUT)
-      const tempTC = _.cloneDeep(payload.testcase)
-      tempTC.TestSteps[payload.stepIndex][payload.property] = newTestAUT.Name;
-      tempTC.TestSteps[payload.stepIndex].Params = []
-      console.log('payload.testcase', payload.testcase)
-      console.log('tempTC', tempTC)
+      // find edited testStep
+      const stepIndex: number = testCase.TestSteps.indexOf(testStep);
+      const tempTC: TestCaseInterface = _.cloneDeep(testCase)
+      tempTC.TestSteps[stepIndex].TestAUT = newTestAUT;
       context.root.$store.commit('testcase/updateOpenedTCs', tempTC)
       context.root.$store.commit('category/updateTestCase', tempTC)
     }
@@ -550,21 +509,11 @@ export default defineComponent({
       }
     }
 
-    function filterKeywordFn(val: any, update: any, abort: any) {
-      update(() => {
-        const needle = val.toLowerCase()
-        optionKeywordDatas.value = keywordDatas.value.filter((v) => v.Name.toLowerCase().indexOf(needle) > -1)
-      })
-    }
-
     function test() {
       console.log('test')
     }
 
     return {
-      optionKeywordDatas,
-      optionTestAUTDatas,
-      filterKeywordFn,
       showByIndex,
       columns,
       openedTCs,
@@ -579,10 +528,7 @@ export default defineComponent({
       onTabChanging,
       addNewStep,
       test,
-      keywords,
       selectedKeyword,
-      keywordDatas,
-      testAUTDatas,
       onDeleteRows,
       saveTestCase,
       changeTestAUT,

@@ -1,11 +1,14 @@
+import { KeywordInterface } from 'src/Models/Keyword';
+import { KeywordCategoryInterface } from 'src/Models/KeywordCategory';
+
 export interface KeywordStateInterface {
-  keywords: any;
-  selectedKeyword: any
+  keywordCategories: KeywordCategoryInterface[];
+  selectedKeyword?: KeywordInterface;
 }
 
 const state: KeywordStateInterface = {
-  keywords: null,
-  selectedKeyword: null,
+  keywordCategories: [],
+  selectedKeyword: undefined,
 };
 
 export default state;

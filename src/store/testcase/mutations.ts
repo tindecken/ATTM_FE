@@ -14,10 +14,9 @@ const mutation: MutationTree<TestCaseStateInterface> = {
     }
     state.selectedTestCaseId = testCase.Id;
   },
-  updateOpenedTCs(state: TestCaseStateInterface, testcase) {
-    const index = state.openedTCs.findIndex((tc: any) => tc.Id === testcase.Id);
-    Vue.set(state.openedTCs, index, testcase)
-    console.log('state.openedTCs', state.openedTCs)
+  updateOpenedTCs(state: TestCaseStateInterface, testCase: TestCaseInterface) {
+    const index = state.openedTCs.findIndex((tc: TestCaseInterface) => tc.Id === testCase.Id);
+    Vue.set(state.openedTCs, index, testCase)
   },
   setSelectedTestCaseId(state: TestCaseStateInterface, testCaseId: string) {
     state.selectedTestCaseId = testCaseId;

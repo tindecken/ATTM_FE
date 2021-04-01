@@ -131,8 +131,6 @@
   </div>
 </template>
 <script lang="ts">
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import {
   defineComponent, reactive, Ref, ref,
 } from '@vue/composition-api';

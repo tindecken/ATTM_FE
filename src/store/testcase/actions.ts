@@ -30,7 +30,7 @@ const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
       throw error;
     }
   },
-  updateOpenedTCs(context, value) {
+  updateOpenedTCs(context, value: TestCaseInterface) {
     context.commit('updateOpenedTCs', value)
   },
   async saveTestCase(context, testCase: TestCaseInterface) {
