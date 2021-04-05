@@ -12,7 +12,7 @@
       fill-input
       hide-selected
       options-dense
-  />
+    />
     <!-- <detail-context-menu
       :selected.sync="selected"
       @deleteRows="onDeleteRows()">

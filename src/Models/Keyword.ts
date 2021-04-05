@@ -4,7 +4,7 @@ export interface KeywordInterface {
     Name: string;
     Description?: string;
     Owner?: string;
-    Params?: TestParamInterface[];
+    Params: TestParamInterface[];
     CreatedDate?: Date;
     ImageDescriptionIds?: string[];
 }

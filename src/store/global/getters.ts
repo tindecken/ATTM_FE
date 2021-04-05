@@ -4,7 +4,7 @@ import { StateInterface } from '../index';
 import { GlobalStateInterface } from './state';
 
 const getters: GetterTree<GlobalStateInterface, StateInterface> = {
-  darkTheme(state: GlobalStateInterface) {
+  darkTheme(state: GlobalStateInterface) : boolean {
     return state.darkTheme;
   },
   testAuTs(state: GlobalStateInterface) : TestAUTInterface[] {

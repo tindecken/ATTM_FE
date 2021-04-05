@@ -1,4 +1,3 @@
-/* eslint-disable no-sequences */
 <template>
   <div>
     <div class="row">
@@ -68,8 +67,8 @@
                   <q-td key="keyword" :props="props" class="q-c-input">
                     <keyword :TestStep="props.row" @changeKeyword="changeKeyword(tc, props.row, $event)" />
                   </q-td>
-                  <q-td v-for="index in 20" :key="index" class="q-c-input">
-                    <param :TestStep="props.row" :ParamIndex="index" @changeParam="changeParam(tc, props.row)" />
+                  <q-td v-for="index in 19" :key="index" class="q-c-input">
+                    <parameter :TestStep="props.row" :ParamIndex="index-1" :Readonly="index-1 >= props.row.Params.length" @changeParam="changeParam(tc, props.row, index-1, $event)"></parameter>
                   </q-td>
                 </q-tr>
               </template>
@@ -92,15 +91,15 @@ import {
   computed,
   defineComponent, Ref, ref,
 } from '@vue/composition-api'
-import _ from 'lodash'
 import { KeywordInterface } from 'src/Models/Keyword';
 import { TestAUTInterface } from 'src/Models/TestAUT';
 import { TestCaseInterface } from 'src/Models/TestCase';
 import { TestStepInterface } from 'src/Models/TestStep';
+import { TestParamInterface } from 'src/Models/TestParam';
 import DetailContextMenu from './ContextMenu/DetailContextMenu.vue'
 import TestAUT from './TestCaseDetail/TestAUT.vue';
 import Keyword from './TestCaseDetail/Keyword.vue';
-import Param from './TestCaseDetail/Param.vue';
+import Parameter from './TestCaseDetail/Parameter.vue';
 
 export default defineComponent({
   name: 'Detail',
@@ -108,7 +107,7 @@ export default defineComponent({
     DetailContextMenu,
     'test-aut': TestAUT,
     Keyword,
-    param: Param,
+    Parameter,
   },
   setup(props, context) {
     const showByIndex = ref(null)
@@ -346,6 +345,10 @@ export default defineComponent({
       const stepIndex: number = testCase.TestSteps.indexOf(testStep);
       const tempTC: TestCaseInterface = _.cloneDeep(testCase)
       tempTC.TestSteps[stepIndex].Keyword = newKeyword;
+      // add default Params to testCase based on number of params of Keyword
+      newKeyword.Params.forEach((pr: TestParamInterface) => {
+        tempTC.TestSteps[stepIndex].Params.push(pr);
+      })
       context.root.$store.commit('testcase/updateOpenedTCs', tempTC)
       context.root.$store.commit('category/updateTestCase', tempTC)
     }
@@ -358,10 +361,12 @@ export default defineComponent({
       context.root.$store.commit('testcase/updateOpenedTCs', tempTC)
       context.root.$store.commit('category/updateTestCase', tempTC)
     }
-    function changeParam(payload: any, e: any) {
-      payload.newValue = e;
-      const tempTC = _.cloneDeep(payload.testcase)
-      tempTC.TestSteps[payload.stepIndex].Params[payload.paramIndex].Value = payload.newValue;
+    function changeParam(testCase: TestCaseInterface, testStep: TestStepInterface, paramIndex: number, newValue: string) {
+      console.log('testcase', testCase)
+      const stepIndex: number = testCase.TestSteps.indexOf(testStep);
+      const tempTC: TestCaseInterface = _.cloneDeep(testCase)
+      console.log('paramIndex', paramIndex)
+      tempTC.TestSteps[stepIndex].Params[paramIndex].Value = newValue;
       context.root.$store.commit('testcase/updateOpenedTCs', tempTC)
       context.root.$store.commit('category/updateTestCase', tempTC)
     }
@@ -486,7 +491,7 @@ export default defineComponent({
 
     async function saveTestCase(testCaseId: string) {
       try {
-        const currTestCase = openedTCs.value.find((tc: any) => tc.Id === testCaseId) as TestCaseInterface
+        const currTestCase = openedTCs.value.find((tc: TestCaseInterface) => tc.Id === testCaseId) as TestCaseInterface
         console.log('currTestCase', currTestCase)
         const result = await context.root.$store.dispatch('testcase/saveTestCase', currTestCase)
         console.log('result', result)
