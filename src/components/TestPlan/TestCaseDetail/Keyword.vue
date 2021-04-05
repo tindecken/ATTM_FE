@@ -60,7 +60,7 @@ export default defineComponent({
       }
     })
     console.log('keywordCategories', keywordCategories);
-    function filterKeywordFn(val: any, update: any, abort: any) {
+    function filterKeywordFn(val: any, update: any) {
       update(() => {
         const needle = val.toLowerCase()
         filteredKeywords.value = allKeyword.value.filter((kw: KeywordInterface) => kw.Name.toLowerCase().indexOf(needle) > -1)

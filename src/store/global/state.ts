@@ -1,4 +1,4 @@
-import { TestAUTInterface } from "src/Models/TestAUT";
+import { TestAUTInterface } from 'src/Models/TestAUT';
 
 export interface GlobalStateInterface {
   darkTheme: boolean,

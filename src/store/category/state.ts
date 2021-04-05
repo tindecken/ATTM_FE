@@ -1,4 +1,4 @@
-import { CategoryInterface } from "src/Models/Category";
+import { CategoryInterface } from 'src/Models/Category';
 
 export interface CategoryStateInterface {
   Categories: CategoryInterface[];

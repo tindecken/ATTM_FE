@@ -4,8 +4,8 @@ import { TestParamInterface } from './TestParam';
 
 export interface TestStepInterface {
     UUID: string;
-    TestAUT: TestAUTInterface;
-    Keyword: KeywordInterface;
+    TestAUT: TestAUTInterface | undefined;
+    Keyword?: KeywordInterface;
     Description?: string;
     Params: TestParamInterface[];
     IsDisabled: boolean;

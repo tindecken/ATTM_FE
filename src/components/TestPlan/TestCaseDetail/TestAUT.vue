@@ -40,7 +40,7 @@ export default defineComponent({
     const filteredTestAUTs: Ref<TestAUTInterface[]> = ref([])
     console.log('dsfsad', props.TestStep);
     const testAUTs: Ref<TestAUTInterface[]> = computed(() => context.root.$store.getters['global/testAuTs'] as TestAUTInterface[]);
-    function filterTestAUTFn(val: any, update: any, abort: any) {
+    function filterTestAUTFn(val: any, update: any) {
       update(() => {
         const needle = val.toLowerCase()
         filteredTestAUTs.value = testAUTs.value.filter((v: TestAUTInterface) => v.Name.toLowerCase().indexOf(needle) > -1)

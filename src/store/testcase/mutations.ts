@@ -51,7 +51,6 @@ const mutation: MutationTree<TestCaseStateInterface> = {
       tempTC.TestSteps.push({
         UUID: uuid(),
         TestAUT: lastTestAUT,
-        Keyword: '',
         Description: '',
         Params: [],
         IsDisabled: false,

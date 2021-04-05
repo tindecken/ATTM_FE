@@ -8,8 +8,8 @@
         <q-select
           dense
           outlined
-          v-model="categories.selectedCategory"
-          :options="categories.options"
+          v-model="selectedKeywordCategory"
+          :options="keywordCategories"
           label="Category"
           @filter="filterCategory"
           @filter-abort="abortFilterCategory"
@@ -25,8 +25,8 @@
         <q-select
           dense
           outlined
-          v-model="features.selectedFeature"
-          :options="features.options"
+          v-model="selectedKeywordFeature"
+          :options="keywordFeatures"
           label="Feature"
           @filter="filterFeature"
           @filter-abort="abortFilterFeature"
@@ -47,7 +47,7 @@
         <q-table
           dense
           title="Keywords"
-          :data="keywordDatas"
+          :data="keywords"
           :columns="keywordColumns"
           row-key="name"
           :hide-pagination="true"
@@ -95,7 +95,7 @@
         <q-table
           dense
           title="Parameters"
-          :data="paramDatas"
+          :data="params"
           :columns="paramColumns"
           row-key="name"
           :hide-pagination="true"
@@ -132,27 +132,27 @@
 </template>
 <script lang="ts">
 import {
-  defineComponent, reactive, Ref, ref,
+  defineComponent, Ref, ref,
 } from '@vue/composition-api';
+import { KeywordInterface } from 'src/Models/Keyword';
+import { KeywordCategoryInterface } from 'src/Models/KeywordCategory';
+import { KeywordFeatureInterface } from 'src/Models/KeywordFeature';
+import { TestParamInterface } from 'src/Models/TestParam';
 
 export default defineComponent({
   name: 'RightDrawer',
   props: {},
   setup(props, context) {
-    const categories = reactive({
-      selectedCategory: null,
-      options: [],
-    });
-    const features = reactive({
-      selectedFeature: null,
-      options: [],
-    })
-    const selectedKeyword = ref()
+    const keywordCategories: Ref<KeywordCategoryInterface[]> = ref([]);
+    const keywordFeatures: Ref<KeywordFeatureInterface[]> = ref([]);
+    const keywords: Ref<KeywordInterface[]> = ref([]);
+    const selectedKeywordCategory: Ref<KeywordCategoryInterface | undefined> = ref();
+    const selectedKeywordFeature: Ref<KeywordFeatureInterface | undefined> = ref();
+    const selectedKeyword: Ref<KeywordInterface | undefined> = ref();
     const kwFilter = ref('');
     const isShowOwner = ref(true);
     const isShowCreatedDate = ref(false);
-    const allKeyword = ref();
-    const paramDatas: Ref<any[]> = ref([]);
+    const params: Ref<TestParamInterface[]> = ref([]);
     const paramColumns = [
       {
         name: 'no',
@@ -259,21 +259,6 @@ export default defineComponent({
       },
     ];
     const keywordVisibleColumns: Ref<string[]> = ref(['no', 'name', 'description', 'owner', 'updatedMessage', 'createdDate']);
-    const keywordDatas: Ref<any[]> = ref([]);
-    allKeyword.value = context.root.$store.getters['keyword/keywords'];
-    categories.options = allKeyword.value.categories.map((c: { Name: string; }) => c.Name);
-    allKeyword.value.categories.forEach((c: { Features: []; }) => {
-      c.Features.forEach((f: { Name: never; }) => features.options.push(f.Name));
-    })
-    allKeyword.value.categories.forEach((c: any) => {
-      c.Features.forEach((f: any) => {
-        f.Keywords.forEach((k: any) => {
-          k = { ...k, Category: c.Name, Feature: f.Name }
-          keywordDatas.value.push(k);
-        })
-      });
-    });
-    keywordDatas.value = keywordDatas.value.map((v: any, i: number) => ({ ...v, rowIndex: i + 1 }))
 
     function filterCategory(val: string, update: any) {
       setTimeout(() => {
@@ -305,78 +290,11 @@ export default defineComponent({
     }
 
     function onFeatureChange() {
-      console.log('selectedFeature', features.selectedFeature)
-      keywordDatas.value = [];
-      if (categories.selectedCategory == null) {
-        if (features.selectedFeature == null) {
-          // Todo: Load all keywords
-          allKeyword.value.categories.forEach((c: any) => {
-            c.Features.forEach((f: any) => {
-              f.Keywords.forEach((k: any) => {
-                k = { ...k, Category: c.Name, Feature: f.Name }
-                keywordDatas.value.push(k);
-              })
-            });
-          });
-        } else {
-          // Todo: Load all keywords base on Feature
-          allKeyword.value.categories.forEach((c: any) => {
-            c.Features.forEach((f: any) => {
-              if (f.Name === features.selectedFeature) {
-                f.Keywords.forEach((k: any) => {
-                  k = { ...k, Category: c.Name, Feature: f.Name }
-                  keywordDatas.value.push(k)
-                })
-              }
-            });
-          });
-        }
-      } else if (features.selectedFeature == null) {
-        // Load all keyword that contains category
-        allKeyword.value.categories.forEach((c: any) => {
-          if (c.Name === categories.selectedCategory) {
-            c.Features.forEach((f: any) => {
-              f.Keywords.forEach((k: any) => {
-                k = { ...k, Category: c.Name, Feature: f.Name }
-                keywordDatas.value.push(k);
-              })
-            });
-          }
-        });
-      } else {
-        // Load all keyword that contains both category and feature
-        allKeyword.value.categories.forEach((c: any) => {
-          if (c.Name === categories.selectedCategory) {
-            c.Features.forEach((f: any) => {
-              if (f.Name === features.selectedFeature) {
-                f.Keywords.forEach((k: any) => {
-                  k = { ...k, Category: c.Name, Feature: f.Name }
-                  keywordDatas.value.push(k)
-                })
-              }
-            });
-          }
-        });
-      }
-      keywordDatas.value = keywordDatas.value.map((v: any, i: number) => ({ ...v, rowIndex: i + 1 }))
+      // TODO onFeatureChange
     }
 
     function onCategoryChange() {
-      console.log('selectedCategory', categories.selectedCategory)
-      features.options = []
-      features.selectedFeature = null
-      if (categories.selectedCategory == null) { // will display all features
-        allKeyword.value.categories.forEach((c: { Features: []; }) => {
-          c.Features.forEach((f: { Name: never; }) => features.options.push(f.Name));
-        });
-      } else { // only display features in specific category
-        allKeyword.value.categories.forEach((c: { Features: []; Name: string; }) => {
-          if (c.Name === categories.selectedCategory) {
-            c.Features.forEach((f: { Name: never; }) => features.options.push(f.Name));
-          }
-        });
-      }
-      onFeatureChange();
+      // TODO onCategoryChange
     }
 
     function filterFeature(val: string, update: any) {
@@ -408,28 +326,22 @@ export default defineComponent({
       console.log('delayed filter aborted')
     }
 
-    function showParams(selectedKw: any) {
-      paramDatas.value = []
+    function showParams(selectedKw: KeywordInterface) {
+      params.value = []
       selectedKw.Params.forEach((p: any) => {
-        paramDatas.value.push(p)
+        params.value.push(p)
       });
-      paramDatas.value = paramDatas.value.map((v: any, i: number) => ({ ...v, rowIndex: i + 1 }))
+      params.value = params.value.map((v: any, i: number) => ({ ...v, rowIndex: i + 1 }))
     }
 
     function onSelectKeyword(row: any) {
-      // todo
-      console.log('selectedKw', row)
-      selectedKeyword.value = row
-      showParams(selectedKeyword.value)
+      // TODO onSelectKeyword()
     }
 
     return {
       kwFilter,
-      categories,
-      features,
       isShowOwner,
       isShowCreatedDate,
-      keywordDatas,
       keywordColumns,
       keywordVisibleColumns,
       filterCategory,
@@ -439,9 +351,14 @@ export default defineComponent({
       abortFilterFeature,
       onFeatureChange,
       onSelectKeyword,
-      paramDatas,
+      params,
       paramColumns,
       selectedKeyword,
+      keywordCategories,
+      keywordFeatures,
+      keywords,
+      selectedKeywordCategory,
+      selectedKeywordFeature,
     };
   },
 });

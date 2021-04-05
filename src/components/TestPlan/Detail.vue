@@ -100,6 +100,7 @@ import DetailContextMenu from './ContextMenu/DetailContextMenu.vue'
 import TestAUT from './TestCaseDetail/TestAUT.vue';
 import Keyword from './TestCaseDetail/Keyword.vue';
 import Parameter from './TestCaseDetail/Parameter.vue';
+import _ from 'lodash'
 
 export default defineComponent({
   name: 'Detail',
