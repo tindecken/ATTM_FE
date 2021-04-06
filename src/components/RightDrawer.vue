@@ -9,8 +9,9 @@
           dense
           outlined
           v-model="selectedKeywordCategory"
-          :options="keywordCategories"
+          :options="filteredKeywordCategories"
           label="Category"
+          option-label="Name"
           @filter="filterCategory"
           @filter-abort="abortFilterCategory"
           @input="val => { onCategoryChange() }"
@@ -26,8 +27,9 @@
           dense
           outlined
           v-model="selectedKeywordFeature"
-          :options="keywordFeatures"
+          :options="filteredKeywordFeatures"
           label="Feature"
+          option-label="Name"
           @filter="filterFeature"
           @filter-abort="abortFilterFeature"
           @input="val => { onFeatureChange() }"
@@ -47,7 +49,7 @@
         <q-table
           dense
           title="Keywords"
-          :data="keywords"
+          :data="filteredKeywords"
           :columns="keywordColumns"
           row-key="name"
           :hide-pagination="true"
@@ -134,6 +136,7 @@
 import {
   defineComponent, Ref, ref,
 } from '@vue/composition-api';
+
 import { KeywordInterface } from 'src/Models/Keyword';
 import { KeywordCategoryInterface } from 'src/Models/KeywordCategory';
 import { KeywordFeatureInterface } from 'src/Models/KeywordFeature';
@@ -144,8 +147,11 @@ export default defineComponent({
   props: {},
   setup(props, context) {
     const keywordCategories: Ref<KeywordCategoryInterface[]> = ref([]);
+    const filteredKeywordCategories: Ref<KeywordCategoryInterface[]> = ref([]);
     const keywordFeatures: Ref<KeywordFeatureInterface[]> = ref([]);
+    const filteredKeywordFeatures: Ref<KeywordFeatureInterface[]> = ref([]);
     const keywords: Ref<KeywordInterface[]> = ref([]);
+    const filteredKeywords: Ref<KeywordInterface[]> = ref([]);
     const selectedKeywordCategory: Ref<KeywordCategoryInterface | undefined> = ref();
     const selectedKeywordFeature: Ref<KeywordFeatureInterface | undefined> = ref();
     const selectedKeyword: Ref<KeywordInterface | undefined> = ref();
@@ -260,16 +266,37 @@ export default defineComponent({
     ];
     const keywordVisibleColumns: Ref<string[]> = ref(['no', 'name', 'description', 'owner', 'updatedMessage', 'createdDate']);
 
+    keywordCategories.value = context.root.$store.getters['keyword/keywordCategories'] as KeywordCategoryInterface[]
+    // get all keywordFeatures
+    keywordCategories.value.forEach((kwCategory: KeywordCategoryInterface) => {
+      if (kwCategory.Features) {
+        kwCategory.Features.forEach((kwFeature: KeywordFeatureInterface) => {
+          keywordFeatures.value.push(kwFeature);
+        })
+      }
+    })
+    // get all keywords
+    keywordCategories.value.forEach((kwCategory: KeywordCategoryInterface) => {
+      if (kwCategory.Features) {
+        kwCategory.Features.forEach((kwFeature: KeywordFeatureInterface) => {
+          if (kwFeature.Keywords) {
+            kwFeature.Keywords.forEach((keyword: KeywordInterface) => {
+              keywords.value.push(keyword);
+            })
+          }
+        })
+      }
+    })
+    console.log('keywordCategories.value', keywordCategories.value)
     function filterCategory(val: string, update: any) {
       setTimeout(() => {
         update(
           () => {
             if (val === '') {
-              categories.options = allKeyword.value.categories.map((c: { Name: string; }) => c.Name);
+              filteredKeywordCategories.value = keywordCategories.value;
             } else {
               const needle = val.toLowerCase()
-              // eslint-disable-next-line max-len
-              categories.options = categories.options.filter((t: string) => t.toLowerCase().indexOf(needle) > -1)
+              filteredKeywordCategories.value = keywordCategories.value.filter((kwCategory: KeywordCategoryInterface) => kwCategory.Name.toLowerCase().indexOf(needle) > -1)
             }
           },
 
@@ -290,11 +317,68 @@ export default defineComponent({
     }
 
     function onFeatureChange() {
-      // TODO onFeatureChange
+      console.log('selectedFeature', selectedKeywordFeature)
+      keywordDatas.value = [];
+      if (categories.selectedCategory == null) {
+        if (features.selectedFeature == null) {
+          // Todo: Load all keywords
+          allKeyword.value.categories.forEach((c: any) => {
+            c.Features.forEach((f: any) => {
+              f.Keywords.forEach((k: any) => {
+                k = { ...k, Category: c.Name, Feature: f.Name }
+                keywordDatas.value.push(k);
+              })
+            });
+          });
+        } else {
+          // Todo: Load all keywords base on Feature
+          allKeyword.value.categories.forEach((c: any) => {
+            c.Features.forEach((f: any) => {
+              if (f.Name === features.selectedFeature) {
+                f.Keywords.forEach((k: any) => {
+                  k = { ...k, Category: c.Name, Feature: f.Name }
+                  keywordDatas.value.push(k)
+                })
+              }
+            });
+          });
+        }
+      } else if (features.selectedFeature == null) {
+        // Load all keyword that contains category
+        allKeyword.value.categories.forEach((c: any) => {
+          if (c.Name === categories.selectedCategory) {
+            c.Features.forEach((f: any) => {
+              f.Keywords.forEach((k: any) => {
+                k = { ...k, Category: c.Name, Feature: f.Name }
+                keywordDatas.value.push(k);
+              })
+            });
+          }
+        });
+      } else {
+        // Load all keyword that contains both category and feature
+        allKeyword.value.categories.forEach((c: any) => {
+          if (c.Name === categories.selectedCategory) {
+            c.Features.forEach((f: any) => {
+              if (f.Name === features.selectedFeature) {
+                f.Keywords.forEach((k: any) => {
+                  k = { ...k, Category: c.Name, Feature: f.Name }
+                  keywordDatas.value.push(k)
+                })
+              }
+            });
+          }
+        });
+      }
+      keywordDatas.value = keywordDatas.value.map((v: any, i: number) => ({ ...v, rowIndex: i + 1 }))
     }
 
     function onCategoryChange() {
-      // TODO onCategoryChange
+      console.log('selectedCategory', selectedKeywordCategory)
+      if (selectedKeywordCategory.value === null) { // will display all features
+        filteredKeywordFeatures.value = keywordFeatures.value
+      } else if (selectedKeywordCategory.value?.Features !== undefined) filteredKeywordFeatures.value = selectedKeywordCategory.value?.Features
+      onFeatureChange();
     }
 
     function filterFeature(val: string, update: any) {
@@ -306,7 +390,7 @@ export default defineComponent({
             } else {
               const needle = val.toLowerCase()
               // eslint-disable-next-line max-len
-              features.options = features.options.filter((t: string) => t.toLowerCase().indexOf(needle) > -1)
+              filteredKeywordFeatures.value = keywordFeatures.value.filter((kwFeature: KeywordFeatureInterface) => kwFeature.Name.toLowerCase().indexOf(needle) > -1)
             }
           },
 
@@ -359,6 +443,9 @@ export default defineComponent({
       keywords,
       selectedKeywordCategory,
       selectedKeywordFeature,
+      filteredKeywordCategories,
+      filteredKeywordFeatures,
+      filteredKeywords,
     };
   },
 });

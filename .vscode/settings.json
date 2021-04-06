@@ -11,5 +11,8 @@
   ],
   "cSpell.ignoreWords": [
     "testgroups"
+  ],
+  "cSpell.enableFiletypes": [
+    "vue"
   ]
 }
