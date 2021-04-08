@@ -134,7 +134,7 @@
 </template>
 <script lang="ts">
 import {
-  defineComponent, onMounted, Ref, ref,
+  defineComponent, onBeforeMount, Ref, ref,
 } from '@vue/composition-api';
 import { KeywordInterface } from 'src/Models/Keyword';
 import { KeywordCategoryInterface } from 'src/Models/KeywordCategory';
@@ -265,35 +265,42 @@ export default defineComponent({
     ];
     const keywordVisibleColumns: Ref<string[]> = ref(['no', 'name', 'description', 'owner', 'updatedMessage', 'createdDate']);
 
-    keywordCategories.value = context.root.$store.getters['keyword/keywordCategories'] as KeywordCategoryInterface[]
-    // get all keywordFeatures
-    keywordCategories.value.forEach((kwCategory: KeywordCategoryInterface) => {
-      if (kwCategory.Features) {
-        kwCategory.Features.forEach((kwFeature: KeywordFeatureInterface) => {
-          keywordFeatures.value.push(kwFeature);
-        })
+    onBeforeMount(async () => {
+      try {
+        await context.root.$store.dispatch('keyword/getKeywords');
+      } catch (error) {
+        context.root.$q.notify({
+          type: 'negative',
+          message: `${error}`,
+        });
       }
-    })
-    // get all keywords
-    keywordCategories.value.forEach((kwCategory: KeywordCategoryInterface) => {
-      if (kwCategory.Features) {
-        kwCategory.Features.forEach((kwFeature: KeywordFeatureInterface) => {
-          if (kwFeature.Keywords) {
-            kwFeature.Keywords.forEach((keyword: KeywordInterface) => {
-              keywords.value.push(keyword);
-            })
-          }
-        })
-      }
-    })
-    console.log('keywordCategories.value', keywordCategories.value)
-    onMounted(() => {
+      console.log('keywordCategories.value', keywordCategories.value)
       console.log('keywords.value', keywords.value)
       console.log('filteredKeywords.value', filteredKeywords.value)
-      // context.root.$nextTick(() => {
-      //   filteredKeywords.value = keywords.value
-      //   filteredKeywords.value = filteredKeywords.value.map((kw: KeywordInterface, i: number) => ({ ...kw, rowIndex: i + 1 }))
-      // });
+      keywordCategories.value = context.root.$store.getters['keyword/keywordCategories'] as KeywordCategoryInterface[]
+      // get all keywordFeatures
+      keywordCategories.value.forEach((kwCategory: KeywordCategoryInterface) => {
+        if (kwCategory.Features) {
+          kwCategory.Features.forEach((kwFeature: KeywordFeatureInterface) => {
+            keywordFeatures.value.push(kwFeature);
+          })
+        }
+      })
+      // get all keywords
+      keywordCategories.value.forEach((kwCategory: KeywordCategoryInterface) => {
+        if (kwCategory.Features) {
+          kwCategory.Features.forEach((kwFeature: KeywordFeatureInterface) => {
+            if (kwFeature.Keywords) {
+              kwFeature.Keywords.forEach((keyword: KeywordInterface) => {
+                keywords.value.push(keyword);
+              })
+            }
+          })
+        }
+      })
+      // set filteredKeyword and add number
+      filteredKeywords.value = keywords.value
+      filteredKeywords.value = filteredKeywords.value.map((kw: KeywordInterface, i: number) => ({ ...kw, rowIndex: i + 1 }))
     })
 
     function filterCategory(val: string, update: any) {
@@ -331,7 +338,7 @@ export default defineComponent({
         if (selectedKeywordFeature.value == null) {
           filteredKeywords.value = keywords.value
         } else {
-          // Todo: Load all keywords base on Feature
+          // Load all keywords base on Feature
           keywordCategories.value.forEach((kwCategory: KeywordCategoryInterface) => {
             if (kwCategory.Features) {
               kwCategory.Features.forEach((kwFeature: KeywordFeatureInterface) => {
@@ -419,11 +426,14 @@ export default defineComponent({
       selectedKw.Params.forEach((p: any) => {
         params.value.push(p)
       });
+      params.value = params.value.map((pr: TestParamInterface, i: number) => ({ ...pr, rowIndex: i + 1 }))
       // params.value = params.value.map((v: any, i: number) => ({ ...v, rowIndex: i + 1 }))
     }
 
-    function onSelectKeyword(row: any) {
-      // TODO onSelectKeyword()
+    function onSelectKeyword(kw: KeywordInterface) {
+      console.log('selectedKw', kw)
+      selectedKeyword.value = kw
+      showParams(selectedKeyword.value)
     }
 
     return {

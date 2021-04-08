@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from '@vue/composition-api';
+import { defineComponent, ref, onBeforeMount } from '@vue/composition-api';
 import LeftDrawer from './LeftDrawer.vue';
 import RightDrawer from './RightDrawer.vue';
 
@@ -41,16 +41,6 @@ export default defineComponent({
     const rightDrawerOpen = ref(false);
     const currentUser = ref('');
     const err = ref('');
-    onMounted(async () => {
-      try {
-        await context.root.$store.dispatch('keyword/getKeywords');
-      } catch (error) {
-        context.root.$q.notify({
-          type: 'negative',
-          message: `${error}`,
-        });
-      }
-    });
     const logout = async () => {
       try {
         await context.root.$store.dispatch('auth/logout');
