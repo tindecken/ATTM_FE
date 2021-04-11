@@ -96,11 +96,11 @@ import { TestAUTInterface } from 'src/Models/TestAUT';
 import { TestCaseInterface } from 'src/Models/TestCase';
 import { TestStepInterface } from 'src/Models/TestStep';
 import { TestParamInterface } from 'src/Models/TestParam';
+import _ from 'lodash'
 import DetailContextMenu from './ContextMenu/DetailContextMenu.vue'
 import TestAUT from './TestCaseDetail/TestAUT.vue';
 import Keyword from './TestCaseDetail/Keyword.vue';
 import Parameter from './TestCaseDetail/Parameter.vue';
-import _ from 'lodash'
 
 export default defineComponent({
   name: 'Detail',

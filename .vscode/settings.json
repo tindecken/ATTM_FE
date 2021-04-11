@@ -6,6 +6,8 @@
   "vetur.experimental.templateInterpolationService": true,
   "cSpell.words": [
     "AUTs",
+    "testenvironment",
+    "testenvironments",
     "testsuite",
     "testsuites"
   ],

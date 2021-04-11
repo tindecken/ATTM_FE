@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onBeforeMount } from '@vue/composition-api';
+import { defineComponent, ref } from '@vue/composition-api';
 import LeftDrawer from './LeftDrawer.vue';
 import RightDrawer from './RightDrawer.vue';
 

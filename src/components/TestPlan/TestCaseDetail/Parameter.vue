@@ -1,5 +1,8 @@
 <template>
   <div>
+    <detail-context-menu
+      @useTestEnv="onUseTestEnv()"
+    ></detail-context-menu>
     <q-input
       :class="valueStyle"
       :debounce="300"
@@ -7,18 +10,16 @@
       @input="onChangeParam($event)"
       :readonly="Readonly"
     ></q-input>
-    <!-- <detail-context-menu
-      :selected.sync="selected"
-      @deleteRows="onDeleteRows()">
-    </detail-context-menu> -->
   </div>
 </template>
 
 <script lang="ts">
 import {
   computed,
-  defineComponent, onMounted,
+  defineComponent,
 } from '@vue/composition-api';
+import TestEnvironmentDialog from '../Dialog/TestEnvironmentDialog.vue'
+import DetailContextMenu from '../ContextMenu/DetailContextMenu.vue'
 
 export default defineComponent({
   props: {
@@ -36,6 +37,10 @@ export default defineComponent({
       required: true,
       default: false,
     },
+  },
+  components: {
+    TestEnvironmentDialog,
+    DetailContextMenu,
   },
   setup(props, context) {
     const isDark = computed(() => context.root.$store.getters['global/darkTheme'] as boolean);
@@ -56,21 +61,34 @@ export default defineComponent({
     const valueStyle = computed(() => {
       if (props.TestStep.Params[props.ParamIndex]) return getValueType(props.TestStep.Params[props.ParamIndex].Value)
     })
-    onMounted(() => {
-      // console.log('props.TestStep', props.TestStep);
-      // console.log('props.ParamIndex', props.ParamIndex);
-    })
 
     function onChangeParam(newParamValue: string) {
       console.log('onChangeParam', newParamValue)
       context.emit('changeParam', newParamValue)
     }
+    function onUseTestEnv() {
+      console.log('onUseTestEnv')
+      // open new testEnv dialog
+      context.root.$q.dialog({
+        component: TestEnvironmentDialog,
+        parent: context.root,
+      }).onOk(() => {
+        // TODO: handle ok
+        console.log('OK from TestEnvironmentDialog')
+      }).onCancel(() => {
+        console.log('Cancel')
+      }).onDismiss(() => {
+        console.log('Called on OK or Cancel')
+      })
+    }
+
     return {
       onChangeParam,
       valueStyle,
       valueStylee,
       getValueType,
       isDark,
+      onUseTestEnv,
     }
   },
 });

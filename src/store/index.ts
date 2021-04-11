@@ -8,6 +8,7 @@ import category from './category';
 import testcase from './testcase';
 import testsuite from './testsuite';
 import testgroup from './testgroup';
+import testenvironment from './environment';
 import { AuthStateInterface } from './auth/state';
 import { GlobalStateInterface } from './global/state';
 import { KeywordStateInterface } from './keyword/state';
@@ -15,6 +16,7 @@ import { CategoryStateInterface } from './category/state';
 import { TestCaseStateInterface } from './testcase/state';
 import { TestSuiteStateInterface } from './testsuite/state';
 import { TestGroupStateInterface } from './testgroup/state';
+import { TestEnvironmentStateInterface } from './environment/state';
 
 // import example from './module-example';
 // import { ExampleStateInterface } from './module-example/state';
@@ -35,6 +37,8 @@ export interface StateInterface {
   testcase: TestCaseStateInterface;
   testsuite: TestSuiteStateInterface;
   testgroup: TestGroupStateInterface;
+  testenvironment: TestEnvironmentStateInterface;
+
 }
 
 export default store(({ Vue }) => {
@@ -68,6 +72,10 @@ export default store(({ Vue }) => {
     key: 'testcase',
     modules: ['testcase'],
   });
+  const persistTestEnvironment = new VuexPersistence({
+    key: 'testenvironment',
+    modules: ['testenvironment'],
+  });
   const Store = new Vuex.Store<StateInterface>({
     modules: {
       auth,
@@ -77,8 +85,9 @@ export default store(({ Vue }) => {
       testcase,
       testsuite,
       testgroup,
+      testenvironment,
     },
-    plugins: [persistGlobal.plugin, persistAuth.plugin, persistKeyword.plugin, persistTestCase.plugin, persistCategory.plugin, persistTestSuite.plugin, persistTestGroup.plugin],
+    plugins: [persistGlobal.plugin, persistAuth.plugin, persistKeyword.plugin, persistTestCase.plugin, persistCategory.plugin, persistTestSuite.plugin, persistTestGroup.plugin, persistTestEnvironment.plugin],
 
     // enable strict mode (adds overhead!)
     // for dev mode only

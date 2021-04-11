@@ -1,6 +1,12 @@
 <template>
   <q-menu touch-position context-menu>
     <q-list dense style="min-width: 100px">
+      <q-item clickable v-close-popup @click="useTestEnv()">
+        <q-item-section avatar>
+          <q-icon color="primary" name="create" />
+        </q-item-section>
+        <q-item-section>Use TestEnv</q-item-section>
+      </q-item>
       <q-item clickable v-close-popup>
         <q-item-section avatar>
           <q-icon color="primary" name="create" />
@@ -45,11 +51,11 @@
         </q-item-section>
         <q-item-section>Insert Comment</q-item-section>
       </q-item>
-      <q-item clickable v-close-popup>
+      <q-item clickable v-close-popup @click="deleteRows()">
         <q-item-section avatar>
           <q-icon color="primary" name="delete_outline" />
         </q-item-section>
-        <q-item-section @click="deleteRows()">Delete</q-item-section>
+        <q-item-section>Delete</q-item-section>
       </q-item>
       <q-separator />
       <q-item clickable v-close-popup>
@@ -69,7 +75,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "@vue/composition-api";
+import { defineComponent } from '@vue/composition-api';
 
 export default defineComponent({
   name: 'DetailContextMenu',
@@ -82,8 +88,13 @@ export default defineComponent({
     function deleteRows() {
       emit('deleteRows')
     }
+    function useTestEnv() {
+      console.log('sdfsdfsdfdfs')
+      emit('useTestEnv')
+    }
     return {
       deleteRows,
+      useTestEnv,
     };
   },
 })
