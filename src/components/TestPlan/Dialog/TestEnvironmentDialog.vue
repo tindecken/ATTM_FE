@@ -1,5 +1,9 @@
 <template>
 <q-dialog ref="dialogRef" @hide="onDialogHide" persistent>
+  <q-layout
+      :class="isDark ? 'bg-grey-9' : 'bg-grey-3'"
+      style="max-height: 400px; min-height: 100px !important;"
+    >
   <div class="q-pa-md">
     <div class="row q-col-gutter-xs">
       <div class="col">
@@ -20,12 +24,14 @@
           hide-selected
           fill-input
           input-debounce="0"
-          clearable
+          :readonly="isReadonly"
         />
       </div>
       <div class="col">
+        <q-btn outline @click="enableEdit()">Enable Edit</q-btn>
       </div>
       <div class="col">
+        <q-btn outline @click="applyTestEnv()">Apply</q-btn>
       </div>
     </div>
     <q-separator class="q-mb-sm q-mt-sm" />
@@ -34,7 +40,7 @@
         <q-table
           dense
           title="Test Environment"
-          :data="filteredTestEnvs"
+          :data="selectedTestEnv ? selectedTestEnv.Categories : []"
           :columns="testEnvColumns"
           row-key="name"
           :hide-pagination="true"
@@ -47,7 +53,6 @@
           <template v-slot:body="props">
             <q-tr
               :props="props"
-              --@click="onSelectKeyword(props.row)"
               class="cursor-pointer"
               >
               <q-td key="no" :props="props">
@@ -77,12 +82,15 @@
     <div class="row">
     </div>
   </div>
+      </q-layout>
   </q-dialog>
 </template>
 <script lang="ts">
 import {
+  computed,
   defineComponent, onBeforeMount, Ref, ref,
 } from '@vue/composition-api';
+import { TestEnvInterface } from 'src/Models/TestEnv';
 import { TestEnvCategoryInterface } from 'src/Models/TestEnvCategory';
 
 export default defineComponent({
@@ -92,8 +100,9 @@ export default defineComponent({
   },
   setup(props, context) {
     const dialogRef: Ref<any> = ref(null);
+    const isReadonly: Ref<boolean> = ref(true);
     const testEnvFilter = ref('');
-    const selectedTestEnv: Ref<TestEnvCategoryInterface | null> = ref(null);
+    const selectedTestEnv: Ref<TestEnvInterface | null> = ref(null);
     const filteredTestEnvs: Ref<TestEnvCategoryInterface[]> = ref([]);
     const testEnvCategories: Ref<TestEnvCategoryInterface[]> = ref([]);
     const testEnvColumns = [
@@ -149,7 +158,8 @@ export default defineComponent({
         headerStyle: 'max-width: 100px',
       },
     ]
-
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    const isDark = computed(() => context.root.$store.getters['global/darkTheme']);
     onBeforeMount(async () => {
       try {
         await context.root.$store.dispatch('testenvironment/getTestEnvironments');
@@ -159,7 +169,12 @@ export default defineComponent({
           message: `${error}`,
         });
       }
-      testEnvCategories.value = context.root.$store.getters['testenvironment/keywordCategories'] as TestEnvCategoryInterface[]
+      testEnvCategories.value = context.root.$store.getters['testenvironment/testEnvCategories'] as TestEnvCategoryInterface[]
+      selectedTestEnv.value = context.root.$store.getters['global/selectedTestEnv'] as TestEnvInterface
+      filteredTestEnvs.value = testEnvCategories.value
+      console.log('testEnvCategories.value', testEnvCategories.value)
+      console.log('filteredTestEnvs.value', filteredTestEnvs.value)
+      context.root.$nextTick()
     })
 
     function onDialogHide() {
@@ -211,6 +226,14 @@ export default defineComponent({
       dialogRef.value.hide();
     }
 
+    function enableEdit() {
+      isReadonly.value = false
+    }
+
+    function applyTestEnv() {
+      if (selectedTestEnv.value) context.root.$store.commit('global/setSelectedTestEnv', selectedTestEnv.value)
+    }
+
     return {
       testEnvColumns,
       onTestEnvChange,
@@ -224,6 +247,10 @@ export default defineComponent({
       dialogRef,
       show,
       hide,
+      isDark,
+      enableEdit,
+      applyTestEnv,
+      isReadonly,
     };
   },
 });
