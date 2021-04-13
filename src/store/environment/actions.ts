@@ -1,6 +1,6 @@
 import { ActionTree } from 'vuex';
 import axios from 'axios';
-import { TestEnvCategoryInterface } from 'src/Models/TestEnvCategory';
+import { TestEnvInterface } from 'src/Models/TestEnv';
 import { StateInterface } from '../index';
 import { TestEnvironmentStateInterface } from './state';
 import config from '../../config';
@@ -18,9 +18,9 @@ const actions: ActionTree<TestEnvironmentStateInterface, StateInterface> = {
           },
         },
       );
-      const testEnvCategories: TestEnvCategoryInterface[] = await response.data;
-      console.log('testEnvCategories', testEnvCategories)
-      context.commit('setTestEnvCategories', testEnvCategories);
+      const testEnvs: TestEnvInterface[] = await response.data;
+      console.log('testEnvs', testEnvs)
+      context.commit('setTestEnvs', testEnvs);
     } catch (error) {
       throw error;
     }

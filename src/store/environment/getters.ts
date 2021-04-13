@@ -3,11 +3,11 @@ import { StateInterface } from '../index';
 import { TestEnvironmentStateInterface } from './state';
 
 const getters: GetterTree<TestEnvironmentStateInterface, StateInterface> = {
-  testEnvCategories(state: TestEnvironmentStateInterface) {
-    return state.testEnvCategories;
+  testEnvs(state: TestEnvironmentStateInterface) {
+    return state.testEnvs;
   },
   selectedTestEnvCategory(state: TestEnvironmentStateInterface) {
-    return state.selectedTestEnvCategory;
+    return state.selectedTestEnv;
   },
 };
 

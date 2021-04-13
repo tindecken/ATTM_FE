@@ -1,13 +1,13 @@
-import { TestEnvCategoryInterface } from 'src/Models/TestEnvCategory';
+import { TestEnvInterface } from 'src/Models/TestEnv';
 
 export interface TestEnvironmentStateInterface {
-  testEnvCategories: TestEnvCategoryInterface[];
-  selectedTestEnvCategory?: TestEnvCategoryInterface
+  testEnvs: TestEnvInterface[];
+  selectedTestEnv?: TestEnvInterface
 }
 
 const state: TestEnvironmentStateInterface = {
-  testEnvCategories: [],
-  selectedTestEnvCategory: undefined,
+  testEnvs: [],
+  selectedTestEnv: undefined,
 };
 
 export default state;

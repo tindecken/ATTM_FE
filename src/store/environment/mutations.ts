@@ -1,13 +1,13 @@
-import { TestEnvCategoryInterface } from 'src/Models/TestEnvCategory';
+import { TestEnvInterface } from 'src/Models/TestEnv';
 import { MutationTree } from 'vuex';
 import { TestEnvironmentStateInterface } from './state';
 
 const mutation: MutationTree<TestEnvironmentStateInterface> = {
-  setSelectedTestEnvCategory(state: TestEnvironmentStateInterface, testEnvCategory: TestEnvCategoryInterface) {
-    state.selectedTestEnvCategory = testEnvCategory;
+  setSelectedTestEnv(state: TestEnvironmentStateInterface, testEnvCategory: TestEnvInterface) {
+    state.selectedTestEnv = testEnvCategory;
   },
-  setTestEnvCategories(state: TestEnvironmentStateInterface, testEnvCategories: TestEnvCategoryInterface[]) {
-    state.testEnvCategories = testEnvCategories;
+  setTestEnvs(state: TestEnvironmentStateInterface, testEnvs: TestEnvInterface[]) {
+    state.testEnvs = testEnvs;
   },
 }
 

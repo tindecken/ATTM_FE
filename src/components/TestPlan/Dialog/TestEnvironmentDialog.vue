@@ -1,9 +1,9 @@
 <template>
 <q-dialog ref="dialogRef" @hide="onDialogHide" persistent>
   <q-layout
-      :class="isDark ? 'bg-grey-9' : 'bg-grey-3'"
-      style="max-height: 400px; min-height: 100px !important;"
-    >
+    :class="isDark ? 'bg-grey-9' : 'bg-grey-3'"
+    style="max-height: 400px; min-height: 100px !important;"
+  >
   <div class="q-pa-md">
     <div class="row q-col-gutter-xs">
       <div class="col">
@@ -40,7 +40,7 @@
         <q-table
           dense
           title="Test Environment"
-          :data="selectedTestEnv ? selectedTestEnv.Categories : []"
+          :data="testEnvTableDatas"
           :columns="testEnvColumns"
           row-key="name"
           :hide-pagination="true"
@@ -48,7 +48,7 @@
           separator="cell"
         >
         <template v-slot:top>
-          <div class="col-2 q-table__title">Test Environment</div>
+          <div class="col-6 q-table__title">Test Environment</div>
         </template>
           <template v-slot:body="props">
             <q-tr
@@ -58,20 +58,17 @@
               <q-td key="no" :props="props">
                 {{ props.row.rowIndex }}
               </q-td>
-              <q-td key="name" :props="props">
-                {{ props.row.Name }}
+              <q-td key="category" :props="props">
+                {{ props.row.Category }}
               </q-td>
-              <q-td key="description" :props="props" style="white-space: normal;">
-                <div>{{ props.row.Description }}</div>
+              <q-td key="name" :props="props" style="white-space: normal;">
+                <div>{{ props.row.Name }}</div>
               </q-td>
-              <q-td key="owner" :props="props">
-                {{ props.row.Owner }}
+              <q-td key="value" :props="props">
+                {{ props.row.Value }}
               </q-td>
-              <q-td key="updatedMessage" :props="props">
-                {{ props.row.UpdatedMessage }}
-              </q-td>
-              <q-td key="createdDate" :props="props">
-                {{ props.row.CreatedDate }}
+              <q-td key="description" :props="props">
+                {{ props.row.Description }}
               </q-td>
             </q-tr>
           </template>
@@ -92,6 +89,7 @@ import {
 } from '@vue/composition-api';
 import { TestEnvInterface } from 'src/Models/TestEnv';
 import { TestEnvCategoryInterface } from 'src/Models/TestEnvCategory';
+import { TestEnvNodeInterface } from 'src/Models/TestEnvNode';
 
 export default defineComponent({
   name: 'TestEnvironmentDialog',
@@ -99,12 +97,13 @@ export default defineComponent({
   components: {
   },
   setup(props, context) {
+    const testEnvTableDatas: Ref<any[]> = ref([])
     const dialogRef: Ref<any> = ref(null);
     const isReadonly: Ref<boolean> = ref(true);
     const testEnvFilter = ref('');
     const selectedTestEnv: Ref<TestEnvInterface | null> = ref(null);
-    const filteredTestEnvs: Ref<TestEnvCategoryInterface[]> = ref([]);
-    const testEnvCategories: Ref<TestEnvCategoryInterface[]> = ref([]);
+    const filteredTestEnvs: Ref<TestEnvInterface[]> = ref([]);
+    const testEnvs: Ref<TestEnvInterface[]> = ref([]);
     const testEnvColumns = [
       {
         name: 'no',
@@ -117,28 +116,28 @@ export default defineComponent({
         headerStyle: 'max-width: 40px',
       },
       {
-        name: 'name',
+        name: 'category',
         required: true,
-        label: 'Name',
+        label: 'Category',
         align: 'left',
-        field: 'Name',
+        field: 'Category',
         format: (val: any) => `${val}`,
         sortable: false,
+      },
+      {
+        name: 'name',
+        align: 'left',
+        label: 'Name',
+        field: 'Name',
+        sortable: false,
+        style: 'min-width: 100px',
+        headerStyle: 'min-width: 100px',
       },
       {
         name: 'value',
         align: 'left',
         label: 'Value',
         field: 'Value',
-        sortable: false,
-        style: 'min-width: 100px',
-        headerStyle: 'min-width: 100px',
-      },
-      {
-        name: 'testBed',
-        align: 'left',
-        label: 'TestBed',
-        field: 'TestBed',
         sortable: false,
       },
       {
@@ -148,18 +147,22 @@ export default defineComponent({
         field: 'Description',
         sortable: false,
       },
-      {
-        name: 'example',
-        align: 'left',
-        label: 'Example',
-        field: 'ExampleValue',
-        sortable: false,
-        style: 'max-width: 100px',
-        headerStyle: 'max-width: 100px',
-      },
     ]
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const isDark = computed(() => context.root.$store.getters['global/darkTheme']);
+    const isDark = computed(() => context.root.$store.getters['global/darkTheme'])
+    function transformToTableDatas(testEnv: TestEnvInterface | null) {
+      testEnvTableDatas.value = []
+      if (testEnv && testEnv.Categories) {
+        testEnv.Categories.forEach((category: TestEnvCategoryInterface) => {
+          category.Nodes.forEach((node: TestEnvNodeInterface) => {
+            const nodeEnv = { ...node, Category: category.Name, categoryDescription: category.Description };
+            testEnvTableDatas.value.push(nodeEnv);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+            testEnvTableDatas.value = testEnvTableDatas.value.map((value: any, i: number) => ({ ...value, rowIndex: i + 1 }))
+          })
+        })
+      }
+    }
     onBeforeMount(async () => {
       try {
         await context.root.$store.dispatch('testenvironment/getTestEnvironments');
@@ -169,10 +172,13 @@ export default defineComponent({
           message: `${error}`,
         });
       }
-      testEnvCategories.value = context.root.$store.getters['testenvironment/testEnvCategories'] as TestEnvCategoryInterface[]
+      testEnvs.value = context.root.$store.getters['testenvironment/testEnvs'] as TestEnvInterface[]
       selectedTestEnv.value = context.root.$store.getters['global/selectedTestEnv'] as TestEnvInterface
-      filteredTestEnvs.value = testEnvCategories.value
-      console.log('testEnvCategories.value', testEnvCategories.value)
+
+      // testEnvTableDatas
+      transformToTableDatas(selectedTestEnv.value)
+      filteredTestEnvs.value = testEnvs.value
+      console.log('testEnvs.value', testEnvs.value)
       console.log('filteredTestEnvs.value', filteredTestEnvs.value)
       context.root.$nextTick()
     })
@@ -184,18 +190,17 @@ export default defineComponent({
     }
 
     function onTestEnvChange() {
-      // TODO
+      transformToTableDatas(selectedTestEnv.value)
     }
-
     function filterTestEnv(val: string, update: any) {
       setTimeout(() => {
         update(
           () => {
             if (val === '') {
-              filteredTestEnvs.value = testEnvCategories.value;
+              filteredTestEnvs.value = testEnvs.value;
             } else {
               const needle = val.toLowerCase()
-              filteredTestEnvs.value = testEnvCategories.value.filter((testEnvCategory: TestEnvCategoryInterface) => testEnvCategory.Name.toLowerCase().indexOf(needle) > -1)
+              filteredTestEnvs.value = testEnvs.value.filter((testEnv: TestEnvInterface) => testEnv.Name.toLowerCase().indexOf(needle) > -1)
             }
           },
 
@@ -243,7 +248,6 @@ export default defineComponent({
       filteredTestEnvs,
       filterTestEnv,
       abortFilterTestEnv,
-      testEnvCategories,
       dialogRef,
       show,
       hide,
@@ -251,6 +255,7 @@ export default defineComponent({
       enableEdit,
       applyTestEnv,
       isReadonly,
+      testEnvTableDatas,
     };
   },
 });
