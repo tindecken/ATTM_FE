@@ -3,7 +3,6 @@ import { MutationTree } from 'vuex';
 import uuid from 'uuid-random';
 import _ from 'lodash'
 import { TestCaseInterface } from 'src/Models/TestCase';
-import { TestAUTInterface } from 'src/Models/TestAUT';
 import { TestCaseStateInterface } from './state';
 
 const mutation: MutationTree<TestCaseStateInterface> = {
@@ -43,14 +42,14 @@ const mutation: MutationTree<TestCaseStateInterface> = {
     const index = state.openedTCs.findIndex((el: TestCaseInterface) => el.Id === testCaseId);
     if (index !== -1) {
       const tempTC = _.cloneDeep(state.openedTCs[index])
-      let lastTestAUT: TestAUTInterface | undefined;
+      let lastTestAUTId = '';
       if (tempTC.TestSteps.length > 0) { // incase there's no testSteps
-        lastTestAUT = tempTC.TestSteps[tempTC.TestSteps.length - 1].TestAUT
+        lastTestAUTId = tempTC.TestSteps[tempTC.TestSteps.length - 1].TestAUTId
       }
-      console.log('lastClient', lastTestAUT)
+      console.log('lastTestAUTId', lastTestAUTId)
       tempTC.TestSteps.push({
         UUID: uuid(),
-        TestAUT: lastTestAUT,
+        TestAUTId: lastTestAUTId,
         Description: '',
         Params: [],
         IsDisabled: false,

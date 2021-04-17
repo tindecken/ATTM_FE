@@ -3,4 +3,5 @@ export interface TestParamInterface {
     Value: string;
     Description: string;
     ExampleValue: string;
+    TestNodePath: string;
 }

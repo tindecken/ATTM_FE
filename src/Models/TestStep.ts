@@ -1,10 +1,9 @@
 import { KeywordInterface } from './Keyword';
-import { TestAUTInterface } from './TestAUT';
 import { TestParamInterface } from './TestParam';
 
 export interface TestStepInterface {
     UUID: string;
-    TestAUT: TestAUTInterface | undefined;
+    TestAUTId: string;
     Keyword?: KeywordInterface;
     Description?: string;
     Params: TestParamInterface[];

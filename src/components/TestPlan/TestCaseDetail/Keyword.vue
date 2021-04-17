@@ -40,9 +40,6 @@ export default defineComponent({
   },
   components: {},
   setup(props, context) {
-    onMounted(() => {
-      console.log('eeeeeeeeeeeeeeeee')
-    })
     console.log('keyword testStep', props.TestStep);
     const filteredKeywords: Ref<KeywordInterface[]> = ref([])
     const keywords: Ref<KeywordInterface[]> = computed(() => context.root.$store.getters['keyword/keywords'] as KeywordInterface[]);

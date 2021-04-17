@@ -8,7 +8,7 @@
       :debounce="300"
       :value="TestStep.Params[ParamIndex] ? TestStep.Params[ParamIndex].Value : ''" dense borderless
       @input="onChangeParam($event)"
-      :readonly="Readonly"
+      :readonly="readonly"
     ></q-input>
   </div>
 </template>
@@ -17,7 +17,11 @@
 import {
   computed,
   defineComponent,
+  Ref,
+  ref,
 } from '@vue/composition-api';
+import { TestParamInterface } from 'src/Models/TestParam';
+import { TestEnvFlatNodeInterface } from 'src/Models/TestEnvFlatNode';
 import TestEnvironmentDialog from '../Dialog/TestEnvironmentDialog.vue'
 import DetailContextMenu from '../ContextMenu/DetailContextMenu.vue'
 
@@ -32,49 +36,55 @@ export default defineComponent({
       type: Number,
       required: true,
     },
-    Readonly: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
   },
   components: {
     TestEnvironmentDialog,
     DetailContextMenu,
   },
   setup(props, context) {
+    const readonly: Ref<boolean> = ref(false)
     const isDark = computed(() => context.root.$store.getters['global/darkTheme'] as boolean);
-    function getValueType(value: string): string {
-      if (value && value.charAt(0) === '$' && value.charAt(value.length - 1) === '$') {
-        console.log('isDark', isDark);
-        if (isDark.value) return 'testBedDark'
+    function getValueType(testParam: TestParamInterface): string {
+      if (testParam.TestNodePath) {
+        if (isDark.value) {
+          return 'testBedDark'
+        }
         return 'testBed'
-      } if (value && value.charAt(0) === '@' && value.charAt(value.length - 1) === '@') {
-        console.log('isDark', isDark);
-        if (isDark.value) return 'testBufferDark'
+      }
+      if (testParam.Value && testParam.Value.charAt(0) === '@' && testParam.Value.charAt(testParam.Value.length - 1) === '@') {
+        if (isDark.value) {
+          return 'testBufferDark'
+        }
         return 'testBuffer'
       }
       return ''
     }
-    const valueStylee = 'testBed'
     // eslint-disable-next-line consistent-return
     const valueStyle = computed(() => {
-      if (props.TestStep.Params[props.ParamIndex]) return getValueType(props.TestStep.Params[props.ParamIndex].Value)
+      if (props.TestStep.Params[props.ParamIndex]) return getValueType(props.TestStep.Params[props.ParamIndex])
     })
 
     function onChangeParam(newParamValue: string) {
       console.log('onChangeParam', newParamValue)
       context.emit('changeParam', newParamValue)
     }
+
+    function useTestEnv(flatNode: TestEnvFlatNodeInterface) {
+      context.emit('useTestEnv', flatNode)
+    }
+
     function onUseTestEnv() {
       console.log('onUseTestEnv')
       // open new testEnv dialog
       context.root.$q.dialog({
         component: TestEnvironmentDialog,
         parent: context.root,
-      }).onOk(() => {
+      }).onOk((node: TestEnvFlatNodeInterface) => {
         // TODO: handle ok
-        console.log('OK from TestEnvironmentDialog')
+        if (node) {
+          console.log('OK from TestEnvironmentDialog', node)
+          useTestEnv(node)
+        }
       }).onCancel(() => {
         console.log('Cancel')
       }).onDismiss(() => {
@@ -85,10 +95,10 @@ export default defineComponent({
     return {
       onChangeParam,
       valueStyle,
-      valueStylee,
       getValueType,
       isDark,
       onUseTestEnv,
+      readonly,
     }
   },
 });

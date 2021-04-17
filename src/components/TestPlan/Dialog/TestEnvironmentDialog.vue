@@ -70,6 +70,9 @@
               <q-td key="description" :props="props">
                 {{ props.row.Description }}
               </q-td>
+              <q-td key="use" :props="props">
+                <q-btn size="sm" outline @click="use(props.row)">Use</q-btn>
+              </q-td>
             </q-tr>
           </template>
         </q-table>
@@ -90,6 +93,7 @@ import {
 import { TestEnvInterface } from 'src/Models/TestEnv';
 import { TestEnvCategoryInterface } from 'src/Models/TestEnvCategory';
 import { TestEnvNodeInterface } from 'src/Models/TestEnvNode';
+import { TestEnvFlatNodeInterface } from 'src/Models/TestEnvFlatNode';
 
 export default defineComponent({
   name: 'TestEnvironmentDialog',
@@ -97,7 +101,7 @@ export default defineComponent({
   components: {
   },
   setup(props, context) {
-    const testEnvTableDatas: Ref<any[]> = ref([])
+    const testEnvTableDatas: Ref<TestEnvFlatNodeInterface[]> = ref([])
     const dialogRef: Ref<any> = ref(null);
     const isReadonly: Ref<boolean> = ref(true);
     const testEnvFilter = ref('');
@@ -147,21 +151,28 @@ export default defineComponent({
         field: 'Description',
         sortable: false,
       },
+      {
+        name: 'use',
+        align: 'left',
+        label: '',
+        field: 'use',
+        sortable: false,
+      },
     ]
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const isDark = computed(() => context.root.$store.getters['global/darkTheme'])
-    function transformToTableDatas(testEnv: TestEnvInterface | null) {
-      testEnvTableDatas.value = []
+    function transformToFlatNode(testEnv: TestEnvInterface | null): TestEnvFlatNodeInterface[] {
+      let flatNodes: TestEnvFlatNodeInterface[] = []
       if (testEnv && testEnv.Categories) {
         testEnv.Categories.forEach((category: TestEnvCategoryInterface) => {
           category.Nodes.forEach((node: TestEnvNodeInterface) => {
-            const nodeEnv = { ...node, Category: category.Name, categoryDescription: category.Description };
-            testEnvTableDatas.value.push(nodeEnv);
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-            testEnvTableDatas.value = testEnvTableDatas.value.map((value: any, i: number) => ({ ...value, rowIndex: i + 1 }))
+            const nodeEnv: TestEnvFlatNodeInterface = { ...node, Category: category.Name, CategoryDescription: category.Description };
+            flatNodes.push(nodeEnv);
+            flatNodes = flatNodes.map((value: TestEnvFlatNodeInterface, i: number) => ({ ...value, rowIndex: i + 1 }))
           })
         })
       }
+      return flatNodes
     }
     onBeforeMount(async () => {
       try {
@@ -176,7 +187,7 @@ export default defineComponent({
       selectedTestEnv.value = context.root.$store.getters['global/selectedTestEnv'] as TestEnvInterface
 
       // testEnvTableDatas
-      transformToTableDatas(selectedTestEnv.value)
+      testEnvTableDatas.value = transformToFlatNode(selectedTestEnv.value)
       filteredTestEnvs.value = testEnvs.value
       console.log('testEnvs.value', testEnvs.value)
       console.log('filteredTestEnvs.value', filteredTestEnvs.value)
@@ -190,7 +201,7 @@ export default defineComponent({
     }
 
     function onTestEnvChange() {
-      transformToTableDatas(selectedTestEnv.value)
+      testEnvTableDatas.value = transformToFlatNode(selectedTestEnv.value)
     }
     function filterTestEnv(val: string, update: any) {
       setTimeout(() => {
@@ -239,6 +250,12 @@ export default defineComponent({
       if (selectedTestEnv.value) context.root.$store.commit('global/setSelectedTestEnv', selectedTestEnv.value)
     }
 
+    function use(flatNode: TestEnvFlatNodeInterface) {
+      console.log('node', flatNode)
+      context.emit('ok', flatNode)
+      hide()
+    }
+
     return {
       testEnvColumns,
       onTestEnvChange,
@@ -256,6 +273,7 @@ export default defineComponent({
       applyTestEnv,
       isReadonly,
       testEnvTableDatas,
+      use,
     };
   },
 });

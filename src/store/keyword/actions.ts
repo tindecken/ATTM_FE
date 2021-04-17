@@ -18,7 +18,7 @@ const actions: ActionTree<KeywordStateInterface, StateInterface> = {
           },
         },
       );
-      const keywordCategories: KeywordCategoryInterface[] = await response.data.categories;
+      const keywordCategories: KeywordCategoryInterface[] = await response.data.Categories;
       console.log('keywordCategories', keywordCategories)
       context.commit('setKeywordCategories', keywordCategories);
     } catch (error) {

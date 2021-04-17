@@ -68,7 +68,13 @@
                     <keyword :TestStep="props.row" @changeKeyword="changeKeyword(tc, props.row, $event)" />
                   </q-td>
                   <q-td v-for="index in 19" :key="index" class="q-c-input">
-                    <parameter :TestStep="props.row" :ParamIndex="index-1" :Readonly="index-1 >= props.row.Params.length" @changeParam="changeParam(tc, props.row, index-1, $event)"></parameter>
+                    <parameter
+                      :TestStep="props.row"
+                      :ParamIndex="index-1"
+                      @changeParam="changeParam(tc, props.row, index-1, $event)"
+                      @useTestEnv="useTestEnv(tc, props.row, index-1, $event)"
+                      >
+                    </parameter>
                   </q-td>
                 </q-tr>
               </template>
@@ -97,6 +103,7 @@ import { TestCaseInterface } from 'src/Models/TestCase';
 import { TestStepInterface } from 'src/Models/TestStep';
 import { TestParamInterface } from 'src/Models/TestParam';
 import _ from 'lodash'
+import { TestEnvFlatNodeInterface } from 'src/Models/TestEnvFlatNode';
 import DetailContextMenu from './ContextMenu/DetailContextMenu.vue'
 import TestAUT from './TestCaseDetail/TestAUT.vue';
 import Keyword from './TestCaseDetail/Keyword.vue';
@@ -353,15 +360,18 @@ export default defineComponent({
       context.root.$store.commit('testcase/updateOpenedTCs', tempTC)
       context.root.$store.commit('category/updateTestCase', tempTC)
     }
+
     function changeTestAUT(testCase: TestCaseInterface, testStep: TestStepInterface, newTestAUT: TestAUTInterface) {
       console.log('newTestAUT', newTestAUT)
       // find edited testStep
       const stepIndex: number = testCase.TestSteps.indexOf(testStep);
       const tempTC: TestCaseInterface = _.cloneDeep(testCase)
-      tempTC.TestSteps[stepIndex].TestAUT = newTestAUT;
+      tempTC.TestSteps[stepIndex].TestAUTId = newTestAUT.Id;
+      console.log('changeTestAUT, tempTC', tempTC)
       context.root.$store.commit('testcase/updateOpenedTCs', tempTC)
       context.root.$store.commit('category/updateTestCase', tempTC)
     }
+
     function changeParam(testCase: TestCaseInterface, testStep: TestStepInterface, paramIndex: number, newValue: string) {
       console.log('testcase', testCase)
       const stepIndex: number = testCase.TestSteps.indexOf(testStep);
@@ -371,6 +381,18 @@ export default defineComponent({
       context.root.$store.commit('testcase/updateOpenedTCs', tempTC)
       context.root.$store.commit('category/updateTestCase', tempTC)
     }
+
+    function useTestEnv(testCase: TestCaseInterface, testStep: TestStepInterface, paramIndex: number, testEnvNode: TestEnvFlatNodeInterface) {
+      console.log('testcase', testCase)
+      const stepIndex: number = testCase.TestSteps.indexOf(testStep);
+      const tempTC: TestCaseInterface = _.cloneDeep(testCase)
+      console.log('paramIndex', paramIndex)
+      tempTC.TestSteps[stepIndex].Params[paramIndex].TestNodePath = `${testEnvNode.Category}/${testEnvNode.Name}`
+      tempTC.TestSteps[stepIndex].Params[paramIndex].Value = testEnvNode.Value;
+      context.root.$store.commit('testcase/updateOpenedTCs', tempTC)
+      context.root.$store.commit('category/updateTestCase', tempTC)
+    }
+
     function onRowHover(params: any) {
       columns.value.forEach((col: any, index: number) => {
         if (index >= 3) {
@@ -493,7 +515,7 @@ export default defineComponent({
     async function saveTestCase(testCaseId: string) {
       try {
         const currTestCase = openedTCs.value.find((tc: TestCaseInterface) => tc.Id === testCaseId) as TestCaseInterface
-        console.log('currTestCase', currTestCase)
+        console.log(currTestCase)
         const result = await context.root.$store.dispatch('testcase/saveTestCase', currTestCase)
         console.log('result', result)
         context.root.$q.notify({
@@ -532,6 +554,7 @@ export default defineComponent({
       saveTestCase,
       changeTestAUT,
       selectedTestCaseId,
+      useTestEnv,
     };
   },
 });
