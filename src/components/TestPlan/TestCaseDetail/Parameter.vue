@@ -17,8 +17,6 @@
 import {
   computed,
   defineComponent,
-  Ref,
-  ref,
 } from '@vue/composition-api';
 import { TestParamInterface } from 'src/Models/TestParam';
 import { TestEnvFlatNodeInterface } from 'src/Models/TestEnvFlatNode';
@@ -42,7 +40,18 @@ export default defineComponent({
     DetailContextMenu,
   },
   setup(props, context) {
-    const readonly: Ref<boolean> = ref(false)
+    const readonly = computed(() => {
+      const numberOfParam: number = props.TestStep.Params.length;
+      const testEnvPath = props.TestStep.Params[props.ParamIndex]?.TestNodePath
+      if (testEnvPath && testEnvPath !== '') {
+        return true
+      }
+      if (props.ParamIndex >= numberOfParam) {
+        return true
+      }
+      return false
+    })
+
     const isDark = computed(() => context.root.$store.getters['global/darkTheme'] as boolean);
     function getValueType(testParam: TestParamInterface): string {
       if (testParam.TestNodePath) {

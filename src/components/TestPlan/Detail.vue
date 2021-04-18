@@ -67,7 +67,7 @@
                   <q-td key="keyword" :props="props" class="q-c-input">
                     <keyword :TestStep="props.row" @changeKeyword="changeKeyword(tc, props.row, $event)" />
                   </q-td>
-                  <q-td v-for="index in 19" :key="index" class="q-c-input">
+                  <q-td v-for="index in 20" :key="index" class="q-c-input">
                     <parameter
                       :TestStep="props.row"
                       :ParamIndex="index-1"
@@ -352,6 +352,7 @@ export default defineComponent({
       // find edited testStep
       const stepIndex: number = testCase.TestSteps.indexOf(testStep);
       const tempTC: TestCaseInterface = _.cloneDeep(testCase)
+      tempTC.TestSteps[stepIndex].Params = []
       tempTC.TestSteps[stepIndex].Keyword = newKeyword;
       // add default Params to testCase based on number of params of Keyword
       newKeyword.Params.forEach((pr: TestParamInterface) => {

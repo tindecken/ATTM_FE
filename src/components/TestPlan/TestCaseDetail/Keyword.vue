@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import {
-  computed, defineComponent, onMounted, ref, Ref,
+  computed, defineComponent, ref, Ref,
 } from '@vue/composition-api';
 
 import { KeywordInterface } from 'src/Models/Keyword';
