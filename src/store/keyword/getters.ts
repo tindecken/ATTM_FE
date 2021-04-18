@@ -1,3 +1,4 @@
+import { FlatKeywordInterface } from 'src/Models/FlatKeyword';
 import { KeywordCategoryInterface } from 'src/Models/KeywordCategory';
 import { GetterTree } from 'vuex';
 import { StateInterface } from '../index';
@@ -9,6 +10,9 @@ const getters: GetterTree<KeywordStateInterface, StateInterface> = {
   },
   selectedKeyword(state: KeywordStateInterface) {
     return state.selectedKeyword;
+  },
+  keywords(state: KeywordStateInterface): FlatKeywordInterface[] {
+    return state.keywords
   },
 };
 

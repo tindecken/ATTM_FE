@@ -9,4 +9,6 @@ export interface TestStepInterface {
     Params: TestParamInterface[];
     IsDisabled: boolean;
     IsComment: boolean;
+    KWFeature: string;
+    KWCategory: string;
 }

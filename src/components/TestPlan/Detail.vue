@@ -108,6 +108,7 @@ import DetailContextMenu from './ContextMenu/DetailContextMenu.vue'
 import TestAUT from './TestCaseDetail/TestAUT.vue';
 import Keyword from './TestCaseDetail/Keyword.vue';
 import Parameter from './TestCaseDetail/Parameter.vue';
+import { FlatKeywordInterface } from 'src/Models/FlatKeyword';
 
 export default defineComponent({
   name: 'Detail',
@@ -347,13 +348,15 @@ export default defineComponent({
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       context.root.$store.commit('testcase/removeOpennedTC', testcase)
     }
-    function changeKeyword(testCase: TestCaseInterface, testStep: TestStepInterface, newKeyword: KeywordInterface) {
+    function changeKeyword(testCase: TestCaseInterface, testStep: TestStepInterface, newKeyword: FlatKeywordInterface) {
       console.log('newKeyword', newKeyword)
       // find edited testStep
       const stepIndex: number = testCase.TestSteps.indexOf(testStep);
       const tempTC: TestCaseInterface = _.cloneDeep(testCase)
       tempTC.TestSteps[stepIndex].Params = []
       tempTC.TestSteps[stepIndex].Keyword = newKeyword;
+      tempTC.TestSteps[stepIndex].KWFeature = newKeyword.Feature;
+      tempTC.TestSteps[stepIndex].KWCategory = newKeyword.Category;
       // add default Params to testCase based on number of params of Keyword
       newKeyword.Params.forEach((pr: TestParamInterface) => {
         tempTC.TestSteps[stepIndex].Params.push(pr);
