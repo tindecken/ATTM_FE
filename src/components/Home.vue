@@ -21,8 +21,9 @@
     <q-page-container>
       <router-view />
     </q-page-container>
-    <q-footer reveal bordered class="text-white" style="height: 24px">
-      Tindecken
+    <q-footer reveal bordered class="text-white row inline justify-between" style="height: 24px">
+      <div>Tindecken @ 2021</div>
+      <div><env-footer></env-footer></div>
     </q-footer>
 
   </q-layout>
@@ -32,10 +33,11 @@
 import { defineComponent, ref } from '@vue/composition-api';
 import LeftDrawer from './LeftDrawer.vue';
 import RightDrawer from './RightDrawer.vue';
+import EnvFooter from './Footer/EnvFooter.vue';
 
 export default defineComponent({
   name: 'Home',
-  components: { LeftDrawer, RightDrawer },
+  components: { LeftDrawer, RightDrawer, EnvFooter },
   setup(props, context) {
     const leftDrawerOpen = ref(false);
     const rightDrawerOpen = ref(false);
@@ -50,9 +52,7 @@ export default defineComponent({
         err.value = error.message || 'Something is error !';
       }
     };
-
     currentUser.value = context.root.$store.getters['auth/userName'];
-
     return {
       leftDrawerOpen, rightDrawerOpen, err, currentUser, logout,
     };

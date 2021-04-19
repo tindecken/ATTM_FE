@@ -54,6 +54,8 @@ const mutation: MutationTree<TestCaseStateInterface> = {
         Params: [],
         IsDisabled: false,
         IsComment: false,
+        KWFeature: '',
+        KWCategory: '',
       })
       Vue.set(state.openedTCs, index, tempTC)
     }

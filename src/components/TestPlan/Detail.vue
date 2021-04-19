@@ -97,7 +97,6 @@ import {
   computed,
   defineComponent, Ref, ref,
 } from '@vue/composition-api'
-import { KeywordInterface } from 'src/Models/Keyword';
 import { TestAUTInterface } from 'src/Models/TestAUT';
 import { TestCaseInterface } from 'src/Models/TestCase';
 import { TestStepInterface } from 'src/Models/TestStep';
