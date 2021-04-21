@@ -6,10 +6,20 @@
     <q-input
       :class="valueStyle"
       :debounce="300"
-      :value="TestStep.Params[ParamIndex] ? TestStep.Params[ParamIndex].Value : ''" dense borderless
+      :value="prValue"
+      dense
+      borderless
       @input="onChangeParam($event)"
       :readonly="readonly"
-    ></q-input>
+    >
+      <template v-slot:prepend>
+          <q-icon v-if="isParamError" name="error">
+            <q-tooltip>
+              {{paramErrorMessage}}
+            </q-tooltip>
+          </q-icon>
+        </template>
+    </q-input>
   </div>
 </template>
 
@@ -17,9 +27,15 @@
 import {
   computed,
   defineComponent,
+  Ref,
+  ref,
 } from '@vue/composition-api';
 import { TestParamInterface } from 'src/Models/TestParam';
 import { TestEnvFlatNodeInterface } from 'src/Models/TestEnvFlatNode';
+import { TestStepInterface } from 'src/Models/TestStep';
+import { TestEnvInterface } from 'src/Models/TestEnv';
+import { TestEnvCategoryInterface } from 'src/Models/TestEnvCategory';
+import { TestEnvNodeInterface } from 'src/Models/TestEnvNode';
 import TestEnvironmentDialog from '../Dialog/TestEnvironmentDialog.vue'
 import DetailContextMenu from '../ContextMenu/DetailContextMenu.vue'
 
@@ -40,6 +56,9 @@ export default defineComponent({
     DetailContextMenu,
   },
   setup(props, context) {
+    const isParamError: Ref<boolean> = ref(false)
+    const paramErrorMessage = ref('')
+    const isDark = computed(() => context.root.$store.getters['global/darkTheme'] as boolean);
     const readonly = computed(() => {
       const numberOfParam: number = props.TestStep.Params.length;
       const testEnvPath = props.TestStep.Params[props.ParamIndex]?.TestNodePath
@@ -52,7 +71,6 @@ export default defineComponent({
       return false
     })
 
-    const isDark = computed(() => context.root.$store.getters['global/darkTheme'] as boolean);
     function getValueType(testParam: TestParamInterface): string {
       if (testParam.TestNodePath) {
         if (isDark.value) {
@@ -68,6 +86,46 @@ export default defineComponent({
       }
       return ''
     }
+    function getValueFromTestEnv(ts: TestStepInterface, prIndex: number): string {
+      let value = ''
+      paramErrorMessage.value = ''
+      isParamError.value = false
+      const selectedTestEnv = context.root.$store.getters['testenvironment/selectedTestEnv'] as TestEnvInterface
+      const catEnv = ts.Params[prIndex].TestNodePath.split('/')[0]
+      const nodeEnv = ts.Params[prIndex].TestNodePath.split('/')[1]
+
+      if (selectedTestEnv.Categories) {
+        const cat = selectedTestEnv.Categories.find((c: TestEnvCategoryInterface) => c.Name === catEnv)
+        if (cat) {
+          const node = cat.Nodes.find((n: TestEnvNodeInterface) => n.Name === nodeEnv)
+          if (node) {
+            value = node.Value
+          } else {
+            isParamError.value = true
+            paramErrorMessage.value = `There's no node: ${nodeEnv} in environment: ${selectedTestEnv.Name}`
+            value = ts.Params[prIndex].Value
+          }
+        } else {
+          isParamError.value = true
+          paramErrorMessage.value = `There's no category: ${catEnv} in environment: ${selectedTestEnv.Name}`
+          value = ts.Params[prIndex].Value
+        }
+      } else {
+        value = ts.Params[prIndex].Value
+      }
+
+      return value
+    }
+    const prValue = computed(() => {
+      const ts: TestStepInterface = props.TestStep as TestStepInterface;
+      const prIndex: number = props.ParamIndex
+      if (ts.Params[prIndex]) {
+        if (ts.Params[prIndex].TestNodePath !== '') {
+          return getValueFromTestEnv(ts, prIndex)
+        }
+        return ts.Params[prIndex].Value
+      } return ''
+    })
     // eslint-disable-next-line consistent-return
     const valueStyle = computed(() => {
       if (props.TestStep.Params[props.ParamIndex]) return getValueType(props.TestStep.Params[props.ParamIndex])
@@ -108,6 +166,9 @@ export default defineComponent({
       isDark,
       onUseTestEnv,
       readonly,
+      prValue,
+      isParamError,
+      paramErrorMessage,
     }
   },
 });

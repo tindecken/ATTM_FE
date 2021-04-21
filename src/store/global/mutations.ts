@@ -1,4 +1,3 @@
-import { TestEnvInterface } from 'src/Models/TestEnv';
 import { MutationTree } from 'vuex';
 import { GlobalStateInterface } from './state';
 
@@ -8,9 +7,6 @@ const mutation: MutationTree<GlobalStateInterface> = {
   },
   setTestAUTs(state: GlobalStateInterface, payload) {
     state.testAUTs = payload.testAUTs;
-  },
-  setSelectedTestEnv(state: GlobalStateInterface, testEnv: TestEnvInterface) {
-    state.selectedTestEnv = testEnv;
   },
 };
 

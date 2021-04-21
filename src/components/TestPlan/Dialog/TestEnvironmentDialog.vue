@@ -184,7 +184,7 @@ export default defineComponent({
         });
       }
       testEnvs.value = context.root.$store.getters['testenvironment/testEnvs'] as TestEnvInterface[]
-      selectedTestEnv.value = context.root.$store.getters['global/selectedTestEnv'] as TestEnvInterface
+      selectedTestEnv.value = context.root.$store.getters['testenvironment/selectedTestEnv'] as TestEnvInterface
 
       // testEnvTableDatas
       testEnvTableDatas.value = transformToFlatNode(selectedTestEnv.value)
@@ -247,7 +247,7 @@ export default defineComponent({
     }
 
     function applyTestEnv() {
-      if (selectedTestEnv.value) context.root.$store.commit('global/setSelectedTestEnv', selectedTestEnv.value)
+      if (selectedTestEnv.value) context.root.$store.commit('testenvironment/setSelectedTestEnv', selectedTestEnv.value)
     }
 
     function use(flatNode: TestEnvFlatNodeInterface) {

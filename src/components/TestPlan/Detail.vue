@@ -103,11 +103,11 @@ import { TestStepInterface } from 'src/Models/TestStep';
 import { TestParamInterface } from 'src/Models/TestParam';
 import _ from 'lodash'
 import { TestEnvFlatNodeInterface } from 'src/Models/TestEnvFlatNode';
+import { FlatKeywordInterface } from 'src/Models/FlatKeyword';
 import DetailContextMenu from './ContextMenu/DetailContextMenu.vue'
 import TestAUT from './TestCaseDetail/TestAUT.vue';
 import Keyword from './TestCaseDetail/Keyword.vue';
 import Parameter from './TestCaseDetail/Parameter.vue';
-import { FlatKeywordInterface } from 'src/Models/FlatKeyword';
 
 export default defineComponent({
   name: 'Detail',

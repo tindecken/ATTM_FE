@@ -6,7 +6,7 @@ const getters: GetterTree<TestEnvironmentStateInterface, StateInterface> = {
   testEnvs(state: TestEnvironmentStateInterface) {
     return state.testEnvs;
   },
-  selectedTestEnvCategory(state: TestEnvironmentStateInterface) {
+  selectedTestEnv(state: TestEnvironmentStateInterface) {
     return state.selectedTestEnv;
   },
 };
