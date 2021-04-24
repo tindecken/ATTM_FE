@@ -94,7 +94,7 @@ export default defineComponent({
       const catEnv = ts.Params[prIndex].TestNodePath.split('/')[0]
       const nodeEnv = ts.Params[prIndex].TestNodePath.split('/')[1]
 
-      if (selectedTestEnv.Categories) {
+      if (selectedTestEnv && selectedTestEnv.Categories) {
         const cat = selectedTestEnv.Categories.find((c: TestEnvCategoryInterface) => c.Name === catEnv)
         if (cat) {
           const node = cat.Nodes.find((n: TestEnvNodeInterface) => n.Name === nodeEnv)
@@ -111,6 +111,8 @@ export default defineComponent({
           value = ts.Params[prIndex].Value
         }
       } else {
+        isParamError.value = true
+        paramErrorMessage.value = 'No Test Environment is selected, get last value'
         value = ts.Params[prIndex].Value
       }
 
@@ -132,7 +134,6 @@ export default defineComponent({
     })
 
     function onChangeParam(newParamValue: string) {
-      console.log('onChangeParam', newParamValue)
       context.emit('changeParam', newParamValue)
     }
 
@@ -141,7 +142,6 @@ export default defineComponent({
     }
 
     function onUseTestEnv() {
-      console.log('onUseTestEnv')
       // open new testEnv dialog
       context.root.$q.dialog({
         component: TestEnvironmentDialog,
@@ -149,13 +149,12 @@ export default defineComponent({
       }).onOk((node: TestEnvFlatNodeInterface) => {
         // TODO: handle ok
         if (node) {
-          console.log('OK from TestEnvironmentDialog', node)
           useTestEnv(node)
         }
       }).onCancel(() => {
-        console.log('Cancel')
+        // TODO
       }).onDismiss(() => {
-        console.log('Called on OK or Cancel')
+        // TODO
       })
     }
 

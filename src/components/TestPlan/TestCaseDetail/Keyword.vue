@@ -27,7 +27,6 @@ import {
 
 import { KeywordInterface } from 'src/Models/Keyword';
 import { FlatKeywordInterface } from 'src/Models/FlatKeyword';
-import { KeywordCategoryInterface } from 'src/Models/KeywordCategory';
 
 export default defineComponent({
   name: 'Keyword',
@@ -40,15 +39,11 @@ export default defineComponent({
   },
   components: {},
   setup(props, context) {
-    console.log('keyword testStep', props.TestStep);
     const filteredKeywords: Ref<FlatKeywordInterface[]> = ref([])
     const keywords: Ref<FlatKeywordInterface[]> = computed(() => context.root.$store.getters['keyword/keywords'] as FlatKeywordInterface[]);
-    const keywordCategories: Ref<KeywordCategoryInterface[]> = computed(() => context.root.$store.getters['keyword/keywordCategories'] as KeywordCategoryInterface[]);
     onMounted(() => {
       filteredKeywords.value = keywords.value;
-      console.log('filteredKeywords.value', filteredKeywords.value)
     })
-    console.log('keywordCategories', keywordCategories);
     function filterKeywordFn(val: any, update: any) {
       update(() => {
         const needle = val.toLowerCase()
@@ -57,7 +52,6 @@ export default defineComponent({
     }
 
     function onChangeKeyword(newKeyword: FlatKeywordInterface) {
-      console.log('onChangeKeyword', newKeyword)
       context.emit('changeKeyword', newKeyword)
     }
     return {

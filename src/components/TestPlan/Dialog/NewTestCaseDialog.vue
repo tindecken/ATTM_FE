@@ -153,7 +153,6 @@ export default defineComponent({
     // following method is REQUIRED
     // (don't change its name --> "show")
     function show() {
-      console.log(dialogRef.value);
       dialogRef.value.show();
     }
 
@@ -170,12 +169,7 @@ export default defineComponent({
     }
 
     function onOKClick() {
-      console.log('testgroup', props.testGroup);
       const testGroup = props.testGroup as TestGroupInterface
-      // on OK, it is REQUIRED to
-      // emit "ok" event (with optional payload)
-      // before hiding the QDialog
-      // console.log('sdfsd', context.root.$emit)
       const newTestCase: TestCaseInterface = {
         CodeName: codeName.value,
         Id: '',

@@ -140,7 +140,6 @@ export default defineComponent({
     // following method is REQUIRED
     // (don't change its name --> "show")
     function show() {
-      console.log(dialogRef.value);
       dialogRef.value.show();
     }
 
@@ -157,7 +156,6 @@ export default defineComponent({
     }
 
     function onOKClick() {
-      console.log('Category', props.Category);
       const Category = props.Category as CategoryInterface
       const newTestSuite: TestSuiteInterface = {
         Id: '',

@@ -348,7 +348,6 @@ export default defineComponent({
       context.root.$store.commit('testcase/removeOpennedTC', testcase)
     }
     function changeKeyword(testCase: TestCaseInterface, testStep: TestStepInterface, newKeyword: FlatKeywordInterface) {
-      console.log('newKeyword', newKeyword)
       // find edited testStep
       const stepIndex: number = testCase.TestSteps.indexOf(testStep);
       const tempTC: TestCaseInterface = _.cloneDeep(testCase)
@@ -358,6 +357,7 @@ export default defineComponent({
       tempTC.TestSteps[stepIndex].KWCategory = newKeyword.Category;
       // add default Params to testCase based on number of params of Keyword
       newKeyword.Params.forEach((pr: TestParamInterface) => {
+        pr.TestNodePath = ''
         tempTC.TestSteps[stepIndex].Params.push(pr);
       })
       context.root.$store.commit('testcase/updateOpenedTCs', tempTC)
@@ -365,31 +365,25 @@ export default defineComponent({
     }
 
     function changeTestAUT(testCase: TestCaseInterface, testStep: TestStepInterface, newTestAUT: TestAUTInterface) {
-      console.log('newTestAUT', newTestAUT)
       // find edited testStep
       const stepIndex: number = testCase.TestSteps.indexOf(testStep);
       const tempTC: TestCaseInterface = _.cloneDeep(testCase)
       tempTC.TestSteps[stepIndex].TestAUTId = newTestAUT.Id;
-      console.log('changeTestAUT, tempTC', tempTC)
       context.root.$store.commit('testcase/updateOpenedTCs', tempTC)
       context.root.$store.commit('category/updateTestCase', tempTC)
     }
 
     function changeParam(testCase: TestCaseInterface, testStep: TestStepInterface, paramIndex: number, newValue: string) {
-      console.log('testcase', testCase)
       const stepIndex: number = testCase.TestSteps.indexOf(testStep);
       const tempTC: TestCaseInterface = _.cloneDeep(testCase)
-      console.log('paramIndex', paramIndex)
       tempTC.TestSteps[stepIndex].Params[paramIndex].Value = newValue;
       context.root.$store.commit('testcase/updateOpenedTCs', tempTC)
       context.root.$store.commit('category/updateTestCase', tempTC)
     }
 
     function useTestEnv(testCase: TestCaseInterface, testStep: TestStepInterface, paramIndex: number, testEnvNode: TestEnvFlatNodeInterface) {
-      console.log('testcase', testCase)
       const stepIndex: number = testCase.TestSteps.indexOf(testStep);
       const tempTC: TestCaseInterface = _.cloneDeep(testCase)
-      console.log('paramIndex', paramIndex)
       tempTC.TestSteps[stepIndex].Params[paramIndex].TestNodePath = `${testEnvNode.Category}/${testEnvNode.Name}`
       tempTC.TestSteps[stepIndex].Params[paramIndex].Value = testEnvNode.Value;
       context.root.$store.commit('testcase/updateOpenedTCs', tempTC)
@@ -410,12 +404,9 @@ export default defineComponent({
 
     function toggleSelectedRow(row: any) {
       if (selected.value.length > 0) { // We can add another row
-        console.log('selected.value.length', selected.value.length)
         // But if clicking one already selected, we'll remove it instead
         let i = 0
         const matched = selected.value.find((item: any, index: number) => {
-          console.log('item', item)
-          console.log('row', row)
           i = index
           return item.UUID === row.UUID
         })
@@ -429,8 +420,6 @@ export default defineComponent({
       }
     }
     function getRowIndexByUUID(currentTest: TestCaseInterface, uuid: any) {
-      console.log('uuid', uuid)
-      console.log('currentTest', currentTest)
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       const index: number = currentTest.TestSteps.findIndex((step: TestStepInterface) => step.UUID === uuid)
       if (index === -1) return 0
@@ -490,7 +479,6 @@ export default defineComponent({
     }
 
     function onTabChanging() {
-      console.log('onTabChanging')
       columns.value.forEach((col: any, index: number) => {
         if (index >= 3) {
           columns.value[index].label = `Param ${index - 2}`
@@ -503,12 +491,10 @@ export default defineComponent({
     }
 
     function onDeleteRows() {
-      console.log('onDeleteRows')
       const currTestCase = openedTCs.value.find((tc: any) => tc.Id === selectedTestCaseId.value) as TestCaseInterface
       selected.value.forEach((selectedRow: any) => {
         currTestCase.TestSteps.forEach((testStep: TestStepInterface) => {
           if (testStep.UUID === selectedRow.UUID) {
-            console.log('delete me', testStep)
             context.root.$store.commit('testcase/deleteStep', { testCaseId: selectedTestCaseId.value, stepUUID: selectedRow.UUID });
           }
         })
@@ -518,9 +504,7 @@ export default defineComponent({
     async function saveTestCase(testCaseId: string) {
       try {
         const currTestCase = openedTCs.value.find((tc: TestCaseInterface) => tc.Id === testCaseId) as TestCaseInterface
-        console.log(currTestCase)
         const result = await context.root.$store.dispatch('testcase/saveTestCase', currTestCase)
-        console.log('result', result)
         context.root.$q.notify({
           type: 'positive',
           message: result.message,
@@ -531,10 +515,6 @@ export default defineComponent({
           message: error.error,
         });
       }
-    }
-
-    function test() {
-      console.log('test')
     }
 
     return {
@@ -551,7 +531,6 @@ export default defineComponent({
       toggleSingleRow,
       onTabChanging,
       addNewStep,
-      test,
       selectedKeyword,
       onDeleteRows,
       saveTestCase,

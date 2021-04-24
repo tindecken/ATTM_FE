@@ -89,7 +89,6 @@ export default defineComponent({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setup(props, { emit }) {
     function deleteNode() {
-      console.log('node', props.node)
       emit('deleteNode', props.node)
     }
 

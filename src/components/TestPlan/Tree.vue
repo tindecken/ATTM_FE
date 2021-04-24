@@ -97,7 +97,6 @@ export default defineComponent({
     }
     async function fnSelectedNode(target: any) {
       const currentNode = tree.value.getNodeByKey(target) as TestCaseInterface;
-      console.log('currentNode: ', currentNode);
       if (currentNode == null) return
       switch (currentNode.nodeType) {
         case 'Category':
@@ -113,7 +112,6 @@ export default defineComponent({
             const testcase = openedTCs.find((el: any) => el.Id === currentNode.Id)
             context.root.$store.commit('testcase/setOpenedTCs', testcase);
           } else {
-            console.log('currentNode', currentNode)
             await context.root.$store.dispatch('testcase/getTestCaseById', currentNode.Id);
           }
           break
@@ -126,11 +124,9 @@ export default defineComponent({
         // get category
         await context.root.$store.dispatch('category/getAllCategories');
         allCat.value = context.root.$store.getters['category/categories'];
-        console.log('allCat', allCat.value)
         // gt all TestAUT
         await context.root.$store.dispatch('global/getTestAUT');
         allTestAUT.value = context.root.$store.getters['global/testAuTs']
-        console.log('allTestAUT', allTestAUT.value)
         await context.root.$nextTick()
         tree.value.expandAll();
       } catch (error) {
@@ -184,7 +180,6 @@ export default defineComponent({
     }
     async function onCreateTestGroup(newTestGroup: TestGroupInterface) {
       try {
-        console.log('newTestGroup', newTestGroup);
         await context.root.$store.dispatch('testsuite/createTestGroup', newTestGroup);
         context.root.$q.notify({
           type: 'positive',
@@ -200,7 +195,6 @@ export default defineComponent({
 
     async function onCreateTestCase(testCase: TestCaseInterface) {
       try {
-        console.log('testCase', testCase);
         await context.root.$store.dispatch('testgroup/createTestCase', testCase);
         context.root.$q.notify({
           type: 'positive',
@@ -231,13 +225,12 @@ export default defineComponent({
       }).onOk((newTestSuite: TestSuiteInterface) => {
         onCreateTestSuite(newTestSuite)
       }).onCancel(() => {
-        console.log('Cancel')
+        // TODO
       }).onDismiss(() => {
-        console.log('Called on OK or Cancel')
+        // TODO
       })
     }
     function onNewTestGroup(TestSuite: TestSuiteInterface) {
-      console.log('TestSuite', TestSuite)
       // check if current node is not TestSuite --> return
       if (TestSuite.nodeType !== 'TestSuite') {
         context.root.$q.notify({
@@ -254,9 +247,9 @@ export default defineComponent({
       }).onOk((newTestGroup: TestGroupInterface) => {
         onCreateTestGroup(newTestGroup)
       }).onCancel(() => {
-        console.log('Cancel')
+        // TODO
       }).onDismiss(() => {
-        console.log('Called on OK or Cancel')
+        // TODO
       })
     }
     function onNewTestCase(testGroup: TestGroupInterface) {
@@ -275,9 +268,9 @@ export default defineComponent({
       }).onOk((newTestCase: TestCaseInterface) => {
         onCreateTestCase(newTestCase)
       }).onCancel(() => {
-        console.log('Cancel')
+        // TODO
       }).onDismiss(() => {
-        console.log('Called on OK or Cancel')
+        // TODO
       })
     }
     function onEdit() {
@@ -307,10 +300,9 @@ export default defineComponent({
       }
     }
     function onDeleteNode(value: any) {
-      console.log(value)
       context.root.$q.notify({
         type: 'negative',
-        message: 'Not develop yet',
+        message: `Not develop yet: ${value}`,
       });
     }
 

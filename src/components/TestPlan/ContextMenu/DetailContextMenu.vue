@@ -89,7 +89,6 @@ export default defineComponent({
       emit('deleteRows')
     }
     function useTestEnv() {
-      console.log('sdfsdfsdfdfs')
       emit('useTestEnv')
     }
     return {

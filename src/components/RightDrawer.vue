@@ -274,10 +274,6 @@ export default defineComponent({
           message: `${error}`,
         });
       }
-      console.log('keywordCategories.value', keywordCategories.value)
-      console.log('keywords.value', keywords.value)
-      console.log('filteredKeywords.value', filteredKeywords.value)
-      keywordCategories.value = context.root.$store.getters['keyword/keywordCategories'] as KeywordCategoryInterface[]
       // get all keywordFeatures
       keywordCategories.value.forEach((kwCategory: KeywordCategoryInterface) => {
         if (kwCategory.Features) {
@@ -328,11 +324,9 @@ export default defineComponent({
       }, 300)
     }
     function abortFilterCategory() {
-      console.log('delayed filter aborted')
     }
 
     function onFeatureChange() {
-      console.log('selectedFeature', selectedKeywordFeature)
       filteredKeywords.value = []
       if (selectedKeywordCategory.value == null) { // No category is selected
         if (selectedKeywordFeature.value == null) {
@@ -385,7 +379,6 @@ export default defineComponent({
     }
 
     function onCategoryChange() {
-      console.log('selectedCategory', selectedKeywordCategory)
       if (selectedKeywordCategory.value === null) { // will display all features
         filteredKeywordFeatures.value = keywordFeatures.value
       } else if (selectedKeywordCategory.value?.Features !== undefined) filteredKeywordFeatures.value = selectedKeywordCategory.value?.Features
@@ -418,7 +411,6 @@ export default defineComponent({
       }, 300)
     }
     function abortFilterFeature() {
-      console.log('delayed filter aborted')
     }
 
     function showParams(selectedKw: KeywordInterface) {
@@ -431,7 +423,6 @@ export default defineComponent({
     }
 
     function onSelectKeyword(kw: KeywordInterface) {
-      console.log('selectedKw', kw)
       selectedKeyword.value = kw
       showParams(selectedKeyword.value)
     }

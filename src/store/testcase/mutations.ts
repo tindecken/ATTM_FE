@@ -21,7 +21,6 @@ const mutation: MutationTree<TestCaseStateInterface> = {
     state.selectedTestCaseId = testCaseId;
   },
   removeOpennedTC(state: TestCaseStateInterface, testCase: TestCaseInterface) {
-    console.log('removeOpennedTC testCase', testCase)
     const index = state.openedTCs.findIndex((el: TestCaseInterface) => el.Id === testCase.Id);
     if (index !== -1) {
       state.openedTCs.splice(index, 1)
@@ -46,7 +45,6 @@ const mutation: MutationTree<TestCaseStateInterface> = {
       if (tempTC.TestSteps.length > 0) { // incase there's no testSteps
         lastTestAUTId = tempTC.TestSteps[tempTC.TestSteps.length - 1].TestAUTId
       }
-      console.log('lastTestAUTId', lastTestAUTId)
       tempTC.TestSteps.push({
         UUID: uuid(),
         TestAUTId: lastTestAUTId,
@@ -63,8 +61,6 @@ const mutation: MutationTree<TestCaseStateInterface> = {
   deleteStep(state: TestCaseStateInterface, payload: any) {
     const { testCaseId } = payload
     const { stepUUID } = payload
-    console.log('testCaseId', testCaseId)
-    console.log('stepUUID', stepUUID)
     const index = state.openedTCs.findIndex((el: any) => el.Id === testCaseId);
     const tempTC = _.cloneDeep(state.openedTCs[index])
     if (tempTC.TestSteps.length > 0) { // incase there's no test steps

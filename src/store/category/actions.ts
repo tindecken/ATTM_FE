@@ -22,10 +22,8 @@ const actions: ActionTree<CategoryStateInterface, StateInterface> = {
       );
       let categories: CategoryInterface[] = await response.data.result;
       categories = paintCategories(categories)
-      console.log('getAllCategories', categories)
       context.commit('setCategories', categories);
     } catch (error) {
-      console.log('getAllCategories', error.response.data)
       throw error.response.data.error;
     }
   },

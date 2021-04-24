@@ -19,7 +19,6 @@ const actions: ActionTree<TestSuiteStateInterface, StateInterface> = {
           },
         },
       )
-      console.log('response', response)
       const responseTestGroup = await response.data as TestGroupInterface;
       // create in vuex
       // commit to category module

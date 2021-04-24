@@ -51,7 +51,6 @@ export default defineComponent({
   components: {},
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setup(props, context) {
-    console.log('login')
     const username = ref('');
     const password = ref('');
     const err = ref('');

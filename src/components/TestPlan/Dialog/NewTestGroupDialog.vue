@@ -140,7 +140,6 @@ export default defineComponent({
     // following method is REQUIRED
     // (don't change its name --> "show")
     function show() {
-      console.log(dialogRef.value);
       dialogRef.value.show();
     }
 
@@ -169,7 +168,6 @@ export default defineComponent({
         CategoryId: TestSuite.CategoryId,
         children: [],
       }
-      console.log('newTestGroup', newTestGroup)
       context.emit('ok', newTestGroup);
       // or with payload: this.$emit('ok', { ... })
 

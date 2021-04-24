@@ -38,12 +38,9 @@ export default defineComponent({
   components: {},
   setup(props, context) {
     const filteredTestAUTs: Ref<TestAUTInterface[]> = ref([])
-    console.log('props.TestStep', props.TestStep);
     const testAUTs: Ref<TestAUTInterface[]> = computed(() => context.root.$store.getters['global/testAuTs'] as TestAUTInterface[]);
     const testAUT: Ref<TestAUTInterface | undefined> = ref(undefined);
     testAUT.value = testAUTs.value.find((aut: TestAUTInterface) => aut.Id === props.TestStep.TestAUTId)
-    console.log('testAUTs', testAUTs)
-    console.log('testAUT', testAUT)
     function filterTestAUTFn(val: any, update: any) {
       update(() => {
         const needle = val.toLowerCase()
@@ -53,8 +50,6 @@ export default defineComponent({
 
     function onChangeTestAUT(newTestAUT: TestAUTInterface) {
       testAUT.value = newTestAUT
-      console.log('onChangeTestAUT, testAUT', testAUT.value)
-      console.log('onChangeTestAUT', newTestAUT)
       context.emit('changeTestAUT', newTestAUT)
     }
     return {

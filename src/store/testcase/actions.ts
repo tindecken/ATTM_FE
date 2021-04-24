@@ -20,7 +20,6 @@ const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
         },
       );
       let testCase = await response.data;
-      console.log('response data', testCase);
 
       testCase = paintTestCase(testCase);
 
@@ -46,7 +45,6 @@ const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
         },
       );
       const responseData = await response.data;
-      console.log('response data', responseData);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return responseData;
     } catch (error) {

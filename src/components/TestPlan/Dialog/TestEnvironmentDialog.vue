@@ -189,8 +189,6 @@ export default defineComponent({
       // testEnvTableDatas
       testEnvTableDatas.value = transformToFlatNode(selectedTestEnv.value)
       filteredTestEnvs.value = testEnvs.value
-      console.log('testEnvs.value', testEnvs.value)
-      console.log('filteredTestEnvs.value', filteredTestEnvs.value)
       context.root.$nextTick()
     })
 
@@ -229,10 +227,8 @@ export default defineComponent({
     }
 
     function abortFilterTestEnv() {
-      console.log('delayed filter aborted')
     }
     function show() {
-      console.log(dialogRef.value);
       dialogRef.value.show();
     }
 
@@ -251,7 +247,6 @@ export default defineComponent({
     }
 
     function use(flatNode: TestEnvFlatNodeInterface) {
-      console.log('node', flatNode)
       context.emit('ok', flatNode)
       hide()
     }

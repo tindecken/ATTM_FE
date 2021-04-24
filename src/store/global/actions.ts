@@ -9,7 +9,6 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
     context.commit('switchTheme');
   },
   async generateCode(context, testcases) {
-    console.log('testcases', testcases);
     try {
       const response = await axios.post(
         `${config.baseURL}/testproject/generatecode`,
@@ -22,7 +21,6 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
         },
       );
       const responseData = await response.data;
-      console.log('response data', responseData);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return responseData;
     } catch (error) {
@@ -42,7 +40,6 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
         },
       );
       const responseData = await response.data;
-      console.log('response data', responseData);
       context.commit('setTestAUTs', {
         testAUTs: responseData,
       });
