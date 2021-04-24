@@ -88,8 +88,6 @@ export default defineComponent({
     }
     function getValueFromTestEnv(ts: TestStepInterface, prIndex: number): string {
       let value = ''
-      paramErrorMessage.value = ''
-      isParamError.value = false
       const selectedTestEnv = context.root.$store.getters['testenvironment/selectedTestEnv'] as TestEnvInterface
       const catEnv = ts.Params[prIndex].TestNodePath.split('/')[0]
       const nodeEnv = ts.Params[prIndex].TestNodePath.split('/')[1]
@@ -121,6 +119,8 @@ export default defineComponent({
     const prValue = computed(() => {
       const ts: TestStepInterface = props.TestStep as TestStepInterface;
       const prIndex: number = props.ParamIndex
+      paramErrorMessage.value = ''
+      isParamError.value = false
       if (ts.Params[prIndex]) {
         if (ts.Params[prIndex].TestNodePath !== '') {
           return getValueFromTestEnv(ts, prIndex)
