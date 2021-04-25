@@ -20,7 +20,7 @@ const mutation: MutationTree<TestCaseStateInterface> = {
   setSelectedTestCaseId(state: TestCaseStateInterface, testCaseId: string) {
     state.selectedTestCaseId = testCaseId;
   },
-  removeOpennedTC(state: TestCaseStateInterface, testCase: TestCaseInterface) {
+  removeOpenedTC(state: TestCaseStateInterface, testCase: TestCaseInterface) {
     const index = state.openedTCs.findIndex((el: TestCaseInterface) => el.Id === testCase.Id);
     if (index !== -1) {
       state.openedTCs.splice(index, 1)
