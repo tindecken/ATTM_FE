@@ -2,7 +2,7 @@
   <div>
     <q-menu>
           <q-list dense class="rounded-borders">
-            <q-item clickable v-close-popup  v-for="testEnv in testEnvs" :key="testEnv.Name" class="q-my-sm" v-ripple @click="selectTestEnv(testEnv)">
+            <q-item clickable v-close-popup  v-for="testEnv in testEnvs" :key="testEnv.Name" class="q-my-sm" v-ripple @click="onSelectTestEnv(testEnv)">
               <q-item-section>{{testEnv.Name}}</q-item-section>
             </q-item>
           </q-list>
@@ -32,12 +32,12 @@ export default defineComponent({
         });
       }
     })
-    function selectTestEnv(testEnv: TestEnvInterface) {
+    function onSelectTestEnv(testEnv: TestEnvInterface) {
       context.root.$store.commit('testenvironment/setSelectedTestEnv', testEnv)
     }
     return {
       selectedEnv,
-      selectTestEnv,
+      onSelectTestEnv,
       testEnvs,
     };
   },

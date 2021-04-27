@@ -324,6 +324,7 @@ export default defineComponent({
       }, 300)
     }
     function abortFilterCategory() {
+      // TODO
     }
 
     function onFeatureChange() {
@@ -411,6 +412,7 @@ export default defineComponent({
       }, 300)
     }
     function abortFilterFeature() {
+      // TODO
     }
 
     function showParams(selectedKw: KeywordInterface) {

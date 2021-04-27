@@ -7,4 +7,5 @@ export interface TestClientInterface {
     User: string;
     Password: string;
     Domain: string;
+    InstanceName: string;
 }

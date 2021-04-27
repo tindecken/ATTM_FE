@@ -64,6 +64,7 @@
 
 <script lang="ts">
 import {
+  computed,
   defineComponent, onMounted, ref, Ref,
 } from '@vue/composition-api';
 
@@ -75,6 +76,7 @@ import TreeContextMenu from './ContextMenu/TreeContextMenu.vue'
 import NewTestSuiteDialog from './Dialog/NewTestSuiteDialog.vue'
 import NewTestGroupDialog from './Dialog/NewTestGroupDialog.vue'
 import NewTestCaseDialog from './Dialog/NewTestCaseDialog.vue'
+import { TestClientInterface } from 'src/Models/TestClient';
 
 export default defineComponent({
   name: 'Tree',
@@ -119,6 +121,8 @@ export default defineComponent({
           break
       }
     }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    const selectedTestClient = computed(() => context.root.$store.getters['testclient/selectedTestClient'] as TestClientInterface);
     onMounted(async () => {
       try {
         // get category
@@ -138,12 +142,6 @@ export default defineComponent({
     });
     function toogleTree() {
       tree.value.collapseAll();
-    }
-    function onRun() {
-      context.root.$q.notify({
-        type: 'negative',
-        message: 'Not develop yet',
-      });
     }
     function onRunOn() {
       context.root.$q.notify({
@@ -279,14 +277,16 @@ export default defineComponent({
         message: 'Not develop yet',
       });
     }
+
     async function onGenerateCode() {
+      console.log('asdfsd')
       const tickedNodes = tree.value.getTickedNodes()
-      const testcases = tickedNodes.filter((n:any) => n.nodeType === 'TestCase')
-      const numberOfTestCase = tickedNodes.filter((n:any) => n.nodeType === 'TestCase').length
+      const testcases = tickedNodes.filter((n: any) => n.nodeType === 'TestCase') as TestCaseInterface[]
+      const numberOfTestCase = tickedNodes.filter((n: TestCaseInterface) => n.nodeType === 'TestCase').length
       if (numberOfTestCase === 0) {
         context.root.$q.notify({
           type: 'negative',
-          message: 'No test case is slected',
+          message: 'No test case is selected',
         });
         return
       }
@@ -299,6 +299,29 @@ export default defineComponent({
         });
       }
     }
+
+    async function onRun() {
+      console.log('selectedTestClient', selectedTestClient)
+      if (selectedTestClient.value === undefined) {
+        context.root.$q.notify({
+          type: 'negative',
+          message: 'No test client is selected',
+        });
+        return
+      }
+      onGenerateCode();
+      const tickedNodes = tree.value.getTickedNodes()
+      const testcases = tickedNodes.filter((n: any) => n.nodeType === 'TestCase') as TestCaseInterface[]
+      try {
+        await context.root.$store.dispatch('global/createDevQueue', { testcases, testClient: selectedTestClient.value });
+      } catch (error) {
+        context.root.$q.notify({
+          type: 'negative',
+          message: `${error.error}`,
+        });
+      }
+    }
+
     function onDeleteNode(value: any) {
       context.root.$q.notify({
         type: 'negative',
@@ -330,6 +353,7 @@ export default defineComponent({
       onCreateTestSuite,
       onCreateTestGroup,
       onCreateTestCase,
+      selectedTestClient,
     }
   },
 });

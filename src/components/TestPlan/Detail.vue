@@ -344,8 +344,7 @@ export default defineComponent({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const openedTCs: Ref<TestCaseInterface[]> = computed(() => context.root.$store.getters['testcase/openedTCs'])
     function closeTab(testcase: TestCaseInterface) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      context.root.$store.commit('testcase/removeOpennedTC', testcase)
+      context.root.$store.commit('testcase/removeOpenedTC', testcase)
     }
     function changeKeyword(testCase: TestCaseInterface, testStep: TestStepInterface, newKeyword: FlatKeywordInterface) {
       // find edited testStep
