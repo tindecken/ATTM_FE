@@ -29,7 +29,7 @@
           <q-item-section avatar>
             <q-icon color="primary" name="code" />
           </q-item-section>
-          <q-item-section @click="generateCode()">Generate Code</q-item-section>
+          <q-item-section @click="generateDevCode()">Generate Code</q-item-section>
         </q-item>
         <q-separator />
         <template v-if="node.nodeType == 'Category'">
@@ -92,8 +92,8 @@ export default defineComponent({
       emit('deleteNode', props.node)
     }
 
-    function generateCode() {
-      emit('generateCode')
+    function generateDevCode() {
+      emit('generateDevCode')
     }
     function run() {
       emit('run')
@@ -121,7 +121,7 @@ export default defineComponent({
     }
     return {
       deleteNode,
-      generateCode,
+      generateDevCode,
       run,
       runOn,
       debug,

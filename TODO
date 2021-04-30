@@ -47,6 +47,11 @@ Todo:
   ✔ fix readonly in parameter, maybe choose new Keyword affect on it. @done(21-04-21 22:56)
   ✔ fix savetestcase request, it returns bad request @done(21-04-21 22:56)
   ✔ fix test parameter incase of there's no TestENV selected @done(21-04-24 15:54)
+  ☐ fix create newtestgroup error in UI (API ok)
+  ☐ add build project when run test, run test will: generate code, buildproject, set queue (if any step error, it will stop other steps)
+  ☐ implement regression run
+  ☐ add monitoring, able to view runtime running of test
+  ☐ implement feature to check if there's test or tests is/are running
 Test:
   ☐ one flow from create category, testsuite, testgroup, testcase from beginning
 API:
@@ -59,6 +64,7 @@ API:
   ✔ api create testsuite, testgroup, testcase haven't checking the input id is correct, exist or not @done(20-11-29 21:14)
   ☐ create new api to list all testcase in .dll file including all task, including [Test] with //
   reference to this tutorial, https://stackoverflow.com/questions/10724479/get-list-of-tests-in-nunit-library-programmatically-without-having-to-run-tests
+  ☐ buildproject API should return JObject
 Node:
   In store keyword, currently not use selectedKeyword
   https://blog.hildenco.com/2020/05/configuration-in-net-core-console.html

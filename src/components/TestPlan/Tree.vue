@@ -34,7 +34,7 @@
                 <div>{{ prop.node.label }}</div>
                 <tree-context-menu
                   :node="prop.node"
-                  @generateCode="onGenerateCode()"
+                  @generateDevCode="onGenerateDevCode()"
                   @run="onRun()"
                   @runOn="onRunOn()"
                   @debug="onDebug()"
@@ -278,8 +278,7 @@ export default defineComponent({
       });
     }
 
-    async function onGenerateCode() {
-      console.log('asdfsd')
+    async function onGenerateDevCode() {
       const tickedNodes = tree.value.getTickedNodes()
       const testcases = tickedNodes.filter((n: any) => n.nodeType === 'TestCase') as TestCaseInterface[]
       const numberOfTestCase = tickedNodes.filter((n: TestCaseInterface) => n.nodeType === 'TestCase').length
@@ -291,7 +290,7 @@ export default defineComponent({
         return
       }
       try {
-        await context.root.$store.dispatch('global/generateCode', testcases);
+        await context.root.$store.dispatch('global/generateDevCode', testcases);
       } catch (error) {
         context.root.$q.notify({
           type: 'negative',
@@ -309,7 +308,7 @@ export default defineComponent({
         });
         return
       }
-      onGenerateCode();
+      onGenerateDevCode();
       const tickedNodes = tree.value.getTickedNodes()
       const testcases = tickedNodes.filter((n: any) => n.nodeType === 'TestCase') as TestCaseInterface[]
       try {
@@ -341,7 +340,7 @@ export default defineComponent({
       tree,
       toogleTree,
       onDeleteNode,
-      onGenerateCode,
+      onGenerateDevCode,
       onRun,
       onRunOn,
       onDebug,

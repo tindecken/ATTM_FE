@@ -40,16 +40,11 @@
 </template>
 
 <script lang="ts">
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-floating-promises */
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { defineComponent, ref } from '@vue/composition-api';
 
 export default defineComponent({
   name: 'Login',
   components: {},
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setup(props, context) {
     const username = ref('');
     const password = ref('');

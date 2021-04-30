@@ -1,7 +1,5 @@
 import { ActionTree } from 'vuex';
 import axios from 'axios';
-import { TestCaseInterface } from 'src/Models/TestCase';
-import { TestClientInterface } from 'src/Models/TestClient';
 import { StateInterface } from '../index';
 import { GlobalStateInterface } from './state';
 import config from '../../config';
@@ -10,10 +8,10 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
   switchDarkTheme(context) {
     context.commit('switchTheme');
   },
-  async generateCode(context, testcases) {
+  async generateDevCode(context, testcases) {
     try {
       const response = await axios.post(
-        `${config.baseURL}/testproject/generatecode`,
+        `${config.baseURL}/testproject/generateDevCode`,
         testcases,
         {
           headers: {
