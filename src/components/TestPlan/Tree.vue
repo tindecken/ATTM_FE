@@ -72,11 +72,11 @@ import { CategoryInterface } from 'src/Models/Category';
 import { TestGroupInterface } from 'src/Models/TestGroup';
 import { TestCaseInterface } from 'src/Models/TestCase';
 import { TestSuiteInterface } from 'src/Models/TestSuite';
+import { TestClientInterface } from 'src/Models/TestClient';
 import TreeContextMenu from './ContextMenu/TreeContextMenu.vue'
 import NewTestSuiteDialog from './Dialog/NewTestSuiteDialog.vue'
 import NewTestGroupDialog from './Dialog/NewTestGroupDialog.vue'
 import NewTestCaseDialog from './Dialog/NewTestCaseDialog.vue'
-import { TestClientInterface } from 'src/Models/TestClient';
 
 export default defineComponent({
   name: 'Tree',
@@ -299,16 +299,18 @@ export default defineComponent({
       }
     }
 
-    async function onRun() {
-      console.log('selectedTestClient', selectedTestClient)
-      if (selectedTestClient.value === undefined) {
+    async function buildProject() {
+      try {
+        await context.root.$store.dispatch('global/buildProject');
+      } catch (error) {
         context.root.$q.notify({
           type: 'negative',
-          message: 'No test client is selected',
+          message: `${error.error}`,
         });
-        return
       }
-      onGenerateDevCode();
+    }
+
+    async function createDevQueue() {
       const tickedNodes = tree.value.getTickedNodes()
       const testcases = tickedNodes.filter((n: any) => n.nodeType === 'TestCase') as TestCaseInterface[]
       try {
@@ -319,6 +321,19 @@ export default defineComponent({
           message: `${error.error}`,
         });
       }
+    }
+    async function onRun() {
+      console.log('selectedTestClient', selectedTestClient)
+      if (selectedTestClient.value === undefined) {
+        context.root.$q.notify({
+          type: 'negative',
+          message: 'No test client is selected',
+        });
+        return
+      }
+      await onGenerateDevCode();
+      await buildProject();
+      await createDevQueue();
     }
 
     function onDeleteNode(value: any) {

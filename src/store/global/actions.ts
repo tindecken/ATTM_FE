@@ -8,6 +8,26 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
   switchDarkTheme(context) {
     context.commit('switchTheme');
   },
+
+  async buildProject(context) {
+    try {
+      const response = await axios.post(
+        `${config.baseURL}/testproject/buildproject`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${context.rootGetters['auth/token']}`,
+          },
+        },
+      );
+      const responseData = await response.data;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return responseData;
+    } catch (error) {
+      throw error.response.data;
+    }
+  },
+
   async generateDevCode(context, testcases) {
     try {
       const response = await axios.post(

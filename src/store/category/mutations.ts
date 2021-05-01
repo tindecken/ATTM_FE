@@ -19,16 +19,22 @@ const mutation: MutationTree<CategoryStateInterface> = {
     const catIndex = state.Categories.findIndex((cat: CategoryInterface) => cat.Id === responseTestSuite.CategoryId);
     const tempCat = _.cloneDeep(state.Categories[catIndex]);
     responseTestSuite = paintTestSuite(responseTestSuite)
+    responseTestSuite.children = []
     tempCat.TestSuiteIds.push(responseTestSuite.Id)
     tempCat.children.push(responseTestSuite)
     Vue.set(state.Categories, catIndex, tempCat)
   },
   createTestGroup(state: CategoryStateInterface, testGroup: TestGroupInterface) {
+    console.log('testgroup', testGroup)
     const catIndex = state.Categories.findIndex((cat: CategoryInterface) => cat.Id === testGroup.CategoryId);
+    console.log('catIndex', catIndex)
     const tempCat = _.cloneDeep(state.Categories[catIndex])
     // find tsIndex
     const tsIndex = tempCat.TestSuiteIds.findIndex((tsId: string) => tsId === testGroup.TestSuiteId)
+    console.log('tsIndex', tsIndex)
     testGroup = paintTestGroup(testGroup)
+    console.log('testgroupPainted', testGroup)
+    console.log('tempCat.children[tsIndex]', tempCat.children[tsIndex])
     tempCat.children[tsIndex].TestGroupIds.push(testGroup.Id)
     tempCat.children[tsIndex].children.push(testGroup)
     Vue.set(state.Categories, catIndex, tempCat)
