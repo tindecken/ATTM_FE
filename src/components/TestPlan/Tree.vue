@@ -9,7 +9,7 @@
         </q-input>
       </div>
       <div class="col">
-        <q-btn dense @click="toogleTree">Toogle</q-btn>
+        <q-btn dense @click="toggleTree">Toggle</q-btn>
       </div>
     </div>
     <q-scroll-area style="height: 85vh; max-width: 600px;">
@@ -140,7 +140,7 @@ export default defineComponent({
         });
       }
     });
-    function toogleTree() {
+    function toggleTree() {
       tree.value.collapseAll();
     }
     function onRunOn() {
@@ -374,7 +374,7 @@ export default defineComponent({
       ticked,
       fnSelectedNode,
       tree,
-      toogleTree,
+      toggleTree,
       onDeleteNode,
       onGenerateDevCode,
       onRun,

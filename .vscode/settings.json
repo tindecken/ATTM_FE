@@ -8,6 +8,8 @@
     "AUTs",
     "Datas",
     "buildproject",
+    "createdevqueue",
+    "testauts",
     "testclient",
     "testenvironment",
     "testenvironments",
