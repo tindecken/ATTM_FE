@@ -49,9 +49,12 @@ Todo:
   ✔ fix test parameter incase of there's no TestENV selected @done(21-04-24 15:54)
   ✔ fix create newtestgroup error in UI (API ok) @done(21-05-01 20:37)
   ✔ add build project when run test, run test will: generate code, buildproject, set queue (if any step error, it will stop other steps) @done(21-05-01 20:19)
+  ✔ remove debug attribute @done(21-05-06 23:03)
+  build project error should be handled
   ☐ implement regression run
   ☐ add monitoring, able to view runtime running of test
   ☐ implement feature to check if there's test or tests is/are running
+  remove 
 Test:
   ☐ one flow from create category, testsuite, testgroup, testcase from beginning
 API:

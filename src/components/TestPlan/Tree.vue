@@ -279,34 +279,48 @@ export default defineComponent({
     }
 
     async function onGenerateDevCode() {
-      const tickedNodes = tree.value.getTickedNodes()
-      const testcases = tickedNodes.filter((n: any) => n.nodeType === 'TestCase') as TestCaseInterface[]
-      const numberOfTestCase = tickedNodes.filter((n: TestCaseInterface) => n.nodeType === 'TestCase').length
-      if (numberOfTestCase === 0) {
-        context.root.$q.notify({
-          type: 'negative',
-          message: 'No test case is selected',
-        });
-        return
-      }
       try {
-        await context.root.$store.dispatch('global/generateDevCode', testcases);
+        const tickedNodes = tree.value.getTickedNodes()
+        const testcases = tickedNodes.filter((n: any) => n.nodeType === 'TestCase') as TestCaseInterface[]
+        const numberOfTestCase = tickedNodes.filter((n: TestCaseInterface) => n.nodeType === 'TestCase').length
+        if (numberOfTestCase === 0) {
+          context.root.$q.notify({
+            type: 'negative',
+            message: 'No test case is selected',
+          });
+          return null
+        }
+        const generateDevCodeResult: Promise<any> = await context.root.$store.dispatch('global/generateDevCode', testcases);
+        context.root.$q.notify({
+          type: 'positive',
+          message: 'Generate code success.',
+        });
+        return generateDevCodeResult
       } catch (error) {
         context.root.$q.notify({
           type: 'negative',
           message: `${error.error}`,
         });
+        return null
       }
     }
 
     async function buildProject() {
       try {
-        await context.root.$store.dispatch('global/buildProject');
+        const buildResult: Promise<any> = await context.root.$store.dispatch('global/buildProject');
+        context.root.$q.notify({
+          type: 'positive',
+          message: 'Build success.',
+        });
+        return buildResult
       } catch (error) {
         context.root.$q.notify({
+          progress: true,
+          timeout: 10000,
           type: 'negative',
-          message: `${error.error}`,
+          message: `${error.buildMessage}`,
         });
+        return null
       }
     }
 
@@ -314,7 +328,12 @@ export default defineComponent({
       const tickedNodes = tree.value.getTickedNodes()
       const testcases = tickedNodes.filter((n: any) => n.nodeType === 'TestCase') as TestCaseInterface[]
       try {
-        await context.root.$store.dispatch('global/createDevQueue', { testcases, testClient: selectedTestClient.value });
+        const createDevQueueResult: any = await context.root.$store.dispatch('global/createDevQueue', { testcases, testClient: selectedTestClient.value });
+        console.log('createDevQueueResult', createDevQueueResult)
+        context.root.$q.notify({
+          type: 'positive',
+          message: `${createDevQueueResult.count} queue(s) added.`,
+        });
       } catch (error) {
         context.root.$q.notify({
           type: 'negative',
@@ -331,9 +350,11 @@ export default defineComponent({
         });
         return
       }
-      await onGenerateDevCode();
-      await buildProject();
-      await createDevQueue();
+      const generateCodeResult = await onGenerateDevCode()
+      if (generateCodeResult) {
+        const buildProjectResult = await buildProject()
+        if (buildProjectResult) await createDevQueue()
+      }
     }
 
     function onDeleteNode(value: any) {

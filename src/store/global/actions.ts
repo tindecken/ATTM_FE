@@ -10,6 +10,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
   },
 
   async buildProject(context) {
+    // eslint-disable-next-line no-useless-catch
     try {
       const response = await axios.post(
         `${config.baseURL}/testproject/buildproject`,
@@ -20,6 +21,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
           },
         },
       );
+      console.log('response', response)
       const responseData = await response.data;
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return responseData;
@@ -85,7 +87,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
         testAUTs: responseData,
       });
     } catch (error) {
-      throw error;
+      throw error.response.data;
     }
   },
 };
