@@ -1,6 +1,6 @@
 <template>
-  <div>
-    Regression
+  <div class="q-pa-md">
+    select test case
   </div>
 </template>
 
@@ -8,7 +8,11 @@
 import { defineComponent } from '@vue/composition-api';
 
 export default defineComponent({
-  name: 'Regression',
-  components: { },
+  name: 'SelectTestCase',
+  components: {},
+  setup(props, context) {
+    return {
+    }
+  },
 });
 </script>

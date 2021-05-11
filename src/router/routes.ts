@@ -30,6 +30,13 @@ const routes: RouteConfig[] = [
           requiresAuth: true,
         },
       },
+      {
+        path: '/createregression',
+        component: () => import('src/components/Regression/CreateRegression/CreateRegression.vue'),
+        meta: {
+          requiresAuth: true,
+        },
+      },
     ],
   },
   {

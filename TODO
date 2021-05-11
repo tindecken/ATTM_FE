@@ -1,5 +1,5 @@
 Todo:
-  ☐ create new directive for format the @@ variable, and maybe the testbed
+  ✔ create new directive for format the @@ variable, and maybe the testbed @done(21-05-09 07:38) --> use it in parameter, no need to create directive
   ✔ layout the test plan, should or should not use vue splitter? @done(20-11-12 22:24)
   ✔ maybe need to use dynamic component for every test case tab? @done(20-11-29 21:13)
   ✔ left drawer should push the content to the right (not overlap) @done(20-11-12 22:24)
@@ -40,9 +40,9 @@ Todo:
   ✔ rewrite create new testcase api, that will include category, testsuite, testgroup in it @done(21-04-24 15:55)
   ✔ treeview - do not show testcase with attribute isDeleted: true @done(21-04-24 15:55)
   ✔ calling api generate code should return success or failure message (same with the other api) @done(21-04-24 15:55)
-  ☐ bug - transfer testcases to generateCode error https://i.imgur.com/PrgkhW8.png
+  ✔ bug - transfer testcases to generateCode error https://i.imgur.com/PrgkhW8.png @done(21-05-09 07:38)
   ✔ bug - clear all cache, login first time --> open right menu --> no keyword is displayed @done(21-04-08 22:38)
-  ☐ is it able to delete these try/catch block? https://i.imgur.com/GKS6fri.png
+  ✔ is it able to delete these try/catch block? https://i.imgur.com/GKS6fri.png --> it should @done(21-05-09 07:38)
   ✔ change model, in teststep, store testAUT as an ID not TestSTep @done(21-04-17 22:45)
   ✔ fix readonly in parameter, maybe choose new Keyword affect on it. @done(21-04-21 22:56)
   ✔ fix savetestcase request, it returns bad request @done(21-04-21 22:56)
@@ -50,13 +50,16 @@ Todo:
   ✔ fix create newtestgroup error in UI (API ok) @done(21-05-01 20:37)
   ✔ add build project when run test, run test will: generate code, buildproject, set queue (if any step error, it will stop other steps) @done(21-05-01 20:19)
   ✔ remove debug attribute @done(21-05-06 23:03)
-  build project error should be handled
-  ☐ implement regression run
+  ✔ build project error should be handled @done(21-05-09 07:35)
+  ✔ regression run - api for create new regression @done(21-05-09 23:06)
+  ✔ regression run - api for add regressionTest to regression @done(21-05-09 23:06)
+  ☐ regression run - api for create regressionTest from TestCase
   ☐ add monitoring, able to view runtime running of test
   ☐ implement feature to check if there's test or tests is/are running
-  remove 
+  ☐ able to delete regression (set flag isDeleted?) make sure has a notitificase: Danger Zone
+  ☐ able to add test case into current regression (mark new add tests? to compare with original test?) - low priority
 Test:
-  ☐ one flow from create category, testsuite, testgroup, testcase from beginning
+  ✔ one flow from create category, testsuite, testgroup, testcase from beginning @done(21-05-11 23:12)
 API:
   ✔ api for saving testcase @done(21-01-23 22:28)
   ✔ api for generate code from testcases, @done(21-05-01 20:21)
@@ -67,7 +70,7 @@ API:
   ✔ api create testsuite, testgroup, testcase haven't checking the input id is correct, exist or not @done(20-11-29 21:14)
   ☐ create new api to list all testcase in .dll file including all task, including [Test] with //
   reference to this tutorial, https://stackoverflow.com/questions/10724479/get-list-of-tests-in-nunit-library-programmatically-without-having-to-run-tests
-  ☐ buildproject API should return JObject
+  ✔ buildproject API should return JObject @done(21-05-09 07:39)
 Node:
   In store keyword, currently not use selectedKeyword
   https://blog.hildenco.com/2020/05/configuration-in-net-core-console.html

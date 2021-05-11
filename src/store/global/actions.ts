@@ -67,7 +67,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return responseData;
     } catch (error) {
-      throw error.response.data;
+      throw error.response.data
     }
   },
   async getTestAUT(context) {
@@ -87,7 +87,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
         testAUTs: responseData,
       });
     } catch (error) {
-      throw error.response.data;
+      throw error.response.data
     }
   },
 };
