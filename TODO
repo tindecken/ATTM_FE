@@ -58,6 +58,7 @@ Todo:
   ☐ implement feature to check if there's test or tests is/are running
   ☐ able to delete regression (set flag isDeleted?) make sure has a notitificase: Danger Zone
   ☐ able to add test case into current regression (mark new add tests? to compare with original test?) - low priority
+  createRegression has a summary, if user confirm all information --> do bulk of action (create regression, create regressionTest)
 Test:
   ✔ one flow from create category, testsuite, testgroup, testcase from beginning @done(21-05-11 23:12)
 API:
