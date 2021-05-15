@@ -7,6 +7,25 @@ import config from '../../config';
 import { paintTestCase } from '../../components/Utils/TreeUtils'
 
 const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
+  async getAllTestCaseDetails(context) {
+    // eslint-disable-next-line no-useless-catch
+    try {
+      const response = await axios.get(
+        `${config.baseURL}/testcases/getAllDetail`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${context.rootGetters['auth/token']}`,
+          },
+        },
+      );
+      const testcases = await response.data;
+      console.log('testcases', testcases);
+      context.commit('setAllTestCasesDetail', testcases.data);
+    } catch (error) {
+      throw error;
+    }
+  },
   async getTestCaseById(context, id) {
     // eslint-disable-next-line no-useless-catch
     try {

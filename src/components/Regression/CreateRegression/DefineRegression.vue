@@ -88,6 +88,7 @@
 <script lang="ts">
 import {
   defineComponent,
+  onMounted,
   reactive,
   Ref,
   ref,
@@ -132,14 +133,14 @@ export default defineComponent({
       });
     }
 
+    onMounted(() => context.root.$store.commit('createregression/setDefineRegression', null));
+
     function rangeStart(startDate: any) {
-      console.log('startDate', startDate)
       dateRange.from = date.formatDate(date.buildDate({ year: startDate.year, month: startDate.month, date: startDate.day }, true), 'YYYY/MM/DD')
       validateForm()
     }
 
     function rangeEnd(endDate: any) {
-      console.log('endDate', endDate)
       if (JSON.stringify(endDate.from) !== JSON.stringify(endDate.to)) {
         dateRange.from = date.formatDate(date.buildDate({ year: endDate.from.year, month: endDate.from.month, date: endDate.from.day }, true), 'YYYY/MM/DD')
         dateRange.to = date.formatDate(date.buildDate({ year: endDate.to.year, month: endDate.to.month, date: endDate.to.day }, true), 'YYYY/MM/DD')

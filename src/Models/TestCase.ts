@@ -12,11 +12,12 @@ export interface TestCaseInterface {
     IsPrimary?: boolean;
     IsDisabled?: boolean;
     IsDeleted?: boolean;
-    Designer?: string;
+    Owner?: string;
     Team?: string;
     CreatedDate?: Date;
     LastModifiedDate?: Date;
     TimeOutInMinutes?: number;
+    QueueId?: number;
     CategoryId: string;
     TestSuiteId: string;
     TestGroupId: string;

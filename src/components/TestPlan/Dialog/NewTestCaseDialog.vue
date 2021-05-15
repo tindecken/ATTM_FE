@@ -178,7 +178,7 @@ export default defineComponent({
         WorkItem: workItem.value,
         Description: description.value,
         TestCaseType: type.value,
-        Designer: author.value,
+        Owner: author.value,
         CategoryId: testGroup.CategoryId,
         TestSuiteId: testGroup.TestSuiteId,
         TestGroupId: testGroup.Id,
