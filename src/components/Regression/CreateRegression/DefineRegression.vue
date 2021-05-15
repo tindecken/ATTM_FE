@@ -62,19 +62,21 @@
             />
           </div>
           <div class="row q-mb-md">
-            <q-toggle v-model="isOfficial" label="Is this regression official?" />
+            <q-toggle v-model="isOfficial" label="Is this regression official?" @input="validateForm()"/>
           </div>
         </div>
         <div class="col">
           <div class="row q-mb-md">
-            <span>Select start and end date of the regression</span>
+            <span>Select start and end date of the regression {{dateRange}}</span>
           </div>
           <div class="row">
             <q-date
-              v-model="dateRange"
+              :value="dateRange"
               range
               today-btn
-              @input="validateForm()"
+              @range-start="rangeStart($event)"
+              @range-end="rangeEnd($event)"
+              ref="datePicker"
             />
           </div>
         </div>
@@ -84,13 +86,20 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, Ref, ref } from '@vue/composition-api';
+import {
+  defineComponent,
+  reactive,
+  Ref,
+  ref,
+} from '@vue/composition-api';
 import { date } from 'quasar'
+import { DefineRegressionInterface } from 'src/Models/DefineRegression';
 
 export default defineComponent({
   name: 'DefineRegression',
   components: {},
   setup(props, context) {
+    const datePicker: Ref<any> = ref(null)
     const name = ref('');
     const release = ref('');
     const build = ref('');
@@ -98,14 +107,46 @@ export default defineComponent({
     const isOfficial = ref(false);
     const form: Ref<any> = ref(null);
     const isFormValid = ref(false);
-    const dateRange = ref({ from: date.formatDate(Date.now(), 'YYYY/MM/DD'), to: date.formatDate(date.addToDate(Date.now(), { days: 7 }), 'YYYY/MM/DD') })
+    const dateRange = reactive({ from: date.formatDate(Date.now(), 'YYYY/MM/DD'), to: date.formatDate(date.addToDate(Date.now(), { days: 7 }), 'YYYY/MM/DD') })
+    let defineRegressionObject: DefineRegressionInterface
     function validateForm() {
       form.value.validate().then((success: any) => {
         if (success) {
-          if (dateRange.value != null) context.emit('validateForm', true)
-          else context.emit('validateForm', false)
+          if (dateRange != null) {
+            defineRegressionObject = {
+              Name: name.value,
+              ReleaseName: release.value,
+              BuildName: build.value,
+              Description: description.value,
+              IsOfficial: isOfficial.value,
+              StartDate: dateRange.from,
+              EndDate: dateRange.to,
+            }
+            console.log('defineRegressionObject', defineRegressionObject)
+            context.emit('validateForm', true)
+            context.root.$store.commit('createregression/setDefineRegression', defineRegressionObject)
+          } else {
+            context.emit('validateForm', false)
+          }
         } else context.emit('validateForm', false)
       });
+    }
+
+    function rangeStart(startDate: any) {
+      console.log('startDate', startDate)
+      dateRange.from = date.formatDate(date.buildDate({ year: startDate.year, month: startDate.month, date: startDate.day }, true), 'YYYY/MM/DD')
+      validateForm()
+    }
+
+    function rangeEnd(endDate: any) {
+      console.log('endDate', endDate)
+      if (JSON.stringify(endDate.from) !== JSON.stringify(endDate.to)) {
+        dateRange.from = date.formatDate(date.buildDate({ year: endDate.from.year, month: endDate.from.month, date: endDate.from.day }, true), 'YYYY/MM/DD')
+        dateRange.to = date.formatDate(date.buildDate({ year: endDate.to.year, month: endDate.to.month, date: endDate.to.day }, true), 'YYYY/MM/DD')
+        validateForm()
+      } else {
+        context.emit('validateForm', false)
+      }
     }
     return {
       form,
@@ -115,8 +156,11 @@ export default defineComponent({
       description,
       validateForm,
       isOfficial,
-      dateRange,
       isFormValid,
+      rangeStart,
+      rangeEnd,
+      datePicker,
+      dateRange,
     };
   },
 });

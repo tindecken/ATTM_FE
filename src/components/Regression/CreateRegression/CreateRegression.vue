@@ -14,7 +14,7 @@
       >
         <define-regression
           @validateForm="validateForm($event)"
-        />
+        ></define-regression>
       </q-step>
       <q-step
         name="selectTestCase"
@@ -32,6 +32,14 @@
       >
         <build-project></build-project>
       </q-step>
+      <q-step
+        name="deploySources"
+        title="Deploy Source"
+        caption="Copy built source to clients"
+        icon="create_new_folder"
+      >
+        <deploy-source></deploy-source>
+      </q-step>
       <template v-slot:navigation>
         <q-stepper-navigation>
           <q-btn
@@ -39,24 +47,22 @@
             color="primary"
             :disable="!isStepValid"
             v-if="currentStep !== 'buildProject'"
-            @click="$refs.stepper.next()"
+            @click="$refs.stepper.next();"
             label="Continue"
           />
-        <q-btn
-          class="q-mr-md"
-          color="primary"
-          v-if="currentStep === 'buildProject'" 
-          @click="finish()"
-          label="Finish"
-        />
-        <q-btn
-          v-if="currentStep !== 'defineRegression'"
-          flat
-          @click="$refs.stepper.previous()"
-          label="Back"
-        />
-          <!-- <q-btn @click="$refs.stepper.next()" color="primary" :label="step === 4 ? 'Finish' : 'Continue'" :disable="!isStepValid"/>
-          <q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Back" class="q-ml-sm" /> -->
+          <q-btn
+            class="q-mr-md"
+            color="primary"
+            v-if="currentStep === 'deploySources'"
+            @click="finish()"
+            label="Finish"
+          />
+          <q-btn
+            v-if="currentStep !== 'defineRegression'"
+            flat
+            @click="$refs.stepper.previous()"
+            label="Back"
+          />
         </q-stepper-navigation>
       </template>
     </q-stepper>
@@ -64,8 +70,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from '@vue/composition-api';
-import AddRegressionTest from './AddRegressionTest.vue'
+import { defineComponent, Ref, ref } from '@vue/composition-api';
+import DeploySource from './DeploySource.vue'
 import DefineRegression from './DefineRegression.vue'
 import SelectTestCase from './SelectTestCase.vue'
 import BuildProject from './BuildProject.vue'
@@ -73,7 +79,7 @@ import BuildProject from './BuildProject.vue'
 export default defineComponent({
   name: 'CreateRegression',
   components: {
-    AddRegressionTest,
+    DeploySource,
     DefineRegression,
     SelectTestCase,
     BuildProject,
@@ -81,6 +87,7 @@ export default defineComponent({
   setup(props, context) {
     const currentStep = ref('defineRegression')
     const isStepValid = ref(false)
+    const defineRegression: Ref<any> = ref(null)
     function validateForm(isValid: boolean) {
       console.log('isValid', isValid)
       isStepValid.value = isValid
@@ -89,6 +96,7 @@ export default defineComponent({
       currentStep,
       isStepValid,
       validateForm,
+      defineRegression,
     }
   },
 });

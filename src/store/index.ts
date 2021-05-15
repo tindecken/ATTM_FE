@@ -10,6 +10,7 @@ import testsuite from './testsuite';
 import testgroup from './testgroup';
 import testenvironment from './environment';
 import testclient from './testclient';
+import createregression from './createregression';
 
 import { AuthStateInterface } from './auth/state';
 import { GlobalStateInterface } from './global/state';
@@ -20,6 +21,7 @@ import { TestSuiteStateInterface } from './testsuite/state';
 import { TestGroupStateInterface } from './testgroup/state';
 import { TestClientStateInterface } from './testclient/state';
 import { TestEnvironmentStateInterface } from './environment/state';
+import { CreateRegressionStateInterface } from './createregression/state';
 
 // import example from './module-example';
 // import { ExampleStateInterface } from './module-example/state';
@@ -42,7 +44,7 @@ export interface StateInterface {
   testgroup: TestGroupStateInterface;
   testenvironment: TestEnvironmentStateInterface;
   testclient: TestClientStateInterface;
-
+  createregression: CreateRegressionStateInterface;
 }
 
 export default store(({ Vue }) => {
@@ -84,6 +86,10 @@ export default store(({ Vue }) => {
     key: 'testclient',
     modules: ['testclient'],
   });
+  const persistCreateRegression = new VuexPersistence({
+    key: 'createregression',
+    modules: ['createregression'],
+  });
   const Store = new Vuex.Store<StateInterface>({
     modules: {
       auth,
@@ -95,8 +101,9 @@ export default store(({ Vue }) => {
       testgroup,
       testenvironment,
       testclient,
+      createregression,
     },
-    plugins: [persistGlobal.plugin, persistAuth.plugin, persistKeyword.plugin, persistTestCase.plugin, persistCategory.plugin, persistTestSuite.plugin, persistTestGroup.plugin, persistTestEnvironment.plugin, persistTestClient.plugin],
+    plugins: [persistGlobal.plugin, persistAuth.plugin, persistKeyword.plugin, persistTestCase.plugin, persistCategory.plugin, persistTestSuite.plugin, persistTestGroup.plugin, persistTestEnvironment.plugin, persistTestClient.plugin, persistCreateRegression.plugin],
 
     // enable strict mode (adds overhead!)
     // for dev mode only

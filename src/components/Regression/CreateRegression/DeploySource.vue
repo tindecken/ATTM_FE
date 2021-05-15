@@ -1,6 +1,6 @@
 <template>
   <div class="q-pa-md">
-    add regression
+    Deploy Source
   </div>
 </template>
 
@@ -8,7 +8,7 @@
 import { defineComponent } from '@vue/composition-api';
 
 export default defineComponent({
-  name: 'AddRegressionTest',
+  name: 'DeploySource',
   components: {},
   setup(props, context) {
     return {
