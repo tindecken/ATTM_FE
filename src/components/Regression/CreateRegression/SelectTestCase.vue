@@ -182,7 +182,7 @@ export default defineComponent({
       rowsPerPage: 50,
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const testCases: Ref<TestCaseDetailInterface[]> = computed(() => context.root.$store.getters['testcase/allTestCasesDetail'])
+    const testCases: Ref<TestCaseDetailInterface[]> = computed(() => context.root.$store.getters['createregression/allTestCasesDetail'])
     const selected: Ref<TestCaseDetailInterface[]> = ref([])
     const visibleColumns = ref(['FullName', 'Category', 'TestSuite', 'TestGroup', 'Owner', 'Type', 'IsPrimary', 'QueueId', 'CreatedDate', 'LastModifiedDate'])
     function getSelectedString() {
@@ -191,14 +191,20 @@ export default defineComponent({
     watch(
       () => selected.value,
       () => {
-        console.log('selected', selected.value);
-        context.root.$store.commit('testcase/setSelectedTestCasesDetail', selected.value)
+        context.root.$store.commit('createregression/setSelectedTestCasesDetail', selected.value)
+        if (selected.value.length === 0) {
+          context.emit('validateForm', false)
+        } else {
+          context.emit('validateForm', true)
+        }
       },
     )
     onMounted(async () => {
       try {
-        context.root.$store.commit('testcase/setSelectedTestCasesDetail', [])
-        await context.root.$store.dispatch('testcase/getAllTestCaseDetails');
+        context.emit('validateForm', false)
+        context.root.$store.commit('createregression/setSelectedTestCasesDetail', [])
+        context.root.$store.commit('createregression/setSelectedTestCases', [])
+        await context.root.$store.dispatch('createregression/getAllTestCaseDetails');
       } catch (error) {
         context.root.$q.notify({
           type: 'negative',

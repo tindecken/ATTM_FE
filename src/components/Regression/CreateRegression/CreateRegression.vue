@@ -22,12 +22,14 @@
         caption="How many test cases need to run in the regression?"
         icon="create_new_folder"
       >
-        <select-test-case></select-test-case>
+        <select-test-case
+          @validateForm="validateForm($event)"
+        ></select-test-case>
       </q-step>
       <q-step
         name="buildProject"
         title="Build Project"
-        caption="To check project is built success or not."
+        caption="Generate code and try to build project"
         icon="create_new_folder"
       >
         <build-project></build-project>
@@ -46,7 +48,7 @@
             class="q-mr-md"
             color="primary"
             :disable="!isStepValid"
-            v-if="currentStep !== 'buildProject'"
+            v-if="currentStep !== 'deploySources'"
             @click="$refs.stepper.next();"
             label="Continue"
           />
@@ -70,7 +72,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, Ref, ref } from '@vue/composition-api';
+import { defineComponent, ref } from '@vue/composition-api';
 import DeploySource from './DeploySource.vue'
 import DefineRegression from './DefineRegression.vue'
 import SelectTestCase from './SelectTestCase.vue'
@@ -87,7 +89,6 @@ export default defineComponent({
   setup(props, context) {
     const currentStep = ref('defineRegression')
     const isStepValid = ref(false)
-    const defineRegression: Ref<any> = ref(null)
     function validateForm(isValid: boolean) {
       console.log('isValid', isValid)
       isStepValid.value = isValid
@@ -96,7 +97,6 @@ export default defineComponent({
       currentStep,
       isStepValid,
       validateForm,
-      defineRegression,
     }
   },
 });

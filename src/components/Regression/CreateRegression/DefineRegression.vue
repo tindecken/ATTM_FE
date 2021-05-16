@@ -67,7 +67,7 @@
         </div>
         <div class="col">
           <div class="row q-mb-md">
-            <span>Select start and end date of the regression {{dateRange}}</span>
+            <span>Select start and end date of the regression</span>
           </div>
           <div class="row">
             <q-date

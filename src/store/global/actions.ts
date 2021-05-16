@@ -50,6 +50,27 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
     }
   },
 
+  async generateRegCode(context, testcases) {
+    console.log('testcases', testcases)
+    try {
+      const response = await axios.post(
+        `${config.baseURL}/testproject/generateRegCode`,
+        testcases,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${context.rootGetters['auth/token']}`,
+          },
+        },
+      );
+      const responseData = await response.data;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return responseData;
+    } catch (error) {
+      throw error.response.data;
+    }
+  },
+
   async createDevQueue(context, payload) {
     console.log('payload', payload);
     try {

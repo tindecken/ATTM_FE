@@ -3,7 +3,6 @@ import { MutationTree } from 'vuex';
 import uuid from 'uuid-random';
 import _ from 'lodash'
 import { TestCaseInterface } from 'src/Models/TestCase';
-import { TestCaseDetailInterface } from 'src/Models/TestCaseDetail';
 import { TestCaseStateInterface } from './state';
 
 const mutation: MutationTree<TestCaseStateInterface> = {
@@ -13,12 +12,6 @@ const mutation: MutationTree<TestCaseStateInterface> = {
       state.openedTCs.push(testCase);
     }
     state.selectedTestCaseId = testCase.Id;
-  },
-  setAllTestCasesDetail(state: TestCaseStateInterface, testCases: TestCaseDetailInterface[]) {
-    state.allTestCasesDetail = testCases
-  },
-  setSelectedTestCasesDetail(state: TestCaseStateInterface, testCases: TestCaseDetailInterface[]) {
-    state.selectedTestCasesDetail = testCases
   },
   updateOpenedTCs(state: TestCaseStateInterface, testCase: TestCaseInterface) {
     const index = state.openedTCs.findIndex((tc: TestCaseInterface) => tc.Id === testCase.Id);
