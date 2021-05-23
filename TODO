@@ -53,12 +53,16 @@ Todo:
   ✔ build project error should be handled @done(21-05-09 07:35)
   ✔ regression run - api for create new regression @done(21-05-09 23:06)
   ✔ regression run - api for add regressionTest to regression @done(21-05-09 23:06)
-  ☐ regression run - api for create regressionTest from TestCase
+  ✔ regression run - api for create regressionTest from TestCase @done(21-05-23 22:33)
   ☐ add monitoring, able to view runtime running of test
   ☐ implement feature to check if there's test or tests is/are running
   ☐ able to delete regression (set flag isDeleted?) make sure has a notitificase: Danger Zone
   ☐ able to add test case into current regression (mark new add tests? to compare with original test?) - low priority
-  createRegression has a summary, if user confirm all information --> do bulk of action (create regression, create regressionTest)
+  ☐ createRegression has a summary, if user confirm all information --> do bulk of action (create regression, create regressionTest)
+  ☐ createRegression - createDB should run before generateCode due to lack of regressionTestID in the testAttributes
+  ☐ add new test attribute: RegressionTestId
+  ✔ pskill https://i.imgur.com/5Q9OFVP.png @done(21-05-23 22:30)
+  copy to remote server: 
 Test:
   ✔ one flow from create category, testsuite, testgroup, testcase from beginning @done(21-05-11 23:12)
 API:

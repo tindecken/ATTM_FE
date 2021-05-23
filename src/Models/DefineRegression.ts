@@ -1,9 +1,11 @@
 export interface DefineRegressionInterface {
     Name: string,
-    ReleaseName: string,
-    BuildName: string,
+    Release: string,
+    Build: string,
     Description: string,
     IsOfficial: boolean,
     StartDate?: string,
     EndDate?: string,
+    CreateBy: string,
+    RegressionTestIds: []
 }

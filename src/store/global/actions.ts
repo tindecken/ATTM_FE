@@ -30,6 +30,27 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
     }
   },
 
+  async getLatestCode(context) {
+    // eslint-disable-next-line no-useless-catch
+    try {
+      const response = await axios.post(
+        `${config.baseURL}/testproject/getlatestcode`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${context.rootGetters['auth/token']}`,
+          },
+        },
+      );
+      console.log('response', response)
+      const responseData = await response.data;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return responseData;
+    } catch (error) {
+      throw error.response.data;
+    }
+  },
+
   async generateDevCode(context, testcases) {
     try {
       const response = await axios.post(

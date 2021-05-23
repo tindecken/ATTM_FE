@@ -29,10 +29,18 @@
       <q-step
         name="buildProject"
         title="Build Project"
-        caption="Generate code and try to build project"
+        caption="Generate code, get latest code and try to build project"
         icon="create_new_folder"
       >
         <build-project></build-project>
+      </q-step>
+      <q-step
+        name="createDBRecords"
+        title="Setup in database"
+        caption="Create Regression, RegressionTests"
+        icon="create_new_folder"
+      >
+        <create-db></create-db>
       </q-step>
       <q-step
         name="deploySources"
@@ -66,6 +74,7 @@
             label="Back"
           />
         </q-stepper-navigation>
+        {{currentStep}}
       </template>
     </q-stepper>
   </div>
@@ -77,6 +86,7 @@ import DeploySource from './DeploySource.vue'
 import DefineRegression from './DefineRegression.vue'
 import SelectTestCase from './SelectTestCase.vue'
 import BuildProject from './BuildProject.vue'
+import CreateDb from './CreateDB.vue'
 
 export default defineComponent({
   name: 'CreateRegression',
@@ -85,8 +95,9 @@ export default defineComponent({
     DefineRegression,
     SelectTestCase,
     BuildProject,
+    CreateDb,
   },
-  setup(props, context) {
+  setup() {
     const currentStep = ref('defineRegression')
     const isStepValid = ref(false)
     function validateForm(isValid: boolean) {

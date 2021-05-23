@@ -87,6 +87,7 @@
 
 <script lang="ts">
 import {
+  computed,
   defineComponent,
   onMounted,
   reactive,
@@ -109,6 +110,7 @@ export default defineComponent({
     const form: Ref<any> = ref(null);
     const isFormValid = ref(false);
     const dateRange = reactive({ from: date.formatDate(Date.now(), 'YYYY/MM/DD'), to: date.formatDate(date.addToDate(Date.now(), { days: 7 }), 'YYYY/MM/DD') })
+    const currentUser = computed(() => context.root.$store.getters['auth/userName'] as string)
     let defineRegressionObject: DefineRegressionInterface
     function validateForm() {
       form.value.validate().then((success: any) => {
@@ -116,12 +118,14 @@ export default defineComponent({
           if (dateRange != null) {
             defineRegressionObject = {
               Name: name.value,
-              ReleaseName: release.value,
-              BuildName: build.value,
+              Release: release.value,
+              Build: build.value,
               Description: description.value,
               IsOfficial: isOfficial.value,
               StartDate: dateRange.from,
               EndDate: dateRange.to,
+              CreateBy: currentUser.value,
+              RegressionTestIds: [],
             }
             console.log('defineRegressionObject', defineRegressionObject)
             context.emit('validateForm', true)
