@@ -1,6 +1,7 @@
 import { DefineRegressionInterface } from 'src/Models/DefineRegression';
 import { TestCaseInterface } from 'src/Models/TestCase';
 import { TestCaseDetailInterface } from 'src/Models/TestCaseDetail';
+import { TestClientInterface } from 'src/Models/TestClient';
 import { MutationTree } from 'vuex';
 import { CreateRegressionStateInterface } from './state';
 
@@ -16,6 +17,9 @@ const mutation: MutationTree<CreateRegressionStateInterface> = {
   },
   setSelectedTestCases(state: CreateRegressionStateInterface, testCases: TestCaseInterface[]) {
     state.selectedTestCases = testCases
+  },
+  setSelectedTestClients(state: CreateRegressionStateInterface, testClients: TestClientInterface[]) {
+    state.selectedTestClients = testClients
   },
   addSelectedTestCase(state: CreateRegressionStateInterface, testCase: TestCaseInterface) {
     state.selectedTestCases.push(testCase)

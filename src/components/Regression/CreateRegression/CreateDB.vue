@@ -42,11 +42,38 @@ export default defineComponent({
         })
         const createRegressionTest: Promise<any> = context.root.$store.dispatch('createregression/createRegressionTests', { regressionId: r.data.Id, selectedTestCasesDetailIds: Ids });
         createRegressionTest.then((t) => {
-          console.log('t', t)
+          console.log('tt', t)
           context.root.$q.notify({
             type: 'positive',
-            message: `Created regression Tests: ${t.data}`,
+            message: `Created regression Tests: ${t.data.message}`,
           });
+          const generateRegCodeResult: Promise<any> = context.root.$store.dispatch('global/generateRegCode', t.data.data);
+          generateRegCodeResult.then((g) => {
+            console.log('g', g)
+            context.root.$q.notify({
+              type: 'positive',
+              message: `Generate Regression Code Successful for ${g.count} test case(s) !`,
+            });
+            const buildResult: Promise<any> = context.root.$store.dispatch('global/buildProject');
+            buildResult.then((b) => {
+              console.log('b', b)
+              output.value += b.buildMessage
+              context.root.$q.notify({
+                type: 'positive',
+                message: 'Build Project Success !',
+              });
+            }).catch(() => {
+              context.root.$q.notify({
+                type: 'negative',
+                message: 'Build Project Error',
+              });
+            })
+          }).catch((e) => {
+            context.root.$q.notify({
+              type: 'negative',
+              message: `Generate Regression Code Unsuccessful: ${e}`,
+            });
+          })
         }).catch((e) => {
           context.root.$q.notify({
             type: 'negative',

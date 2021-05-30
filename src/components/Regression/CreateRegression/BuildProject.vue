@@ -38,8 +38,8 @@ export default defineComponent({
           type: 'positive',
           message: 'Get Latest Code success !',
         });
-        const generateRegCodeResult: Promise<any> = context.root.$store.dispatch('global/generateRegCode', selectedTestCases.value);
-        generateRegCodeResult.then((g) => {
+        const generateDevCodeResult: Promise<any> = context.root.$store.dispatch('global/generateDevCode', selectedTestCases.value);
+        generateDevCodeResult.then((g) => {
           console.log('g', g)
           g.message.forEach((m: any) => {
             output.value += m.generatedCode

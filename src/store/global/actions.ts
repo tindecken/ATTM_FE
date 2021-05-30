@@ -1,5 +1,6 @@
 import { ActionTree } from 'vuex';
 import axios from 'axios';
+import { TestClientInterface } from 'src/Models/TestClient';
 import { StateInterface } from '../index';
 import { GlobalStateInterface } from './state';
 import config from '../../config';
@@ -14,6 +15,28 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
     try {
       const response = await axios.post(
         `${config.baseURL}/testproject/buildproject`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${context.rootGetters['auth/token']}`,
+          },
+        },
+      );
+      console.log('response', response)
+      const responseData = await response.data;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return responseData;
+    } catch (error) {
+      throw error.response.data;
+    }
+  },
+
+  async copycodetoclient(context, testClient: TestClientInterface) {
+    // eslint-disable-next-line no-useless-catch
+    try {
+      const response = await axios.post(
+        `${config.baseURL}/testproject/copycodetoclient`,
+        testClient,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -71,12 +94,12 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
     }
   },
 
-  async generateRegCode(context, testcases) {
-    console.log('testcases', testcases)
+  async generateRegCode(context, testcasesDetail) {
+    console.log('testcasesDetail', testcasesDetail)
     try {
       const response = await axios.post(
         `${config.baseURL}/testproject/generateRegCode`,
-        testcases,
+        testcasesDetail,
         {
           headers: {
             'Content-Type': 'application/json',

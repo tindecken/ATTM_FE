@@ -60,9 +60,11 @@ Todo:
   ☐ able to add test case into current regression (mark new add tests? to compare with original test?) - low priority
   ☐ createRegression has a summary, if user confirm all information --> do bulk of action (create regression, create regressionTest)
   ☐ createRegression - createDB should run before generateCode due to lack of regressionTestID in the testAttributes
-  ☐ add new test attribute: RegressionTestId
+  ✔ add new test attribute: RegressionTestId @done(21-05-24 08:36)
   ✔ pskill https://i.imgur.com/5Q9OFVP.png @done(21-05-23 22:30)
-  copy to remote server: 
+  ☐ copy to remote server: 
+  create git repo for Runner
+  create git repo for TestProject
 Test:
   ✔ one flow from create category, testsuite, testgroup, testcase from beginning @done(21-05-11 23:12)
 API:

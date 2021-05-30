@@ -6,6 +6,8 @@ export interface TestClientInterface {
     Type: string;
     User: string;
     Password: string;
-    Domain: string;
-    InstanceName: string;
+    RegressionFolder: string;
+    DevelopFolder: string;
+    RunnerFolder: string;
+    Status: string;
 }
