@@ -23,9 +23,9 @@
         </q-input>
       </template>
     </q-table>
-    <div class="q-mt-md">
+    <!-- <div class="q-mt-md">
       Selected: {{ JSON.stringify(selected) }}
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -168,11 +168,11 @@ export default defineComponent({
         sortable: true,
       },
       {
-        name: 'QueueId',
+        name: 'Queue',
         required: false,
-        label: 'QueueId',
+        label: 'Queue',
         align: 'left',
-        field: 'QueueId',
+        field: 'Queue',
         format: (val: any) => `${val}`,
         sortable: true,
       },
@@ -184,7 +184,7 @@ export default defineComponent({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const testCases: Ref<TestCaseDetailInterface[]> = computed(() => context.root.$store.getters['createregression/allTestCasesDetail'])
     const selected: Ref<TestCaseDetailInterface[]> = ref([])
-    const visibleColumns = ref(['FullName', 'Category', 'TestSuite', 'TestGroup', 'Owner', 'Type', 'IsPrimary', 'QueueId', 'CreatedDate', 'LastModifiedDate'])
+    const visibleColumns = ref(['FullName', 'Category', 'TestSuite', 'TestGroup', 'Owner', 'Type', 'IsPrimary', 'Queue', 'CreatedDate', 'LastModifiedDate'])
     function getSelectedString() {
       return selected.value.length === 0 ? '' : `${selected.value.length} record${selected.value.length > 1 ? 's' : ''} selected of ${testCases.value.length}`
     }

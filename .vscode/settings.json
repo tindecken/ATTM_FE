@@ -9,13 +9,15 @@
     "Datas",
     "buildproject",
     "createdevqueue",
+    "swipeable",
     "testauts",
     "testcase",
     "testclient",
     "testenvironment",
     "testenvironments",
     "testsuite",
-    "testsuites"
+    "testsuites",
+    "updatereleaseforclient"
   ],
   "cSpell.ignoreWords": [
     "borderless",

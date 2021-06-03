@@ -24,14 +24,48 @@
       </template>
     </q-table>
     <q-btn
-      class="q-mr-md"
+      class="q-mt-md q-mb-md"
       color="primary"
       @click="deployClient"
       label="Deploy"
     />
-    <div class="q-mt-md">
-      Selected: {{ JSON.stringify(selected) }}
-    </div>
+    <q-splitter
+      v-model="splitterModel"
+      style="height: 250px"
+    >
+
+      <template v-slot:before>
+        <q-tabs
+          v-model="tab"
+          vertical
+          no-caps
+        >
+          <q-tab name="deploySource" label="Deploy Source" />
+          <q-tab name="updateClient" label="Update Clients" />
+        </q-tabs>
+      </template>
+
+      <template v-slot:after>
+        <q-tab-panels
+          v-model="tab"
+          animated
+          swipeable
+          vertical
+          transition-prev="jump-up"
+          transition-next="jump-up"
+        >
+          <q-tab-panel name="deploySource">
+            <div class="text-h6 q-mb-md">Status: {{deploySourceStatus}}</div>
+            <p style="white-space: pre;">{{deploySourceMessage}}</p>
+          </q-tab-panel>
+
+          <q-tab-panel name="updateClient">
+            <div class="text-h6 q-mb-md">Status: {{updateClientStatus}}</div>
+            <p style="white-space: pre;">{{updateClientMessage}}</p>
+          </q-tab-panel>
+        </q-tab-panels>
+      </template>
+    </q-splitter>
   </div>
 </template>
 
@@ -39,6 +73,7 @@
 import {
   computed, defineComponent, ref, Ref, watch,
 } from '@vue/composition-api';
+import { DefineRegressionInterface } from 'src/Models/DefineRegression';
 import { TestClientInterface } from 'src/Models/TestClient';
 
 export default defineComponent({
@@ -147,6 +182,11 @@ export default defineComponent({
         sortable: true,
       },
     ]
+    const tab = ref('deploySource')
+    const deploySourceStatus = ref('')
+    const deploySourceMessage = ref('')
+    const updateClientStatus = ref('')
+    const updateClientMessage = ref('')
     const filter = ref('')
     const initialPagination = {
       rowsPerPage: 50,
@@ -155,6 +195,7 @@ export default defineComponent({
     const clients: Ref<TestClientInterface[]> = computed(() => context.root.$store.getters['testclient/testClients'])
     const selected: Ref<TestClientInterface[]> = ref([])
     const visibleColumns = ref(['Name', 'Description', 'IPAddress', 'Type', 'User', 'RegressionFolder', 'DevelopFolder', 'RunnerFolder', 'Status'])
+    const defineRegression = computed(() => context.root.$store.getters['createregression/defineRegression'] as DefineRegressionInterface);
     function getSelectedString() {
       return selected.value.length === 0 ? '' : `${selected.value.length} record${selected.value.length > 1 ? 's' : ''} selected of ${clients.value.length}`
     }
@@ -169,7 +210,15 @@ export default defineComponent({
         }
       },
     )
+    function clearStatusAndMessage() {
+      deploySourceStatus.value = ''
+      deploySourceMessage.value = ''
+      updateClientStatus.value = ''
+      updateClientMessage.value = ''
+      tab.value = 'deploySource'
+    }
     function deployClient() {
+      clearStatusAndMessage()
       console.log('deployClient')
       if (selected.value.length === 0) {
         context.root.$q.notify({
@@ -180,12 +229,41 @@ export default defineComponent({
         selected.value.forEach((tc: TestClientInterface) => {
           const copyResult: Promise<any> = context.root.$store.dispatch('global/copycodetoclient', tc);
           copyResult.then((r) => {
+            if (!deploySourceStatus.value.includes('Error') && deploySourceStatus.value !== '') deploySourceStatus.value = 'Success'
+            deploySourceMessage.value += r.message.replace('\r\n\r\n', '\r\n')
             console.log('r', r)
             context.root.$q.notify({
               type: 'positive',
               message: `Deploy to client ${tc.Name} success !`,
             });
+            const payload = {
+              testClient: tc,
+              regressionName: defineRegression.value.Name,
+            }
+            const updateReleaseResult: Promise<any> = context.root.$store.dispatch('global/updatereleaseforclient', payload);
+            updateReleaseResult.then((u) => {
+              tab.value = 'updateClient'
+              updateClientStatus.value = ''
+              if (!updateClientStatus.value.includes('Error') && updateClientStatus.value !== '') updateClientStatus.value = 'Success'
+              updateClientMessage.value += `${u.message}\r\n`
+              context.root.$q.notify({
+                type: 'positive',
+                message: `Update Regression for client ${tc.Name} success !`,
+              });
+              deploySourceStatus.value = 'Success'
+              deploySourceMessage.value = r.message.replace('\r\n\r\n', '\r\n')
+            }).catch((e) => {
+              tab.value = 'updateClient'
+              updateClientStatus.value = 'Error'
+              updateClientMessage.value += e.message
+              context.root.$q.notify({
+                type: 'negative',
+                message: `Update Regression for client ${tc.Name} error !`,
+              });
+            })
           }).catch((e) => {
+            deploySourceStatus.value = 'Error'
+            deploySourceMessage.value += e.message
             console.log('e', e)
             context.root.$q.notify({
               type: 'negative',
@@ -204,6 +282,11 @@ export default defineComponent({
       selected,
       initialPagination,
       deployClient,
+      tab,
+      deploySourceStatus,
+      deploySourceMessage,
+      updateClientStatus,
+      updateClientMessage,
     }
   },
 });

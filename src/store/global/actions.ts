@@ -52,6 +52,29 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
       throw error.response.data;
     }
   },
+  async updatereleaseforclient(context, payload: any) {
+    const testClient = payload.testClient as TestClientInterface;
+    const newValue = payload.regressionName as string;
+    // eslint-disable-next-line no-useless-catch
+    try {
+      const response = await axios.post(
+        `${config.baseURL}/testproject/updatereleaseforclient/${newValue}`,
+        testClient,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${context.rootGetters['auth/token']}`,
+          },
+        },
+      );
+      console.log('response', response)
+      const responseData = await response.data;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return responseData;
+    } catch (error) {
+      throw error.response.data;
+    }
+  },
 
   async getLatestCode(context) {
     // eslint-disable-next-line no-useless-catch
