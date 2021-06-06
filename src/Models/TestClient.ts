@@ -10,4 +10,8 @@ export interface TestClientInterface {
     DevelopFolder: string;
     RunnerFolder: string;
     Status: string;
+    DeploySourceStatus: string;
+    DeploySourceMessage: string;
+    UpdateReleaseStatus: string;
+    UpdateReleaseMessage: string;
 }

@@ -129,6 +129,7 @@ module.exports = configure((ctx) => ({
       'LoadingBar',
       'Notify',
       'Dialog',
+      'Loading',
     ],
   },
 

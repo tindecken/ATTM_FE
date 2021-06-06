@@ -10,7 +10,7 @@
       row-key="Id"
       :selected-rows-label="getSelectedString"
       selection="multiple"
-      :selected.sync="selected"
+      :selected.sync="selectedClients"
       no-data-label="No test client"
       :pagination="initialPagination"
       separator="cell"
@@ -29,57 +29,61 @@
       @click="deployClient"
       label="Deploy"
     />
-    <q-splitter
-      v-model="splitterModel"
-      style="height: 250px"
+    <q-tabs
+      v-model="tab"
+      dense
+      active-color="primary"
+      align="left"
+      inline-label
+      no-caps
     >
-
-      <template v-slot:before>
-        <q-tabs
-          v-model="tab"
-          vertical
-          no-caps
-        >
-          <q-tab name="deploySource" label="Deploy Source" />
-          <q-tab name="updateClient" label="Update Clients" />
-        </q-tabs>
-      </template>
-
-      <template v-slot:after>
-        <q-tab-panels
+      <q-tab v-for="client in selectedClients" :key="client.Id" :name="client.Name" :ripple="false" :alert="client.Status">
+        <div class="q-mr-xs">{{client.Name}}</div>
+      </q-tab>
+    </q-tabs>
+    <q-tab-panels
           v-model="tab"
           animated
-          swipeable
-          vertical
-          transition-prev="jump-up"
-          transition-next="jump-up"
-        >
-          <q-tab-panel name="deploySource">
-            <div class="text-h6 q-mb-md">Status: {{deploySourceStatus}}</div>
-            <p style="white-space: pre;">{{deploySourceMessage}}</p>
-          </q-tab-panel>
-
-          <q-tab-panel name="updateClient">
-            <div class="text-h6 q-mb-md">Status: {{updateClientStatus}}</div>
-            <p style="white-space: pre;">{{updateClientMessage}}</p>
+          keep-alive
+          >
+          <q-tab-panel v-for="client in selectedClients" :key="client.Id" :name="client.Name">
+            <p class="text-subtitle1 text-info">Deploy Source Code: {{client.DeploySourceStatus}}</p>
+            <q-btn
+              outline
+              class="q-mb-md"
+              color="warning"
+              @click="retryDeploySource(client)"
+              label="Retry"
+              v-if="client.DeploySourceStatus == 'Error'"
+            />
+            <p style="white-space: pre;">{{client.DeploySourceMessage}}</p>
+            <p class="text-subtitle1 text-info">Update release in setting file: {{client.UpdateReleaseStatus}}</p>
+            <q-btn
+              outline
+              class="q-mb-md"
+              color="warning"
+              @click="retryUpdateReleaseSetting(client)"
+              label="Retry"
+              v-if="client.UpdateReleaseStatus == 'Error' || (client.UpdateReleaseStatus == '' && client.DeploySourceStatus == 'Error')"
+            />
+            <p style="white-space: pre;">{{client.UpdateReleaseMessage}}</p>
           </q-tab-panel>
         </q-tab-panels>
-      </template>
-    </q-splitter>
   </div>
 </template>
 
 <script lang="ts">
 import {
-  computed, defineComponent, ref, Ref, watch,
+  computed, defineComponent, ref, Ref, SetupContext,
 } from '@vue/composition-api';
 import { DefineRegressionInterface } from 'src/Models/DefineRegression';
 import { TestClientInterface } from 'src/Models/TestClient';
+import _ from 'lodash'
 
 export default defineComponent({
   name: 'DeploySource',
   components: {},
-  setup(props, context) {
+  setup(props, context: SetupContext) {
     const columns = [
       {
         name: 'Id',
@@ -174,7 +178,7 @@ export default defineComponent({
       },
       {
         name: 'Status',
-        required: true,
+        required: false,
         label: 'Status',
         align: 'left',
         field: 'Status',
@@ -182,7 +186,7 @@ export default defineComponent({
         sortable: true,
       },
     ]
-    const tab = ref('deploySource')
+    const tab = ref('')
     const deploySourceStatus = ref('')
     const deploySourceMessage = ref('')
     const updateClientStatus = ref('')
@@ -193,45 +197,93 @@ export default defineComponent({
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const clients: Ref<TestClientInterface[]> = computed(() => context.root.$store.getters['testclient/testClients'])
-    const selected: Ref<TestClientInterface[]> = ref([])
-    const visibleColumns = ref(['Name', 'Description', 'IPAddress', 'Type', 'User', 'RegressionFolder', 'DevelopFolder', 'RunnerFolder', 'Status'])
+    const selectedClients: Ref<TestClientInterface[]> = ref([])
+    const visibleColumns = ref(['Name', 'Description', 'IPAddress', 'Type', 'User', 'RegressionFolder', 'DevelopFolder', 'RunnerFolder'])
     const defineRegression = computed(() => context.root.$store.getters['createregression/defineRegression'] as DefineRegressionInterface);
-    function getSelectedString() {
-      return selected.value.length === 0 ? '' : `${selected.value.length} record${selected.value.length > 1 ? 's' : ''} selected of ${clients.value.length}`
+    function retryDeploySource(client: TestClientInterface) {
+      const index: number = selectedClients.value.findIndex((c: TestClientInterface) => c.Id === client.Id);
+      client.DeploySourceStatus = ''
+      client.DeploySourceMessage = ''
+      context.root.$set(selectedClients.value, index, client)
+      const copyResult: Promise<any> = context.root.$store.dispatch('global/copycodetoclient', client)
+      copyResult.then((r: any) => {
+        client.DeploySourceStatus = 'Success'
+        if (client.UpdateReleaseStatus === 'Success') client.Status = 'green'
+        client.DeploySourceMessage = r.message
+        context.root.$set(selectedClients.value, index, client)
+        context.root.$q.notify({
+          type: 'positive',
+          message: `Deploy to client ${client.Name} success !`,
+        });
+      }).catch((e) => {
+        console.log('e', e)
+        context.root.$q.notify({
+          type: 'negative',
+          message: `Deploy to client ${client.Name} unsuccess !`,
+        });
+        client.Status = 'red'
+        client.DeploySourceStatus = 'Error'
+        client.DeploySourceMessage = e.message
+        context.root.$set(selectedClients.value, index, client)
+      })
     }
-    watch(
-      () => selected.value,
-      () => {
-        context.root.$store.commit('createregression/setSelectedTestClients', selected.value)
-        if (selected.value.length === 0) {
-          context.emit('validateForm', false)
-        } else {
-          context.emit('validateForm', true)
-        }
-      },
-    )
-    function clearStatusAndMessage() {
-      deploySourceStatus.value = ''
-      deploySourceMessage.value = ''
-      updateClientStatus.value = ''
-      updateClientMessage.value = ''
-      tab.value = 'deploySource'
+    function retryUpdateReleaseSetting(client: TestClientInterface) {
+      const index: number = selectedClients.value.findIndex((c: TestClientInterface) => c.Id === client.Id);
+      client.UpdateReleaseStatus = ''
+      client.UpdateReleaseMessage = ''
+      context.root.$set(selectedClients.value, index, client)
+      const payload = {
+        testClient: client,
+        regressionName: defineRegression.value.Name,
+      }
+      const updateReleaseResult: Promise<any> = context.root.$store.dispatch('global/updatereleaseforclient', payload);
+      updateReleaseResult.then((r: any) => {
+        client.UpdateReleaseStatus = 'Success'
+        if (client.DeploySourceStatus === 'Success') client.Status = 'green'
+        client.UpdateReleaseMessage = r.message
+        context.root.$set(selectedClients.value, index, client)
+        context.root.$q.notify({
+          type: 'positive',
+          message: `Update Regression for client ${client.Name} success !`,
+        });
+      }).catch((e) => {
+        console.log('e', e)
+        context.root.$q.notify({
+          type: 'negative',
+          message: `Update Regression for client ${client.Name} unsuccess !`,
+        });
+        client.Status = 'red'
+        client.UpdateReleaseStatus = 'Error'
+        client.UpdateReleaseMessage = e.message
+        context.root.$set(selectedClients.value, index, client)
+      })
+    }
+    function getSelectedString() {
+      return selectedClients.value.length === 0 ? '' : `${selectedClients.value.length} record${selectedClients.value.length > 1 ? 's' : ''} selected of ${clients.value.length}`
     }
     function deployClient() {
-      clearStatusAndMessage()
       console.log('deployClient')
-      if (selected.value.length === 0) {
+      if (selectedClients.value.length === 0) {
         context.root.$q.notify({
           type: 'negative',
           message: 'No test client is selected',
         });
       } else {
-        selected.value.forEach((tc: TestClientInterface) => {
-          const copyResult: Promise<any> = context.root.$store.dispatch('global/copycodetoclient', tc);
+        tab.value = selectedClients.value[0].Name;
+        selectedClients.value.forEach((tc: TestClientInterface, index: number) => {
+          const cloneClient = _.cloneDeep(tc)
+          cloneClient.DeploySourceStatus = ''
+          cloneClient.DeploySourceMessage = ''
+          cloneClient.UpdateReleaseStatus = ''
+          cloneClient.UpdateReleaseMessage = ''
+          context.root.$set(selectedClients.value, index, cloneClient)
+          // context.root.$store.commit('createregression/setSelectedTestClients', selectedClients.value)
+          const copyResult: Promise<any> = context.root.$store.dispatch('global/copycodetoclient', cloneClient);
           copyResult.then((r) => {
-            if (!deploySourceStatus.value.includes('Error') && deploySourceStatus.value !== '') deploySourceStatus.value = 'Success'
-            deploySourceMessage.value += r.message.replace('\r\n\r\n', '\r\n')
-            console.log('r', r)
+            cloneClient.DeploySourceStatus = 'Success'
+            cloneClient.DeploySourceMessage = r.message.replace('\r\n\r\n', '\r\n')
+            context.root.$set(selectedClients.value, index, cloneClient)
+            // context.root.$store.commit('createregression/setSelectedTestClients', selectedClients.value)
             context.root.$q.notify({
               type: 'positive',
               message: `Deploy to client ${tc.Name} success !`,
@@ -242,33 +294,37 @@ export default defineComponent({
             }
             const updateReleaseResult: Promise<any> = context.root.$store.dispatch('global/updatereleaseforclient', payload);
             updateReleaseResult.then((u) => {
-              tab.value = 'updateClient'
-              updateClientStatus.value = ''
-              if (!updateClientStatus.value.includes('Error') && updateClientStatus.value !== '') updateClientStatus.value = 'Success'
-              updateClientMessage.value += `${u.message}\r\n`
+              cloneClient.UpdateReleaseStatus = 'Success'
+              cloneClient.UpdateReleaseMessage = u.message.replace('\r\n\r\n', '\r\n')
+              cloneClient.Status = 'green'
+              context.root.$set(selectedClients.value, index, cloneClient)
+              // context.root.$store.commit('createregression/setSelectedTestClients', selectedClients.value)
               context.root.$q.notify({
                 type: 'positive',
                 message: `Update Regression for client ${tc.Name} success !`,
               });
-              deploySourceStatus.value = 'Success'
-              deploySourceMessage.value = r.message.replace('\r\n\r\n', '\r\n')
             }).catch((e) => {
-              tab.value = 'updateClient'
-              updateClientStatus.value = 'Error'
-              updateClientMessage.value += e.message
               context.root.$q.notify({
                 type: 'negative',
                 message: `Update Regression for client ${tc.Name} error !`,
               });
+              cloneClient.UpdateReleaseStatus = 'Error'
+              cloneClient.UpdateReleaseMessage = e.message
+              cloneClient.Status = 'red'
+              context.root.$set(selectedClients.value, index, cloneClient)
+              // context.root.$store.commit('createregression/setSelectedTestClients', selectedClients.value)
             })
           }).catch((e) => {
-            deploySourceStatus.value = 'Error'
-            deploySourceMessage.value += e.message
             console.log('e', e)
             context.root.$q.notify({
               type: 'negative',
               message: `Deploy to client ${tc.Name} unsuccess !`,
             });
+            cloneClient.Status = 'red'
+            cloneClient.DeploySourceStatus = 'Error'
+            cloneClient.DeploySourceMessage = e.message
+            context.root.$set(selectedClients.value, index, cloneClient)
+            // context.root.$store.commit('createregression/setSelectedTestClients', selectedClients.value)
           })
         })
       }
@@ -279,7 +335,7 @@ export default defineComponent({
       getSelectedString,
       clients,
       filter,
-      selected,
+      selectedClients,
       initialPagination,
       deployClient,
       tab,
@@ -287,6 +343,8 @@ export default defineComponent({
       deploySourceMessage,
       updateClientStatus,
       updateClientMessage,
+      retryDeploySource,
+      retryUpdateReleaseSetting,
     }
   },
 });

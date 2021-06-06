@@ -68,7 +68,7 @@ export default defineComponent({
   name: 'CreateDb',
   components: {},
   setup(props, context) {
-    const splitterModel = ref(20)
+    const splitterModel = ref(10)
     const tab = ref('createRegression')
     const createRegressionStatus = ref('')
     const createRegressionMessage = ref('')
