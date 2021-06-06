@@ -52,6 +52,10 @@ module.exports = configure((ctx) => ({
 
   // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
   build: {
+    chainWebpack (chain) {
+      const nodePolyfillWebpackPlugin = require('node-polyfill-webpack-plugin')
+      chain.plugin('node-polyfill').use(nodePolyfillWebpackPlugin)
+    },
     vueRouterMode: 'hash', // available values: 'hash', 'history'
 
     // transpile: false,
@@ -99,7 +103,7 @@ module.exports = configure((ctx) => ({
   // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-framework
   framework: {
     iconSet: 'material-icons', // Quasar icon set
-    lang: 'en-us', // Quasar language pack
+    lang: 'en-US', // Quasar language pack
     config: {
       loadingBar: {
         color: 'orange',

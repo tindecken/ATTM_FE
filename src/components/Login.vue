@@ -40,12 +40,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from '@vue/composition-api';
+import { defineComponent, ref } from 'vue';
+import { useQuasar } from 'quasar'
 
 export default defineComponent({
   name: 'Login',
   components: {},
-  setup(props, context) {
+  setup() {
     const username = ref('');
     const password = ref('');
     const err = ref('');

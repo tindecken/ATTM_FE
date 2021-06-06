@@ -34,7 +34,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from '@vue/composition-api';
+import { useStore } from 'vuex'
+import { useRoute, useRouter } from 'vue-router'
+import { defineComponent, ref } from 'vue';
 import LeftDrawer from './LeftDrawer.vue';
 import RightDrawer from './RightDrawer.vue';
 import EnvFooter from './Footer/EnvFooter.vue';
@@ -49,20 +51,23 @@ export default defineComponent({
     TestClientFooter,
   },
   setup(props, context) {
+    const $store = useStore()
+    const $route = useRoute()
+    const $router = useRouter()
     const leftDrawerOpen = ref(false);
     const rightDrawerOpen = ref(false);
     const currentUser = ref('');
     const err = ref('');
     const logout = async () => {
       try {
-        await context.root.$store.dispatch('auth/logout');
-        const redirectUrl = `/${context.root.$route.query.redirect || 'login'}`;
-        context.root.$router.replace(redirectUrl);
+        await $store.dispatch('auth/logout');
+        const redirectUrl = `/${$route.query.redirect || 'login'}`;
+        $router.replace(redirectUrl);
       } catch (error) {
         err.value = error.message || 'Something is error !';
       }
     };
-    currentUser.value = context.root.$store.getters['auth/userName'];
+    currentUser.value = $store.getters['auth/userName'];
 
     return {
       leftDrawerOpen, rightDrawerOpen, err, currentUser, logout,

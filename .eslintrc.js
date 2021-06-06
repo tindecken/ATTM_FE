@@ -13,7 +13,7 @@ module.exports = {
     // https://github.com/TypeStrong/fork-ts-checker-webpack-plugin#eslint
     // Needed to make the parser take into account 'vue' files
     extraFileExtensions: ['.vue'],
-    parser: '@typescript-eslint/parser',
+    parser: '@babel/eslint-parser',
     project: resolve(__dirname, './tsconfig.json'),
     tsconfigRootDir: __dirname,
     ecmaVersion: 2018, // Allows for the parsing of modern ECMAScript features
@@ -39,7 +39,7 @@ module.exports = {
     // Uncomment any of the lines below to choose desired strictness,
     // but leave only one uncommented!
     // See https://eslint.vuejs.org/rules/#available-rules
-    'plugin:vue/essential', // Priority A: Essential (Error Prevention)
+    'plugin:vue/vue3-essential', // Priority A: Essential (Error Prevention)
     // 'plugin:vue/strongly-recommended', // Priority B: Strongly Recommended (Improving Readability)
     // 'plugin:vue/recommended', // Priority C: Recommended (Minimizing Arbitrary Choices and Cognitive Overhead)
 

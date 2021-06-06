@@ -1,17 +1,17 @@
 <template>
-  <div id="q-app">
     <router-view />
-  </div>
 </template>
 <script lang="ts">
-import { defineComponent, onBeforeMount } from '@vue/composition-api';
+import { useStore } from 'vuex'
+import { defineComponent, onBeforeMount } from 'vue';
 import { Dark } from 'quasar';
 
 export default defineComponent({
   name: 'App',
-  setup(props, context) {
+  setup() {
+    const $store = useStore()
     onBeforeMount(() => {
-      const theme = context.root.$store.getters['global/darkTheme'];
+      const theme = $store.getters['global/darkTheme'];
       Dark.set(theme);
     });
   },

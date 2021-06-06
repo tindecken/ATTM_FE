@@ -13,20 +13,22 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onBeforeMount } from '@vue/composition-api';
+import { useQuasar } from 'quasar'
+import { computed, defineComponent, onBeforeMount } from 'vue';
 import { TestEnvInterface } from 'src/Models/TestEnv';
 
 export default defineComponent({
   name: 'EnvFooter',
   components: {},
   setup(props, context) {
+    const $q = useQuasar()
     const selectedEnv = computed(() => context.root.$store.getters['testenvironment/selectedTestEnv'] as TestEnvInterface);
     const testEnvs = computed(() => context.root.$store.getters['testenvironment/testEnvs'] as TestEnvInterface[]);
     onBeforeMount(async () => {
       try {
         await context.root.$store.dispatch('testenvironment/getTestEnvironments');
       } catch (error) {
-        context.root.$q.notify({
+        $q.notify({
           type: 'negative',
           message: `${error}`,
         });

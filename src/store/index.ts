@@ -1,5 +1,6 @@
 import { store } from 'quasar/wrappers';
 import Vuex from 'vuex';
+import { createStore } from 'vuex'
 import VuexPersistence from 'vuex-persist';
 import auth from './auth';
 import global from './global';
@@ -47,9 +48,7 @@ export interface StateInterface {
   createregression: CreateRegressionStateInterface;
 }
 
-export default store(({ Vue }) => {
-  Vue.use(Vuex);
-
+export default store(function (/* { ssrContext } */) {
   const persistGlobal = new VuexPersistence({
     key: 'global',
     modules: ['global'],
@@ -90,7 +89,8 @@ export default store(({ Vue }) => {
     key: 'createregression',
     modules: ['createregression'],
   });
-  const Store = new Vuex.Store<StateInterface>({
+
+  const Store = createStore<StateInterface>({
     modules: {
       auth,
       global,
@@ -103,7 +103,7 @@ export default store(({ Vue }) => {
       testclient,
       createregression,
     },
-    plugins: [persistGlobal.plugin, persistAuth.plugin, persistKeyword.plugin, persistTestCase.plugin, persistCategory.plugin, persistTestSuite.plugin, persistTestGroup.plugin, persistTestEnvironment.plugin, persistTestClient.plugin, persistCreateRegression.plugin],
+    plugins: [new VuexPersistence().plugin, persistGlobal.plugin, persistAuth.plugin, persistKeyword.plugin, persistTestCase.plugin, persistCategory.plugin, persistTestSuite.plugin, persistTestGroup.plugin, persistTestEnvironment.plugin, persistTestClient.plugin, persistCreateRegression.plugin],
 
     // enable strict mode (adds overhead!)
     // for dev mode only
