@@ -50,7 +50,7 @@ export default defineComponent({
     EnvFooter,
     TestClientFooter,
   },
-  setup(props, context) {
+  setup() {
     const $store = useStore()
     const $route = useRoute()
     const $router = useRouter()
@@ -62,7 +62,7 @@ export default defineComponent({
       try {
         await $store.dispatch('auth/logout');
         const redirectUrl = `/${$route.query.redirect || 'login'}`;
-        $router.replace(redirectUrl);
+        void $router.replace(redirectUrl);
       } catch (error) {
         err.value = error.message || 'Something is error !';
       }

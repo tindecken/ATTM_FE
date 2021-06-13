@@ -42,11 +42,17 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import { useQuasar } from 'quasar'
+import { useStore } from 'vuex'
+import { useRoute, useRouter } from 'vue-router'
 
 export default defineComponent({
   name: 'Login',
   components: {},
   setup() {
+    const $q = useQuasar()
+    const $store = useStore()
+    const $route = useRoute()
+    const $router = useRouter()
     const username = ref('');
     const password = ref('');
     const err = ref('');
@@ -56,16 +62,16 @@ export default defineComponent({
         password: password.value,
       };
       try {
-        await context.root.$store.dispatch('auth/login', actionPayload);
-        const redirectUrl = `/${context.root.$route.query.redirect || 'home'}`;
-        context.root.$router.replace(redirectUrl);
-        context.root.$q.notify({
+        await $store.dispatch('auth/login', actionPayload);
+        const redirectUrl = `/${$route.query.redirect || 'home'}`;
+        void $router.replace(redirectUrl);
+        $q.notify({
           type: 'positive',
           message: 'Login success !',
         });
       } catch (error) {
         err.value = error.data.message || 'Failed to authenticate, try later.';
-        context.root.$q.notify({
+        $q.notify({
           type: 'warning',
           message: err.value,
         });

@@ -1,7 +1,6 @@
-import Vue from 'vue';
 import { MutationTree } from 'vuex';
 import uuid from 'uuid-random';
-import _ from 'lodash'
+import _ from 'lodash';
 import { TestCaseInterface } from 'src/Models/TestCase';
 import { TestCaseStateInterface } from './state';
 
@@ -15,7 +14,7 @@ const mutation: MutationTree<TestCaseStateInterface> = {
   },
   updateOpenedTCs(state: TestCaseStateInterface, testCase: TestCaseInterface) {
     const index = state.openedTCs.findIndex((tc: TestCaseInterface) => tc.Id === testCase.Id);
-    Vue.set(state.openedTCs, index, testCase)
+    state.openedTCs[index] = testCase
   },
   setSelectedTestCaseId(state: TestCaseStateInterface, testCaseId: string) {
     state.selectedTestCaseId = testCaseId;
@@ -55,7 +54,7 @@ const mutation: MutationTree<TestCaseStateInterface> = {
         KWFeature: '',
         KWCategory: '',
       })
-      Vue.set(state.openedTCs, index, tempTC)
+      state.openedTCs[index] = tempTC
     }
   },
   deleteStep(state: TestCaseStateInterface, payload: any) {
@@ -66,7 +65,7 @@ const mutation: MutationTree<TestCaseStateInterface> = {
     if (tempTC.TestSteps.length > 0) { // incase there's no test steps
       tempTC.TestSteps = tempTC.TestSteps.filter((step: any) => step.UUID !== stepUUID)
     }
-    Vue.set(state.openedTCs, index, tempTC)
+    state.openedTCs[index] = tempTC
   },
 
 };

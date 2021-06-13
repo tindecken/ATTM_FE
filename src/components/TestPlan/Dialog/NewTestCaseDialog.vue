@@ -124,22 +124,32 @@
 
 <script lang="ts">
 import {
-  computed, defineComponent, Ref, ref,
-} from '@vue/composition-api';
+  computed, defineComponent, Ref, ref, PropType,
+} from 'vue';
 import { TestCaseInterface } from 'src/Models/TestCase';
 import { TestGroupInterface } from 'src/Models/TestGroup';
+import { useStore } from 'vuex'
+import { useDialogPluginComponent } from 'quasar'
 
 export default defineComponent({
   name: 'NewTestCaseDialog',
   props: {
     testGroup: {
-      type: Object,
+      type: Object as PropType<TestGroupInterface>,
       required: true,
     },
   },
+  emits: [
+    // REQUIRED; need to specify some events that your
+    // component will emit through useDialogPluginComponent()
+    ...useDialogPluginComponent.emits,
+  ],
   components: {},
-  setup(props, context) {
-    const dialogRef: Ref<any> = ref(null);
+  setup(props) {
+    const {
+      dialogRef, onDialogHide, onDialogOK, onDialogCancel,
+    } = useDialogPluginComponent()
+    const $store = useStore()
     const codeName = ref('');
     const name = ref('');
     const author = ref('');
@@ -147,29 +157,12 @@ export default defineComponent({
     const workItem = ref('');
     const type = ref('');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const isDark = computed(() => context.root.$store.getters['global/darkTheme']);
+    const isDark = computed(() => $store.getters['global/darkTheme']);
     const isFormValid = ref(false);
     const form: Ref<any> = ref(null);
-    // following method is REQUIRED
-    // (don't change its name --> "show")
-    function show() {
-      dialogRef.value.show();
-    }
-
-    // following method is REQUIRED
-    // (don't change its name --> "hide")
-    function hide() {
-      dialogRef.value.hide();
-    }
-
-    function onDialogHide() {
-      // required to be emitted
-      // when QDialog emits "hide" event
-      context.emit('hide');
-    }
 
     function onOKClick() {
-      const testGroup = props.testGroup as TestGroupInterface
+      const { testGroup } = props
       const newTestCase: TestCaseInterface = {
         CodeName: codeName.value,
         Id: '',
@@ -183,27 +176,20 @@ export default defineComponent({
         TestSuiteId: testGroup.TestSuiteId,
         TestGroupId: testGroup.Id,
       }
-      context.emit('ok', newTestCase)
-      // then hiding dialog
-      hide();
+      onDialogOK(newTestCase)
+      // context.emit('ok', newTestCase)
     }
 
-    function onCancelClick() {
-      // we just need to hide dialog
-      hide();
-    }
     function validateForm() {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       if (form.value !== null) form.value.validate(false);
     }
     return {
       dialogRef,
       codeName,
       name,
-      show,
-      hide,
       onDialogHide,
       onOKClick,
-      onCancelClick,
       isDark,
       author,
       description,
@@ -212,6 +198,8 @@ export default defineComponent({
       isFormValid,
       validateForm,
       form,
+      // we can passthrough onDialogCancel directly
+      onCancelClick: onDialogCancel,
     };
   },
 });

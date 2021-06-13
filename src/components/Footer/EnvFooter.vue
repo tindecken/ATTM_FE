@@ -16,17 +16,19 @@
 import { useQuasar } from 'quasar'
 import { computed, defineComponent, onBeforeMount } from 'vue';
 import { TestEnvInterface } from 'src/Models/TestEnv';
+import { useStore } from 'vuex'
 
 export default defineComponent({
   name: 'EnvFooter',
   components: {},
-  setup(props, context) {
+  setup() {
+    const $store = useStore()
     const $q = useQuasar()
-    const selectedEnv = computed(() => context.root.$store.getters['testenvironment/selectedTestEnv'] as TestEnvInterface);
-    const testEnvs = computed(() => context.root.$store.getters['testenvironment/testEnvs'] as TestEnvInterface[]);
+    const selectedEnv = computed(() => $store.getters['testenvironment/selectedTestEnv'] as TestEnvInterface);
+    const testEnvs = computed(() => $store.getters['testenvironment/testEnvs'] as TestEnvInterface[]);
     onBeforeMount(async () => {
       try {
-        await context.root.$store.dispatch('testenvironment/getTestEnvironments');
+        await $store.dispatch('testenvironment/getTestEnvironments');
       } catch (error) {
         $q.notify({
           type: 'negative',
@@ -35,7 +37,7 @@ export default defineComponent({
       }
     })
     function onSelectTestEnv(testEnv: TestEnvInterface) {
-      context.root.$store.commit('testenvironment/setSelectedTestEnv', testEnv)
+      $store.commit('testenvironment/setSelectedTestEnv', testEnv)
     }
     return {
       selectedEnv,

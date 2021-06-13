@@ -1,6 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { route } from 'quasar/wrappers';
-import VueRouter from 'vue-router';
+import {
+  createMemoryHistory,
+  createRouter,
+  createWebHashHistory,
+  createWebHistory,
+} from 'vue-router';
 import { Store } from 'vuex';
 import { StateInterface } from '../store';
 import routes from './routes';
@@ -10,25 +14,26 @@ import routes from './routes';
  * directly export the Router instantiation
  */
 
-export default route<Store<StateInterface>>(({ store, Vue }) => {
-  Vue.use(VueRouter);
+export default route<Store<StateInterface>>(({ store }) => {
+  const createHistory = process.env.SERVER
+    ? createMemoryHistory
+    : (process.env.VUE_ROUTER_MODE === 'history' ? createWebHistory : createWebHashHistory);
 
-  const Router = new VueRouter({
-    scrollBehavior: () => ({ x: 0, y: 0 }),
+  const Router = createRouter({
+    scrollBehavior: () => ({ left: 0, top: 0 }),
     routes,
 
-    // Leave these as is and change from quasar.conf.js instead!
+    // Leave this as is and make changes in quasar.conf.js instead!
     // quasar.conf.js -> build -> vueRouterMode
     // quasar.conf.js -> build -> publicPath
-    mode: process.env.VUE_ROUTER_MODE,
-    base: process.env.VUE_ROUTER_BASE,
+    history: createHistory(
+      process.env.MODE === 'ssr' ? void 0 : process.env.VUE_ROUTER_BASE,
+    ),
   });
   Router.beforeEach((to, from, next) => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (to.meta.requiresAuth && !store.getters['auth/isAuthenticated']) {
       // if require login but no token --> go to login
       next({ path: 'login' });
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     } else if (to.meta.requiresUnAuth && store.getters['auth/isAuthenticated']) {
       // if no require and has token --> home
       next({ path: '/' });

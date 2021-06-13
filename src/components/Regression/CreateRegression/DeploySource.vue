@@ -4,13 +4,13 @@
       :filter="filter"
       dense
       title="Clients"
-      :data="clients"
+      :rows="clients"
       :columns="columns"
       :visible-columns="visibleColumns"
       row-key="Id"
       :selected-rows-label="getSelectedString"
       selection="multiple"
-      :selected.sync="selectedClients"
+      v-model:selected="selectedClients"
       no-data-label="No test client"
       :pagination="initialPagination"
       separator="cell"
@@ -74,16 +74,20 @@
 
 <script lang="ts">
 import {
-  computed, defineComponent, ref, Ref, SetupContext,
-} from '@vue/composition-api';
+  computed, defineComponent, ref, Ref,
+} from 'vue';
 import { DefineRegressionInterface } from 'src/Models/DefineRegression';
 import { TestClientInterface } from 'src/Models/TestClient';
 import _ from 'lodash'
+import { useStore } from 'vuex'
+import { useQuasar } from 'quasar'
 
 export default defineComponent({
   name: 'DeploySource',
   components: {},
-  setup(props, context: SetupContext) {
+  setup() {
+    const $store = useStore()
+    const $q = useQuasar()
     const columns = [
       {
         name: 'Id',
@@ -196,66 +200,66 @@ export default defineComponent({
       rowsPerPage: 50,
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const clients: Ref<TestClientInterface[]> = computed(() => context.root.$store.getters['testclient/testClients'])
+    const clients: Ref<TestClientInterface[]> = computed(() => $store.getters['testclient/testClients'])
     const selectedClients: Ref<TestClientInterface[]> = ref([])
     const visibleColumns = ref(['Name', 'Description', 'IPAddress', 'Type', 'User', 'RegressionFolder', 'DevelopFolder', 'RunnerFolder'])
-    const defineRegression = computed(() => context.root.$store.getters['createregression/defineRegression'] as DefineRegressionInterface);
+    const defineRegression = computed(() => $store.getters['createregression/defineRegression'] as DefineRegressionInterface);
     function retryDeploySource(client: TestClientInterface) {
       const index: number = selectedClients.value.findIndex((c: TestClientInterface) => c.Id === client.Id);
       client.DeploySourceStatus = ''
       client.DeploySourceMessage = ''
-      context.root.$set(selectedClients.value, index, client)
-      const copyResult: Promise<any> = context.root.$store.dispatch('global/copycodetoclient', client)
+      selectedClients.value[index] = client
+      const copyResult: Promise<any> = $store.dispatch('global/copycodetoclient', client)
       copyResult.then((r: any) => {
         client.DeploySourceStatus = 'Success'
         if (client.UpdateReleaseStatus === 'Success') client.Status = 'green'
         client.DeploySourceMessage = r.message
-        context.root.$set(selectedClients.value, index, client)
-        context.root.$q.notify({
+        selectedClients.value[index] = client
+        $q.notify({
           type: 'positive',
           message: `Deploy to client ${client.Name} success !`,
         });
       }).catch((e) => {
         console.log('e', e)
-        context.root.$q.notify({
+        $q.notify({
           type: 'negative',
           message: `Deploy to client ${client.Name} unsuccess !`,
         });
         client.Status = 'red'
         client.DeploySourceStatus = 'Error'
         client.DeploySourceMessage = e.message
-        context.root.$set(selectedClients.value, index, client)
+        selectedClients.value[index] = client
       })
     }
     function retryUpdateReleaseSetting(client: TestClientInterface) {
       const index: number = selectedClients.value.findIndex((c: TestClientInterface) => c.Id === client.Id);
       client.UpdateReleaseStatus = ''
       client.UpdateReleaseMessage = ''
-      context.root.$set(selectedClients.value, index, client)
+      selectedClients.value[index] = client
       const payload = {
         testClient: client,
         regressionName: defineRegression.value.Name,
       }
-      const updateReleaseResult: Promise<any> = context.root.$store.dispatch('global/updatereleaseforclient', payload);
+      const updateReleaseResult: Promise<any> = $store.dispatch('global/updatereleaseforclient', payload);
       updateReleaseResult.then((r: any) => {
         client.UpdateReleaseStatus = 'Success'
         if (client.DeploySourceStatus === 'Success') client.Status = 'green'
         client.UpdateReleaseMessage = r.message
-        context.root.$set(selectedClients.value, index, client)
-        context.root.$q.notify({
+        selectedClients.value[index] = client
+        $q.notify({
           type: 'positive',
           message: `Update Regression for client ${client.Name} success !`,
         });
       }).catch((e) => {
         console.log('e', e)
-        context.root.$q.notify({
+        $q.notify({
           type: 'negative',
           message: `Update Regression for client ${client.Name} unsuccess !`,
         });
         client.Status = 'red'
         client.UpdateReleaseStatus = 'Error'
         client.UpdateReleaseMessage = e.message
-        context.root.$set(selectedClients.value, index, client)
+        selectedClients.value[index] = client
       })
     }
     function getSelectedString() {
@@ -264,7 +268,7 @@ export default defineComponent({
     function deployClient() {
       console.log('deployClient')
       if (selectedClients.value.length === 0) {
-        context.root.$q.notify({
+        $q.notify({
           type: 'negative',
           message: 'No test client is selected',
         });
@@ -276,15 +280,13 @@ export default defineComponent({
           cloneClient.DeploySourceMessage = ''
           cloneClient.UpdateReleaseStatus = ''
           cloneClient.UpdateReleaseMessage = ''
-          context.root.$set(selectedClients.value, index, cloneClient)
-          // context.root.$store.commit('createregression/setSelectedTestClients', selectedClients.value)
-          const copyResult: Promise<any> = context.root.$store.dispatch('global/copycodetoclient', cloneClient);
+          selectedClients.value[index] = cloneClient
+          const copyResult: Promise<any> = $store.dispatch('global/copycodetoclient', cloneClient);
           copyResult.then((r) => {
             cloneClient.DeploySourceStatus = 'Success'
             cloneClient.DeploySourceMessage = r.message.replace('\r\n\r\n', '\r\n')
-            context.root.$set(selectedClients.value, index, cloneClient)
-            // context.root.$store.commit('createregression/setSelectedTestClients', selectedClients.value)
-            context.root.$q.notify({
+            selectedClients.value[index] = cloneClient
+            $q.notify({
               type: 'positive',
               message: `Deploy to client ${tc.Name} success !`,
             });
@@ -292,39 +294,36 @@ export default defineComponent({
               testClient: tc,
               regressionName: defineRegression.value.Name,
             }
-            const updateReleaseResult: Promise<any> = context.root.$store.dispatch('global/updatereleaseforclient', payload);
+            const updateReleaseResult: Promise<any> = $store.dispatch('global/updatereleaseforclient', payload);
             updateReleaseResult.then((u) => {
               cloneClient.UpdateReleaseStatus = 'Success'
               cloneClient.UpdateReleaseMessage = u.message.replace('\r\n\r\n', '\r\n')
               cloneClient.Status = 'green'
-              context.root.$set(selectedClients.value, index, cloneClient)
-              // context.root.$store.commit('createregression/setSelectedTestClients', selectedClients.value)
-              context.root.$q.notify({
+              selectedClients.value[index] = cloneClient
+              $q.notify({
                 type: 'positive',
                 message: `Update Regression for client ${tc.Name} success !`,
               });
             }).catch((e) => {
-              context.root.$q.notify({
+              $q.notify({
                 type: 'negative',
                 message: `Update Regression for client ${tc.Name} error !`,
               });
               cloneClient.UpdateReleaseStatus = 'Error'
               cloneClient.UpdateReleaseMessage = e.message
               cloneClient.Status = 'red'
-              context.root.$set(selectedClients.value, index, cloneClient)
-              // context.root.$store.commit('createregression/setSelectedTestClients', selectedClients.value)
+              selectedClients.value[index] = cloneClient
             })
           }).catch((e) => {
             console.log('e', e)
-            context.root.$q.notify({
+            $q.notify({
               type: 'negative',
               message: `Deploy to client ${tc.Name} unsuccess !`,
             });
             cloneClient.Status = 'red'
             cloneClient.DeploySourceStatus = 'Error'
             cloneClient.DeploySourceMessage = e.message
-            context.root.$set(selectedClients.value, index, cloneClient)
-            // context.root.$store.commit('createregression/setSelectedTestClients', selectedClients.value)
+            selectedClients.value[index] = cloneClient
           })
         })
       }

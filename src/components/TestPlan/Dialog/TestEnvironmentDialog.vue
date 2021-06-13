@@ -40,7 +40,7 @@
         <q-table
           dense
           title="Test Environment"
-          :data="testEnvTableDatas"
+          :rows="testEnvTableDatas"
           :columns="testEnvColumns"
           row-key="name"
           :hide-pagination="true"
@@ -88,12 +88,14 @@
 <script lang="ts">
 import {
   computed,
-  defineComponent, onBeforeMount, Ref, ref,
-} from '@vue/composition-api';
+  defineComponent, nextTick, onBeforeMount, Ref, ref,
+} from 'vue';
 import { TestEnvInterface } from 'src/Models/TestEnv';
 import { TestEnvCategoryInterface } from 'src/Models/TestEnvCategory';
 import { TestEnvNodeInterface } from 'src/Models/TestEnvNode';
 import { TestEnvFlatNodeInterface } from 'src/Models/TestEnvFlatNode';
+import { useStore } from 'vuex'
+import { useQuasar } from 'quasar'
 
 export default defineComponent({
   name: 'TestEnvironmentDialog',
@@ -101,6 +103,8 @@ export default defineComponent({
   components: {
   },
   setup(props, context) {
+    const $store = useStore()
+    const $q = useQuasar()
     const testEnvTableDatas: Ref<TestEnvFlatNodeInterface[]> = ref([])
     const dialogRef: Ref<any> = ref(null);
     const isReadonly: Ref<boolean> = ref(true);
@@ -160,7 +164,7 @@ export default defineComponent({
       },
     ]
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const isDark = computed(() => context.root.$store.getters['global/darkTheme'])
+    const isDark = computed(() => $store.getters['global/darkTheme'])
     function transformToFlatNode(testEnv: TestEnvInterface | null): TestEnvFlatNodeInterface[] {
       let flatNodes: TestEnvFlatNodeInterface[] = []
       if (testEnv && testEnv.Categories) {
@@ -176,26 +180,26 @@ export default defineComponent({
     }
     onBeforeMount(async () => {
       try {
-        await context.root.$store.dispatch('testenvironment/getTestEnvironments');
+        await $store.dispatch('testenvironment/getTestEnvironments');
       } catch (error) {
-        context.root.$q.notify({
+        $q.notify({
           type: 'negative',
           message: `${error}`,
         });
       }
-      testEnvs.value = context.root.$store.getters['testenvironment/testEnvs'] as TestEnvInterface[]
-      selectedTestEnv.value = context.root.$store.getters['testenvironment/selectedTestEnv'] as TestEnvInterface
+      testEnvs.value = $store.getters['testenvironment/testEnvs'] as TestEnvInterface[]
+      selectedTestEnv.value = $store.getters['testenvironment/selectedTestEnv'] as TestEnvInterface
 
       // testEnvTableDatas
       testEnvTableDatas.value = transformToFlatNode(selectedTestEnv.value)
       filteredTestEnvs.value = testEnvs.value
-      context.root.$nextTick()
+      void nextTick()
     })
 
     function onDialogHide() {
       // required to be emitted
       // when QDialog emits "hide" event
-      context.emit('hide');
+      context.emit('cancel');
     }
 
     function onTestEnvChange() {
@@ -244,7 +248,7 @@ export default defineComponent({
     }
 
     function applyTestEnv() {
-      if (selectedTestEnv.value) context.root.$store.commit('testenvironment/setSelectedTestEnv', selectedTestEnv.value)
+      if (selectedTestEnv.value) $store.commit('testenvironment/setSelectedTestEnv', selectedTestEnv.value)
     }
 
     function use(flatNode: TestEnvFlatNodeInterface) {

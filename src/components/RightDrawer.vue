@@ -49,7 +49,7 @@
         <q-table
           dense
           title="Keywords"
-          :data="filteredKeywords"
+          :rows="filteredKeywords"
           :columns="keywordColumns"
           row-key="name"
           :hide-pagination="true"
@@ -97,7 +97,7 @@
         <q-table
           dense
           title="Parameters"
-          :data="params"
+          :rows="params"
           :columns="paramColumns"
           row-key="name"
           :hide-pagination="true"
@@ -135,16 +135,20 @@
 <script lang="ts">
 import {
   defineComponent, onBeforeMount, Ref, ref,
-} from '@vue/composition-api';
-import { KeywordInterface } from 'src/Models/Keyword';
-import { KeywordCategoryInterface } from 'src/Models/KeywordCategory';
-import { KeywordFeatureInterface } from 'src/Models/KeywordFeature';
-import { TestParamInterface } from 'src/Models/TestParam';
+} from 'vue'
+import { useStore } from 'vuex'
+import { KeywordInterface } from 'src/Models/Keyword'
+import { KeywordCategoryInterface } from 'src/Models/KeywordCategory'
+import { KeywordFeatureInterface } from 'src/Models/KeywordFeature'
+import { TestParamInterface } from 'src/Models/TestParam'
+import { QSelect, useQuasar } from 'quasar'
 
 export default defineComponent({
   name: 'RightDrawer',
   props: {},
-  setup(props, context) {
+  setup() {
+    const $store = useStore()
+    const $q = useQuasar()
     const keywordCategories: Ref<KeywordCategoryInterface[]> = ref([]);
     const filteredKeywordCategories: Ref<KeywordCategoryInterface[]> = ref([]);
     const keywordFeatures: Ref<KeywordFeatureInterface[]> = ref([]);
@@ -227,7 +231,6 @@ export default defineComponent({
         required: true,
         label: 'Name',
         align: 'left',
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         field: 'Name',
         format: (val: any) => `${val}`,
         sortable: true,
@@ -267,9 +270,9 @@ export default defineComponent({
 
     onBeforeMount(async () => {
       try {
-        await context.root.$store.dispatch('keyword/getKeywords');
+        await $store.dispatch('keyword/getKeywords');
       } catch (error) {
-        context.root.$q.notify({
+        $q.notify({
           type: 'negative',
           message: `${error}`,
         });
@@ -313,8 +316,8 @@ export default defineComponent({
 
           // next function is available in Quasar v1.7.4+;
           // "ref" is the Vue reference to the QSelect
-          (refQ: any) => {
-            if (val !== '' && refQ.options.length > 0) {
+          (refQ: QSelect) => {
+            if (val !== '' && refQ.options && refQ.options.length > 0) {
               refQ.setOptionIndex(-1) // reset optionIndex in case there is something selected
               // eslint-disable-next-line max-len
               refQ.moveOptionSelection(1, true) // focus the first selectable option and do not update the input-value
@@ -401,8 +404,8 @@ export default defineComponent({
 
           // next function is available in Quasar v1.7.4+;
           // "ref" is the Vue reference to the QSelect
-          (refQ: any) => {
-            if (val !== '' && refQ.options.length > 0) {
+          (refQ: QSelect) => {
+            if (val !== '' && refQ.options && refQ.options.length > 0) {
               refQ.setOptionIndex(-1) // reset optionIndex in case there is something selected
               // eslint-disable-next-line max-len
               refQ.moveOptionSelection(1, true) // focus the first selectable option and do not update the input-value

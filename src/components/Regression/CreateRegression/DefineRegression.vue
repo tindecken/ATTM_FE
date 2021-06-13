@@ -93,14 +93,16 @@ import {
   reactive,
   Ref,
   ref,
-} from '@vue/composition-api';
+} from 'vue';
 import { date } from 'quasar'
 import { DefineRegressionInterface } from 'src/Models/DefineRegression';
+import { useStore } from 'vuex'
 
 export default defineComponent({
   name: 'DefineRegression',
   components: {},
   setup(props, context) {
+    const $store = useStore()
     const datePicker: Ref<any> = ref(null)
     const name = ref('');
     const release = ref('');
@@ -110,7 +112,7 @@ export default defineComponent({
     const form: Ref<any> = ref(null);
     const isFormValid = ref(false);
     const dateRange = reactive({ from: date.formatDate(Date.now(), 'YYYY/MM/DD'), to: date.formatDate(date.addToDate(Date.now(), { days: 7 }), 'YYYY/MM/DD') })
-    const currentUser = computed(() => context.root.$store.getters['auth/userName'] as string)
+    const currentUser = computed(() => $store.getters['auth/userName'] as string)
     let defineRegressionObject: DefineRegressionInterface
     function validateForm() {
       form.value.validate().then((success: any) => {
@@ -129,7 +131,7 @@ export default defineComponent({
             }
             console.log('defineRegressionObject', defineRegressionObject)
             context.emit('validateForm', true)
-            context.root.$store.commit('createregression/setDefineRegression', defineRegressionObject)
+            $store.commit('createregression/setDefineRegression', defineRegressionObject)
           } else {
             context.emit('validateForm', false)
           }
@@ -137,7 +139,7 @@ export default defineComponent({
       });
     }
 
-    onMounted(() => context.root.$store.commit('createregression/setDefineRegression', null));
+    onMounted(() => $store.commit('createregression/setDefineRegression', null));
 
     function rangeStart(startDate: any) {
       dateRange.from = date.formatDate(date.buildDate({ year: startDate.year, month: startDate.month, date: startDate.day }, true), 'YYYY/MM/DD')

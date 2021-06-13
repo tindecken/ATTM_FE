@@ -2,10 +2,10 @@
   <div>
       <q-select
       dense
-      :value="TestStep.Keyword"
+      :model-value="TestStep.Keyword"
       :options="filteredKeywords"
       option-label="Name"
-      @input="onChangeKeyword($event)"
+      @update:model-value="onChangeKeyword($event)"
       @filter="filterKeywordFn"
       input-debounce="0"
       use-input
@@ -13,38 +13,37 @@
       hide-selected
       options-dense
     />
-    <!-- <detail-context-menu
-      :selected.sync="selected"
-      @deleteRows="onDeleteRows()">
-    </detail-context-menu> -->
   </div>
 </template>
 
 <script lang="ts">
 import {
-  computed, defineComponent, onMounted, ref, Ref,
-} from '@vue/composition-api';
+  computed, defineComponent, onMounted, ref, Ref, PropType,
+} from 'vue';
 
 import { KeywordInterface } from 'src/Models/Keyword';
 import { FlatKeywordInterface } from 'src/Models/FlatKeyword';
+import { useStore } from 'vuex'
+import { TestStepInterface } from 'src/Models/TestStep';
 
 export default defineComponent({
   name: 'Keyword',
   props: {
     TestStep: {
-      type: Object,
+      type: Object as PropType<TestStepInterface>,
       required: true,
       default: () => ({}),
     },
   },
   components: {},
   setup(props, context) {
+    const $store = useStore()
     const filteredKeywords: Ref<FlatKeywordInterface[]> = ref([])
-    const keywords: Ref<FlatKeywordInterface[]> = computed(() => context.root.$store.getters['keyword/keywords'] as FlatKeywordInterface[]);
+    const keywords: Ref<FlatKeywordInterface[]> = computed(() => $store.getters['keyword/keywords'] as FlatKeywordInterface[]);
     onMounted(() => {
       filteredKeywords.value = keywords.value;
     })
-    function filterKeywordFn(val: any, update: any) {
+    function filterKeywordFn(val: string, update: any) {
       update(() => {
         const needle = val.toLowerCase()
         filteredKeywords.value = keywords.value.filter((kw: KeywordInterface) => kw.Name.toLowerCase().indexOf(needle) > -1)

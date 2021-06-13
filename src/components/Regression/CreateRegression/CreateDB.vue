@@ -59,15 +59,19 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from '@vue/composition-api';
+import { computed, defineComponent, ref } from 'vue';
 import { DefineRegressionInterface } from 'src/Models/DefineRegression';
 import { TestCaseInterface } from 'src/Models/TestCase';
 import { TestCaseDetailInterface } from 'src/Models/TestCaseDetail';
+import { useStore } from 'vuex'
+import { useQuasar } from 'quasar'
 
 export default defineComponent({
   name: 'CreateDb',
   components: {},
-  setup(props, context) {
+  setup() {
+    const $store = useStore()
+    const $q = useQuasar()
     const splitterModel = ref(10)
     const tab = ref('createRegression')
     const createRegressionStatus = ref('')
@@ -78,9 +82,9 @@ export default defineComponent({
     const generateRegCodeMessage = ref('')
     const buildProjectStatus = ref('')
     const buildProjectMessage = ref('')
-    const selectedTestCasesDetail = computed(() => context.root.$store.getters['createregression/selectedTestCasesDetail'] as TestCaseDetailInterface[]);
-    const selectedTestCases = computed(() => context.root.$store.getters['createregression/selectedTestCases'] as TestCaseInterface[]);
-    const defineRegression = computed(() => context.root.$store.getters['createregression/defineRegression'] as DefineRegressionInterface);
+    const selectedTestCasesDetail = computed(() => $store.getters['createregression/selectedTestCasesDetail'] as TestCaseDetailInterface[]);
+    const selectedTestCases = computed(() => $store.getters['createregression/selectedTestCases'] as TestCaseInterface[]);
+    const defineRegression = computed(() => $store.getters['createregression/defineRegression'] as DefineRegressionInterface);
     console.log('selectedTestCasesDetail', selectedTestCasesDetail)
     console.log('selectedTestCases', selectedTestCases)
     console.log('defineRegression', defineRegression)
@@ -97,7 +101,7 @@ export default defineComponent({
     }
     function createDB() {
       clearStatusAndMessage()
-      const createRegression: Promise<any> = context.root.$store.dispatch('createregression/createRegression', defineRegression.value);
+      const createRegression: Promise<any> = $store.dispatch('createregression/createRegression', defineRegression.value);
       createRegression.then((r) => {
         tab.value = 'createRegression'
         createRegressionStatus.value = 'Success'
@@ -110,7 +114,7 @@ export default defineComponent({
         createRegressionMessage.value += `Start Date: ${r.data.StartDate}\r\n`
         createRegressionMessage.value += `End Date: ${r.data.EndDate}\r\n`
         console.log('r', r)
-        context.root.$q.notify({
+        $q.notify({
           type: 'positive',
           message: `Created regression: ${r.data.Name}`,
         });
@@ -118,37 +122,37 @@ export default defineComponent({
         selectedTestCasesDetail.value.forEach((c: TestCaseDetailInterface) => {
           Ids.push(c.Id)
         })
-        const createRegressionTest: Promise<any> = context.root.$store.dispatch('createregression/createRegressionTests', { regressionId: r.data.Id, selectedTestCasesDetailIds: Ids });
+        const createRegressionTest: Promise<any> = $store.dispatch('createregression/createRegressionTests', { regressionId: r.data.Id, selectedTestCasesDetailIds: Ids });
         createRegressionTest.then((t) => {
           tab.value = 'createRegressionTest'
           createRegressionTestStatus.value = 'Success'
           createRegressionTestMessage.value = t.data
-          context.root.$q.notify({
+          $q.notify({
             type: 'positive',
             message: `Created regression Tests: ${t.data.message}`,
           });
-          const generateRegCodeResult: Promise<any> = context.root.$store.dispatch('global/generateRegCode', t.data.data);
+          const generateRegCodeResult: Promise<any> = $store.dispatch('global/generateRegCode', t.data.data);
           generateRegCodeResult.then((g) => {
             tab.value = 'generateRegCode'
             generateRegCodeStatus.value = 'Success'
             generateRegCodeMessage.value = g
             console.log('g', g)
-            context.root.$q.notify({
+            $q.notify({
               type: 'positive',
               message: `Generate Regression Code Successful for ${g.count} test case(s) !`,
             });
-            const buildResult: Promise<any> = context.root.$store.dispatch('global/buildProject');
+            const buildResult: Promise<any> = $store.dispatch('global/buildProject');
             buildResult.then((b) => {
               console.log('b', b)
               tab.value = 'buildProject'
               buildProjectStatus.value = 'Success'
               buildProjectMessage.value = b.buildMessage
-              context.root.$q.notify({
+              $q.notify({
                 type: 'positive',
                 message: 'Build Project Success !',
               });
             }).catch((e) => {
-              context.root.$q.notify({
+              $q.notify({
                 type: 'negative',
                 message: 'Build Project Error',
               });
@@ -156,7 +160,7 @@ export default defineComponent({
               buildProjectMessage.value = e
             })
           }).catch((e) => {
-            context.root.$q.notify({
+            $q.notify({
               type: 'negative',
               message: `Generate Regression Code Unsuccessful: ${e}`,
             });
@@ -164,7 +168,7 @@ export default defineComponent({
             generateRegCodeMessage.value = e
           })
         }).catch((e) => {
-          context.root.$q.notify({
+          $q.notify({
             type: 'negative',
             message: `Error while creating RegressionTest: ${e}`,
           });
@@ -173,7 +177,7 @@ export default defineComponent({
         })
       }).catch((e) => {
         console.log('e', e)
-        context.root.$q.notify({
+        $q.notify({
           type: 'negative',
           message: `Error while creating regression: ${e}`,
         });

@@ -21,8 +21,8 @@
             :filter="filter"
             default-expand-all
             tick-strategy="leaf"
-            :selected.sync="selectedNode"
-            :ticked.sync="ticked"
+            v-model:selected="selectedNode"
+            v-model:ticked="ticked"
             @update:selected="fnSelectedNode(selectedNode)"
             ref="tree"
             selected-color="primary"
@@ -65,14 +65,16 @@
 <script lang="ts">
 import {
   computed,
-  defineComponent, onMounted, ref, Ref,
-} from '@vue/composition-api';
+  defineComponent, onMounted, ref, Ref, nextTick,
+} from 'vue';
 
 import { CategoryInterface } from 'src/Models/Category';
 import { TestGroupInterface } from 'src/Models/TestGroup';
 import { TestCaseInterface } from 'src/Models/TestCase';
 import { TestSuiteInterface } from 'src/Models/TestSuite';
 import { TestClientInterface } from 'src/Models/TestClient';
+import { useStore } from 'vuex'
+import { useQuasar } from 'quasar'
 import TreeContextMenu from './ContextMenu/TreeContextMenu.vue'
 import NewTestSuiteDialog from './Dialog/NewTestSuiteDialog.vue'
 import NewTestGroupDialog from './Dialog/NewTestGroupDialog.vue'
@@ -82,10 +84,10 @@ export default defineComponent({
   name: 'Tree',
   components: {
     TreeContextMenu,
-    NewTestGroupDialog,
-    NewTestCaseDialog,
   },
-  setup(props, context) {
+  setup() {
+    const $store = useStore()
+    const $q = useQuasar()
     const filter: Ref<string> = ref('');
     const filterInput: Ref<any> = ref(null)
     const allCat: Ref<CategoryInterface[]> = ref([]);
@@ -108,13 +110,13 @@ export default defineComponent({
         case 'TestGroup':
           break
         case 'TestCase':
-          const openedTCs = context.root.$store.getters['testcase/openedTCs'];
+          const openedTCs = $store.getters['testcase/openedTCs'];
           const found = openedTCs.some((el: any) => el.Id === currentNode.Id);
           if (found) {
             const testcase = openedTCs.find((el: any) => el.Id === currentNode.Id)
-            context.root.$store.commit('testcase/setOpenedTCs', testcase);
+            $store.commit('testcase/setOpenedTCs', testcase);
           } else {
-            await context.root.$store.dispatch('testcase/getTestCaseById', currentNode.Id);
+            await $store.dispatch('testcase/getTestCaseById', currentNode.Id);
           }
           break
         default:
@@ -122,19 +124,19 @@ export default defineComponent({
       }
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const selectedTestClient = computed(() => context.root.$store.getters['testclient/selectedTestClient'] as TestClientInterface);
+    const selectedTestClient = computed(() => $store.getters['testclient/selectedTestClient'] as TestClientInterface);
     onMounted(async () => {
       try {
         // get category
-        await context.root.$store.dispatch('category/getAllCategories');
-        allCat.value = context.root.$store.getters['category/categories'];
+        await $store.dispatch('category/getAllCategories');
+        allCat.value = $store.getters['category/categories'];
         // gt all TestAUT
-        await context.root.$store.dispatch('global/getTestAUT');
-        allTestAUT.value = context.root.$store.getters['global/testAuTs']
-        await context.root.$nextTick()
+        await $store.dispatch('global/getTestAUT');
+        allTestAUT.value = $store.getters['global/testAuTs']
+        await nextTick()
         tree.value.expandAll();
       } catch (error) {
-        context.root.$q.notify({
+        $q.notify({
           type: 'negative',
           message: `${error}`,
         });
@@ -144,19 +146,19 @@ export default defineComponent({
       tree.value.collapseAll();
     }
     function onRunOn() {
-      context.root.$q.notify({
+      $q.notify({
         type: 'negative',
         message: 'Not develop yet',
       });
     }
     function onDebug() {
-      context.root.$q.notify({
+      $q.notify({
         type: 'negative',
         message: 'Not develop yet',
       });
     }
     function onDebugOn() {
-      context.root.$q.notify({
+      $q.notify({
         type: 'negative',
         message: 'Not develop yet',
       });
@@ -164,13 +166,13 @@ export default defineComponent({
 
     async function onCreateTestSuite(tsInfo: any) {
       try {
-        await context.root.$store.dispatch('category/createTestSuite', tsInfo);
-        context.root.$q.notify({
+        await $store.dispatch('category/createTestSuite', tsInfo);
+        $q.notify({
           type: 'positive',
           message: 'Created new test suite !',
         });
       } catch (error) {
-        context.root.$q.notify({
+        $q.notify({
           type: 'negative',
           message: `${error}`,
         });
@@ -178,13 +180,13 @@ export default defineComponent({
     }
     async function onCreateTestGroup(newTestGroup: TestGroupInterface) {
       try {
-        await context.root.$store.dispatch('testsuite/createTestGroup', newTestGroup);
-        context.root.$q.notify({
+        await $store.dispatch('testsuite/createTestGroup', newTestGroup);
+        $q.notify({
           type: 'positive',
           message: 'Created new test group !',
         });
       } catch (error) {
-        context.root.$q.notify({
+        $q.notify({
           type: 'negative',
           message: `${error}`,
         });
@@ -193,13 +195,14 @@ export default defineComponent({
 
     async function onCreateTestCase(testCase: TestCaseInterface) {
       try {
-        await context.root.$store.dispatch('testgroup/createTestCase', testCase);
-        context.root.$q.notify({
+        console.log('testCase', testCase);
+        await $store.dispatch('testgroup/createTestCase', testCase);
+        $q.notify({
           type: 'positive',
           message: 'Created new test case !',
         });
       } catch (error) {
-        context.root.$q.notify({
+        $q.notify({
           type: 'negative',
           message: `${error}`,
         });
@@ -209,19 +212,20 @@ export default defineComponent({
     function onNewTestSuite(Category: CategoryInterface) {
       // check if current node is not Category --> return
       if (Category.nodeType !== 'Category') {
-        context.root.$q.notify({
+        $q.notify({
           type: 'negative',
           message: 'Something errors, node Type is not Category',
         });
         return
       }
       // open new testsuite dialog
-      context.root.$q.dialog({
+      $q.dialog({
         component: NewTestSuiteDialog,
-        parent: context.root,
-        Category,
+        componentProps: {
+          Category,
+        },
       }).onOk((newTestSuite: TestSuiteInterface) => {
-        onCreateTestSuite(newTestSuite)
+        void onCreateTestSuite(newTestSuite)
       }).onCancel(() => {
         // TODO
       }).onDismiss(() => {
@@ -231,19 +235,20 @@ export default defineComponent({
     function onNewTestGroup(TestSuite: TestSuiteInterface) {
       // check if current node is not TestSuite --> return
       if (TestSuite.nodeType !== 'TestSuite') {
-        context.root.$q.notify({
+        $q.notify({
           type: 'negative',
           message: 'Something errors, node Type is not TestSuite',
         });
         return
       }
       // open new testgroup dialog
-      context.root.$q.dialog({
+      $q.dialog({
         component: NewTestGroupDialog,
-        parent: context.root,
-        TestSuite,
+        componentProps: {
+          TestSuite,
+        },
       }).onOk((newTestGroup: TestGroupInterface) => {
-        onCreateTestGroup(newTestGroup)
+        void onCreateTestGroup(newTestGroup)
       }).onCancel(() => {
         // TODO
       }).onDismiss(() => {
@@ -252,19 +257,20 @@ export default defineComponent({
     }
     function onNewTestCase(testGroup: TestGroupInterface) {
       if (testGroup.nodeType !== 'TestGroup') {
-        context.root.$q.notify({
+        $q.notify({
           type: 'negative',
           message: 'Something errors, node Type is not TestGroup',
         });
         return
       }
       // open new testcase dialog
-      context.root.$q.dialog({
+      $q.dialog({
         component: NewTestCaseDialog,
-        parent: context.root,
-        testGroup,
+        componentProps: {
+          testGroup,
+        },
       }).onOk((newTestCase: TestCaseInterface) => {
-        onCreateTestCase(newTestCase)
+        void onCreateTestCase(newTestCase)
       }).onCancel(() => {
         // TODO
       }).onDismiss(() => {
@@ -272,7 +278,7 @@ export default defineComponent({
       })
     }
     function onEdit() {
-      context.root.$q.notify({
+      $q.notify({
         type: 'negative',
         message: 'Not develop yet',
       });
@@ -284,20 +290,20 @@ export default defineComponent({
         const testcases = tickedNodes.filter((n: any) => n.nodeType === 'TestCase') as TestCaseInterface[]
         const numberOfTestCase = tickedNodes.filter((n: TestCaseInterface) => n.nodeType === 'TestCase').length
         if (numberOfTestCase === 0) {
-          context.root.$q.notify({
+          $q.notify({
             type: 'negative',
             message: 'No test case is selected',
           });
           return null
         }
-        const generateDevCodeResult: Promise<any> = await context.root.$store.dispatch('global/generateDevCode', testcases);
-        context.root.$q.notify({
+        const generateDevCodeResult: Promise<any> = await $store.dispatch('global/generateDevCode', testcases);
+        $q.notify({
           type: 'positive',
           message: 'Generate code success.',
         });
         return generateDevCodeResult
       } catch (error) {
-        context.root.$q.notify({
+        $q.notify({
           type: 'negative',
           message: `${error.error}`,
         });
@@ -307,14 +313,14 @@ export default defineComponent({
 
     async function buildProject() {
       try {
-        const buildResult: Promise<any> = await context.root.$store.dispatch('global/buildProject');
-        context.root.$q.notify({
+        const buildResult: Promise<any> = await $store.dispatch('global/buildProject');
+        $q.notify({
           type: 'positive',
           message: 'Build success.',
         });
         return buildResult
       } catch (error) {
-        context.root.$q.notify({
+        $q.notify({
           progress: true,
           timeout: 10000,
           type: 'negative',
@@ -328,14 +334,14 @@ export default defineComponent({
       const tickedNodes = tree.value.getTickedNodes()
       const testcases = tickedNodes.filter((n: any) => n.nodeType === 'TestCase') as TestCaseInterface[]
       try {
-        const createDevQueueResult: any = await context.root.$store.dispatch('global/createDevQueue', { testcases, testClient: selectedTestClient.value });
+        const createDevQueueResult: any = await $store.dispatch('global/createDevQueue', { testcases, testClient: selectedTestClient.value });
         console.log('createDevQueueResult', createDevQueueResult)
-        context.root.$q.notify({
+        $q.notify({
           type: 'positive',
           message: `${createDevQueueResult.count} queue(s) added.`,
         });
       } catch (error) {
-        context.root.$q.notify({
+        $q.notify({
           type: 'negative',
           message: `${error.error}`,
         });
@@ -344,7 +350,7 @@ export default defineComponent({
     async function onRun() {
       console.log('selectedTestClient', selectedTestClient)
       if (selectedTestClient.value === undefined) {
-        context.root.$q.notify({
+        $q.notify({
           type: 'negative',
           message: 'No test client is selected',
         });
@@ -358,7 +364,7 @@ export default defineComponent({
     }
 
     function onDeleteNode(value: any) {
-      context.root.$q.notify({
+      $q.notify({
         type: 'negative',
         message: `Not develop yet: ${value}`,
       });

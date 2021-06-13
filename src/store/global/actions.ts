@@ -69,7 +69,6 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
       );
       console.log('response', response)
       const responseData = await response.data;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return responseData;
     } catch (error) {
       throw error.response.data;

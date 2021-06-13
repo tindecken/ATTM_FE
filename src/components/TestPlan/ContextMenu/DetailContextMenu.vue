@@ -75,7 +75,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from '@vue/composition-api';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'DetailContextMenu',
@@ -83,7 +83,6 @@ export default defineComponent({
     selected: Array,
   },
   components: {},
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setup(props, { emit }) {
     function deleteRows() {
       emit('deleteRows')

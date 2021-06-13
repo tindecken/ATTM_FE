@@ -2,10 +2,10 @@
     <div>
         <q-select
         dense
-        :value="testAUT"
+        :model-value="testAUT"
         :options="filteredTestAUTs"
         option-label="Name"
-        @input="onChangeTestAUT($event)"
+        @update:model-value="onChangeTestAUT($event)"
         @filter="filterTestAUTFn"
         input-debounce="0"
         use-input
@@ -13,35 +13,34 @@
         hide-selected
         options-dense
     />
-    <!-- <detail-context-menu
-        :selected.sync="selected"
-        @deleteRows="onDeleteRows()">
-    </detail-context-menu> -->
     </div>
 </template>
 
 <script lang="ts">
 import {
-  computed, defineComponent, ref, Ref,
-} from '@vue/composition-api';
+  computed, defineComponent, ref, Ref, PropType,
+} from 'vue';
 import { TestAUTInterface } from 'src/Models/TestAUT';
+import { useStore } from 'vuex'
+import { TestStepInterface } from 'src/Models/TestStep';
 
 export default defineComponent({
   name: 'TestAUT',
   props: {
     TestStep: {
-      type: Object,
+      type: Object as PropType<TestStepInterface>,
       required: true,
       default: () => ({}),
     },
   },
   components: {},
   setup(props, context) {
+    const $store = useStore()
     const filteredTestAUTs: Ref<TestAUTInterface[]> = ref([])
-    const testAUTs: Ref<TestAUTInterface[]> = computed(() => context.root.$store.getters['global/testAuTs'] as TestAUTInterface[]);
+    const testAUTs: Ref<TestAUTInterface[]> = computed(() => $store.getters['global/testAuTs'] as TestAUTInterface[]);
     const testAUT: Ref<TestAUTInterface | undefined> = ref(undefined);
     testAUT.value = testAUTs.value.find((aut: TestAUTInterface) => aut.Id === props.TestStep.TestAUTId)
-    function filterTestAUTFn(val: any, update: any) {
+    function filterTestAUTFn(val: string, update: any) {
       update(() => {
         const needle = val.toLowerCase()
         filteredTestAUTs.value = testAUTs.value.filter((v: TestAUTInterface) => v.Name.toLowerCase().indexOf(needle) > -1)

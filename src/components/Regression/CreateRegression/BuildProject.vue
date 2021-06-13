@@ -53,14 +53,18 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from '@vue/composition-api';
+import { computed, defineComponent, ref } from 'vue';
 import { TestCaseInterface } from 'src/Models/TestCase';
 import { TestCaseDetailInterface } from 'src/Models/TestCaseDetail';
+import { useQuasar } from 'quasar'
+import { useStore } from 'vuex'
 
 export default defineComponent({
   name: 'BuildProject',
   components: {},
-  setup(props, context) {
+  setup() {
+    const $store = useStore()
+    const $q = useQuasar()
     const tab = ref('getLatestCode')
     const getLatestCodeStatus = ref('')
     const getLatestCodeMessage = ref('')
@@ -69,8 +73,8 @@ export default defineComponent({
     const buildProjectStatus = ref('')
     const buildProjectMessage = ref('')
     const splitterModel = ref(7)
-    const selectedTestCasesDetail = computed(() => context.root.$store.getters['createregression/selectedTestCasesDetail'] as TestCaseDetailInterface[]);
-    const selectedTestCases = computed(() => context.root.$store.getters['createregression/selectedTestCases'] as TestCaseInterface[]);
+    const selectedTestCasesDetail = computed(() => $store.getters['createregression/selectedTestCasesDetail'] as TestCaseDetailInterface[]);
+    const selectedTestCases = computed(() => $store.getters['createregression/selectedTestCases'] as TestCaseInterface[]);
     console.log('selectedTestCasesDetail', selectedTestCasesDetail)
     function clearStatusAndMessage() {
       getLatestCodeStatus.value = ''
@@ -84,20 +88,20 @@ export default defineComponent({
       clearStatusAndMessage()
       tab.value = 'getLatestCode'
       console.log('generateAndBuildProject')
-      context.root.$store.commit('createregression/setSelectedTestCases', [])
-      await context.root.$store.dispatch('createregression/getAndAddSelectedTestCase', selectedTestCasesDetail.value);
+      $store.commit('createregression/setSelectedTestCases', [])
+      await $store.dispatch('createregression/getAndAddSelectedTestCase', selectedTestCasesDetail.value);
       console.log('selectedTestCases.value', selectedTestCases.value)
-      const getLatestCodeResult: Promise<any> = context.root.$store.dispatch('global/getLatestCode');
+      const getLatestCodeResult: Promise<any> = $store.dispatch('global/getLatestCode');
 
       getLatestCodeResult.then((r) => {
         console.log('r', r)
         getLatestCodeStatus.value = 'Success'
         getLatestCodeMessage.value = r.message
-        context.root.$q.notify({
+        $q.notify({
           type: 'positive',
           message: 'Get Latest Code success !',
         });
-        const generateDevCodeResult: Promise<any> = context.root.$store.dispatch('global/generateDevCode', selectedTestCases.value);
+        const generateDevCodeResult: Promise<any> = $store.dispatch('global/generateDevCode', selectedTestCases.value);
         generateDevCodeResult.then((g) => {
           tab.value = 'generateCode'
           generateCodeStatus.value = 'Success'
@@ -108,22 +112,22 @@ export default defineComponent({
             generateCodeMessage.value += `${m.generatedCode}\r\n`
             generateCodeMessage.value += '------------------\r\n'
           });
-          context.root.$q.notify({
+          $q.notify({
             type: 'positive',
             message: 'Generate Code Success !',
           });
-          const buildResult: Promise<any> = context.root.$store.dispatch('global/buildProject');
+          const buildResult: Promise<any> = $store.dispatch('global/buildProject');
           buildResult.then((b) => {
             tab.value = 'buildProject'
             buildProjectStatus.value = 'Success'
             buildProjectMessage.value = b.buildMessage
             console.log('b', b)
-            context.root.$q.notify({
+            $q.notify({
               type: 'positive',
               message: 'Build Project Success !',
             });
           }).catch((e) => {
-            context.root.$q.notify({
+            $q.notify({
               type: 'negative',
               message: 'Build Project Error',
             });
@@ -131,7 +135,7 @@ export default defineComponent({
             buildProjectMessage.value = e
           })
         }).catch((e) => {
-          context.root.$q.notify({
+          $q.notify({
             type: 'negative',
             message: 'Generate Code Error',
           });
@@ -141,7 +145,7 @@ export default defineComponent({
       }).catch((e) => {
         getLatestCodeStatus.value = 'Error'
         getLatestCodeMessage.value = e
-        context.root.$q.notify({
+        $q.notify({
           type: 'negative',
           message: 'Get Latest Code Error',
         });

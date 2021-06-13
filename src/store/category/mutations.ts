@@ -1,4 +1,3 @@
-import Vue from 'vue';
 import _ from 'lodash'
 import { MutationTree } from 'vuex';
 import { CategoryInterface } from 'src/Models/Category';
@@ -22,7 +21,7 @@ const mutation: MutationTree<CategoryStateInterface> = {
     responseTestSuite.children = []
     tempCat.TestSuiteIds.push(responseTestSuite.Id)
     tempCat.children.push(responseTestSuite)
-    Vue.set(state.Categories, catIndex, tempCat)
+    state.Categories[catIndex] = tempCat
   },
   createTestGroup(state: CategoryStateInterface, testGroup: TestGroupInterface) {
     const catIndex = state.Categories.findIndex((cat: CategoryInterface) => cat.Id === testGroup.CategoryId);
@@ -32,7 +31,7 @@ const mutation: MutationTree<CategoryStateInterface> = {
     testGroup = paintTestGroup(testGroup)
     tempCat.children[tsIndex].TestGroupIds.push(testGroup.Id)
     tempCat.children[tsIndex].children.push(testGroup)
-    Vue.set(state.Categories, catIndex, tempCat)
+    state.Categories[catIndex] = tempCat
   },
   createTestCase(state: CategoryStateInterface, testCase: TestCaseInterface) {
     const catIndex = state.Categories.findIndex((cat: CategoryInterface) => cat.Id === testCase.CategoryId);
@@ -42,8 +41,11 @@ const mutation: MutationTree<CategoryStateInterface> = {
     // find tgIndex
     const tgIndex = tempCat.children[tsIndex].TestGroupIds.findIndex((tgId: string) => tgId === testCase.TestGroupId)
     testCase = paintTestCase(testCase)
+    if (!tempCat.children[tsIndex].children[tgIndex].children) { // to make sure TestGroup has children property
+      tempCat.children[tsIndex].children[tgIndex].children = []
+    }
     tempCat.children[tsIndex].children[tgIndex].children.push(testCase)
-    Vue.set(state.Categories, catIndex, tempCat)
+    state.Categories[catIndex] = tempCat
   },
   updateTestCase(state: CategoryStateInterface, testCase: TestCaseInterface) {
     const catIndex = state.Categories.findIndex((cat: CategoryInterface) => cat.Id === testCase.CategoryId);
@@ -54,7 +56,7 @@ const mutation: MutationTree<CategoryStateInterface> = {
     const tgIndex = tempCat.children[tsIndex].children.findIndex((tg: TestGroupInterface) => tg.Id === testCase.TestGroupId)
     const tcIndex = tempCat.children[tsIndex].children[tgIndex].children.findIndex((tc: TestCaseInterface) => tc.Id === testCase.Id)
     tempCat.children[tsIndex].children[tgIndex].children[tcIndex] = testCase
-    Vue.set(state.Categories, catIndex, tempCat)
+    state.Categories[catIndex] = tempCat
   },
 }
 

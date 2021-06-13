@@ -45,6 +45,7 @@ const actions: ActionTree<CreateRegressionStateInterface, StateInterface> = {
   async getAndAddSelectedTestCase(context, selectedTestCasesDetail: TestCaseDetailInterface[]) {
     const promises: any = []
     selectedTestCasesDetail.forEach((tc: TestCaseDetailInterface) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       promises.push(axios.get(`${config.baseURL}/testcases/${tc.Id}`, {
         headers: {
           'Content-Type': 'application/json',

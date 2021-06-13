@@ -57,7 +57,7 @@
             color="primary"
             :disable="!isStepValid"
             v-if="currentStep !== 'deploySources'"
-            @click="$refs.stepper.next();"
+            @click="$refs.stepper.next()"
             label="Continue"
           />
           <q-btn
@@ -81,7 +81,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from '@vue/composition-api';
+import { defineComponent, ref } from 'vue';
 import DeploySource from './DeploySource.vue'
 import DefineRegression from './DefineRegression.vue'
 import SelectTestCase from './SelectTestCase.vue'

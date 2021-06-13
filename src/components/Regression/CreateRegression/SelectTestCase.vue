@@ -4,13 +4,13 @@
       :filter="filter"
       dense
       title="Test Cases"
-      :data="testCases"
+      :rows="testCases"
       :columns="columns"
       :visible-columns="visibleColumns"
       row-key="Id"
       :selected-rows-label="getSelectedString"
       selection="multiple"
-      :selected.sync="selected"
+      v-model:selected="selected"
       no-data-label="No test case"
       :pagination="initialPagination"
       separator="cell"
@@ -32,13 +32,17 @@
 <script lang="ts">
 import {
   computed, defineComponent, onMounted, Ref, ref, watch,
-} from '@vue/composition-api';
+} from 'vue';
 import { TestCaseDetailInterface } from 'src/Models/TestCaseDetail';
+import { useStore } from 'vuex'
+import { useQuasar } from 'quasar'
 
 export default defineComponent({
   name: 'SelectTestCase',
   components: {},
   setup(props, context) {
+    const $store = useStore()
+    const $q = useQuasar()
     const columns = [
       {
         name: 'Id',
@@ -182,7 +186,7 @@ export default defineComponent({
       rowsPerPage: 50,
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const testCases: Ref<TestCaseDetailInterface[]> = computed(() => context.root.$store.getters['createregression/allTestCasesDetail'])
+    const testCases: Ref<TestCaseDetailInterface[]> = computed(() => $store.getters['createregression/allTestCasesDetail'])
     const selected: Ref<TestCaseDetailInterface[]> = ref([])
     const visibleColumns = ref(['FullName', 'Category', 'TestSuite', 'TestGroup', 'Owner', 'Type', 'IsPrimary', 'Queue', 'CreatedDate', 'LastModifiedDate'])
     function getSelectedString() {
@@ -191,7 +195,7 @@ export default defineComponent({
     watch(
       () => selected.value,
       () => {
-        context.root.$store.commit('createregression/setSelectedTestCasesDetail', selected.value)
+        $store.commit('createregression/setSelectedTestCasesDetail', selected.value)
         if (selected.value.length === 0) {
           context.emit('validateForm', false)
         } else {
@@ -202,11 +206,11 @@ export default defineComponent({
     onMounted(async () => {
       try {
         context.emit('validateForm', false)
-        context.root.$store.commit('createregression/setSelectedTestCasesDetail', [])
-        context.root.$store.commit('createregression/setSelectedTestCases', [])
-        await context.root.$store.dispatch('createregression/getAllTestCaseDetails');
+        $store.commit('createregression/setSelectedTestCasesDetail', [])
+        $store.commit('createregression/setSelectedTestCases', [])
+        await $store.dispatch('createregression/getAllTestCaseDetails');
       } catch (error) {
-        context.root.$q.notify({
+        $q.notify({
           type: 'negative',
           message: `${error}`,
         });

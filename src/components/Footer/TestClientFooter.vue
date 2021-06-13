@@ -13,27 +13,31 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onBeforeMount } from '@vue/composition-api';
+import { computed, defineComponent, onBeforeMount } from 'vue';
 import { TestClientInterface } from 'src/Models/TestClient';
+import { useStore } from 'vuex'
+import { useQuasar } from 'quasar'
 
 export default defineComponent({
   name: 'TestClientFooter',
   components: {},
-  setup(props, context) {
-    const selectedTestClient = computed(() => context.root.$store.getters['testclient/selectedTestClient'] as TestClientInterface);
-    const testClients = computed(() => context.root.$store.getters['testclient/testClients'] as TestClientInterface[]);
+  setup() {
+    const $store = useStore()
+    const $q = useQuasar()
+    const selectedTestClient = computed(() => $store.getters['testclient/selectedTestClient'] as TestClientInterface)
+    const testClients = computed(() => $store.getters['testclient/testClients'] as TestClientInterface[])
     onBeforeMount(async () => {
       try {
-        await context.root.$store.dispatch('testclient/getTestClients');
+        await $store.dispatch('testclient/getTestClients');
       } catch (error) {
-        context.root.$q.notify({
+        $q.notify({
           type: 'negative',
           message: `${error}`,
         });
       }
     })
     function onSelectTestClient(testClient: TestClientInterface) {
-      context.root.$store.commit('testclient/setSelectedTestClient', testClient)
+      $store.commit('testclient/setSelectedTestClient', testClient)
     }
     return {
       onSelectTestClient,

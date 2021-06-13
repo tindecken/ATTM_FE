@@ -6,10 +6,10 @@
     <q-input
       :class="valueStyle"
       :debounce="300"
-      :value="prValue"
+      :model-value="prValue"
       dense
       borderless
-      @input="onChangeParam($event)"
+      @update:model-value="onChangeParam($event)"
       :readonly="readonly"
     >
       <template v-slot:prepend>
@@ -29,20 +29,23 @@ import {
   defineComponent,
   Ref,
   ref,
-} from '@vue/composition-api';
+  PropType,
+} from 'vue';
 import { TestParamInterface } from 'src/Models/TestParam';
 import { TestEnvFlatNodeInterface } from 'src/Models/TestEnvFlatNode';
 import { TestStepInterface } from 'src/Models/TestStep';
 import { TestEnvInterface } from 'src/Models/TestEnv';
 import { TestEnvCategoryInterface } from 'src/Models/TestEnvCategory';
 import { TestEnvNodeInterface } from 'src/Models/TestEnvNode';
+import { useQuasar } from 'quasar'
+import { useStore } from 'vuex'
 import TestEnvironmentDialog from '../Dialog/TestEnvironmentDialog.vue'
 import DetailContextMenu from '../ContextMenu/DetailContextMenu.vue'
 
 export default defineComponent({
   props: {
     TestStep: {
-      type: Object,
+      type: Object as PropType<TestStepInterface>,
       required: true,
       default: () => ({}),
     },
@@ -52,13 +55,15 @@ export default defineComponent({
     },
   },
   components: {
-    TestEnvironmentDialog,
+    // TestEnvironmentDialog,
     DetailContextMenu,
   },
   setup(props, context) {
+    const $store = useStore()
+    const $q = useQuasar()
     const isParamError: Ref<boolean> = ref(false)
     const paramErrorMessage = ref('')
-    const isDark = computed(() => context.root.$store.getters['global/darkTheme'] as boolean);
+    const isDark = computed(() => $store.getters['global/darkTheme'] as boolean);
     const readonly = computed(() => {
       const numberOfParam: number = props.TestStep.Params.length;
       const testEnvPath = props.TestStep.Params[props.ParamIndex]?.TestNodePath
@@ -88,7 +93,7 @@ export default defineComponent({
     }
     function getValueFromTestEnv(ts: TestStepInterface, prIndex: number): string {
       let value = ''
-      const selectedTestEnv = context.root.$store.getters['testenvironment/selectedTestEnv'] as TestEnvInterface
+      const selectedTestEnv = $store.getters['testenvironment/selectedTestEnv'] as TestEnvInterface
       const catEnv = ts.Params[prIndex].TestNodePath.split('/')[0]
       const nodeEnv = ts.Params[prIndex].TestNodePath.split('/')[1]
 
@@ -117,10 +122,8 @@ export default defineComponent({
       return value
     }
     const prValue = computed(() => {
-      const ts: TestStepInterface = props.TestStep as TestStepInterface;
+      const ts: TestStepInterface = props.TestStep;
       const prIndex: number = props.ParamIndex
-      paramErrorMessage.value = ''
-      isParamError.value = false
       if (ts.Params[prIndex]) {
         if (ts.Params[prIndex].TestNodePath !== '') {
           return getValueFromTestEnv(ts, prIndex)
@@ -131,9 +134,11 @@ export default defineComponent({
     // eslint-disable-next-line consistent-return
     const valueStyle = computed(() => {
       if (props.TestStep.Params[props.ParamIndex]) return getValueType(props.TestStep.Params[props.ParamIndex])
+      return ''
     })
 
     function onChangeParam(newParamValue: string) {
+      console.log('onChangeParam', newParamValue)
       context.emit('changeParam', newParamValue)
     }
 
@@ -143,9 +148,8 @@ export default defineComponent({
 
     function onUseTestEnv() {
       // open new testEnv dialog
-      context.root.$q.dialog({
+      $q.dialog({
         component: TestEnvironmentDialog,
-        parent: context.root,
       }).onOk((node: TestEnvFlatNodeInterface) => {
         // TODO: handle ok
         if (node) {

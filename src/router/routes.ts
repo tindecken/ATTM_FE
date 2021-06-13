@@ -1,6 +1,6 @@
-import { RouteConfig } from 'vue-router';
+import { RouteRecordRaw } from 'vue-router';
 
-const routes: RouteConfig[] = [
+const routes: RouteRecordRaw[] = [
   {
     path: '/',
     component: () => import('components/Home.vue'),
@@ -47,7 +47,7 @@ const routes: RouteConfig[] = [
     },
   },
   {
-    path: '*',
+    path: '/:catchAll(.*)*',
     redirect: '/login',
   },
 ];

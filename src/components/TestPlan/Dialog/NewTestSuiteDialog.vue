@@ -112,21 +112,24 @@
 
 <script lang="ts">
 import {
-  computed, defineComponent, Ref, ref,
-} from '@vue/composition-api';
+  computed, defineComponent, Ref, ref, PropType,
+} from 'vue';
 import { CategoryInterface } from 'src/Models/Category';
 import { TestSuiteInterface } from 'src/Models/TestSuite';
+import { useStore } from 'vuex'
 
 export default defineComponent({
   name: 'NewTestSuiteDialog',
   props: {
     Category: {
-      type: Object,
+      type: Object as PropType<CategoryInterface>,
       required: true,
     },
   },
   components: {},
+  emits: ['ok', 'cancel'],
   setup(props, context) {
+    const $store = useStore()
     const dialogRef: Ref<any> = ref(null);
     const codeName = ref('');
     const name = ref('');
@@ -134,7 +137,7 @@ export default defineComponent({
     const description = ref('');
     const workItem = ref('');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const isDark = computed(() => context.root.$store.getters['global/darkTheme']);
+    const isDark = computed(() => $store.getters['global/darkTheme']);
     const isFormValid = ref(false);
     const form: Ref<any> = ref(null);
     // following method is REQUIRED
@@ -152,11 +155,11 @@ export default defineComponent({
     function onDialogHide() {
       // required to be emitted
       // when QDialog emits "hide" event
-      context.emit('hide');
+      context.emit('cancel');
     }
 
     function onOKClick() {
-      const Category = props.Category as CategoryInterface
+      const { Category } = props
       const newTestSuite: TestSuiteInterface = {
         Id: '',
         CodeName: codeName.value.trim(),

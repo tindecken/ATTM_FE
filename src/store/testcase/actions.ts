@@ -7,7 +7,7 @@ import config from '../../config';
 import { paintTestCase } from '../../components/Utils/TreeUtils'
 
 const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
-  async getTestCaseById(context, id) {
+  async getTestCaseById(context, id: string) {
     // eslint-disable-next-line no-useless-catch
     try {
       const response = await axios.get(
@@ -19,7 +19,7 @@ const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
           },
         },
       );
-      let testCase = await response.data;
+      let testCase = await response.data as TestCaseInterface;
 
       testCase = paintTestCase(testCase);
 

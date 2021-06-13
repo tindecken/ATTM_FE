@@ -1,5 +1,4 @@
 import { store } from 'quasar/wrappers';
-import Vuex from 'vuex';
 import { createStore } from 'vuex'
 import VuexPersistence from 'vuex-persist';
 import auth from './auth';
@@ -48,7 +47,7 @@ export interface StateInterface {
   createregression: CreateRegressionStateInterface;
 }
 
-export default store(function (/* { ssrContext } */) {
+export default store((/* { ssrContext } */) => {
   const persistGlobal = new VuexPersistence({
     key: 'global',
     modules: ['global'],

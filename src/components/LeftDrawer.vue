@@ -36,16 +36,18 @@
 </template>
 <script lang="ts">
 
-import { defineComponent } from '@vue/composition-api';
-import { Dark } from 'quasar';
+import { defineComponent } from 'vue'
+import { Dark } from 'quasar'
+import { useStore } from 'vuex'
 
 export default defineComponent({
   name: 'LeftDrawer',
   props: {},
-  setup(props, context) {
+  setup() {
+    const $store = useStore()
     function switchTheme() {
-      context.root.$store.dispatch('global/switchDarkTheme');
-      Dark.set(context.root.$store.getters['global/darkTheme']);
+      void $store.dispatch('global/switchDarkTheme');
+      Dark.set($store.getters['global/darkTheme']);
     }
     return { switchTheme };
   },

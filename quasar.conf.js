@@ -15,7 +15,10 @@ module.exports = configure((ctx) => ({
   // https://quasar.dev/quasar-cli/supporting-ts
   supportTS: {
     tsCheckerConfig: {
-      eslint: true,
+      eslint: {
+        enabled: true,
+        files: './src/**/*.{ts,tsx,js,jsx,vue}',
+      },
     },
   },
 
@@ -26,7 +29,6 @@ module.exports = configure((ctx) => ({
   // --> boot files are part of "main.js"
   // https://quasar.dev/quasar-cli/boot-files
   boot: [
-    'composition-api',
     'i18n',
     'axios',
   ],
@@ -52,7 +54,7 @@ module.exports = configure((ctx) => ({
 
   // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
   build: {
-    chainWebpack (chain) {
+    chainWebpack(chain) {
       const nodePolyfillWebpackPlugin = require('node-polyfill-webpack-plugin')
       chain.plugin('node-polyfill').use(nodePolyfillWebpackPlugin)
     },

@@ -24,13 +24,13 @@
           <q-tab-panel v-for="tc in openedTCs" :key="tc.Id" :name="tc.Id">
             <q-table
               dense
-              :data="tc.TestSteps"
+              :rows="tc.TestSteps"
               :columns="columns"
               row-key="UUId"
               :hide-pagination="true"
               separator="cell"
               :wrap-cells="false"
-              :selected.sync="selected"
+              v-model:selected="selected"
               :rows-per-page-options="[0]"
               no-data-label="Test case has no step"
             >
@@ -57,7 +57,7 @@
                   <q-td key="no" :props="props" class="q-c-input">
                     {{ props.rowIndex + 1 }}
                     <detail-context-menu
-                     :selected.sync="selected"
+                     v-model:selected="selected"
                      @deleteRows="onDeleteRows()">
                     </detail-context-menu>
                   </q-td>
@@ -96,7 +96,7 @@
 import {
   computed,
   defineComponent, Ref, ref,
-} from '@vue/composition-api'
+} from 'vue'
 import { TestAUTInterface } from 'src/Models/TestAUT';
 import { TestCaseInterface } from 'src/Models/TestCase';
 import { TestStepInterface } from 'src/Models/TestStep';
@@ -104,6 +104,8 @@ import { TestParamInterface } from 'src/Models/TestParam';
 import _ from 'lodash'
 import { TestEnvFlatNodeInterface } from 'src/Models/TestEnvFlatNode';
 import { FlatKeywordInterface } from 'src/Models/FlatKeyword';
+import { useStore } from 'vuex'
+import { useQuasar } from 'quasar'
 import DetailContextMenu from './ContextMenu/DetailContextMenu.vue'
 import TestAUT from './TestCaseDetail/TestAUT.vue';
 import Keyword from './TestCaseDetail/Keyword.vue';
@@ -117,7 +119,9 @@ export default defineComponent({
     Keyword,
     Parameter,
   },
-  setup(props, context) {
+  setup() {
+    const $store = useStore()
+    const $q = useQuasar()
     const showByIndex = ref(null)
     const selectedKeyword = ref('')
     const selected: Ref<any[]> = ref([])
@@ -336,15 +340,15 @@ export default defineComponent({
     )
     const selectedTestCaseId: Ref<string> = computed({
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      get: () => context.root.$store.getters['testcase/selectedTestCaseId'],
+      get: () => $store.getters['testcase/selectedTestCaseId'],
       set: (val) => {
-        context.root.$store.commit('testcase/setSelectedTestCaseId', val);
+        $store.commit('testcase/setSelectedTestCaseId', val);
       },
     })
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const openedTCs: Ref<TestCaseInterface[]> = computed(() => context.root.$store.getters['testcase/openedTCs'])
+    const openedTCs: Ref<TestCaseInterface[]> = computed(() => $store.getters['testcase/openedTCs'])
     function closeTab(testcase: TestCaseInterface) {
-      context.root.$store.commit('testcase/removeOpenedTC', testcase)
+      $store.commit('testcase/removeOpenedTC', testcase)
     }
     function changeKeyword(testCase: TestCaseInterface, testStep: TestStepInterface, newKeyword: FlatKeywordInterface) {
       // find edited testStep
@@ -356,11 +360,12 @@ export default defineComponent({
       tempTC.TestSteps[stepIndex].KWCategory = newKeyword.Category;
       // add default Params to testCase based on number of params of Keyword
       newKeyword.Params.forEach((pr: TestParamInterface) => {
-        pr.TestNodePath = ''
-        tempTC.TestSteps[stepIndex].Params.push(pr);
+        const prClone = _.cloneDeep(pr)
+        prClone.TestNodePath = ''
+        tempTC.TestSteps[stepIndex].Params.push(prClone);
       })
-      context.root.$store.commit('testcase/updateOpenedTCs', tempTC)
-      context.root.$store.commit('category/updateTestCase', tempTC)
+      $store.commit('testcase/updateOpenedTCs', tempTC)
+      $store.commit('category/updateTestCase', tempTC)
     }
 
     function changeTestAUT(testCase: TestCaseInterface, testStep: TestStepInterface, newTestAUT: TestAUTInterface) {
@@ -368,16 +373,16 @@ export default defineComponent({
       const stepIndex: number = testCase.TestSteps.indexOf(testStep);
       const tempTC: TestCaseInterface = _.cloneDeep(testCase)
       tempTC.TestSteps[stepIndex].TestAUTId = newTestAUT.Id;
-      context.root.$store.commit('testcase/updateOpenedTCs', tempTC)
-      context.root.$store.commit('category/updateTestCase', tempTC)
+      $store.commit('testcase/updateOpenedTCs', tempTC)
+      $store.commit('category/updateTestCase', tempTC)
     }
 
     function changeParam(testCase: TestCaseInterface, testStep: TestStepInterface, paramIndex: number, newValue: string) {
       const stepIndex: number = testCase.TestSteps.indexOf(testStep);
       const tempTC: TestCaseInterface = _.cloneDeep(testCase)
       tempTC.TestSteps[stepIndex].Params[paramIndex].Value = newValue;
-      context.root.$store.commit('testcase/updateOpenedTCs', tempTC)
-      context.root.$store.commit('category/updateTestCase', tempTC)
+      $store.commit('testcase/updateOpenedTCs', tempTC)
+      $store.commit('category/updateTestCase', tempTC)
     }
 
     function useTestEnv(testCase: TestCaseInterface, testStep: TestStepInterface, paramIndex: number, testEnvNode: TestEnvFlatNodeInterface) {
@@ -385,8 +390,8 @@ export default defineComponent({
       const tempTC: TestCaseInterface = _.cloneDeep(testCase)
       tempTC.TestSteps[stepIndex].Params[paramIndex].TestNodePath = `${testEnvNode.Category}/${testEnvNode.Name}`
       tempTC.TestSteps[stepIndex].Params[paramIndex].Value = testEnvNode.Value;
-      context.root.$store.commit('testcase/updateOpenedTCs', tempTC)
-      context.root.$store.commit('category/updateTestCase', tempTC)
+      $store.commit('testcase/updateOpenedTCs', tempTC)
+      $store.commit('category/updateTestCase', tempTC)
     }
 
     function onRowHover(params: any) {
@@ -486,15 +491,15 @@ export default defineComponent({
     }
 
     function addNewStep(testCaseId: string) {
-      context.root.$store.commit('testcase/addNewStep', testCaseId);
+      $store.commit('testcase/addNewStep', testCaseId);
     }
 
     function onDeleteRows() {
-      const currTestCase = openedTCs.value.find((tc: any) => tc.Id === selectedTestCaseId.value) as TestCaseInterface
+      const currTestCase = openedTCs.value.find((tc: TestCaseInterface) => tc.Id === selectedTestCaseId.value) as TestCaseInterface
       selected.value.forEach((selectedRow: any) => {
         currTestCase.TestSteps.forEach((testStep: TestStepInterface) => {
           if (testStep.UUID === selectedRow.UUID) {
-            context.root.$store.commit('testcase/deleteStep', { testCaseId: selectedTestCaseId.value, stepUUID: selectedRow.UUID });
+            $store.commit('testcase/deleteStep', { testCaseId: selectedTestCaseId.value, stepUUID: selectedRow.UUID });
           }
         })
       })
@@ -503,13 +508,13 @@ export default defineComponent({
     async function saveTestCase(testCaseId: string) {
       try {
         const currTestCase = openedTCs.value.find((tc: TestCaseInterface) => tc.Id === testCaseId) as TestCaseInterface
-        const result = await context.root.$store.dispatch('testcase/saveTestCase', currTestCase)
-        context.root.$q.notify({
+        const result = await $store.dispatch('testcase/saveTestCase', currTestCase)
+        $q.notify({
           type: 'positive',
           message: result.message,
         });
       } catch (error) {
-        context.root.$q.notify({
+        $q.notify({
           type: 'warning',
           message: error.error,
         });
