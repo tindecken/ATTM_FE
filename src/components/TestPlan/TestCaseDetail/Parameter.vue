@@ -178,19 +178,19 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-::v-deep .testBed {
+:deep(.testBed) {
   background-color: $teal-2;
   background-clip: content-box;
 }
-::v-deep .testBuffer {
+:deep(.testBuffer) {
   background-color: $green-2;
   background-clip: content-box;
 }
-::v-deep .testBedDark {
+:deep(.testBedDark) {
   background-color: $teal-10;
   background-clip: content-box;
 }
-::v-deep .testBufferDark {
+:deep(.testBufferDark) {
   background-color: $green-10;
   background-clip: content-box;
 }

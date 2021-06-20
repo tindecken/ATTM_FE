@@ -1,5 +1,5 @@
 <template>
-  <q-menu touch-position context-menu>
+  <q-menu touch-position context-menu ref="menuRef">
     <q-list dense style="min-width: 100px">
       <q-item clickable v-close-popup @click="useTestEnv()">
         <q-item-section avatar>
@@ -45,11 +45,11 @@
         <q-item-section>Insert and Paste</q-item-section>
       </q-item>
       <q-separator />
-      <q-item clickable v-close-popup>
+      <q-item clickable v-close-popup @click="insertDescription()">
         <q-item-section avatar>
           <q-icon color="primary" name="insert_comment" />
         </q-item-section>
-        <q-item-section>Insert Comment</q-item-section>
+        <q-item-section>Insert Description</q-item-section>
       </q-item>
       <q-item clickable v-close-popup @click="deleteRows()">
         <q-item-section avatar>
@@ -75,7 +75,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import {
+  defineComponent, ref, Ref,
+} from 'vue';
 
 export default defineComponent({
   name: 'DetailContextMenu',
@@ -84,15 +86,24 @@ export default defineComponent({
   },
   components: {},
   setup(props, { emit }) {
+    const menuRef: Ref<any> = ref(null)
     function deleteRows() {
       emit('deleteRows')
     }
     function useTestEnv() {
       emit('useTestEnv')
     }
+
+    function insertDescription() {
+      console.log('menuRef.value', menuRef.value)
+      menuRef.value.toggle()
+      emit('insertDescription')
+    }
     return {
+      menuRef,
       deleteRows,
       useTestEnv,
+      insertDescription,
     };
   },
 })

@@ -2,7 +2,7 @@
   <div class="q-pa-md">
     <q-stepper
       v-model="currentStep"
-      ref="stepper"
+      ref="stepperRef"
       color="primary"
       animated
       keep-alive
@@ -57,7 +57,7 @@
             color="primary"
             :disable="!isStepValid"
             v-if="currentStep !== 'deploySources'"
-            @click="$refs.stepper.next()"
+            @click="$refs.next()"
             label="Continue"
           />
           <q-btn
@@ -70,7 +70,7 @@
           <q-btn
             v-if="currentStep !== 'defineRegression'"
             flat
-            @click="$refs.stepper.previous()"
+            @click="$refs.stepperRef.previous()"
             label="Back"
           />
         </q-stepper-navigation>
@@ -98,16 +98,22 @@ export default defineComponent({
     CreateDb,
   },
   setup() {
+    const stepperRef = ref(null)
     const currentStep = ref('defineRegression')
     const isStepValid = ref(false)
     function validateForm(isValid: boolean) {
       console.log('isValid', isValid)
       isStepValid.value = isValid
     }
+    function finish() {
+      // TODO
+    }
     return {
       currentStep,
       isStepValid,
       validateForm,
+      stepperRef,
+      finish,
     }
   },
 });

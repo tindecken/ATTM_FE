@@ -57,14 +57,16 @@ Todo:
   ☐ add monitoring, able to view runtime running of test
   ☐ implement feature to check if there's test or tests is/are running
   ☐ able to delete regression (set flag isDeleted?) make sure has a notitificase: Danger Zone
-  ☐ able to add test case into current regression (mark new add tests? to compare with original test?) - low priority
-  ☐ createRegression has a summary, if user confirm all information --> do bulk of action (create regression, create regressionTest)
-  ☐ createRegression - createDB should run before generateCode due to lack of regressionTestID in the testAttributes
+  ✔ able to add test case into current regression (mark new add tests? to compare with original test?) - low priority @done(21-06-13 15:32)
+  ✔ createRegression has a summary, if user confirm all information --> do bulk of action (create regression, create regressionTest) @done(21-06-13 15:32)
+  ✔ createRegression - createDB should run before generateCode due to lack of regressionTestID in the testAttributes @done(21-06-13 15:31)
   ✔ add new test attribute: RegressionTestId @done(21-05-24 08:36)
   ✔ pskill https://i.imgur.com/5Q9OFVP.png @done(21-05-23 22:30)
-  ☐ copy to remote server: 
-  create git repo for Runner
-  create git repo for TestProject
+  ✔ update to quasar v2 @done(21-06-13 15:31)
+  ✔ copy to remote server: @done(21-06-13 15:31)
+  ✔ create git repo for Runner @done(21-06-13 15:31)
+  ✔ create git repo for TestProject @done(21-06-13 15:31)
+  ✔ detail component - fix selected rows, the issue happen while upgrading to quasar v2 @done(21-06-19 11:24)
 Test:
   ✔ one flow from create category, testsuite, testgroup, testcase from beginning @done(21-05-11 23:12)
 API:

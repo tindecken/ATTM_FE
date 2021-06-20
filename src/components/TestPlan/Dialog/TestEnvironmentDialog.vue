@@ -279,7 +279,7 @@ export default defineComponent({
 });
 </script>
 <style scoped lang="scss">
-::v-deep .q-c-input {
+:deep(.q-c-input) {
   padding-top: 0px !important;
   padding-bottom: 0px !important;
   input {

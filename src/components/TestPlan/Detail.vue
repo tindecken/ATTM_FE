@@ -26,14 +26,24 @@
               dense
               :rows="tc.TestSteps"
               :columns="columns"
-              row-key="UUId"
+              row-key="UUID"
               :hide-pagination="true"
               separator="cell"
               :wrap-cells="false"
+              selection="multiple"
               v-model:selected="selected"
               :rows-per-page-options="[0]"
               no-data-label="Test case has no step"
+              :filter="filterTable"
+              :filter-method="filterMethod"
             >
+              <template v-slot:top-left>
+                <q-input borderless dense debounce="200" v-model="filterTable" placeholder="Filter">
+                  <template v-slot:append>
+                    <q-icon name="search" />
+                  </template>
+                </q-input>
+              </template>
               <template v-slot:header="props">
                 <q-tr :props="props">
                   <q-th
@@ -47,6 +57,21 @@
                 </q-tr>
               </template>
               <template v-slot:body="props">
+                <q-tr v-show="props.row.Description" :props="props">
+                  <q-td colspan="100%">
+                    <q-input
+                      :model-value="props.row.Description"
+                      dense
+                      borderless
+                      @update:model-value="updateDescription(tc, props.row, $event)"
+                      debounce="500"
+                    >
+                      <template v-slot:before>
+                        <q-icon name="notes"  style="font-size: 0.9rem;" />
+                      </template>
+                    </q-input>
+                  </q-td>
+                </q-tr>
                 <q-tr
                   :props="props"
                   @mouseover="onRowHover(props.row.Params)"
@@ -54,12 +79,12 @@
                   @click.exact="toggleSingleRow(props.row)"
                   @click.shift="toggleRowGroup(props.row)"
                   >
+                  <detail-context-menu
+                    @deleteRows="onDeleteRows()"
+                    @insertDescription="onInsertDescription(tc, props.row)">
+                  </detail-context-menu>
                   <q-td key="no" :props="props" class="q-c-input">
-                    {{ props.rowIndex + 1 }}
-                    <detail-context-menu
-                     v-model:selected="selected"
-                     @deleteRows="onDeleteRows()">
-                    </detail-context-menu>
+                    <no :TestStep="props.row" :Index="props.rowIndex + 1"></no>
                   </q-td>
                   <q-td key="testAUT" :props="props" class="q-c-input">
                     <test-aut :TestStep="props.row" @changeTestAUT="changeTestAUT(tc, props.row, $event)"></test-aut>
@@ -81,6 +106,9 @@
             </q-table>
             <q-btn color="primary" label="New Step" @click="addNewStep(selectedTestCaseId)"></q-btn>
             <q-btn color="primary" label="Save" @click="saveTestCase(selectedTestCaseId)"></q-btn>
+            <div class="q-mt-md">
+              Selected: {{ JSON.stringify(selected) }}
+            </div>
           </q-tab-panel>
         </q-tab-panels>
       </div>
@@ -110,6 +138,8 @@ import DetailContextMenu from './ContextMenu/DetailContextMenu.vue'
 import TestAUT from './TestCaseDetail/TestAUT.vue';
 import Keyword from './TestCaseDetail/Keyword.vue';
 import Parameter from './TestCaseDetail/Parameter.vue';
+import No from './TestCaseDetail/No.vue';
+import AddDescriptionDialog from './Dialog/AddDescriptionDialog.vue';
 
 export default defineComponent({
   name: 'Detail',
@@ -118,6 +148,7 @@ export default defineComponent({
     'test-aut': TestAUT,
     Keyword,
     Parameter,
+    No,
   },
   setup() {
     const $store = useStore()
@@ -478,6 +509,7 @@ export default defineComponent({
 
     // With no key pressed - single selection
     function toggleSingleRow(row: any) {
+      console.log('row', row)
       selected.value = []
       selected.value.push(row)
     }
@@ -505,6 +537,26 @@ export default defineComponent({
       })
     }
 
+    function onInsertDescription(testCase: TestCaseInterface, testStep: TestStepInterface) {
+      // open new AddDescriptionDialog dialog
+      $q.dialog({
+        component: AddDescriptionDialog,
+      }).onOk((newDescription: string) => {
+        // TODO: handle ok
+        if (newDescription) {
+          const stepIndex: number = testCase.TestSteps.indexOf(testStep);
+          const tempTC: TestCaseInterface = _.cloneDeep(testCase)
+          tempTC.TestSteps[stepIndex].Description = newDescription;
+          $store.commit('testcase/updateOpenedTCs', tempTC)
+          $store.commit('category/updateTestCase', tempTC)
+        }
+      }).onCancel(() => {
+        // TODO
+      }).onDismiss(() => {
+        // TODO
+      })
+    }
+
     async function saveTestCase(testCaseId: string) {
       try {
         const currTestCase = openedTCs.value.find((tc: TestCaseInterface) => tc.Id === testCaseId) as TestCaseInterface
@@ -521,7 +573,29 @@ export default defineComponent({
       }
     }
 
+    function updateDescription(testCase: TestCaseInterface, testStep: TestStepInterface, newTSDescription: string) {
+      const stepIndex: number = testCase.TestSteps.indexOf(testStep);
+      const tempTC: TestCaseInterface = _.cloneDeep(testCase)
+      tempTC.TestSteps[stepIndex].Description = newTSDescription;
+      $store.commit('testcase/updateOpenedTCs', tempTC)
+      $store.commit('category/updateTestCase', tempTC)
+    }
+    function filterMethod(rows: TestStepInterface[], filter: string): TestStepInterface[] {
+      let filtered: TestStepInterface[] = []
+      console.log('rows', rows)
+      console.log('filter', filter)
+      filtered = rows.filter((row: TestStepInterface) => {
+        if (!row.Keyword?.Name.toLowerCase().includes(filter.toLowerCase())
+          && !row.Params.some((pr: TestParamInterface) => pr.Value?.toLowerCase().includes(filter.toLowerCase()))) return false
+        return true
+      })
+      return filtered
+    }
+
     return {
+      filterMethod,
+      onInsertDescription,
+      updateDescription,
       showByIndex,
       columns,
       openedTCs,
@@ -541,25 +615,34 @@ export default defineComponent({
       changeTestAUT,
       selectedTestCaseId,
       useTestEnv,
+      filterTable: ref(''),
     };
   },
 });
 </script>
 
 <style scoped lang="scss">
-::v-deep .q-tab {
+:deep .q-tab {
   padding-right: 2px;
   padding-left: 4px;
   padding-top: 0px;
   padding-bottom: 0px;
 }
-::v-deep .q-tab-panel {
+:deep .q-tab-panel {
   padding: 1px;
 }
-::v-deep td.q-c-input {
+
+:deep td.q-c-input {
   padding-right: 1px;
   padding-left: 1px;
   padding-top: 0px;
   padding-bottom: 0px;
+}
+
+:deep td.q-c-input .q-field__native {
+  padding-right: 0px;
+  padding-left: 0px;
+  padding-top: 1px;
+  padding-bottom: 1px;
 }
 </style>

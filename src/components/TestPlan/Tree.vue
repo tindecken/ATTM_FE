@@ -401,11 +401,11 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-::v-deep .q-tree__node-header {
+:deep(.q-tree__node-header) {
   padding-top: 0;
   padding-bottom: 0;
 }
-::v-deep .q-tree__node {
+:deep(.q-tree__node) {
   padding-top: 0;
   padding-bottom: 0;
 }
