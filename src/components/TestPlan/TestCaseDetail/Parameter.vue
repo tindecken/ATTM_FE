@@ -1,8 +1,6 @@
 <template>
   <div>
-    <detail-context-menu
-      @useTestEnv="onUseTestEnv()"
-    ></detail-context-menu>
+    <parameter-menu></parameter-menu>
     <q-input
       :class="valueStyle"
       :debounce="300"
@@ -40,7 +38,7 @@ import { TestEnvNodeInterface } from 'src/Models/TestEnvNode';
 import { useQuasar } from 'quasar'
 import { useStore } from 'vuex'
 import TestEnvironmentDialog from '../Dialog/TestEnvironmentDialog.vue'
-import DetailContextMenu from '../ContextMenu/DetailContextMenu.vue'
+import ParameterMenu from '../ContextMenu/DetailMenu/ParameterMenu.vue'
 
 export default defineComponent({
   props: {
@@ -55,8 +53,7 @@ export default defineComponent({
     },
   },
   components: {
-    // TestEnvironmentDialog,
-    DetailContextMenu,
+    ParameterMenu,
   },
   setup(props, context) {
     const $store = useStore()

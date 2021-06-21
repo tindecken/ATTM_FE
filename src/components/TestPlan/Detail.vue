@@ -79,10 +79,6 @@
                   @click.exact="toggleSingleRow(props.row)"
                   @click.shift="toggleRowGroup(props.row)"
                   >
-                  <detail-context-menu
-                    @deleteRows="onDeleteRows()"
-                    @insertDescription="onInsertDescription(tc, props.row)">
-                  </detail-context-menu>
                   <q-td key="no" :props="props" class="q-c-input">
                     <no :TestStep="props.row" :Index="props.rowIndex + 1"></no>
                   </q-td>
@@ -134,17 +130,16 @@ import { TestEnvFlatNodeInterface } from 'src/Models/TestEnvFlatNode';
 import { FlatKeywordInterface } from 'src/Models/FlatKeyword';
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
-import DetailContextMenu from './ContextMenu/DetailContextMenu.vue'
 import TestAUT from './TestCaseDetail/TestAUT.vue';
 import Keyword from './TestCaseDetail/Keyword.vue';
 import Parameter from './TestCaseDetail/Parameter.vue';
 import No from './TestCaseDetail/No.vue';
 import AddDescriptionDialog from './Dialog/AddDescriptionDialog.vue';
+import TestEnvironmentDialog from './Dialog/TestEnvironmentDialog.vue';
 
 export default defineComponent({
   name: 'Detail',
   components: {
-    DetailContextMenu,
     'test-aut': TestAUT,
     Keyword,
     Parameter,
@@ -592,7 +587,24 @@ export default defineComponent({
       return filtered
     }
 
+    function onUseTestEnv() {
+      // open new testEnv dialog
+      $q.dialog({
+        component: TestEnvironmentDialog,
+      }).onOk((node: TestEnvFlatNodeInterface) => {
+        // TODO: handle ok
+        if (node) {
+          useTestEnv(node)
+        }
+      }).onCancel(() => {
+        // TODO
+      }).onDismiss(() => {
+        // TODO
+      })
+    }
+
     return {
+      onUseTestEnv,
       filterMethod,
       onInsertDescription,
       updateDescription,

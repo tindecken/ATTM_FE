@@ -1,5 +1,6 @@
 <template>
   <div>
+      <keyword-menu></keyword-menu>
       <q-select
       dense
       :model-value="TestStep.Keyword"
@@ -21,10 +22,11 @@ import {
   computed, defineComponent, onMounted, ref, Ref, PropType,
 } from 'vue';
 
-import { KeywordInterface } from 'src/Models/Keyword';
-import { FlatKeywordInterface } from 'src/Models/FlatKeyword';
+import { KeywordInterface } from 'src/Models/Keyword'
+import { FlatKeywordInterface } from 'src/Models/FlatKeyword'
 import { useStore } from 'vuex'
-import { TestStepInterface } from 'src/Models/TestStep';
+import { TestStepInterface } from 'src/Models/TestStep'
+import KeywordMenu from '../ContextMenu/DetailMenu/KeywordMenu.vue'
 
 export default defineComponent({
   name: 'Keyword',
@@ -35,7 +37,7 @@ export default defineComponent({
       default: () => ({}),
     },
   },
-  components: {},
+  components: { KeywordMenu },
   setup(props, context) {
     const $store = useStore()
     const filteredKeywords: Ref<FlatKeywordInterface[]> = ref([])

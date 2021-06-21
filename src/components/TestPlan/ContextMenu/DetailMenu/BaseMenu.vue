@@ -1,12 +1,8 @@
 <template>
   <q-menu touch-position context-menu ref="menuRef">
     <q-list dense style="min-width: 100px">
-      <q-item clickable v-close-popup @click="useTestEnv()">
-        <q-item-section avatar>
-          <q-icon color="primary" name="create" />
-        </q-item-section>
-        <q-item-section>Use TestEnv</q-item-section>
-      </q-item>
+      <slot>
+      </slot>
       <q-item clickable v-close-popup>
         <q-item-section avatar>
           <q-icon color="primary" name="create" />

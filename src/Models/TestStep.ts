@@ -11,4 +11,5 @@ export interface TestStepInterface {
     IsComment: boolean;
     KWFeature: string;
     KWCategory: string;
+    Status: string;
 }

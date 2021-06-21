@@ -1,5 +1,6 @@
 <template>
     <div>
+        <test-aut-menu></test-aut-menu>
         <q-select
         dense
         :model-value="testAUT"
@@ -12,7 +13,8 @@
         fill-input
         hide-selected
         options-dense
-    />
+        >
+      </q-select>
     </div>
 </template>
 
@@ -20,9 +22,10 @@
 import {
   computed, defineComponent, ref, Ref, PropType,
 } from 'vue';
-import { TestAUTInterface } from 'src/Models/TestAUT';
+import { TestAUTInterface } from 'src/Models/TestAUT'
 import { useStore } from 'vuex'
-import { TestStepInterface } from 'src/Models/TestStep';
+import { TestStepInterface } from 'src/Models/TestStep'
+import TestAUTMenu from '../ContextMenu/DetailMenu/TestAUTMenu.vue'
 
 export default defineComponent({
   name: 'TestAUT',
@@ -33,7 +36,7 @@ export default defineComponent({
       default: () => ({}),
     },
   },
-  components: {},
+  components: { 'test-aut-menu': TestAUTMenu },
   setup(props, context) {
     const $store = useStore()
     const filteredTestAUTs: Ref<TestAUTInterface[]> = ref([])

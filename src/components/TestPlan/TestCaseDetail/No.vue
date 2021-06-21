@@ -1,5 +1,8 @@
 <template>
-  {{Index}}
+  <no-menu></no-menu>
+  <div>
+    {{Index}}
+  </div>
 </template>
 
 <script lang="ts">
@@ -7,10 +10,11 @@ import {
   computed, defineComponent, onMounted, ref, Ref, PropType,
 } from 'vue';
 
-import { KeywordInterface } from 'src/Models/Keyword';
-import { FlatKeywordInterface } from 'src/Models/FlatKeyword';
+import { KeywordInterface } from 'src/Models/Keyword'
+import { FlatKeywordInterface } from 'src/Models/FlatKeyword'
 import { useStore } from 'vuex'
-import { TestStepInterface } from 'src/Models/TestStep';
+import { TestStepInterface } from 'src/Models/TestStep'
+import NoMenu from '../ContextMenu/DetailMenu/NoMenu.vue'
 
 export default defineComponent({
   name: 'No',
@@ -26,7 +30,7 @@ export default defineComponent({
       default: 0,
     },
   },
-  components: {},
+  components: { NoMenu },
   setup(props, context) {
     const $store = useStore()
     const filteredKeywords: Ref<FlatKeywordInterface[]> = ref([])
