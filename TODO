@@ -68,6 +68,8 @@ Todo:
   ✔ create git repo for TestProject @done(21-06-13 15:31)
   ✔ detail component - fix selected rows, the issue happen while upgrading to quasar v2 @done(21-06-19 11:24)
   ☐ refactor, every td: no, testaut, keyword, parameter has own context menu
+  ✔ bug - when change testenv multiple times (2 times), it not check incorrect @done(21-06-22 21:09)
+  ✔ style testStep in case of it's disabled, able to disable multiple testStep @done(21-06-23 16:53)
 Test:
   ✔ one flow from create category, testsuite, testgroup, testcase from beginning @done(21-05-11 23:12)
 API:

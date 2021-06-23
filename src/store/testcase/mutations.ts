@@ -2,6 +2,7 @@ import { MutationTree } from 'vuex';
 import uuid from 'uuid-random';
 import _ from 'lodash';
 import { TestCaseInterface } from 'src/Models/TestCase';
+import { TestStepInterface } from 'src/Models/TestStep';
 import { TestCaseStateInterface } from './state';
 
 const mutation: MutationTree<TestCaseStateInterface> = {
@@ -64,6 +65,34 @@ const mutation: MutationTree<TestCaseStateInterface> = {
     const tempTC = _.cloneDeep(state.openedTCs[index])
     if (tempTC.TestSteps.length > 0) { // incase there's no test steps
       tempTC.TestSteps = tempTC.TestSteps.filter((step: any) => step.UUID !== stepUUID)
+    }
+    state.openedTCs[index] = tempTC
+  },
+
+  disableStep(state: TestCaseStateInterface, payload: any) {
+    console.log('state', state)
+    console.log('payload', payload)
+    const { testCaseId } = payload
+    const { stepUUID } = payload
+    const index = state.openedTCs.findIndex((el: any) => el.Id === testCaseId);
+    const tempTC = _.cloneDeep(state.openedTCs[index])
+    if (tempTC.TestSteps.length > 0) { // incase there's no test steps
+      const indexTestStep: number = tempTC.TestSteps.findIndex((ts: TestStepInterface) => ts.UUID === stepUUID);
+      console.log('indexTestStep', indexTestStep)
+      if (indexTestStep !== -1) tempTC.TestSteps[indexTestStep].IsDisabled = true;
+    }
+    state.openedTCs[index] = tempTC
+  },
+  enableStep(state: TestCaseStateInterface, payload: any) {
+    console.log('state', state)
+    console.log('payload', payload)
+    const { testCaseId } = payload
+    const { stepUUID } = payload
+    const index = state.openedTCs.findIndex((el: any) => el.Id === testCaseId);
+    const tempTC = _.cloneDeep(state.openedTCs[index])
+    if (tempTC.TestSteps.length > 0) { // incase there's no test steps
+      const indexTestStep: number = tempTC.TestSteps.findIndex((ts: TestStepInterface) => ts.UUID === stepUUID);
+      if (indexTestStep !== -1) tempTC.TestSteps[indexTestStep].IsDisabled = false;
     }
     state.openedTCs[index] = tempTC
   },

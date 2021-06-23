@@ -13,6 +13,7 @@
         fill-input
         hide-selected
         options-dense
+        :readonly="readonly"
         >
       </q-select>
     </div>
@@ -42,6 +43,10 @@ export default defineComponent({
     const filteredTestAUTs: Ref<TestAUTInterface[]> = ref([])
     const testAUTs: Ref<TestAUTInterface[]> = computed(() => $store.getters['global/testAuTs'] as TestAUTInterface[]);
     const testAUT: Ref<TestAUTInterface | undefined> = ref(undefined);
+    const readonly = computed(() => {
+      if (props.TestStep.IsDisabled) return true
+      return false
+    })
     testAUT.value = testAUTs.value.find((aut: TestAUTInterface) => aut.Id === props.TestStep.TestAUTId)
     function filterTestAUTFn(val: string, update: any) {
       update(() => {
@@ -60,6 +65,7 @@ export default defineComponent({
       testAUTs,
       onChangeTestAUT,
       testAUT,
+      readonly,
     }
   },
 });

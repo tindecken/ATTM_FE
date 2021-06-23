@@ -7,6 +7,12 @@
         </q-item-section>
         <q-item-section>Use TestEnv</q-item-section>
       </q-item>
+      <q-item clickable v-close-popup @click="unUseTestEnv()">
+        <q-item-section avatar>
+          <q-icon color="primary" name="create" />
+        </q-item-section>
+        <q-item-section>UnUse TestEnv</q-item-section>
+      </q-item>
     </template>
   </base-menu>
 </template>
@@ -22,8 +28,12 @@ export default defineComponent({
     function useTestEnv() {
       emit('useTestEnv')
     }
+    function unUseTestEnv() {
+      emit('unUseTestEnv')
+    }
     return {
       useTestEnv,
+      unUseTestEnv,
     };
   },
 })

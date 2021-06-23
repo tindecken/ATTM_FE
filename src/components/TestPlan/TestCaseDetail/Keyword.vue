@@ -13,6 +13,7 @@
       fill-input
       hide-selected
       options-dense
+      :readonly="readonly"
     />
   </div>
 </template>
@@ -45,6 +46,10 @@ export default defineComponent({
     onMounted(() => {
       filteredKeywords.value = keywords.value;
     })
+    const readonly = computed(() => {
+      if (props.TestStep.IsDisabled) return true
+      return false
+    })
     function filterKeywordFn(val: string, update: any) {
       update(() => {
         const needle = val.toLowerCase()
@@ -60,6 +65,7 @@ export default defineComponent({
       filteredKeywords,
       keywords,
       onChangeKeyword,
+      readonly,
     }
   },
 });

@@ -1,6 +1,9 @@
 <template>
   <div>
-    <parameter-menu></parameter-menu>
+    <parameter-menu
+      @useTestEnv="useTestEnv"
+      @unUseTestEnv="unUseTestEnv"
+    ></parameter-menu>
     <q-input
       :class="valueStyle"
       :debounce="300"
@@ -35,9 +38,7 @@ import { TestStepInterface } from 'src/Models/TestStep';
 import { TestEnvInterface } from 'src/Models/TestEnv';
 import { TestEnvCategoryInterface } from 'src/Models/TestEnvCategory';
 import { TestEnvNodeInterface } from 'src/Models/TestEnvNode';
-import { useQuasar } from 'quasar'
 import { useStore } from 'vuex'
-import TestEnvironmentDialog from '../Dialog/TestEnvironmentDialog.vue'
 import ParameterMenu from '../ContextMenu/DetailMenu/ParameterMenu.vue'
 
 export default defineComponent({
@@ -57,13 +58,13 @@ export default defineComponent({
   },
   setup(props, context) {
     const $store = useStore()
-    const $q = useQuasar()
     const isParamError: Ref<boolean> = ref(false)
     const paramErrorMessage = ref('')
     const isDark = computed(() => $store.getters['global/darkTheme'] as boolean);
     const readonly = computed(() => {
       const numberOfParam: number = props.TestStep.Params.length;
       const testEnvPath = props.TestStep.Params[props.ParamIndex]?.TestNodePath
+      if (props.TestStep.IsDisabled) return true
       if (testEnvPath && testEnvPath !== '') {
         return true
       }
@@ -100,6 +101,8 @@ export default defineComponent({
           const node = cat.Nodes.find((n: TestEnvNodeInterface) => n.Name === nodeEnv)
           if (node) {
             value = node.Value
+            isParamError.value = false
+            paramErrorMessage.value = ''
           } else {
             isParamError.value = true
             paramErrorMessage.value = `There's no node: ${nodeEnv} in environment: ${selectedTestEnv.Name}`
@@ -143,20 +146,8 @@ export default defineComponent({
       context.emit('useTestEnv', flatNode)
     }
 
-    function onUseTestEnv() {
-      // open new testEnv dialog
-      $q.dialog({
-        component: TestEnvironmentDialog,
-      }).onOk((node: TestEnvFlatNodeInterface) => {
-        // TODO: handle ok
-        if (node) {
-          useTestEnv(node)
-        }
-      }).onCancel(() => {
-        // TODO
-      }).onDismiss(() => {
-        // TODO
-      })
+    function unUseTestEnv() {
+      context.emit('unUseTestEnv', prValue.value)
     }
 
     return {
@@ -164,11 +155,12 @@ export default defineComponent({
       valueStyle,
       getValueType,
       isDark,
-      onUseTestEnv,
       readonly,
       prValue,
       isParamError,
       paramErrorMessage,
+      useTestEnv,
+      unUseTestEnv,
     }
   },
 });

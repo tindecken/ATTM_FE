@@ -1,5 +1,5 @@
 <template>
-  <q-menu touch-position context-menu ref="menuRef">
+  <q-menu touch-position context-menu>
     <q-list dense style="min-width: 100px">
       <slot>
       </slot>
@@ -54,13 +54,13 @@
         <q-item-section>Delete</q-item-section>
       </q-item>
       <q-separator />
-      <q-item clickable v-close-popup>
+      <q-item clickable v-close-popup @click="enableRows()">
         <q-item-section avatar>
           <q-icon color="primary" name="toggle_on" />
         </q-item-section>
         <q-item-section>Enable</q-item-section>
       </q-item>
-      <q-item clickable v-close-popup>
+      <q-item clickable v-close-popup @click="disableRows()">
         <q-item-section avatar>
           <q-icon color="primary" name="toggle_off" />
         </q-item-section>
@@ -71,9 +71,7 @@
 </template>
 
 <script lang="ts">
-import {
-  defineComponent, ref, Ref,
-} from 'vue';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'DetailContextMenu',
@@ -82,22 +80,25 @@ export default defineComponent({
   },
   components: {},
   setup(props, { emit }) {
-    const menuRef: Ref<any> = ref(null)
     function deleteRows() {
       emit('deleteRows')
+    }
+    function enableRows() {
+      emit('enableRows')
+    }
+    function disableRows() {
+      emit('disableRows')
     }
     function useTestEnv() {
       emit('useTestEnv')
     }
-
     function insertDescription() {
-      console.log('menuRef.value', menuRef.value)
-      menuRef.value.toggle()
       emit('insertDescription')
     }
     return {
-      menuRef,
       deleteRows,
+      enableRows,
+      disableRows,
       useTestEnv,
       insertDescription,
     };

@@ -38,7 +38,7 @@
               :filter-method="filterMethod"
             >
               <template v-slot:top-left>
-                <q-input borderless dense debounce="200" v-model="filterTable" placeholder="Filter">
+                <q-input borderless dense debounce="300" v-model="filterTable" placeholder="Filter">
                   <template v-slot:append>
                     <q-icon name="search" />
                   </template>
@@ -78,9 +78,14 @@
                   @click.ctrl="toggleSelectedRow(props.row)"
                   @click.exact="toggleSingleRow(props.row)"
                   @click.shift="toggleRowGroup(props.row)"
+                  :class="disabledStyle(props.row)"
                   >
                   <q-td key="no" :props="props" class="q-c-input">
-                    <no :TestStep="props.row" :Index="props.rowIndex + 1"></no>
+                    <no :TestStep="props.row" :Index="props.rowIndex + 1"
+                      @insertDescription="onInsertDescription(tc, $event)"
+                      @enableRows="onEnableRows()"
+                      @disableRows="onDisableRows()"
+                    ></no>
                   </q-td>
                   <q-td key="testAUT" :props="props" class="q-c-input">
                     <test-aut :TestStep="props.row" @changeTestAUT="changeTestAUT(tc, props.row, $event)"></test-aut>
@@ -93,7 +98,8 @@
                       :TestStep="props.row"
                       :ParamIndex="index-1"
                       @changeParam="changeParam(tc, props.row, index-1, $event)"
-                      @useTestEnv="useTestEnv(tc, props.row, index-1, $event)"
+                      @useTestEnv="onUseTestEnv(tc, props.row, index-1)"
+                      @unUseTestEnv="onUnUseTestEnv(tc, props.row, index-1, $event)"
                       >
                     </parameter>
                   </q-td>
@@ -151,6 +157,7 @@ export default defineComponent({
     const showByIndex = ref(null)
     const selectedKeyword = ref('')
     const selected: Ref<any[]> = ref([])
+    const isDark = computed(() => $store.getters['global/darkTheme']);
     const columns = ref(
       [
         {
@@ -371,6 +378,13 @@ export default defineComponent({
         $store.commit('testcase/setSelectedTestCaseId', val);
       },
     })
+
+    function disabledStyle(row: TestStepInterface) {
+      if (row.IsDisabled) {
+        if (isDark.value) return 'disabledDark'
+        return 'disabledLight'
+      } return ''
+    }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const openedTCs: Ref<TestCaseInterface[]> = computed(() => $store.getters['testcase/openedTCs'])
     function closeTab(testcase: TestCaseInterface) {
@@ -411,11 +425,20 @@ export default defineComponent({
       $store.commit('category/updateTestCase', tempTC)
     }
 
-    function useTestEnv(testCase: TestCaseInterface, testStep: TestStepInterface, paramIndex: number, testEnvNode: TestEnvFlatNodeInterface) {
+    function updateTestEnvValue(testCase: TestCaseInterface, testStep: TestStepInterface, paramIndex: number, testEnvNode: TestEnvFlatNodeInterface) {
       const stepIndex: number = testCase.TestSteps.indexOf(testStep);
       const tempTC: TestCaseInterface = _.cloneDeep(testCase)
       tempTC.TestSteps[stepIndex].Params[paramIndex].TestNodePath = `${testEnvNode.Category}/${testEnvNode.Name}`
       tempTC.TestSteps[stepIndex].Params[paramIndex].Value = testEnvNode.Value;
+      $store.commit('testcase/updateOpenedTCs', tempTC)
+      $store.commit('category/updateTestCase', tempTC)
+    }
+
+    function onUnUseTestEnv(testCase: TestCaseInterface, testStep: TestStepInterface, paramIndex: number, currentValue: string) {
+      const stepIndex: number = testCase.TestSteps.indexOf(testStep);
+      const tempTC: TestCaseInterface = _.cloneDeep(testCase)
+      tempTC.TestSteps[stepIndex].Params[paramIndex].TestNodePath = ''
+      tempTC.TestSteps[stepIndex].Params[paramIndex].Value = currentValue
       $store.commit('testcase/updateOpenedTCs', tempTC)
       $store.commit('category/updateTestCase', tempTC)
     }
@@ -532,6 +555,28 @@ export default defineComponent({
       })
     }
 
+    function onEnableRows() {
+      const currTestCase = openedTCs.value.find((tc: TestCaseInterface) => tc.Id === selectedTestCaseId.value) as TestCaseInterface
+      selected.value.forEach((selectedRow: any) => {
+        currTestCase.TestSteps.forEach((testStep: TestStepInterface) => {
+          if (testStep.UUID === selectedRow.UUID) {
+            $store.commit('testcase/enableStep', { testCaseId: selectedTestCaseId.value, stepUUID: selectedRow.UUID });
+          }
+        })
+      })
+    }
+
+    function onDisableRows() {
+      const currTestCase = openedTCs.value.find((tc: TestCaseInterface) => tc.Id === selectedTestCaseId.value) as TestCaseInterface
+      selected.value.forEach((selectedRow: any) => {
+        currTestCase.TestSteps.forEach((testStep: TestStepInterface) => {
+          if (testStep.UUID === selectedRow.UUID) {
+            $store.commit('testcase/disableStep', { testCaseId: selectedTestCaseId.value, stepUUID: selectedRow.UUID });
+          }
+        })
+      })
+    }
+
     function onInsertDescription(testCase: TestCaseInterface, testStep: TestStepInterface) {
       // open new AddDescriptionDialog dialog
       $q.dialog({
@@ -587,14 +632,15 @@ export default defineComponent({
       return filtered
     }
 
-    function onUseTestEnv() {
+    function onUseTestEnv(testCase: TestCaseInterface, testStep: TestStepInterface, index: number) {
       // open new testEnv dialog
       $q.dialog({
         component: TestEnvironmentDialog,
       }).onOk((node: TestEnvFlatNodeInterface) => {
         // TODO: handle ok
+        console.log('node', node)
         if (node) {
-          useTestEnv(node)
+          updateTestEnvValue(testCase, testStep, index, node)
         }
       }).onCancel(() => {
         // TODO
@@ -623,11 +669,15 @@ export default defineComponent({
       addNewStep,
       selectedKeyword,
       onDeleteRows,
+      onEnableRows,
+      onDisableRows,
       saveTestCase,
       changeTestAUT,
       selectedTestCaseId,
-      useTestEnv,
+      updateTestEnvValue,
       filterTable: ref(''),
+      onUnUseTestEnv,
+      disabledStyle,
     };
   },
 });
@@ -656,5 +706,11 @@ export default defineComponent({
   padding-left: 0px;
   padding-top: 1px;
   padding-bottom: 1px;
+}
+:deep(.disabledDark) {
+  background-color: $blue-grey-10
+}
+:deep(.disabledLight) {
+  background-color: $grey-12;
 }
 </style>

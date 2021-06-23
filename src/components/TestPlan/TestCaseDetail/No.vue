@@ -1,5 +1,9 @@
 <template>
-  <no-menu></no-menu>
+  <no-menu
+    @enableRows="enableRows()"
+    @disableRows="disableRows()"
+    @insertDescription="insertDescription()"
+  ></no-menu>
   <div>
     {{Index}}
   </div>
@@ -7,12 +11,9 @@
 
 <script lang="ts">
 import {
-  computed, defineComponent, onMounted, ref, Ref, PropType,
+  defineComponent, PropType, computed,
 } from 'vue';
 
-import { KeywordInterface } from 'src/Models/Keyword'
-import { FlatKeywordInterface } from 'src/Models/FlatKeyword'
-import { useStore } from 'vuex'
 import { TestStepInterface } from 'src/Models/TestStep'
 import NoMenu from '../ContextMenu/DetailMenu/NoMenu.vue'
 
@@ -30,30 +31,33 @@ export default defineComponent({
       default: 0,
     },
   },
+  emits: ['insertDescription', 'enableRows', 'disableRows'],
   components: { NoMenu },
-  setup(props, context) {
-    const $store = useStore()
-    const filteredKeywords: Ref<FlatKeywordInterface[]> = ref([])
-    const keywords: Ref<FlatKeywordInterface[]> = computed(() => $store.getters['keyword/keywords'] as FlatKeywordInterface[]);
-    onMounted(() => {
-      filteredKeywords.value = keywords.value;
-    })
-    function filterKeywordFn(val: string, update: any) {
-      update(() => {
-        const needle = val.toLowerCase()
-        filteredKeywords.value = keywords.value.filter((kw: KeywordInterface) => kw.Name.toLowerCase().indexOf(needle) > -1)
-      })
+  setup(props, { emit }) {
+    const valueStyle = computed(() => 'disabled')
+    function enableRows() {
+      emit('enableRows')
     }
 
-    function onChangeKeyword(newKeyword: FlatKeywordInterface) {
-      context.emit('changeKeyword', newKeyword)
+    function disableRows() {
+      emit('disableRows')
+    }
+    function insertDescription() {
+      emit('insertDescription', props.TestStep)
     }
     return {
-      filterKeywordFn,
-      filteredKeywords,
-      keywords,
-      onChangeKeyword,
+      insertDescription,
+      enableRows,
+      disableRows,
+      valueStyle,
     }
   },
 });
 </script>
+
+<style scoped lang="scss">
+:deep(.disabledStyle) {
+  background-color: $teal-5;
+  background-clip: content-box;
+}
+</style>
