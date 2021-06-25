@@ -3,6 +3,9 @@
     @enableRows="enableRows()"
     @disableRows="disableRows()"
     @insertDescription="insertDescription()"
+    @copyTestSteps="copyTestSteps()"
+    @cutTestSteps="cutTestSteps()"
+    @deleteTestSteps="deleteTestSteps()"
   ></no-menu>
   <div>
     {{Index}}
@@ -11,7 +14,7 @@
 
 <script lang="ts">
 import {
-  defineComponent, PropType, computed,
+  defineComponent, PropType,
 } from 'vue';
 
 import { TestStepInterface } from 'src/Models/TestStep'
@@ -31,10 +34,9 @@ export default defineComponent({
       default: 0,
     },
   },
-  emits: ['insertDescription', 'enableRows', 'disableRows'],
+  emits: ['insertDescription', 'enableRows', 'disableRows', 'copyTestSteps', 'cutTestSteps', 'deleteTestSteps'],
   components: { NoMenu },
   setup(props, { emit }) {
-    const valueStyle = computed(() => 'disabled')
     function enableRows() {
       emit('enableRows')
     }
@@ -45,11 +47,22 @@ export default defineComponent({
     function insertDescription() {
       emit('insertDescription', props.TestStep)
     }
+    function copyTestSteps() {
+      emit('copyTestSteps')
+    }
+    function cutTestSteps() {
+      emit('cutTestSteps')
+    }
+    function deleteTestSteps() {
+      emit('deleteTestSteps')
+    }
     return {
       insertDescription,
       enableRows,
       disableRows,
-      valueStyle,
+      copyTestSteps,
+      cutTestSteps,
+      deleteTestSteps,
     }
   },
 });

@@ -11,6 +11,7 @@ import testgroup from './testgroup';
 import testenvironment from './environment';
 import testclient from './testclient';
 import createregression from './createregression';
+import teststep from './teststep';
 
 import { AuthStateInterface } from './auth/state';
 import { GlobalStateInterface } from './global/state';
@@ -20,6 +21,7 @@ import { TestCaseStateInterface } from './testcase/state';
 import { TestSuiteStateInterface } from './testsuite/state';
 import { TestGroupStateInterface } from './testgroup/state';
 import { TestClientStateInterface } from './testclient/state';
+import { TestStepStateInterface } from './teststep/state';
 import { TestEnvironmentStateInterface } from './environment/state';
 import { CreateRegressionStateInterface } from './createregression/state';
 
@@ -45,6 +47,7 @@ export interface StateInterface {
   testenvironment: TestEnvironmentStateInterface;
   testclient: TestClientStateInterface;
   createregression: CreateRegressionStateInterface;
+  teststep: TestStepStateInterface;
 }
 
 export default store((/* { ssrContext } */) => {
@@ -76,6 +79,10 @@ export default store((/* { ssrContext } */) => {
     key: 'testcase',
     modules: ['testcase'],
   });
+  const persistTestStep = new VuexPersistence({
+    key: 'teststep',
+    modules: ['teststep'],
+  });
   const persistTestEnvironment = new VuexPersistence({
     key: 'testenvironment',
     modules: ['testenvironment'],
@@ -101,8 +108,9 @@ export default store((/* { ssrContext } */) => {
       testenvironment,
       testclient,
       createregression,
+      teststep,
     },
-    plugins: [new VuexPersistence().plugin, persistGlobal.plugin, persistAuth.plugin, persistKeyword.plugin, persistTestCase.plugin, persistCategory.plugin, persistTestSuite.plugin, persistTestGroup.plugin, persistTestEnvironment.plugin, persistTestClient.plugin, persistCreateRegression.plugin],
+    plugins: [new VuexPersistence().plugin, persistGlobal.plugin, persistAuth.plugin, persistKeyword.plugin, persistTestCase.plugin, persistCategory.plugin, persistTestSuite.plugin, persistTestGroup.plugin, persistTestEnvironment.plugin, persistTestClient.plugin, persistCreateRegression.plugin, persistTestStep.plugin],
 
     // enable strict mode (adds overhead!)
     // for dev mode only

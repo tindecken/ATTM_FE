@@ -9,13 +9,13 @@
         </q-item-section>
         <q-item-section>Edit</q-item-section>
       </q-item>
-      <q-item clickable v-close-popup>
+      <q-item clickable v-close-popup @click="copyTestSteps()">
         <q-item-section avatar>
           <q-icon color="primary" name="content_copy" />
         </q-item-section>
         <q-item-section>Copy</q-item-section>
       </q-item>
-      <q-item clickable v-close-popup>
+      <q-item clickable v-close-popup @click="cutTestSteps()">
         <q-item-section avatar>
           <q-icon color="primary" name="content_cut" />
         </q-item-section>
@@ -47,7 +47,7 @@
         </q-item-section>
         <q-item-section>Insert Description</q-item-section>
       </q-item>
-      <q-item clickable v-close-popup @click="deleteRows()">
+      <q-item clickable v-close-popup @click="deleteTestSteps()">
         <q-item-section avatar>
           <q-icon color="primary" name="delete_outline" />
         </q-item-section>
@@ -80,8 +80,8 @@ export default defineComponent({
   },
   components: {},
   setup(props, { emit }) {
-    function deleteRows() {
-      emit('deleteRows')
+    function deleteTestSteps() {
+      emit('deleteTestSteps')
     }
     function enableRows() {
       emit('enableRows')
@@ -95,12 +95,20 @@ export default defineComponent({
     function insertDescription() {
       emit('insertDescription')
     }
+    function copyTestSteps() {
+      emit('copyTestSteps')
+    }
+    function cutTestSteps() {
+      emit('cutTestSteps')
+    }
     return {
-      deleteRows,
+      deleteTestSteps,
       enableRows,
       disableRows,
       useTestEnv,
       insertDescription,
+      copyTestSteps,
+      cutTestSteps,
     };
   },
 })

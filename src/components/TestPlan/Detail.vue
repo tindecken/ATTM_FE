@@ -23,6 +23,7 @@
           >
           <q-tab-panel v-for="tc in openedTCs" :key="tc.Id" :name="tc.Id">
             <q-table
+              :class="[isDark ? 'sticky-header-dark': 'sticky-header-light']"
               dense
               :rows="tc.TestSteps"
               :columns="columns"
@@ -36,6 +37,7 @@
               no-data-label="Test case has no step"
               :filter="filterTable"
               :filter-method="filterMethod"
+              :selected-rows-label="getSelectedString"
             >
               <template v-slot:top-left>
                 <q-input borderless dense debounce="300" v-model="filterTable" placeholder="Filter">
@@ -85,6 +87,9 @@
                       @insertDescription="onInsertDescription(tc, $event)"
                       @enableRows="onEnableRows()"
                       @disableRows="onDisableRows()"
+                      @copyTestSteps="onCopyTestSteps()"
+                      @cutTestSteps="onCutTestSteps()"
+                      @deleteTestSteps="onDeleteTestSteps()"
                     ></no>
                   </q-td>
                   <q-td key="testAUT" :props="props" class="q-c-input">
@@ -108,9 +113,9 @@
             </q-table>
             <q-btn color="primary" label="New Step" @click="addNewStep(selectedTestCaseId)"></q-btn>
             <q-btn color="primary" label="Save" @click="saveTestCase(selectedTestCaseId)"></q-btn>
-            <div class="q-mt-md">
+            <!-- <div class="q-mt-md">
               Selected: {{ JSON.stringify(selected) }}
-            </div>
+            </div> -->
           </q-tab-panel>
         </q-tab-panels>
       </div>
@@ -544,15 +549,16 @@ export default defineComponent({
       $store.commit('testcase/addNewStep', testCaseId);
     }
 
-    function onDeleteRows() {
+    function onDeleteTestSteps() {
       const currTestCase = openedTCs.value.find((tc: TestCaseInterface) => tc.Id === selectedTestCaseId.value) as TestCaseInterface
-      selected.value.forEach((selectedRow: any) => {
+      selected.value.forEach((selectedTestStep: TestStepInterface) => {
         currTestCase.TestSteps.forEach((testStep: TestStepInterface) => {
-          if (testStep.UUID === selectedRow.UUID) {
-            $store.commit('testcase/deleteStep', { testCaseId: selectedTestCaseId.value, stepUUID: selectedRow.UUID });
+          if (testStep.UUID === selectedTestStep.UUID) {
+            $store.commit('testcase/deleteStep', { testCaseId: selectedTestCaseId.value, stepUUID: selectedTestStep.UUID });
           }
         })
       })
+      selected.value = []
     }
 
     function onEnableRows() {
@@ -575,6 +581,16 @@ export default defineComponent({
           }
         })
       })
+    }
+
+    function onCopyTestSteps() {
+      if (selected.value.length > 0) {
+        $store.commit('teststep/setCopiedTestSteps', selected.value);
+      }
+    }
+    function onCutTestSteps() {
+      onCopyTestSteps()
+      onDeleteTestSteps()
     }
 
     function onInsertDescription(testCase: TestCaseInterface, testStep: TestStepInterface) {
@@ -649,6 +665,10 @@ export default defineComponent({
       })
     }
 
+    function getSelectedString() {
+      return selected.value.length === 0 ? '' : `${selected.value.length} step${selected.value.length > 1 ? 's' : ''} selected.`
+    }
+
     return {
       onUseTestEnv,
       filterMethod,
@@ -668,7 +688,7 @@ export default defineComponent({
       onTabChanging,
       addNewStep,
       selectedKeyword,
-      onDeleteRows,
+      onDeleteTestSteps,
       onEnableRows,
       onDisableRows,
       saveTestCase,
@@ -678,6 +698,10 @@ export default defineComponent({
       filterTable: ref(''),
       onUnUseTestEnv,
       disabledStyle,
+      isDark,
+      getSelectedString,
+      onCopyTestSteps,
+      onCutTestSteps,
     };
   },
 });
@@ -711,6 +735,46 @@ export default defineComponent({
   background-color: $blue-grey-10
 }
 :deep(.disabledLight) {
-  background-color: $grey-12;
+  background-color: $grey-4;
+}
+.sticky-header-dark {  /* height or max-height is important */
+  max-height: 790px;
+
+  .q-table__top,
+  .q-table__bottom,
+  thead tr:first-child th {    /* bg color is important for th; just specify one */
+    background-color: $dark;
+  }
+  thead tr th {
+    position: sticky;
+    z-index: 1;
+  }
+  thead tr:first-child th {
+    top: 0;
+  }
+  /* this is when the loading indicator appears */
+  &.q-table--loading thead tr:last-child th {    /* height of all previous header rows */
+    top: 48px;
+  }
+}
+.sticky-header-light {  /* height or max-height is important */
+  max-height: 790px;
+
+  .q-table__top,
+  .q-table__bottom,
+  thead tr:first-child th {    /* bg color is important for th; just specify one */
+    background-color: $light-green-1;
+  }
+  thead tr th {
+    position: sticky;
+    z-index: 1;
+  }
+  thead tr:first-child th {
+    top: 0;
+  }
+  /* this is when the loading indicator appears */
+  &.q-table--loading thead tr:last-child th {    /* height of all previous header rows */
+    top: 48px;
+  }
 }
 </style>

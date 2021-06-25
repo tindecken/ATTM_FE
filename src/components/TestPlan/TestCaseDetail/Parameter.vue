@@ -89,6 +89,14 @@ export default defineComponent({
       }
       return ''
     }
+    function setNoError() {
+      isParamError.value = false
+      paramErrorMessage.value = ''
+    }
+    function setError(message: string) {
+      isParamError.value = true
+      paramErrorMessage.value = message
+    }
     function getValueFromTestEnv(ts: TestStepInterface, prIndex: number): string {
       let value = ''
       const selectedTestEnv = $store.getters['testenvironment/selectedTestEnv'] as TestEnvInterface
@@ -101,21 +109,17 @@ export default defineComponent({
           const node = cat.Nodes.find((n: TestEnvNodeInterface) => n.Name === nodeEnv)
           if (node) {
             value = node.Value
-            isParamError.value = false
-            paramErrorMessage.value = ''
+            setNoError()
           } else {
-            isParamError.value = true
-            paramErrorMessage.value = `There's no node: ${nodeEnv} in environment: ${selectedTestEnv.Name}`
+            setError(`There's no node: ${nodeEnv} in environment: ${selectedTestEnv.Name}`)
             value = ts.Params[prIndex].Value
           }
         } else {
-          isParamError.value = true
-          paramErrorMessage.value = `There's no category: ${catEnv} in environment: ${selectedTestEnv.Name}`
+          setError(`There's no category: ${catEnv} in environment: ${selectedTestEnv.Name}`)
           value = ts.Params[prIndex].Value
         }
       } else {
-        isParamError.value = true
-        paramErrorMessage.value = 'No Test Environment is selected, get last value'
+        setError('No Test Environment is selected, get last value')
         value = ts.Params[prIndex].Value
       }
 
@@ -128,6 +132,7 @@ export default defineComponent({
         if (ts.Params[prIndex].TestNodePath !== '') {
           return getValueFromTestEnv(ts, prIndex)
         }
+        setNoError()
         return ts.Params[prIndex].Value
       } return ''
     })
