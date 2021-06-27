@@ -1,4 +1,4 @@
-import { TestStepInterface } from "src/Models/TestStep";
+import { TestStepInterface } from 'src/Models/TestStep';
 
 export interface TestStepStateInterface {
   copiedTestSteps: TestStepInterface[];

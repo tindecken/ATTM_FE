@@ -59,14 +59,15 @@
                 </q-tr>
               </template>
               <template v-slot:body="props">
-                <q-tr v-show="props.row.Description" :props="props">
-                  <q-td colspan="100%">
+                <q-tr v-show="props.row.Description" :props="props" class="tsDescription">
+                  <q-td colspan="100%" style="padding: 0px;">
                     <q-input
                       :model-value="props.row.Description"
                       dense
                       borderless
                       @update:model-value="updateDescription(tc, props.row, $event)"
                       debounce="500"
+                      style="padding: 0px; font-style: oblique;"
                     >
                       <template v-slot:before>
                         <q-icon name="notes"  style="font-size: 0.9rem;" />
@@ -87,9 +88,13 @@
                       @insertDescription="onInsertDescription(tc, $event)"
                       @enableRows="onEnableRows()"
                       @disableRows="onDisableRows()"
-                      @copyTestSteps="onCopyTestSteps()"
-                      @cutTestSteps="onCutTestSteps()"
+                      @copyTestSteps="onCopyTestSteps(tc)"
+                      @cutTestSteps="onCutTestSteps(tc)"
+                      @pasteTestSteps="onPasteTestSteps(tc)"
                       @deleteTestSteps="onDeleteTestSteps()"
+                      @beforeShowDialog="onBeforeShowDialog(tc, props.row)"
+                      @insertTestSteps="onInsertTestSteps(tc, 1)"
+                      @insertPasteTestSteps="onInsertPasteTestSteps(tc)"
                     ></no>
                   </q-td>
                   <q-td key="testAUT" :props="props" class="q-c-input">
@@ -113,9 +118,25 @@
             </q-table>
             <q-btn color="primary" label="New Step" @click="addNewStep(selectedTestCaseId)"></q-btn>
             <q-btn color="primary" label="Save" @click="saveTestCase(selectedTestCaseId)"></q-btn>
-            <!-- <div class="q-mt-md">
-              Selected: {{ JSON.stringify(selected) }}
-            </div> -->
+            <div class="q-mt-md">
+              Selected:
+              <ul>
+                <li v-for="value in selected" :key="value.UUID">
+                  {{value.UUID}}
+                </li>
+              </ul>
+            </div>
+            <div class="q-mt-md">
+              Copied:
+              <ul>
+                <li v-for="value in copiedTestSteps" :key="value.UUID">
+                  {{value.UUID}}
+                </li>
+              </ul>
+            </div>
+            <div class="q-mt-md">
+              {{rightClickIndex}}
+            </div>
           </q-tab-panel>
         </q-tab-panels>
       </div>
@@ -137,6 +158,7 @@ import { TestCaseInterface } from 'src/Models/TestCase';
 import { TestStepInterface } from 'src/Models/TestStep';
 import { TestParamInterface } from 'src/Models/TestParam';
 import _ from 'lodash'
+import uuid from 'uuid-random'
 import { TestEnvFlatNodeInterface } from 'src/Models/TestEnvFlatNode';
 import { FlatKeywordInterface } from 'src/Models/FlatKeyword';
 import { useStore } from 'vuex'
@@ -376,6 +398,7 @@ export default defineComponent({
         },
       ],
     )
+    const rightClickIndex = ref(-1)
     const selectedTestCaseId: Ref<string> = computed({
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       get: () => $store.getters['testcase/selectedTestCaseId'],
@@ -392,6 +415,7 @@ export default defineComponent({
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const openedTCs: Ref<TestCaseInterface[]> = computed(() => $store.getters['testcase/openedTCs'])
+    const copiedTestSteps: Ref<TestStepInterface[]> = computed(() => $store.getters['teststep/copiedTestSteps'])
     function closeTab(testcase: TestCaseInterface) {
       $store.commit('testcase/removeOpenedTC', testcase)
     }
@@ -477,9 +501,9 @@ export default defineComponent({
         selected.value.push(row)
       }
     }
-    function getRowIndexByUUID(currentTest: TestCaseInterface, uuid: any) {
+    function getRowIndexByUUID(currentTest: TestCaseInterface, uid: any) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      const index: number = currentTest.TestSteps.findIndex((step: TestStepInterface) => step.UUID === uuid)
+      const index: number = currentTest.TestSteps.findIndex((step: TestStepInterface) => step.UUID === uid)
       if (index === -1) return 0
       return index
     }
@@ -583,14 +607,83 @@ export default defineComponent({
       })
     }
 
-    function onCopyTestSteps() {
+    function onCopyTestSteps(testCase: TestCaseInterface) {
+      selected.value.sort((a, b) => testCase.TestSteps.indexOf(a) - testCase.TestSteps.indexOf(b));
       if (selected.value.length > 0) {
         $store.commit('teststep/setCopiedTestSteps', selected.value);
       }
     }
-    function onCutTestSteps() {
-      onCopyTestSteps()
+    function onCutTestSteps(testCase: TestCaseInterface) {
+      onCopyTestSteps(testCase)
       onDeleteTestSteps()
+    }
+
+    function onInsertTestSteps(testCase: TestCaseInterface, number: number) {
+      const tempTC: TestCaseInterface = _.cloneDeep(testCase)
+      let lastTestAUTId = '';
+      if (tempTC.TestSteps.length > 0) { // incase there's no testSteps
+        lastTestAUTId = tempTC.TestSteps[rightClickIndex.value].TestAUTId
+      }
+      // eslint-disable-next-line no-plusplus
+      for (let index = 0; index < number; index++) {
+        tempTC.TestSteps.splice(rightClickIndex.value, 0, {
+          UUID: uuid(),
+          TestAUTId: lastTestAUTId,
+          Description: '',
+          Params: [],
+          IsDisabled: false,
+          IsComment: false,
+          KWFeature: '',
+          KWCategory: '',
+        })
+      }
+      $store.commit('testcase/updateOpenedTCs', tempTC)
+      $store.commit('category/updateTestCase', tempTC)
+    }
+
+    function onPasteTestSteps(testCase: TestCaseInterface) {
+      if (copiedTestSteps.value.length === 0) return
+      const tempTC: TestCaseInterface = _.cloneDeep(testCase)
+      copiedTestSteps.value.forEach((copyTS: TestStepInterface) => {
+        console.log('before', rightClickIndex.value)
+        tempTC.TestSteps[rightClickIndex.value] = copyTS
+        rightClickIndex.value += 1
+        console.log('after', rightClickIndex.value)
+      })
+      $store.commit('testcase/updateOpenedTCs', tempTC)
+      $store.commit('category/updateTestCase', tempTC)
+    }
+
+    function onInsertPasteTestSteps(testCase: TestCaseInterface) {
+      const tempTC: TestCaseInterface = _.cloneDeep(testCase)
+      if (copiedTestSteps.value.length === 0) return
+      // insert blank test step
+      let lastTestAUTId = '';
+      if (tempTC.TestSteps.length > 0) { // incase there's no testSteps
+        lastTestAUTId = tempTC.TestSteps[rightClickIndex.value].TestAUTId
+      }
+      // eslint-disable-next-line no-plusplus
+      for (let index = 0; index < copiedTestSteps.value.length; index++) {
+        tempTC.TestSteps.splice(rightClickIndex.value, 0, {
+          UUID: uuid(),
+          TestAUTId: lastTestAUTId,
+          Description: '',
+          Params: [],
+          IsDisabled: false,
+          IsComment: false,
+          KWFeature: '',
+          KWCategory: '',
+        })
+      }
+      // paste copiedTestSteps
+      copiedTestSteps.value.forEach((copyTS: TestStepInterface) => {
+        console.log('before', rightClickIndex.value)
+        tempTC.TestSteps[rightClickIndex.value] = copyTS
+        rightClickIndex.value += 1
+        console.log('after', rightClickIndex.value)
+      })
+      $store.commit('testcase/updateOpenedTCs', tempTC)
+      $store.commit('category/updateTestCase', tempTC)
     }
 
     function onInsertDescription(testCase: TestCaseInterface, testStep: TestStepInterface) {
@@ -611,6 +704,16 @@ export default defineComponent({
       }).onDismiss(() => {
         // TODO
       })
+    }
+
+    function onBeforeShowDialog(testCase: TestCaseInterface, testStep: TestStepInterface) {
+      if (selected.value.length > 1) return
+      if (!selected.value.some((ts: TestStepInterface) => ts.UUID === testStep.UUID)) {
+        selected.value = []
+        selected.value.push(testStep)
+      }
+      rightClickIndex.value = testCase.TestSteps.findIndex((ts: TestStepInterface) => ts.UUID === testStep.UUID)
+      console.log('rightClickIndex', rightClickIndex)
     }
 
     async function saveTestCase(testCaseId: string) {
@@ -691,6 +794,7 @@ export default defineComponent({
       onDeleteTestSteps,
       onEnableRows,
       onDisableRows,
+      onBeforeShowDialog,
       saveTestCase,
       changeTestAUT,
       selectedTestCaseId,
@@ -702,12 +806,26 @@ export default defineComponent({
       getSelectedString,
       onCopyTestSteps,
       onCutTestSteps,
+      onPasteTestSteps,
+      copiedTestSteps,
+      rightClickIndex,
+      onInsertTestSteps,
+      onInsertPasteTestSteps,
     };
   },
 });
 </script>
 
 <style scoped lang="scss">
+:deep tr.tsDescription label {
+  height: -webkit-fill-available;
+}
+:deep tr.tsDescription label .q-field__marginal{
+  height: -webkit-fill-available;
+}
+:deep tr.tsDescription label .q-field__control{
+  height: -webkit-fill-available;
+}
 :deep .q-tab {
   padding-right: 2px;
   padding-left: 4px;
@@ -732,10 +850,12 @@ export default defineComponent({
   padding-bottom: 1px;
 }
 :deep(.disabledDark) {
-  background-color: $blue-grey-10
+  background-color: $blue-grey-14;
+  font-style: italic;
 }
 :deep(.disabledLight) {
-  background-color: $grey-4;
+  background-color: $grey-6;
+  font-style: italic;
 }
 .sticky-header-dark {  /* height or max-height is important */
   max-height: 790px;

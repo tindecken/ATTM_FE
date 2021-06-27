@@ -22,19 +22,19 @@
         <q-item-section>Cut</q-item-section>
       </q-item>
       <q-separator />
-      <q-item clickable v-close-popup>
+      <q-item clickable v-close-popup @click="pasteTestSteps()">
         <q-item-section avatar>
           <q-icon color="primary" name="content_paste" />
         </q-item-section>
         <q-item-section>Paste</q-item-section>
       </q-item>
-      <q-item clickable v-close-popup>
+      <q-item clickable v-close-popup @click="insertTestSteps()">
         <q-item-section avatar>
           <q-icon color="primary" name="add" />
         </q-item-section>
         <q-item-section>Insert</q-item-section>
       </q-item>
-      <q-item clickable v-close-popup>
+      <q-item clickable v-close-popup @click="insertPasteTestSteps()">
         <q-item-section avatar>
           <q-icon color="primary" name="post_add" />
         </q-item-section>
@@ -101,6 +101,15 @@ export default defineComponent({
     function cutTestSteps() {
       emit('cutTestSteps')
     }
+    function pasteTestSteps() {
+      emit('pasteTestSteps')
+    }
+    function insertTestSteps() {
+      emit('insertTestSteps')
+    }
+    function insertPasteTestSteps() {
+      emit('insertPasteTestSteps')
+    }
     return {
       deleteTestSteps,
       enableRows,
@@ -109,6 +118,9 @@ export default defineComponent({
       insertDescription,
       copyTestSteps,
       cutTestSteps,
+      pasteTestSteps,
+      insertTestSteps,
+      insertPasteTestSteps,
     };
   },
 })

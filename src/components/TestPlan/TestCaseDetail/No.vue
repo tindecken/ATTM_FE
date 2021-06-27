@@ -5,9 +5,16 @@
     @insertDescription="insertDescription()"
     @copyTestSteps="copyTestSteps()"
     @cutTestSteps="cutTestSteps()"
+    @pasteTestSteps="pasteTestSteps()"
     @deleteTestSteps="deleteTestSteps()"
+    @before-show="beforeShowDialog"
+    @insertTestSteps="insertTestSteps()"
+    @insertPasteTestSteps="insertPasteTestSteps()"
   ></no-menu>
   <div>
+    <q-tooltip>
+      {{TestStep.UUID}}
+    </q-tooltip>
     {{Index}}
   </div>
 </template>
@@ -34,7 +41,9 @@ export default defineComponent({
       default: 0,
     },
   },
-  emits: ['insertDescription', 'enableRows', 'disableRows', 'copyTestSteps', 'cutTestSteps', 'deleteTestSteps'],
+  emits: ['insertDescription', 'enableRows', 'disableRows',
+    'copyTestSteps', 'cutTestSteps', 'deleteTestSteps', 'beforeShowDialog',
+    'pasteTestSteps', 'insertTestSteps', 'insertPasteTestSteps'],
   components: { NoMenu },
   setup(props, { emit }) {
     function enableRows() {
@@ -56,13 +65,29 @@ export default defineComponent({
     function deleteTestSteps() {
       emit('deleteTestSteps')
     }
+    function beforeShowDialog() {
+      emit('beforeShowDialog')
+    }
+    function pasteTestSteps() {
+      emit('pasteTestSteps')
+    }
+    function insertTestSteps() {
+      emit('insertTestSteps')
+    }
+    function insertPasteTestSteps() {
+      emit('insertPasteTestSteps')
+    }
     return {
       insertDescription,
       enableRows,
       disableRows,
       copyTestSteps,
       cutTestSteps,
+      pasteTestSteps,
       deleteTestSteps,
+      beforeShowDialog,
+      insertTestSteps,
+      insertPasteTestSteps,
     }
   },
 });
