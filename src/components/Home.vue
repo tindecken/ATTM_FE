@@ -36,7 +36,9 @@
 <script lang="ts">
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, onMounted } from 'vue';
+import * as signalR from '@microsoft/signalr';
+import DevRunRecordInterface from 'src/Models/DevRunRecord';
 import LeftDrawer from './LeftDrawer.vue';
 import RightDrawer from './RightDrawer.vue';
 import EnvFooter from './Footer/EnvFooter.vue';
@@ -68,7 +70,24 @@ export default defineComponent({
       }
     };
     currentUser.value = $store.getters['auth/userName'];
+    onMounted(() => {
+      const connection = new signalR.HubConnectionBuilder()
+        .withUrl('http://localhost:5000/monitoring')
+        .build()
 
+      connection.on('DevRunningInfo', (data: DevRunRecordInterface) => {
+        console.log(data);
+      });
+
+      connection.on('DevRunningFail', (data: DevRunRecordInterface) => {
+        console.log(data);
+      });
+
+      void connection.start()
+
+      // void connection.start()
+      //   .then(() => connection.invoke('SendMessage', 'Hello'));
+    });
     return {
       leftDrawerOpen, rightDrawerOpen, err, currentUser, logout,
     };

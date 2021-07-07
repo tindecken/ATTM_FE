@@ -76,6 +76,7 @@ Todo:
   ✔ detail - insert & paste ==> fix, maybe difference testcase between insert and paste @done(21-06-27 15:26)
   ✔ detail - insert blank @done(21-06-27 15:26)
   ✔ right click  means select, if already multiple selected --> no affect, if selected.length = 1 or 0 --> select it. @done(21-06-27 15:26)
+  ☐ remove Team attribute
   ☐ properties of testcase, has 3 tabs: Properties, DevRunRecord, RegressionRunRecord
   API to get all DevRunRecords of a testcase, sort by last running, double click to DevRunRecord to get detail running of a TestCase
   API to get all RegressionRunRecord of a testcase (Regression Test, sort by last running --> RegressionRunRecord, sort by last running)

@@ -24,6 +24,13 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: '/devmonitoring',
+        component: () => import('components/DevMonitoring/DevMonitoring.vue'),
+        meta: {
+          requiresAuth: true,
+        },
+      },
+      {
         path: '/regression',
         component: () => import('components/Regression/Regression.vue'),
         meta: {

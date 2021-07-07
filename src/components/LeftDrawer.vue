@@ -6,11 +6,11 @@
         </q-item-section>
         <q-item-section>Test Plan</q-item-section>
       </q-item>
-      <q-item clickable v-ripple class="cursor-pointer">
+      <q-item clickable v-ripple class="cursor-pointer" router-link to="/devmonitoring">
         <q-item-section avatar>
           <q-avatar rounded color="primary" text-color="white" icon="swap_horiz" />
         </q-item-section>
-        <q-item-section>Debug</q-item-section>
+        <q-item-section>Dev Monitoring</q-item-section>
       </q-item>
       <q-separator />
       <q-item clickable v-ripple class="cursor-pointer" router-link to="/regression">
