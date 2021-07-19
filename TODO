@@ -80,6 +80,7 @@ Todo:
   ☐ properties of testcase, has 3 tabs: Properties, DevRunRecord, RegressionRunRecord
   API to get all DevRunRecords of a testcase, sort by last running, double click to DevRunRecord to get detail running of a TestCase
   API to get all RegressionRunRecord of a testcase (Regression Test, sort by last running --> RegressionRunRecord, sort by last running)
+  ☐ bug - when switch from TestPlan to DevMonitoring during the testcase is build, createDevQueue, it will throw error. https://i.imgur.com/DQDaShc.png
 Test:
   ✔ one flow from create category, testsuite, testgroup, testcase from beginning @done(21-05-11 23:12)
 API:

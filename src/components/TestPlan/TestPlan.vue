@@ -4,7 +4,7 @@
       v-model="splitterModel"
     >
       <template v-slot:before>
-        <tree></tree>
+          <tree></tree>
       </template>
       <template v-slot:after>
         <detail></detail>

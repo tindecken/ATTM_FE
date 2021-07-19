@@ -1,8 +1,9 @@
-export default interface DevRunRecordInterface {
+export interface DevRunRecordInterface {
     Id: string;
     TestCaseId: string;
     TestCaseCodeName: string;
     TestCaseName: string;
+    TestCaseFullName: string;
     Description: string;
     TestCaseType?: string;
     Status: string;
@@ -18,7 +19,6 @@ export default interface DevRunRecordInterface {
     ExecuteTime?: number;
     RunMachine?: string;
     ErrorScreenshot?: string;
-    ErrorTearDownScreenshot?: string;
     Screenshot1?: string;
     Screenshot2?: string;
     Comments?: string;
