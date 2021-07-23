@@ -8,12 +8,10 @@
       <div class="row q-mb-sm">
         <span class="text-h6">{{ DevRunRecord.TestCaseCodeName }}: {{ DevRunRecord.TestCaseName }}</span>
         <q-space />
-        <q-btn outline icon="content_copy" primary @click="copy(DevRunRecord.TestCaseCodeName)" class="q-mr-sm">TestCase Code Name</q-btn>
-        <q-btn outline icon="content_copy"  primary @click="copy(DevRunRecord.TestCaseName)" class="q-mr-sm">TestCase Name</q-btn>
-        <q-btn outline icon="content_copy"  primary @click="copy(DevRunRecord.Log || '')">Log</q-btn>
+        <q-btn outline icon="content_copy" primary @click="copy(DevRunRecord.ErrorMessage || '')" class="q-mr-sm">Copy Error</q-btn>
       </div>
       <div style="white-space: pre-wrap;">
-        {{ DevRunRecord.Log }}
+        {{ DevRunRecord.ErrorMessage }}
       </div>
     </q-layout>
   </q-dialog>
@@ -30,7 +28,7 @@ import { useStore } from 'vuex'
 import { useClipboard } from '@vueuse/core'
 
 export default defineComponent({
-  name: 'DevLogDialog',
+  name: 'DevErrorMessageDialog',
   props: {
     DevRunRecord: {
       type: Object as PropType<DevRunRecordInterface>,

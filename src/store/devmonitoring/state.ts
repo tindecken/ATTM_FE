@@ -2,7 +2,7 @@ import { DevRunRecordInterface } from 'src/Models/DevRunRecord'
 
 export interface DevMonitoringStateInterface {
   devRunRecords: DevRunRecordInterface[];
-  inQueueDevRunRecords: DevRunRecordInterface[];
+  inQueueDevRunRecords: any[];
   selectedDevRunRecord?: DevRunRecordInterface
 }
 

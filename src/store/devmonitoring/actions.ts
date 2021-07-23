@@ -17,7 +17,6 @@ const actions: ActionTree<DevMonitoringStateInterface, StateInterface> = {
           },
         },
       );
-      console.log('response getDevRunRecords', response)
       const responseData = await response.data
       const devRunRecords = await responseData.data as DevRunRecordInterface [];
       context.commit('setDevRunRecords', devRunRecords);

@@ -162,7 +162,7 @@ export default defineComponent({
         },
       ],
     )
-    const inQueueDevRunRecords: Ref<DevRunRecordInterface[]> = computed(() => $store.getters['devmonitoring/inQueueDevRunRecords'])
+    const inQueueDevRunRecords: Ref<any[]> = computed(() => $store.getters['devmonitoring/inQueueDevRunRecords'])
     const isDark = computed(() => $store.getters['global/darkTheme'])
     const initialPagination = {
       sortBy: 'createAt',

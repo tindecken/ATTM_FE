@@ -75,7 +75,14 @@
             {{ props.row.TestGroup }}
           </q-td>
           <q-td key="description" :props="props" class="q-c-input">
-            {{ props.row.Description }}
+            <div class="row no-wrap">
+              <div class="col-11 ellipsis">
+                {{ props.row.Description }}
+              </div>
+              <div class="col-1" v-if="props.row.Description">
+                <q-btn flat round icon="content_copy" size="xs" primary @click="copy(props.row.Description)" class="order-last"></q-btn>
+              </div>
+            </div>
           </q-td>
           <q-td key="testCaseType" :props="props" class="q-c-input">
             {{ props.row.TestCaseType }}
@@ -87,10 +94,29 @@
             {{ props.row.Team }}
           </q-td>
           <q-td key="errorMessage" :props="props" class="q-c-input">
-            {{ props.row.ErrorMessage }}
+            <div class="row no-wrap">
+              <div class="col-11 ellipsis" @click="showErrorMessageDialog(props.row)">
+                <q-tooltip :delay="300" max-width="1200px">
+                  <div style="white-space: pre-wrap; font-size: medium;">
+                    {{ props.row.ErrorMessage }}
+                  </div>
+                </q-tooltip>
+                {{ props.row.ErrorMessage }}
+              </div>
+              <div class="col-1" v-if="props.row.ErrorMessage">
+                <q-btn flat round icon="content_copy" size="xs" primary @click="copy(props.row.ErrorMessage)" class="order-last"></q-btn>
+              </div>
+            </div>
           </q-td>
           <q-td key="log" :props="props" class="q-c-input">
-            <dev-log :DevRunRecord="props.row"></dev-log>
+            <div class="row no-wrap">
+              <div class="col-11">
+                <dev-log :DevRunRecord="props.row" class="ellipsis"></dev-log>
+              </div>
+              <div class="col-1">
+                <q-btn flat round icon="content_copy" size="xs" primary @click="copy(props.row.Log)" class="order-last"></q-btn>
+              </div>
+            </div>
           </q-td>
           <q-td key="errorScreenShot" :props="props" class="q-c-input">
             <error-screenshot :DevRunRecord="props.row"></error-screenshot>
@@ -135,9 +161,11 @@ import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 import { DevRunRecordInterface } from 'src/Models/DevRunRecord';
 import { UseTimeAgo } from '@vueuse/components'
+import { useClipboard } from '@vueuse/core'
 import DevLog from './DevRunning/DevLog.vue'
 import ErrorScreenshot from './DevRunning/ErrorScreenshot.vue'
 import DevQueue from './DevQueue/DevQueue.vue'
+import DevErrorMessageDialog from './Dialog/DevErrorMessageDialog.vue';
 
 export default defineComponent({
   name: 'DevMonitoring',
@@ -147,6 +175,7 @@ export default defineComponent({
   setup() {
     const $q = useQuasar()
     const $store = useStore()
+    const { copy } = useClipboard()
     const columns = ref(
       [
         {
@@ -360,6 +389,22 @@ export default defineComponent({
     function getSelectedString() {
       return selected.value.length === 0 ? '' : `${selected.value.length} step${selected.value.length > 1 ? 's' : ''} selected.`
     }
+    function showErrorMessageDialog(devRunRecord: DevRunRecordInterface) {
+      $q.dialog({
+        component: DevErrorMessageDialog,
+        componentProps: {
+          DevRunRecord: devRunRecord,
+        },
+      }).onOk(() => {
+        // TODO: handle ok
+        console.log('OK')
+      }).onCancel(() => {
+        // TODO
+        console.log('Cancel')
+      }).onDismiss(() => {
+        console.log('Dismiss')
+      })
+    }
     return {
       columns,
       isDark,
@@ -370,6 +415,8 @@ export default defineComponent({
       visibleColumns: ref(['testCaseFullName', 'category', 'testSuite', 'testGroup', 'status', 'errorMessage', 'log', 'errorScreenShot', 'startAt', 'endAt', 'executeTime', 'runMachine']),
       initialPagination,
       styleStatus,
+      copy,
+      showErrorMessageDialog,
     }
   },
 });

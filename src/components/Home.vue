@@ -87,7 +87,7 @@ export default defineComponent({
         $store.commit('devmonitoring/updateDevRunRecords', devRunRecord)
       });
       connection.on('TakeDevQueue', (devQueue: any) => {
-        console.log('TakeDevQueue', devQueue)
+        $store.commit('devmonitoring/updateInDevRunRecords', devQueue)
       });
 
       void connection.start()

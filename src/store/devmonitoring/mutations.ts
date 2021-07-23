@@ -9,11 +9,10 @@ const mutation: MutationTree<DevMonitoringStateInterface> = {
   setDevRunRecords(state: DevMonitoringStateInterface, devRunRecords: DevRunRecordInterface[]) {
     state.devRunRecords = devRunRecords;
   },
-  setInQueueDevRunRecords(state: DevMonitoringStateInterface, devRunRecords: DevRunRecordInterface[]) {
-    state.inQueueDevRunRecords = devRunRecords;
+  setInQueueDevRunRecords(state: DevMonitoringStateInterface, devQueueRecords: any[]) {
+    state.inQueueDevRunRecords = devQueueRecords;
   },
   updateDevRunRecords(state: DevMonitoringStateInterface, devRunRecord: DevRunRecordInterface) {
-    console.log('updateDevRunRecords', devRunRecord)
     // findindex
     const index = state.devRunRecords.findIndex((item: DevRunRecordInterface) => item.Id === devRunRecord.Id)
     if (index === -1) {
@@ -21,6 +20,12 @@ const mutation: MutationTree<DevMonitoringStateInterface> = {
     } else {
       state.devRunRecords[index] = devRunRecord
     }
+  },
+  updateInDevRunRecords(state: DevMonitoringStateInterface, devQueue: any) {
+    console.log('updateInDevRunRecords', devQueue)
+    console.log('state.inQueueDevRunRecords', state.inQueueDevRunRecords)
+    // findindex
+    state.inQueueDevRunRecords = state.inQueueDevRunRecords.filter((item: any) => item.Id !== devQueue.Id)
   },
 }
 export default mutation;

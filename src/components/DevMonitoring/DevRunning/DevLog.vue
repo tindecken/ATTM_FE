@@ -3,11 +3,6 @@
     <span @click="showDialog()">
       {{ DevRunRecord.Log }}
     </span>
-    <q-tooltip :delay="300" v-model="showing">
-      <div style="white-space: pre; font-size: medium;">
-        {{ DevRunRecord.Log }}
-      </div>
-    </q-tooltip>
   </div>
 </template>
 
@@ -33,7 +28,6 @@ export default defineComponent({
   setup(props) {
     const $q = useQuasar()
     function showDialog() {
-      console.log('showDialog')
       $q.dialog({
         component: DevLogDialog,
         componentProps: {
