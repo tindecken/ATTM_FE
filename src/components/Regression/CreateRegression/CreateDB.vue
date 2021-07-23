@@ -34,23 +34,31 @@
           transition-next="jump-up"
         >
           <q-tab-panel name="createRegression">
-            <div class="text-h6 q-mb-md">Status: {{createRegressionStatus}}</div>
-            <p style="white-space: pre;">{{createRegressionMessage}}</p>
+            <div class="text-h6 q-mb-md">Status: {{createRegressionStatus}}
+              <q-btn flat round icon="content_copy" size="md" primary @click="copy(createRegressionMessage || '')" class="q-mr-sm" v-if="createRegressionStatus"></q-btn>
+            </div>
+            <p style="white-space: pre-wrap;">{{createRegressionMessage}}</p>
           </q-tab-panel>
 
           <q-tab-panel name="createRegressionTest">
-            <div class="text-h6 q-mb-md">Status: {{createRegressionTestStatus}}</div>
-            <p style="white-space: pre;">{{createRegressionTestMessage}}</p>
+            <div class="text-h6 q-mb-md">Status: {{createRegressionTestStatus}}
+              <q-btn flat round icon="content_copy" size="md" primary @click="copy(createRegressionTestMessage || '')" class="q-mr-sm" v-if="createRegressionTestStatus"></q-btn>
+            </div>
+            <p style="white-space: pre-wrap;">{{createRegressionTestMessage}}</p>
           </q-tab-panel>
 
           <q-tab-panel name="generateRegCode">
-            <div class="text-h6 q-mb-md">Status: {{generateRegCodeStatus}}</div>
-            <p style="white-space: pre;">{{generateRegCodeMessage}}</p>
+            <div class="text-h6 q-mb-md">Status: {{generateRegCodeStatus}}
+              <q-btn flat round icon="content_copy" size="md" primary @click="copy(generateRegCodeMessage || '')" class="q-mr-sm" v-if="generateRegCodeStatus"></q-btn>
+            </div>
+            <p style="white-space: pre-wrap;">{{generateRegCodeMessage}}</p>
           </q-tab-panel>
 
           <q-tab-panel name="buildProject">
-            <div class="text-h6 q-mb-md">Status: {{buildProjectStatus}}</div>
-            <p style="white-space: pre;">{{buildProjectMessage}}</p>
+            <div class="text-h6 q-mb-md">Status: {{buildProjectStatus}}
+              <q-btn flat round icon="content_copy" size="md" primary @click="copy(buildProjectMessage || '')" class="q-mr-sm" v-if="buildProjectStatus"></q-btn>
+            </div>
+            <p style="white-space: pre-wrap;">{{buildProjectMessage}}</p>
           </q-tab-panel>
         </q-tab-panels>
       </template>
@@ -65,6 +73,7 @@ import { TestCaseInterface } from 'src/Models/TestCase';
 import { TestCaseDetailInterface } from 'src/Models/TestCaseDetail';
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
+import { useClipboard } from '@vueuse/core'
 
 export default defineComponent({
   name: 'CreateDb',
@@ -72,6 +81,7 @@ export default defineComponent({
   setup() {
     const $store = useStore()
     const $q = useQuasar()
+    const { copy } = useClipboard()
     const splitterModel = ref(10)
     const tab = ref('createRegression')
     const createRegressionStatus = ref('')
@@ -126,7 +136,11 @@ export default defineComponent({
         createRegressionTest.then((t) => {
           tab.value = 'createRegressionTest'
           createRegressionTestStatus.value = 'Success'
-          createRegressionTestMessage.value = t.data
+          t.data.data.forEach((i: any) => {
+            createRegressionTestMessage.value += `${i.TestCaseFullName}\r\n`
+            createRegressionTestMessage.value += `${i.Status}\r\n`
+            createRegressionTestMessage.value += '------------------\r\n'
+          });
           $q.notify({
             type: 'positive',
             message: `Created regression Tests: ${t.data.message}`,
@@ -135,8 +149,12 @@ export default defineComponent({
           generateRegCodeResult.then((g) => {
             tab.value = 'generateRegCode'
             generateRegCodeStatus.value = 'Success'
-            generateRegCodeMessage.value = g
-            console.log('g', g)
+            // generateRegCodeMessage.value = g
+            g.message.forEach((m: any) => {
+              generateRegCodeMessage.value += `Test Case: ${m.testCase}\r\n\r\n`
+              generateRegCodeMessage.value += `${m.generatedCode}\r\n`
+              generateRegCodeMessage.value += '------------------\r\n'
+            });
             $q.notify({
               type: 'positive',
               message: `Generate Regression Code Successful for ${g.count} test case(s) !`,
@@ -157,7 +175,7 @@ export default defineComponent({
                 message: 'Build Project Error',
               });
               buildProjectStatus.value = 'Error'
-              buildProjectMessage.value = e
+              buildProjectMessage.value = e.buildMessage
             })
           }).catch((e) => {
             $q.notify({
@@ -186,6 +204,7 @@ export default defineComponent({
       })
     }
     return {
+      copy,
       createDB,
       splitterModel,
       tab,

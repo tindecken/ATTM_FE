@@ -57,7 +57,7 @@
             color="primary"
             :disable="!isStepValid"
             v-if="currentStep !== 'deploySources'"
-            @click="$refs.next()"
+            @click="$refs.stepperRef.next()"
             label="Continue"
           />
           <q-btn

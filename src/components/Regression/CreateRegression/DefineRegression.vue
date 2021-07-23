@@ -71,7 +71,7 @@
           </div>
           <div class="row">
             <q-date
-              :value="dateRange"
+              v-model="dateRange"
               range
               today-btn
               @range-start="rangeStart($event)"
@@ -129,7 +129,6 @@ export default defineComponent({
               CreateBy: currentUser.value,
               RegressionTestIds: [],
             }
-            console.log('defineRegressionObject', defineRegressionObject)
             context.emit('validateForm', true)
             $store.commit('createregression/setDefineRegression', defineRegressionObject)
           } else {
@@ -147,11 +146,16 @@ export default defineComponent({
     }
 
     function rangeEnd(endDate: any) {
+      console.log('endDate From', endDate.from)
+      console.log('endDate To', endDate.to)
       if (JSON.stringify(endDate.from) !== JSON.stringify(endDate.to)) {
         dateRange.from = date.formatDate(date.buildDate({ year: endDate.from.year, month: endDate.from.month, date: endDate.from.day }, true), 'YYYY/MM/DD')
         dateRange.to = date.formatDate(date.buildDate({ year: endDate.to.year, month: endDate.to.month, date: endDate.to.day }, true), 'YYYY/MM/DD')
+        console.log('dateRange.from', dateRange.from)
+        console.log('dateRange.to', dateRange.to)
         validateForm()
       } else {
+        console.log('abc')
         context.emit('validateForm', false)
       }
     }

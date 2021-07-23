@@ -274,8 +274,8 @@ export default defineComponent({
         });
       } else {
         tab.value = selectedClients.value[0].Name;
-        selectedClients.value.forEach((tc: TestClientInterface, index: number) => {
-          const cloneClient = _.cloneDeep(tc)
+        selectedClients.value.forEach((testClient: TestClientInterface, index: number) => {
+          const cloneClient = _.cloneDeep(testClient)
           cloneClient.DeploySourceStatus = ''
           cloneClient.DeploySourceMessage = ''
           cloneClient.UpdateReleaseStatus = ''
@@ -288,10 +288,10 @@ export default defineComponent({
             selectedClients.value[index] = cloneClient
             $q.notify({
               type: 'positive',
-              message: `Deploy to client ${tc.Name} success !`,
+              message: `Deploy to client ${testClient.Name} success !`,
             });
             const payload = {
-              testClient: tc,
+              testClient,
               regressionName: defineRegression.value.Name,
             }
             const updateReleaseResult: Promise<any> = $store.dispatch('global/updatereleaseforclient', payload);
@@ -302,12 +302,12 @@ export default defineComponent({
               selectedClients.value[index] = cloneClient
               $q.notify({
                 type: 'positive',
-                message: `Update Regression for client ${tc.Name} success !`,
+                message: `Update Regression for client ${testClient.Name} success !`,
               });
             }).catch((e) => {
               $q.notify({
                 type: 'negative',
-                message: `Update Regression for client ${tc.Name} error !`,
+                message: `Update Regression for client ${testClient.Name} error !`,
               });
               cloneClient.UpdateReleaseStatus = 'Error'
               cloneClient.UpdateReleaseMessage = e.message
@@ -318,7 +318,7 @@ export default defineComponent({
             console.log('e', e)
             $q.notify({
               type: 'negative',
-              message: `Deploy to client ${tc.Name} unsuccess !`,
+              message: `Deploy to client ${testClient.Name} unsuccess !`,
             });
             cloneClient.Status = 'red'
             cloneClient.DeploySourceStatus = 'Error'

@@ -33,18 +33,24 @@
           transition-next="jump-up"
         >
           <q-tab-panel name="getLatestCode">
-            <div class="text-h6 q-mb-md">Status: {{getLatestCodeStatus}}</div>
-            <p style="white-space: pre;">{{getLatestCodeMessage}}</p>
+            <div class="text-h6 q-mb-md">Status: {{getLatestCodeStatus}}
+              <q-btn flat round icon="content_copy" size="md" primary @click="copy(getLatestCodeMessage || '')" class="q-mr-sm" v-if="getLatestCodeStatus"></q-btn>
+            </div>
+            <p style="white-space: pre-wrap;">{{getLatestCodeMessage}}</p>
           </q-tab-panel>
 
           <q-tab-panel name="generateCode">
-            <div class="text-h6 q-mb-md">Status: {{generateCodeStatus}}</div>
-            <p style="white-space: pre;">{{generateCodeMessage}}</p>
+            <div class="text-h6 q-mb-md">Status: {{generateCodeStatus}}
+              <q-btn flat round icon="content_copy" size="md" primary @click="copy(generateCodeMessage || '')" class="q-mr-sm" v-if="generateCodeStatus"></q-btn>
+            </div>
+            <p style="white-space: pre-wrap;">{{generateCodeMessage}}</p>
           </q-tab-panel>
 
           <q-tab-panel name="buildProject">
-            <div class="text-h6 q-mb-md">Status: {{buildProjectStatus}}</div>
-            <p style="white-space: pre;">{{buildProjectMessage}}</p>
+            <div class="text-h6 q-mb-md">Status: {{buildProjectStatus}}
+              <q-btn flat round icon="content_copy" size="md" primary @click="copy(buildProjectMessage || '')" class="q-mr-sm" v-if="buildProjectStatus"></q-btn>
+            </div>
+            <p style="white-space: pre-wrap;">{{buildProjectMessage}}</p>
           </q-tab-panel>
         </q-tab-panels>
       </template>
@@ -58,6 +64,7 @@ import { TestCaseInterface } from 'src/Models/TestCase';
 import { TestCaseDetailInterface } from 'src/Models/TestCaseDetail';
 import { useQuasar } from 'quasar'
 import { useStore } from 'vuex'
+import { useClipboard } from '@vueuse/core'
 
 export default defineComponent({
   name: 'BuildProject',
@@ -66,6 +73,7 @@ export default defineComponent({
     const $store = useStore()
     const $q = useQuasar()
     const tab = ref('getLatestCode')
+    const { copy } = useClipboard()
     const getLatestCodeStatus = ref('')
     const getLatestCodeMessage = ref('')
     const generateCodeStatus = ref('')
@@ -105,7 +113,6 @@ export default defineComponent({
         generateDevCodeResult.then((g) => {
           tab.value = 'generateCode'
           generateCodeStatus.value = 'Success'
-          console.log('g', g)
           g.message.forEach((m: any) => {
             console.log('m', m)
             generateCodeMessage.value += `Test Case: ${m.testCase}\r\n\r\n`
@@ -132,7 +139,7 @@ export default defineComponent({
               message: 'Build Project Error',
             });
             buildProjectStatus.value = 'Error'
-            buildProjectMessage.value = e
+            buildProjectMessage.value = e.buildMessage
           })
         }).catch((e) => {
           $q.notify({
@@ -152,6 +159,7 @@ export default defineComponent({
       })
     }
     return {
+      copy,
       splitterModel,
       getLatestCodeThenGenerateAndBuildProject,
       tab,
