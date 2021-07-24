@@ -82,6 +82,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router'
 import DeploySource from './DeploySource.vue'
 import DefineRegression from './DefineRegression.vue'
 import SelectTestCase from './SelectTestCase.vue'
@@ -98,15 +99,18 @@ export default defineComponent({
     CreateDb,
   },
   setup() {
+    const $route = useRoute()
+    const $router = useRouter()
     const stepperRef = ref(null)
     const currentStep = ref('defineRegression')
     const isStepValid = ref(false)
     function validateForm(isValid: boolean) {
-      console.log('isValid', isValid)
       isStepValid.value = isValid
     }
     function finish() {
-      // TODO
+      // Go to regression page
+      const redirectUrl = `/${$route.query.redirect || 'regression'}`;
+      void $router.replace(redirectUrl);
     }
     return {
       currentStep,

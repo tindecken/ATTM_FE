@@ -49,22 +49,22 @@
           <q-tab-panel v-for="client in selectedClients" :key="client.Id" :name="client.Name">
             <p class="text-subtitle1 text-info">Deploy Source Code: {{client.DeploySourceStatus}}</p>
             <q-btn
+              v-if="client.DeploySourceStatus == 'Error'"
               outline
               class="q-mb-md"
               color="warning"
               @click="retryDeploySource(client)"
               label="Retry"
-              v-if="client.DeploySourceStatus == 'Error'"
             />
             <p style="white-space: pre;">{{client.DeploySourceMessage}}</p>
             <p class="text-subtitle1 text-info">Update release in setting file: {{client.UpdateReleaseStatus}}</p>
             <q-btn
+              v-if="client.UpdateReleaseStatus == 'Error' || (client.UpdateReleaseStatus == '' && client.DeploySourceStatus == 'Error')"
               outline
               class="q-mb-md"
               color="warning"
               @click="retryUpdateReleaseSetting(client)"
               label="Retry"
-              v-if="client.UpdateReleaseStatus == 'Error' || (client.UpdateReleaseStatus == '' && client.DeploySourceStatus == 'Error')"
             />
             <p style="white-space: pre;">{{client.UpdateReleaseMessage}}</p>
           </q-tab-panel>
@@ -272,61 +272,61 @@ export default defineComponent({
           type: 'negative',
           message: 'No test client is selected',
         });
-      } else {
-        tab.value = selectedClients.value[0].Name;
-        selectedClients.value.forEach((testClient: TestClientInterface, index: number) => {
-          const cloneClient = _.cloneDeep(testClient)
-          cloneClient.DeploySourceStatus = ''
-          cloneClient.DeploySourceMessage = ''
-          cloneClient.UpdateReleaseStatus = ''
-          cloneClient.UpdateReleaseMessage = ''
+        return
+      }
+      tab.value = selectedClients.value[0].Name;
+      selectedClients.value.forEach((testClient: TestClientInterface, index: number) => {
+        const cloneClient = _.cloneDeep(testClient)
+        cloneClient.DeploySourceStatus = ''
+        cloneClient.DeploySourceMessage = ''
+        cloneClient.UpdateReleaseStatus = ''
+        cloneClient.UpdateReleaseMessage = ''
+        const copyResult: Promise<any> = $store.dispatch('global/copycodetoclient', cloneClient);
+        copyResult.then((r) => {
+          cloneClient.DeploySourceStatus = 'Success'
+          cloneClient.DeploySourceMessage = r.message.replace('\r\n\r\n', '\r\n')
           selectedClients.value[index] = cloneClient
-          const copyResult: Promise<any> = $store.dispatch('global/copycodetoclient', cloneClient);
-          copyResult.then((r) => {
-            cloneClient.DeploySourceStatus = 'Success'
-            cloneClient.DeploySourceMessage = r.message.replace('\r\n\r\n', '\r\n')
+          $q.notify({
+            type: 'positive',
+            message: `Deploy to client ${testClient.Name} success !`,
+          });
+          const payload = {
+            testClient,
+            regressionName: defineRegression.value.Name,
+          }
+          const updateReleaseResult: Promise<any> = $store.dispatch('global/updatereleaseforclient', payload);
+          updateReleaseResult.then((u) => {
+            cloneClient.UpdateReleaseStatus = 'Success'
+            cloneClient.UpdateReleaseMessage = u.message.replace('\r\n\r\n', '\r\n')
+            cloneClient.Status = 'green'
             selectedClients.value[index] = cloneClient
             $q.notify({
               type: 'positive',
-              message: `Deploy to client ${testClient.Name} success !`,
+              message: `Update Regression for client ${testClient.Name} success !`,
             });
-            const payload = {
-              testClient,
-              regressionName: defineRegression.value.Name,
-            }
-            const updateReleaseResult: Promise<any> = $store.dispatch('global/updatereleaseforclient', payload);
-            updateReleaseResult.then((u) => {
-              cloneClient.UpdateReleaseStatus = 'Success'
-              cloneClient.UpdateReleaseMessage = u.message.replace('\r\n\r\n', '\r\n')
-              cloneClient.Status = 'green'
-              selectedClients.value[index] = cloneClient
-              $q.notify({
-                type: 'positive',
-                message: `Update Regression for client ${testClient.Name} success !`,
-              });
-            }).catch((e) => {
-              $q.notify({
-                type: 'negative',
-                message: `Update Regression for client ${testClient.Name} error !`,
-              });
-              cloneClient.UpdateReleaseStatus = 'Error'
-              cloneClient.UpdateReleaseMessage = e.message
-              cloneClient.Status = 'red'
-              selectedClients.value[index] = cloneClient
-            })
           }).catch((e) => {
-            console.log('e', e)
             $q.notify({
               type: 'negative',
-              message: `Deploy to client ${testClient.Name} unsuccess !`,
+              message: `Update Regression for client ${testClient.Name} error !`,
             });
+            cloneClient.UpdateReleaseStatus = 'Error'
+            cloneClient.UpdateReleaseMessage = e.message
             cloneClient.Status = 'red'
-            cloneClient.DeploySourceStatus = 'Error'
-            cloneClient.DeploySourceMessage = e.message
             selectedClients.value[index] = cloneClient
           })
+        }).catch((e) => {
+          console.log('e', e)
+          $q.notify({
+            type: 'negative',
+            message: `Deploy to client ${testClient.Name} unsuccess !`,
+          });
+          cloneClient.Status = 'red'
+          cloneClient.DeploySourceStatus = 'Error'
+          cloneClient.DeploySourceMessage = e.message
+          selectedClients.value[index] = cloneClient
+          console.log('cloneClient', cloneClient)
         })
-      }
+      })
     }
     return {
       visibleColumns,
