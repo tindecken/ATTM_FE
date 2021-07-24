@@ -10,6 +10,7 @@
         <q-space />
         <q-btn outline icon="content_copy" primary @click="copy(DevRunRecord.ErrorMessage || '')" class="q-mr-sm">Copy Error</q-btn>
       </div>
+      <q-separator class="q-mb-sm q-mt-sm" />
       <div style="white-space: pre-wrap;">
         {{ DevRunRecord.ErrorMessage }}
       </div>

@@ -2,19 +2,19 @@
   <div>
       <keyword-menu></keyword-menu>
       <q-select
-      dense
-      :model-value="TestStep.Keyword"
-      :options="filteredKeywords"
-      option-label="Name"
-      @update:model-value="onChangeKeyword($event)"
-      @filter="filterKeywordFn"
-      input-debounce="0"
-      use-input
-      fill-input
-      hide-selected
-      options-dense
-      :readonly="readonly"
-    />
+        dense
+        :model-value="TestStep.Keyword"
+        :options="filteredKeywords"
+        option-label="Name"
+        @update:model-value="onChangeKeyword($event)"
+        @filter="filterKeywordFn"
+        input-debounce="0"
+        use-input
+        fill-input
+        hide-selected
+        options-dense
+        :readonly="readonly"
+      />
   </div>
 </template>
 

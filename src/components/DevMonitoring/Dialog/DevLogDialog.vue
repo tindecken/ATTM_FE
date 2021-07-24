@@ -12,6 +12,7 @@
         <q-btn outline icon="content_copy"  primary @click="copy(DevRunRecord.TestCaseName)" class="q-mr-sm">TestCase Name</q-btn>
         <q-btn outline icon="content_copy"  primary @click="copy(DevRunRecord.Log || '')">Log</q-btn>
       </div>
+      <q-separator class="q-mb-sm q-mt-sm" />
       <div style="white-space: pre-wrap;">
         {{ DevRunRecord.Log }}
       </div>

@@ -1,0 +1,22 @@
+export interface RegressionTestInterface {
+    Id: string,
+    TestCaseId: string,
+    Regression: string,
+    Release: string,
+    Build: string,
+    TestCaseCodeName: string,
+    TestCaseName: string,
+    TestCaseFullName: string,
+    CategoryName: string,
+    TestSuiteFullName: string,
+    TestGroupFullName: string,
+    IsHighPriority: boolean,
+    Status: string,
+    WorkItem: string,
+    Queue: string,
+    Owner: string,
+    RegressionRunRecordIds: string[],
+    AnalyzeBy: string,
+    Issue: string,
+    Comment: string
+}
