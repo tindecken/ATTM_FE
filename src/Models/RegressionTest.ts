@@ -1,3 +1,5 @@
+import { RegressionRunRecordInterface } from './RegressionRunRecord';
+
 export interface RegressionTestInterface {
     Id: string,
     TestCaseId: string,
@@ -6,17 +8,21 @@ export interface RegressionTestInterface {
     Build: string,
     TestCaseCodeName: string,
     TestCaseName: string,
-    TestCaseFullName: string,
+    TestCaseFullCodeName: string,
     CategoryName: string,
+    Description: string,
     TestSuiteFullName: string,
     TestGroupFullName: string,
     IsHighPriority: boolean,
+    TestCaseType: string,
+    Team: string,
     Status: string,
     WorkItem: string,
     Queue: string,
     Owner: string,
     RegressionRunRecordIds: string[],
-    AnalyzeBy: string,
+    LastRegressionRunRecord: RegressionRunRecordInterface
+    AnalyseBy: string,
     Issue: string,
     Comment: string
 }

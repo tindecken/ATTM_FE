@@ -34,18 +34,34 @@
           separator="cell"
           narrow-indicator
         >
-          <q-tab name="all" label="All"/>
-          <q-tab name="failed" label="Failed" />
-          <q-tab name="passed" label="Passed" />
-          <q-tab name="inQueue" label="In Queue" />
-          <q-tab name="running" label="Running" />
-          <q-tab name="analyseFailed" label="Analyse Failed" />
-          <q-tab name="analysePassed" label="Analyse Passed" />
-          <q-tab name="inCompatible" label="InCompatible" />
+          <q-tab class="text-primary" name="all" label="All">
+            <q-badge outline color="primary" floating>{{allCount}}</q-badge>
+          </q-tab>
+          <q-tab class="text-negative" name="failed" label="Failed">
+            <q-badge outline color="negative" floating>{{failedCount}}</q-badge>
+          </q-tab>
+          <q-tab class="text-positive" name="passed" label="Passed">
+            <q-badge outline color="positive" floating>{{passedCount}}</q-badge>
+          </q-tab>
+          <q-tab class="text-info" name="inQueue" label="In Queue">
+            <q-badge outline color="info" floating>{{inQueueCount}}</q-badge>
+          </q-tab>
+          <q-tab class="text-secondary" name="running" label="Running">
+            <q-badge outline color="secondary" floating>{{runningCount}}</q-badge>
+          </q-tab>
+          <q-tab class="text-negative" name="analyseFailed" label="Analyse Failed">
+            <q-badge outline color="negative" floating>{{analyseFailedCount}}</q-badge>
+          </q-tab>
+          <q-tab class="text-positive" name="analysePassed" label="Analyse Passed">
+            <q-badge outline color="positive" floating>{{analysePassedCount}}</q-badge>
+          </q-tab>
+          <q-tab class="text-info" name="inCompatible" label="InCompatible">
+            <q-badge outline color="info" floating>{{inCompatibleCount}}</q-badge>
+          </q-tab>
         </q-tabs>
         <q-tab-panels v-model="selectedTab" animated keep-alive>
           <q-tab-panel name="all">
-            <all-test-table></all-test-table>
+            <all-test-table :selectedRegression="selectedRegression"></all-test-table>
           </q-tab-panel>
           <q-tab-panel name="failed">
             <failed-table></failed-table>
@@ -81,6 +97,7 @@ import {
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 import { RegressionInterface } from 'src/Models/Regression'
+import { RegressionRunRecordInterface } from 'src/Models/RegressionRunRecord'
 import AllTestTable from './AllTestTable.vue'
 import FailedTable from './FailedTable.vue'
 import PassedTable from './PassedTable.vue'
@@ -99,14 +116,44 @@ export default defineComponent({
     const $store = useStore()
     const $q = useQuasar()
     const regressions = computed(() => $store.getters['regression/regressions'] as RegressionInterface[])
-    const selectedRegression = ref(null)
+    const selectedRegression = computed(() => $store.getters['regression/selectedRegression'] as RegressionInterface)
+    const allCount = computed(() => $store.getters['regmonitoring/regRunRecords'].length)
+    const failedCount = computed(() => {
+      const all = $store.getters['regmonitoring/regRunRecords'] as RegressionRunRecordInterface[]
+      return all.filter((r: RegressionRunRecordInterface) => r.Status === 'Failed').length
+    })
+    const passedCount = computed(() => {
+      const all = $store.getters['regmonitoring/regRunRecords'] as RegressionRunRecordInterface[]
+      return all.filter((r: RegressionRunRecordInterface) => r.Status === 'Passed').length
+    })
+    const inQueueCount = computed(() => {
+      const all = $store.getters['regmonitoring/regRunRecords'] as RegressionRunRecordInterface[]
+      return all.filter((r: RegressionRunRecordInterface) => r.Status === 'InQueue').length
+    })
+    const runningCount = computed(() => {
+      const all = $store.getters['regmonitoring/regRunRecords'] as RegressionRunRecordInterface[]
+      return all.filter((r: RegressionRunRecordInterface) => r.Status === 'Running' || r.Status === 'Inconclusive').length
+    })
+    const analyseFailedCount = computed(() => {
+      const all = $store.getters['regmonitoring/regRunRecords'] as RegressionRunRecordInterface[]
+      return all.filter((r: RegressionRunRecordInterface) => r.Status === 'AnalyseFailed').length
+    })
+    const analysePassedCount = computed(() => {
+      const all = $store.getters['regmonitoring/regRunRecords'] as RegressionRunRecordInterface[]
+      return all.filter((r: RegressionRunRecordInterface) => r.Status === 'AnalysePassed').length
+    })
+    const inCompatibleCount = computed(() => {
+      const all = $store.getters['regmonitoring/regRunRecords'] as RegressionRunRecordInterface[]
+      return all.filter((r: RegressionRunRecordInterface) => r.Status === 'InCompatible').length
+    })
     const filteredRegressions: Ref<RegressionInterface[]> = ref([])
     const selectedTab = ref('all')
     onBeforeMount(async () => {
       try {
         await $store.dispatch('regression/getRegressions');
-        selectedRegression.value = $store.getters['regression/selectedRegression']
-        console.log('selectedRegression.value', selectedRegression.value)
+        if (selectedRegression.value) {
+          await $store.dispatch('regmonitoring/getRegressionDetail', selectedRegression.value.Id)
+        }
       } catch (error) {
         $q.notify({
           type: 'negative',
@@ -117,9 +164,9 @@ export default defineComponent({
     onMounted(() => {
       filteredRegressions.value = regressions.value
     })
-    function onChangeRegression(regression: RegressionInterface) {
-      console.log('event', regression)
+    async function onChangeRegression(regression: RegressionInterface) {
       $store.commit('regression/setSelectedRegression', regression)
+      await $store.dispatch('regmonitoring/getRegressionDetail', regression.Id)
     }
     function filterRegressionFn(val: string, update: any) {
       update(() => {
@@ -128,6 +175,14 @@ export default defineComponent({
       })
     }
     return {
+      allCount,
+      passedCount,
+      failedCount,
+      inQueueCount,
+      runningCount,
+      analyseFailedCount,
+      analysePassedCount,
+      inCompatibleCount,
       selectedTab,
       filteredRegressions,
       filterRegressionFn,
@@ -138,3 +193,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped lang="scss">
+:deep(.q-tab__label) {
+  padding-right: 15px;
+}
+</style>

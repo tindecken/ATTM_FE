@@ -20,8 +20,9 @@ const actions: ActionTree<RegressionStateInterface, StateInterface> = {
       );
       const regressions: RegressionInterface[] = await response.data;
       context.commit('setRegressions', regressions);
-      if (regressions.length > 0) {
-        context.commit('setSelectedRegression', regressions[0]);
+      if (regressions.length > 0 && context.state.selectedRegression === undefined) {
+        console.log('context.getters[\'regression/selectedRegression\']', context.state.selectedRegression)
+        context.commit('setSelectedRegression', regressions[regressions.length - 1]);
       }
     } catch (error) {
       throw error;

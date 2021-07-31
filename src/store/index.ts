@@ -14,6 +14,7 @@ import createregression from './createregression';
 import teststep from './teststep';
 import devmonitoring from './devmonitoring';
 import regression from './regression';
+import regmonitoring from './regmonitoring';
 
 import { AuthStateInterface } from './auth/state';
 import { GlobalStateInterface } from './global/state';
@@ -28,6 +29,7 @@ import { TestEnvironmentStateInterface } from './environment/state';
 import { CreateRegressionStateInterface } from './createregression/state';
 import { DevMonitoringStateInterface } from './devmonitoring/state';
 import { RegressionStateInterface } from './regression/state';
+import { RegMonitoringStateInterface } from './regmonitoring/state';
 
 // import example from './module-example';
 // import { ExampleStateInterface } from './module-example/state';
@@ -54,6 +56,7 @@ export interface StateInterface {
   teststep: TestStepStateInterface;
   devmonitoring: DevMonitoringStateInterface;
   regression: RegressionStateInterface;
+  regmonitoring: RegMonitoringStateInterface;
 }
 
 export default store((/* { ssrContext } */) => {
@@ -105,10 +108,13 @@ export default store((/* { ssrContext } */) => {
     key: 'devmonitoring',
     modules: ['devmonitoring'],
   });
-
   const persistRegression = new VuexPersistence({
     key: 'regression',
     modules: ['regression'],
+  });
+  const persistRegMonitoring = new VuexPersistence({
+    key: 'regmonitoring',
+    modules: ['regmonitoring'],
   });
 
   const Store = createStore<StateInterface>({
@@ -126,8 +132,9 @@ export default store((/* { ssrContext } */) => {
       teststep,
       devmonitoring,
       regression,
+      regmonitoring,
     },
-    plugins: [new VuexPersistence().plugin, persistGlobal.plugin, persistAuth.plugin, persistKeyword.plugin, persistTestCase.plugin, persistCategory.plugin, persistTestSuite.plugin, persistTestGroup.plugin, persistTestEnvironment.plugin, persistTestClient.plugin, persistCreateRegression.plugin, persistTestStep.plugin, persistDevMonitoring.plugin, persistRegression.plugin],
+    plugins: [new VuexPersistence().plugin, persistGlobal.plugin, persistAuth.plugin, persistKeyword.plugin, persistTestCase.plugin, persistCategory.plugin, persistTestSuite.plugin, persistTestGroup.plugin, persistTestEnvironment.plugin, persistTestClient.plugin, persistCreateRegression.plugin, persistTestStep.plugin, persistDevMonitoring.plugin, persistRegression.plugin, persistRegMonitoring.plugin],
 
     // enable strict mode (adds overhead!)
     // for dev mode only
