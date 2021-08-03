@@ -6,15 +6,16 @@
       style="max-width: 1200px; min-height: 400px !important;"
     >
       <div class="row q-mb-sm">
-        <!-- <span class="text-h6">{{ RegRunRecord. }}: {{ RegRunRecord.TestCaseName }}</span> -->
-        <!-- <q-space />
-        <q-btn outline icon="content_copy" primary @click="copy(RegRunRecord.TestCaseCodeName)" class="q-mr-sm">TestCase Code Name</q-btn>
-        <q-btn outline icon="content_copy"  primary @click="copy(RegRunRecord.TestCaseName)" class="q-mr-sm">TestCase Name</q-btn>
-        <q-btn outline icon="content_copy"  primary @click="copy(RegRunRecord.Log || '')">Log</q-btn> -->
+        <span class="text-h6">{{ RegressionTest.TestCaseCodeName }}: {{ RegressionTest.TestCaseName }}</span>
+        <q-space />
+        <q-btn outline icon="visibility" primary @click="showImage()" class="q-mr-sm">View Screenshot</q-btn>
+        <q-btn outline icon="content_copy" primary @click="copy(RegressionTest.TestCaseCodeName)" class="q-mr-sm">TestCase Code Name</q-btn>
+        <q-btn outline icon="content_copy"  primary @click="copy(RegressionTest.TestCaseName)" class="q-mr-sm">TestCase Name</q-btn>
+        <q-btn outline icon="content_copy"  primary @click="copy(RegressionTest.LastRegressionRunRecord?.Log || '')">Log</q-btn>
       </div>
       <q-separator class="q-mb-sm q-mt-sm" />
       <div style="white-space: pre-wrap;">
-        {{ RegRunRecord.Log }}
+        {{ RegressionTest.LastRegressionRunRecord.Log }}
       </div>
     </q-layout>
   </q-dialog>
@@ -22,7 +23,7 @@
 
 <script lang="ts">
 import { useDialogPluginComponent } from 'quasar';
-import { RegressionRunRecordInterface } from 'src/Models/RegressionRunRecord';
+import { RegressionTestInterface } from 'src/Models/RegressionTest';
 import {
   defineComponent, computed, PropType,
 } from 'vue';
@@ -33,8 +34,8 @@ import { useClipboard } from '@vueuse/core'
 export default defineComponent({
   name: 'RegLogDialog',
   props: {
-    RegRunRecord: {
-      type: Object as PropType<RegressionRunRecordInterface>,
+    RegressionTest: {
+      type: Object as PropType<RegressionTestInterface>,
       required: true,
       default: () => ({}),
     },
@@ -45,7 +46,7 @@ export default defineComponent({
     ...useDialogPluginComponent.emits,
   ],
   components: { },
-  setup() {
+  setup(props) {
     const $store = useStore()
     const isDark = computed(() => $store.getters['global/darkTheme'])
     // REQUIRED; must be called inside of setup()
@@ -53,7 +54,30 @@ export default defineComponent({
       dialogRef, onDialogHide, onDialogOK, onDialogCancel,
     } = useDialogPluginComponent()
     const { copy } = useClipboard()
+    async function showImage() {
+      const image = await $store.dispatch('regmonitoring/getScreenshot', props.RegressionTest.LastRegressionRunRecord?.ErrorScreenshot);
+      const contentType = 'image/png';
+      const byteCharacters = atob(image.substr(`data:${contentType};base64,`.length));
+      const byteArrays = [];
+      for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
+        const slice = byteCharacters.slice(offset, offset + 1024);
+
+        const byteNumbers = new Array(slice.length);
+        for (let i = 0; i < slice.length; i += 1) {
+          byteNumbers[i] = slice.charCodeAt(i);
+        }
+
+        const byteArray = new Uint8Array(byteNumbers);
+
+        byteArrays.push(byteArray);
+      }
+      const blob = new Blob(byteArrays, { type: contentType });
+      const blobUrl = URL.createObjectURL(blob);
+
+      window.open(blobUrl, '_blank');
+    }
     return {
+      showImage,
       copy,
       isDark,
       // This is REQUIRED;

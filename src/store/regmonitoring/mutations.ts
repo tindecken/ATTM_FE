@@ -1,13 +1,22 @@
-import { RegressionRunRecordInterface } from 'src/Models/RegressionRunRecord'
+import { RegressionTestInterface } from 'src/Models/RegressionTest';
 import { MutationTree } from 'vuex';
 import { RegMonitoringStateInterface } from './state'
 
 const mutation: MutationTree<RegMonitoringStateInterface> = {
-  setSelectedRegRunRecord(state: RegMonitoringStateInterface, regRunRecord: RegressionRunRecordInterface) {
-    state.selectedRegRunRecord = regRunRecord;
+  setSelectedRegTest(state: RegMonitoringStateInterface, regTest: RegressionTestInterface) {
+    state.selectedRegTest = regTest;
   },
-  setRegRunRecords(state: RegMonitoringStateInterface, regRunRecords: RegressionRunRecordInterface[]) {
-    state.regRunRecords = regRunRecords;
+  setRegTests(state: RegMonitoringStateInterface, regTests: RegressionTestInterface[]) {
+    state.regTests = regTests;
+  },
+  setCategorySelections(state: RegMonitoringStateInterface, categories: string[]) {
+    state.categorySelections = categories;
+  },
+  setTestSuiteSelections(state: RegMonitoringStateInterface, testsuites: string[]) {
+    state.testSuiteSelections = testsuites;
+  },
+  setTestGroupSelections(state: RegMonitoringStateInterface, testgroups: string[]) {
+    state.testGroupSelections = testgroups;
   },
 }
 export default mutation;

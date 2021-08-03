@@ -4,7 +4,7 @@
       dense
       virtual-scroll
       virtual-scroll-sticky-size-start="48"
-      :rows="regRunRecords"
+      :rows="regTests"
       :columns="columns"
       row-key="Id"
       :hide-pagination="true"
@@ -13,7 +13,7 @@
       selection="multiple"
       v-model:selected="selected"
       :rows-per-page-options="[0]"
-      no-data-label="No dev run record found"
+      no-data-label="No regression test record found"
       :selected-rows-label="getSelectedString"
       :visible-columns="visibleColumns"
       :pagination="initialPagination"
@@ -31,6 +31,7 @@
           :options="columns"
           option-value="name"
           style="min-width: 150px"
+          selection="multiple"
         />
       </template>
       <template v-slot:header="props">
@@ -99,7 +100,7 @@
           <q-td key="log" :props="props" class="q-c-input">
             <div class="row no-wrap">
               <div class="col-11">
-                <reg-log :RegRunRecord="props.row.LastRegressionRunRecord" class="ellipsis"></reg-log>
+                <reg-log :RegressionTest="props.row" class="ellipsis"></reg-log>
               </div>
               <div class="col-1" v-if="props.row.LastRegressionRunRecord?.Log">
                 <q-btn flat round icon="content_copy" size="xs" primary @click="copy(props.row.LastRegressionRunRecord.Log)" class="order-last"></q-btn>
@@ -107,17 +108,27 @@
             </div>
           </q-td>
           <q-td key="errorScreenShot" :props="props" class="q-c-input">
-            <error-screenshot :RegRunRecord="props.row.LastRegressionRunRecord"></error-screenshot>
+            <error-screenshot :RegTest="props.row"></error-screenshot>
           </q-td>
           <q-td key="startAt" :props="props" class="q-c-input">
             <UseTimeAgo v-slot="{ timeAgo }" :time="props.row.LastRegressionRunRecord?.StartAt">
               {{ timeAgo }}
             </UseTimeAgo>
+            <q-tooltip :delay="300" max-width="1200px">
+              <div style="white-space: pre-wrap; font-size: medium;">
+                {{ date.formatDate(props.row.LastRegressionRunRecord?.StartAt, 'YYYY-MM-DD HH:mm:ss Z')}}
+              </div>
+            </q-tooltip>
           </q-td>
           <q-td key="endAt" :props="props" class="q-c-input">
             <UseTimeAgo v-slot="{ timeAgo }" :time="props.row.LastRegressionRunRecord?.EndAt">
               {{ timeAgo }}
             </UseTimeAgo>
+             <q-tooltip :delay="300" max-width="1200px">
+              <div style="white-space: pre-wrap; font-size: medium;">
+                {{ date.formatDate(props.row.LastRegressionRunRecord?.EndAt, 'YYYY-MM-DD HH:mm:ss Z')}}
+              </div>
+            </q-tooltip>
           </q-td>
           <q-td key="executeTime" :props="props" class="q-c-input">
             {{ props.row.LastRegressionRunRecord?.ExecuteTime }}
@@ -160,9 +171,10 @@ import {
 } from 'vue';
 import { useStore } from 'vuex'
 import { useClipboard } from '@vueuse/core'
-import { RegressionRunRecordInterface } from 'src/Models/RegressionRunRecord';
 import { UseTimeAgo } from '@vueuse/components'
 import { RegressionInterface } from 'src/Models/Regression';
+import { date } from 'quasar'
+import { RegressionTestInterface } from 'src/Models/RegressionTest';
 import { allColumns } from './columnDefinitions'
 import RegLog from './Cells/RegLog.vue'
 import ErrorScreenshot from './Cells/ErrorScreenshot.vue'
@@ -183,7 +195,7 @@ export default defineComponent({
     const selected: Ref<any[]> = ref([])
     const columns = allColumns
     const { copy } = useClipboard()
-    const regRunRecords: Ref<RegressionRunRecordInterface[]> = computed(() => $store.getters['regmonitoring/regRunRecords'])
+    const regTests: Ref<RegressionTestInterface[]> = computed(() => $store.getters['regmonitoring/regTests'])
     const initialPagination = {
       sortBy: 'startAt',
       descending: true,
@@ -207,9 +219,9 @@ export default defineComponent({
           return ''
       }
     }
-    function showErrorMessageDialog(regressionRunRecord: RegressionRunRecordInterface) {
+    function showErrorMessageDialog(regTest: RegressionTestInterface) {
       // TODO
-      console.log('regressionRunRecord', regressionRunRecord)
+      console.log('regTest', regTest)
       // $q.dialog({
       //   component: DevErrorMessageDialog,
       //   componentProps: {
@@ -229,8 +241,9 @@ export default defineComponent({
       return selected.value.length === 0 ? '' : `${selected.value.length} step${selected.value.length > 1 ? 's' : ''} selected.`
     }
     return {
+      date,
       initialPagination,
-      regRunRecords,
+      regTests,
       selected,
       getSelectedString,
       showErrorMessageDialog,

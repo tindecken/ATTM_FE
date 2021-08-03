@@ -556,7 +556,6 @@ export default defineComponent({
 
     // With no key pressed - single selection
     function toggleSingleRow(row: any) {
-      console.log('row', row)
       selected.value = []
       selected.value.push(row)
     }

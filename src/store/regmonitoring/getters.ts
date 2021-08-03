@@ -3,11 +3,20 @@ import { StateInterface } from '../index';
 import { RegMonitoringStateInterface } from './state'
 
 const getters: GetterTree<RegMonitoringStateInterface, StateInterface> = {
-  regRunRecords(state: RegMonitoringStateInterface) {
-    return state.regRunRecords;
+  regTests(state: RegMonitoringStateInterface) {
+    return state.regTests;
   },
-  selectedRegRunRecord(state: RegMonitoringStateInterface) {
-    return state.selectedRegRunRecord;
+  selectedRegTest(state: RegMonitoringStateInterface) {
+    return state.selectedRegTest;
+  },
+  categorySelections(state: RegMonitoringStateInterface) {
+    return state.categorySelections;
+  },
+  testSuiteSelections(state: RegMonitoringStateInterface) {
+    return state.testSuiteSelections;
+  },
+  testGroupSelections(state: RegMonitoringStateInterface) {
+    return state.testGroupSelections;
   },
 };
 

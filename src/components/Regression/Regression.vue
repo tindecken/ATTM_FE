@@ -7,6 +7,8 @@
           v-model="selectedRegression"
           :options="filteredRegressions"
           option-label="Name"
+          label="Regression"
+          outlined
           @update:model-value="onChangeRegression($event)"
           @filter="filterRegressionFn"
           input-debounce="0"
@@ -19,6 +21,70 @@
       <div class="col"></div>
       <div class="col"></div>
       <div class="col"></div>
+    </div>
+    <q-separator class="q-mb-sm q-mt-sm" />
+    <div class="row">
+      <div class="col">
+        <div class="row q-gutter-xs">
+          <q-select
+            dense
+            clearable
+            clear-icon="close"
+            outlined
+            name="Category"
+            style="min-width: 150px"
+            label="Category"
+            v-model="selectedCategory"
+            :options="categorySelections"
+            @update:model-value="onCategoryValueChange($event)"
+            fill-input
+            options-dense
+          />
+          <q-select
+            dense
+            clearable
+            clear-icon="close"
+            outlined
+            name="TestSuite"
+            v-model="selectedTestSuite"
+            :options="testSuiteSelections"
+            @input="val => { onTestSuiteValueChange($event) }"
+            color="primary"
+            label="Test Suite"
+            style="min-width: 150px"
+          />
+          <q-select
+            dense
+            clearable
+            clear-icon="close"
+            outlined
+            name="TestGroup"
+            v-model="selectedTestGroup"
+            :options="testGroupSelections"
+            @input="val => { onTestGroupValueChange($event) }"
+            color="primary"
+            label="Test Group"
+            style="min-width: 150px"
+          />
+          <!-- <q-select
+            dense
+            clearable
+            clear-icon="close"
+            outlined
+            name="Client"
+            v-model="selectedClient"
+            :options="Clients"
+            @input="val => { onClientValueChange() }"
+            :loading="clientLoading"
+            color="primary"
+            label="Client"
+            style="min-width: 150px"
+          />
+          <q-input dense clearable clear-icon="close" outlined v-model="testCase" label="Test Case" style="min-width: 300px"/>
+          <q-btn outline color="primary" label="Filter" style="min-width: 100px" @click="filter()"/>
+          <q-btn outline color="secondary" label="Clear Filter" @click="clearFilter()"/> -->
+        </div>
+      </div>
     </div>
     <q-separator class="q-mb-sm q-mt-sm" />
     <div class="row">
@@ -97,7 +163,7 @@ import {
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 import { RegressionInterface } from 'src/Models/Regression'
-import { RegressionRunRecordInterface } from 'src/Models/RegressionRunRecord'
+import { RegressionTestInterface } from 'src/Models/RegressionTest'
 import AllTestTable from './AllTestTable.vue'
 import FailedTable from './FailedTable.vue'
 import PassedTable from './PassedTable.vue'
@@ -117,37 +183,43 @@ export default defineComponent({
     const $q = useQuasar()
     const regressions = computed(() => $store.getters['regression/regressions'] as RegressionInterface[])
     const selectedRegression = computed(() => $store.getters['regression/selectedRegression'] as RegressionInterface)
-    const allCount = computed(() => $store.getters['regmonitoring/regRunRecords'].length)
+    const categorySelections = computed(() => $store.getters['regmonitoring/categorySelections'] as string[])
+    const testSuiteSelections = computed(() => $store.getters['regmonitoring/testSuiteSelections'] as string[])
+    const testGroupSelections = computed(() => $store.getters['regmonitoring/testGroupSelections'] as string[])
+    const allCount = computed(() => $store.getters['regmonitoring/regTests'].length)
     const failedCount = computed(() => {
-      const all = $store.getters['regmonitoring/regRunRecords'] as RegressionRunRecordInterface[]
-      return all.filter((r: RegressionRunRecordInterface) => r.Status === 'Failed').length
+      const all = $store.getters['regmonitoring/regTests'] as RegressionTestInterface[]
+      return all.filter((r: RegressionTestInterface) => r.Status === 'Failed').length
     })
     const passedCount = computed(() => {
-      const all = $store.getters['regmonitoring/regRunRecords'] as RegressionRunRecordInterface[]
-      return all.filter((r: RegressionRunRecordInterface) => r.Status === 'Passed').length
+      const all = $store.getters['regmonitoring/regTests'] as RegressionTestInterface[]
+      return all.filter((r: RegressionTestInterface) => r.Status === 'Passed').length
     })
     const inQueueCount = computed(() => {
-      const all = $store.getters['regmonitoring/regRunRecords'] as RegressionRunRecordInterface[]
-      return all.filter((r: RegressionRunRecordInterface) => r.Status === 'InQueue').length
+      const all = $store.getters['regmonitoring/regTests'] as RegressionTestInterface[]
+      return all.filter((r: RegressionTestInterface) => r.Status === 'InQueue').length
     })
     const runningCount = computed(() => {
-      const all = $store.getters['regmonitoring/regRunRecords'] as RegressionRunRecordInterface[]
-      return all.filter((r: RegressionRunRecordInterface) => r.Status === 'Running' || r.Status === 'Inconclusive').length
+      const all = $store.getters['regmonitoring/regTests'] as RegressionTestInterface[]
+      return all.filter((r: RegressionTestInterface) => r.Status === 'Running' || r.Status === 'Inconclusive').length
     })
     const analyseFailedCount = computed(() => {
-      const all = $store.getters['regmonitoring/regRunRecords'] as RegressionRunRecordInterface[]
-      return all.filter((r: RegressionRunRecordInterface) => r.Status === 'AnalyseFailed').length
+      const all = $store.getters['regmonitoring/regTests'] as RegressionTestInterface[]
+      return all.filter((r: RegressionTestInterface) => r.Status === 'AnalyseFailed').length
     })
     const analysePassedCount = computed(() => {
-      const all = $store.getters['regmonitoring/regRunRecords'] as RegressionRunRecordInterface[]
-      return all.filter((r: RegressionRunRecordInterface) => r.Status === 'AnalysePassed').length
+      const all = $store.getters['regmonitoring/regTests'] as RegressionTestInterface[]
+      return all.filter((r: RegressionTestInterface) => r.Status === 'AnalysePassed').length
     })
     const inCompatibleCount = computed(() => {
-      const all = $store.getters['regmonitoring/regRunRecords'] as RegressionRunRecordInterface[]
-      return all.filter((r: RegressionRunRecordInterface) => r.Status === 'InCompatible').length
+      const all = $store.getters['regmonitoring/regTests'] as RegressionTestInterface[]
+      return all.filter((r: RegressionTestInterface) => r.Status === 'InCompatible').length
     })
     const filteredRegressions: Ref<RegressionInterface[]> = ref([])
     const selectedTab = ref('all')
+    const selectedCategory = ref('')
+    const selectedTestSuite = ref('')
+    const selectedTestGroup = ref('')
     onBeforeMount(async () => {
       try {
         await $store.dispatch('regression/getRegressions');
@@ -174,6 +246,18 @@ export default defineComponent({
         filteredRegressions.value = regressions.value.filter((reg: RegressionInterface) => reg.Name.toLowerCase().indexOf(needle) > -1)
       })
     }
+    function onCategoryValueChange(event: any) {
+      // TODO
+      console.log('onCategoryValueChange', event)
+    }
+    function onTestSuiteValueChange(event: any) {
+      // TODO
+      console.log('onTestGroupValueChange', event)
+    }
+    function onTestGroupValueChange(event: any) {
+      // TODO
+      console.log('onTestGroupValueChange', event)
+    }
     return {
       allCount,
       passedCount,
@@ -189,6 +273,15 @@ export default defineComponent({
       selectedRegression,
       regressions,
       onChangeRegression,
+      selectedCategory,
+      selectedTestSuite,
+      selectedTestGroup,
+      categorySelections,
+      testSuiteSelections,
+      testGroupSelections,
+      onCategoryValueChange,
+      onTestSuiteValueChange,
+      onTestGroupValueChange,
     }
   },
 });

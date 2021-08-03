@@ -1,13 +1,19 @@
-import { RegressionRunRecordInterface } from 'src/Models/RegressionRunRecord'
+import { RegressionTestInterface } from 'src/Models/RegressionTest';
 
 export interface RegMonitoringStateInterface {
-  regRunRecords: RegressionRunRecordInterface[];
-  selectedRegRunRecord?: RegressionRunRecordInterface
+  regTests: RegressionTestInterface[];
+  selectedRegTest?: RegressionTestInterface
+  categorySelections: string[]
+  testSuiteSelections: string[]
+  testGroupSelections: string[]
 }
 
 const state: RegMonitoringStateInterface = {
-  regRunRecords: [],
-  selectedRegRunRecord: undefined,
+  categorySelections: [],
+  testSuiteSelections: [],
+  testGroupSelections: [],
+  regTests: [],
+  selectedRegTest: undefined,
 };
 
 export default state;

@@ -1,6 +1,6 @@
 import { ActionTree } from 'vuex';
 import axios from 'axios';
-import { RegressionRunRecordInterface } from 'src/Models/RegressionRunRecord'
+import { RegressionTestInterface } from 'src/Models/RegressionTest';
 import { StateInterface } from '../index';
 import { RegMonitoringStateInterface } from './state';
 import config from '../../config';
@@ -18,8 +18,14 @@ const actions: ActionTree<RegMonitoringStateInterface, StateInterface> = {
         },
       );
       const responseData = await response.data
-      const regRunRecords = await responseData.data as RegressionRunRecordInterface [];
-      context.commit('setRegRunRecords', regRunRecords);
+      const regressionTests = await responseData.data as RegressionTestInterface [];
+      context.commit('setRegTests', regressionTests);
+      const categories = regressionTests.map((regTest: RegressionTestInterface) => regTest.CategoryName).filter((value, index, self) => self.indexOf(value) === index)
+      context.commit('setCategorySelections', categories);
+      const testSuites = regressionTests.map((regTest: RegressionTestInterface) => regTest.TestSuiteFullName).filter((value, index, self) => self.indexOf(value) === index)
+      context.commit('setTestSuiteSelections', testSuites);
+      const testGroups = regressionTests.map((regTest: RegressionTestInterface) => regTest.TestGroupFullName).filter((value, index, self) => self.indexOf(value) === index)
+      context.commit('setTestGroupSelections', testGroups);
     } catch (error) {
       throw error.response.data
     }

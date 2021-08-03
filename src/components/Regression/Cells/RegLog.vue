@@ -1,7 +1,7 @@
 <template>
   <div>
-    <span v-if="RegRunRecord" @click="showDialog()">
-      {{ RegRunRecord.Log }}
+    <span v-if="RegressionTest" @click="showDialog()">
+      {{ RegressionTest.LastRegressionRunRecord?.Log }}
     </span>
   </div>
 </template>
@@ -11,15 +11,15 @@ import {
   defineComponent, PropType, ref,
 } from 'vue';
 
-import { RegressionRunRecordInterface } from 'src/Models/RegressionRunRecord';
+import { RegressionTestInterface } from 'src/Models/RegressionTest';
 import { useQuasar } from 'quasar'
 import RegLogDialog from '../Dialog/RegLogDialog.vue';
 
 export default defineComponent({
   name: 'DevLog',
   props: {
-    RegRunRecord: {
-      type: Object as PropType<RegressionRunRecordInterface>,
+    RegressionTest: {
+      type: Object as PropType<RegressionTestInterface>,
       required: true,
       default: () => ({}),
     },
@@ -31,7 +31,7 @@ export default defineComponent({
       $q.dialog({
         component: RegLogDialog,
         componentProps: {
-          RegRunRecord: props.RegRunRecord,
+          RegressionTest: props.RegressionTest,
         },
       }).onOk(() => {
         // TODO: handle ok

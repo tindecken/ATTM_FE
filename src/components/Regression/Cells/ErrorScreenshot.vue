@@ -1,5 +1,5 @@
 <template>
-  <div v-if="RegRunRecord">
+  <div v-if="RegTest.LastRegressionRunRecord?.ErrorScreenshot">
     <q-btn @click="showImage()" size="sm" outline>
       View
     </q-btn>
@@ -11,14 +11,14 @@ import {
   defineComponent, PropType,
 } from 'vue';
 
-import { RegressionRunRecordInterface } from 'src/Models/RegressionRunRecord';
 import { useStore } from 'vuex'
+import { RegressionTestInterface } from 'src/Models/RegressionTest';
 
 export default defineComponent({
   name: 'ErrorScreenshot',
   props: {
-    RegRunRecord: {
-      type: Object as PropType<RegressionRunRecordInterface>,
+    RegTest: {
+      type: Object as PropType<RegressionTestInterface>,
       required: true,
       default: () => ({}),
     },
@@ -27,7 +27,7 @@ export default defineComponent({
   setup(props) {
     const $store = useStore()
     async function showImage() {
-      const image = await $store.dispatch('regmonitoring/getScreenshot', props.RegRunRecord.ErrorScreenshot);
+      const image = await $store.dispatch('regmonitoring/getScreenshot', props.RegTest.LastRegressionRunRecord?.ErrorScreenshot);
       const contentType = 'image/png';
       const byteCharacters = atob(image.substr(`data:${contentType};base64,`.length));
       const byteArrays = [];
