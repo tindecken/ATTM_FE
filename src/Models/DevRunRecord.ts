@@ -17,6 +17,7 @@ export interface DevRunRecordInterface {
     EndAt?: Date;
     WorkItem?: string;
     ExecuteTime?: number;
+    GeneratedCode?: string;
     RunMachine?: string;
     ErrorScreenshot?: string;
     Screenshot1?: string;

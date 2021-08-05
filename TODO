@@ -76,12 +76,14 @@ Todo:
   ✔ detail - insert & paste ==> fix, maybe difference testcase between insert and paste @done(21-06-27 15:26)
   ✔ detail - insert blank @done(21-06-27 15:26)
   ✔ right click  means select, if already multiple selected --> no affect, if selected.length = 1 or 0 --> select it. @done(21-06-27 15:26)
-  ☐ remove Team attribute
+  ✔ remove Team attribute @done(21-08-05 09:14) --> Decide to not remote that attribute
   ☐ properties of testcase, has 3 tabs: Properties, DevRunRecord, RegressionRunRecord
-  API to get all DevRunRecords of a testcase, sort by last running, double click to DevRunRecord to get detail running of a TestCase
-  API to get all RegressionRunRecord of a testcase (Regression Test, sort by last running --> RegressionRunRecord, sort by last running)
+  ✔ API to get all DevRunRecords of a testcase, sort by last running, double click to DevRunRecord to get detail running of a TestCase @done(21-08-05 08:20)
+  ✔ API to get all RegressionRunRecord of a testcase (Regression Test, sort by last running --> RegressionRunRecord, sort by last running) @done(21-08-05 08:20)
   ☐ bug - when switch from TestPlan to DevMonitoring during the testcase is build, createDevQueue, it will throw error. https://i.imgur.com/DQDaShc.png
   ☐ Reg monitoring - define columns definition for all columns in table, also for visible columns
+  ☐ Ussing highlightjs for hightlight the code https://github.com/highlightjs/vue-plugin
+  ☐ add attribute: generatedCode for RegressionTest and DevRunRecord
 Test:
   ✔ one flow from create category, testsuite, testgroup, testcase from beginning @done(21-05-11 23:12)
 API:
