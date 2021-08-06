@@ -10,7 +10,7 @@
         <div class="row reverse q-mt-md">
           <div>
             <q-btn outline label="Edit" color="primary" class="q-mr-sm" @click="readonly=false"/>
-            <q-btn outline label="Save" color="primary" />
+            <q-btn outline label="Save" color="primary"  @click="updateImportBlock()"/>
           </div>
         </div>
       </div>
@@ -19,17 +19,64 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import {
+  defineComponent, ref, computed, PropType, Ref, onMounted,
+} from 'vue';
+import { useStore } from 'vuex'
+import { useQuasar } from 'quasar'
+import { SettingInterface } from '../../../Models/Setting'
 
 export default defineComponent({
   name: 'ImportBlock',
   components: {},
-  setup() {
+  props: {
+    settings: {
+      type: Object as PropType<SettingInterface[]>,
+      required: true,
+      default: () => ({}),
+    },
+  },
+  setup(props) {
+    const $store = useStore()
+    const $q = useQuasar()
     const readonly = ref(true)
-    const importBlock = ref('');
+    const importBlockSetting: Ref<SettingInterface> = computed(() => props.settings.find((setting: SettingInterface) => setting.Name === 'ImportBlock') as SettingInterface)
+    const importBlock = ref('')
+    onMounted(() => {
+      importBlock.value = importBlockSetting.value.Value
+    })
+    async function updateImportBlock() {
+      try {
+        const newSetting: SettingInterface = {
+          Id: importBlockSetting.value.Id,
+          Name: 'ImportBlock',
+          Value: importBlock.value,
+          IsDeleted: importBlockSetting.value.IsDeleted,
+          Description: importBlockSetting.value.Description,
+          UpdatedDateTime: new Date(),
+          UpdatedBy: $store.getters['auth/userName'] as string,
+        }
+        console.log('newSetting', newSetting)
+        const result = await $store.dispatch('setting/updateSetting', { settingId: importBlockSetting.value.Id, setting: newSetting });
+        $q.notify({
+          type: 'positive',
+          message: `${result.message}`,
+        });
+      } catch (error) {
+        $q.notify({
+          type: 'negative',
+          message: `${error}`,
+        });
+      }
+    }
+    function update(event: any) {
+      importBlock.value = event
+    }
     return {
-      readonly,
       importBlock,
+      update,
+      readonly,
+      updateImportBlock,
     };
   },
 });
