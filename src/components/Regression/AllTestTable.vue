@@ -49,8 +49,12 @@
       <template v-slot:body="props">
         <q-tr
           :props="props"
+          @click.ctrl="toggleSelectedRow(props.row)"
+          @click.exact="toggleSingleRow(props.row)"
+          @click.shift="toggleRowGroup(props.row)"
           :class="styleStatus(props.row.Status)"
           >
+          <reg-menu></reg-menu>
           <q-td key="testCaseFullName" :props="props" class="q-c-input">
             {{ props.row.TestCaseCodeName }}: {{ props.row.TestCaseName }}
           </q-td>
@@ -163,6 +167,14 @@
         </q-tr>
       </template>
     </q-table>
+    <div class="q-mt-md">
+      Selected:
+      <ul>
+        <li v-for="value in selected" :key="value.Id">
+          {{value.Id}}
+        </li>
+      </ul>
+    </div>
 </template>
 
 <script lang="ts">
@@ -175,6 +187,7 @@ import { UseTimeAgo } from '@vueuse/components'
 import { RegressionInterface } from 'src/Models/Regression';
 import { date } from 'quasar'
 import { RegressionTestInterface } from 'src/Models/RegressionTest';
+import RegMenu from './ContextMenu/RegMenu.vue';
 import { allColumns } from './columnDefinitions'
 import RegLog from './Cells/RegLog.vue'
 import ErrorScreenshot from './Cells/ErrorScreenshot.vue'
@@ -188,7 +201,9 @@ export default defineComponent({
       default: () => ({}),
     },
   },
-  components: { UseTimeAgo, RegLog, ErrorScreenshot },
+  components: {
+    UseTimeAgo, RegLog, ErrorScreenshot, RegMenu,
+  },
   setup() {
     const $store = useStore()
     const isDark = computed(() => $store.getters['global/darkTheme'])
@@ -238,9 +253,83 @@ export default defineComponent({
       // })
     }
     function getSelectedString() {
-      return selected.value.length === 0 ? '' : `${selected.value.length} step${selected.value.length > 1 ? 's' : ''} selected.`
+      return selected.value.length === 0 ? '' : `${selected.value.length} regresion test${selected.value.length > 1 ? 's' : ''} selected.`
     }
+    function toggleSelectedRow(row: any) {
+      if (selected.value.length > 0) { // We can add another row
+        // But if clicking one already selected, we'll remove it instead
+        let i = 0
+        const matched = selected.value.find((item: any, index: number) => {
+          i = index
+          return item.Id === row.Id
+        })
+        if (matched) { // This row was already selected, so remove it
+          selected.value.splice(i, 1)
+        } else { // Add to selection
+          selected.value.push(row)
+        }
+      } else { // First selection - add it
+        selected.value.push(row)
+      }
+    }
+    function toggleSingleRow(row: any) {
+      selected.value = []
+      selected.value.push(row)
+    }
+    function getRowIndexById(Id: string) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      const index: number = regTests.value.findIndex((regTest: RegressionTestInterface) => regTest.Id === Id)
+      if (index === -1) return 0
+      return index
+    }
+
+    // With Shift pressed, select contiguous group
+    function toggleRowGroup(row: any) {
+      if (selected.value.length === 1) { // There is a previous selection
+        // Select contiguous block from previous selection to this one
+        // But if clicked one already selected, remove any selected since then
+        const matched = selected.value.find((item: any) => item.Id === row.Id)
+        if (matched) { // Had already selected this one --> do nothing
+        } else { // New selection - add it and any between
+          // find previous selected teststep
+          const previousSelectedRegressionTest = regTests.value.find((regTest: RegressionTestInterface) => regTest.Id === selected.value[0].Id) as RegressionTestInterface
+
+          // get index for previousRegressionTest and currentSelectedRegressionTest
+          const previousIndex = getRowIndexById(previousSelectedRegressionTest.Id)
+          const currentIndex = getRowIndexById(row.Id)
+
+          let first: number
+          let last: number
+
+          if (previousIndex < currentIndex) {
+            first = previousIndex
+            last = currentIndex
+          } else {
+            first = currentIndex
+            last = previousIndex
+          }
+
+          // row Index need to push
+          // eslint-disable-next-line no-plusplus
+          for (let index = first + 1; index < last; index++) {
+            selected.value.push(regTests.value[index])
+          }
+
+          selected.value.push(row)
+        }
+      } else if (selected.value.length > 1) { // there're multiple row previous selection
+        selected.value = []
+        selected.value.push(row)
+      } else { // No previous selection - just select this one
+        selected.value = []
+        selected.value.push(row)
+      }
+    }
+
     return {
+      toggleSelectedRow,
+      toggleSingleRow,
+      toggleRowGroup,
       date,
       initialPagination,
       regTests,
