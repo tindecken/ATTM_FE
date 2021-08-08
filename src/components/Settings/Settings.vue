@@ -25,10 +25,10 @@
             <import-block :settings="settings"></import-block>
           </q-tab-panel>
           <q-tab-panel name="testClients">
-            Test Clients
+            <test-clients></test-clients>
           </q-tab-panel>
           <q-tab-panel name="testEnvironments">
-            Test Environments
+            <test-environments></test-environments>
           </q-tab-panel>
         </q-tab-panels>
       </div>
@@ -43,11 +43,13 @@ import {
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 import ImportBlock from './Childs/ImportBlock.vue'
+import TestClients from './Childs/TestClients.vue'
+import TestEnvironments from './Childs/TestEnvironments.vue'
 import { SettingInterface } from '../../Models/Setting'
 
 export default defineComponent({
   name: 'Settings',
-  components: { ImportBlock },
+  components: { ImportBlock, TestClients, TestEnvironments },
   setup() {
     const $store = useStore()
     const $q = useQuasar()

@@ -21,7 +21,7 @@ export interface RegressionTestInterface {
     Queue: string,
     Owner: string,
     RegressionRunRecordIds: string[],
-    LastRegressionRunRecord: RegressionRunRecordInterface
+    LastRegressionRunRecord: RegressionRunRecordInterface,
     AnalyseBy: string,
     Issue: string,
     Comment: string
