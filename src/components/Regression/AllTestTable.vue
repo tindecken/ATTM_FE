@@ -54,7 +54,9 @@
           @click.shift="toggleRowGroup(props.row)"
           :class="styleStatus(props.row.Status)"
           >
-          <reg-menu></reg-menu>
+          <reg-menu
+            @update="onUpdate()"
+          ></reg-menu>
           <q-td key="testCaseFullName" :props="props" class="q-c-input">
             {{ props.row.TestCaseCodeName }}: {{ props.row.TestCaseName }}
           </q-td>
@@ -184,13 +186,14 @@ import {
 import { useStore } from 'vuex'
 import { useClipboard } from '@vueuse/core'
 import { UseTimeAgo } from '@vueuse/components'
-import { RegressionInterface } from 'src/Models/Regression';
-import { date } from 'quasar'
-import { RegressionTestInterface } from 'src/Models/RegressionTest';
-import RegMenu from './ContextMenu/RegMenu.vue';
+import { RegressionInterface } from 'src/Models/Regression'
+import { RegressionTestInterface } from 'src/Models/RegressionTest'
+import { useQuasar, date } from 'quasar'
+import RegMenu from './ContextMenu/RegMenu.vue'
 import { allColumns } from './columnDefinitions'
 import RegLog from './Cells/RegLog.vue'
 import ErrorScreenshot from './Cells/ErrorScreenshot.vue'
+import UpdateDialog from './Dialogs/UpdateDialog.vue'
 
 export default defineComponent({
   name: 'AllTestTable',
@@ -202,12 +205,13 @@ export default defineComponent({
     },
   },
   components: {
-    UseTimeAgo, RegLog, ErrorScreenshot, RegMenu,
+    UseTimeAgo, RegLog, ErrorScreenshot, RegMenu
   },
   setup() {
+    const $q = useQuasar()
     const $store = useStore()
     const isDark = computed(() => $store.getters['global/darkTheme'])
-    const selected: Ref<any[]> = ref([])
+    const selected: Ref<RegressionTestInterface[]> = ref([])
     const columns = allColumns
     const { copy } = useClipboard()
     const regTests: Ref<RegressionTestInterface[]> = computed(() => $store.getters['regmonitoring/regTests'])
@@ -325,8 +329,26 @@ export default defineComponent({
         selected.value.push(row)
       }
     }
+    function onUpdate() {
+      console.log('oneUpdate')
+      $q.dialog({
+        component: UpdateDialog,
+        componentProps: {
+          RegressionTests: selected.value,
+        },
+      }).onOk(() => {
+        // TODO: handle ok
+        console.log('OK')
+      }).onCancel(() => {
+        // TODO
+        console.log('Cancel')
+      }).onDismiss(() => {
+        console.log('Dismiss')
+      })
+    }
 
     return {
+      onUpdate,
       toggleSelectedRow,
       toggleSingleRow,
       toggleRowGroup,

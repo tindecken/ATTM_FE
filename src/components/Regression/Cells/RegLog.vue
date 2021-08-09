@@ -13,7 +13,7 @@ import {
 
 import { RegressionTestInterface } from 'src/Models/RegressionTest';
 import { useQuasar } from 'quasar'
-import RegLogDialog from '../Dialog/RegLogDialog.vue';
+import RegLogDialog from '../Dialogs/RegLogDialog.vue';
 
 export default defineComponent({
   name: 'DevLog',
