@@ -38,7 +38,7 @@
           >
           <q-tab-panel v-for="regTest in RegressionTests" :key="regTest.Id" :name="regTest.Id">
             <div class="row">
-                <span class="text-subtitle2">{{ regTest. TestCaseName}}</span>
+                <span class="text-subtitle2">{{ regTest.TestCaseName}}</span>
                 <q-space />
               <q-btn size="sm" outline icon="visibility" primary @click="showImage(regTest)" class="q-mr-sm" v-if="regTest.LastRegressionRunRecord.ErrorScreenshot">View Screenshot</q-btn>
               <q-btn size="sm" outline icon="content_copy" primary @click="copy(regTest.TestCaseCodeName)" class="q-mr-sm">TestCase Code Name</q-btn>
@@ -62,7 +62,7 @@
 
 <script lang="ts">
 import {
-  computed, defineComponent, Ref, ref, PropType,
+  computed, defineComponent, Ref, ref, PropType, onMounted,
 } from 'vue';
 import { useStore } from 'vuex'
 import { useClipboard } from '@vueuse/core'
@@ -83,7 +83,7 @@ export default defineComponent({
     ...useDialogPluginComponent.emits,
   ],
   components: {},
-  setup() {
+  setup(props) {
     const {
       dialogRef, onDialogHide, onDialogOK, onDialogCancel,
     } = useDialogPluginComponent()
@@ -95,6 +95,11 @@ export default defineComponent({
     const isFormValid = ref(false);
     const form: Ref<any> = ref(null);
     const selectedRegTest = ref('');
+    onMounted(() => {
+      if (props.RegressionTests.length > 0) {
+        selectedRegTest.value = props.RegressionTests[0].Id;
+      }
+    })
     function onOKClick() {
       onDialogOK(description.value)
     }
@@ -143,3 +148,11 @@ export default defineComponent({
   },
 });
 </script>
+
+function onMounted(arg0: () => void) {
+  throw new Error('Function not implemented.');
+}
+
+function onMounted(arg0: () => void) {
+  throw new Error('Function not implemented.');
+}

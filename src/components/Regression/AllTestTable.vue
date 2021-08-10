@@ -52,6 +52,7 @@
           @click.ctrl="toggleSelectedRow(props.row)"
           @click.exact="toggleSingleRow(props.row)"
           @click.shift="toggleRowGroup(props.row)"
+          @click.right="toogleRightClick(props.row)"
           :class="styleStatus(props.row.Status)"
           >
           <reg-menu
@@ -205,7 +206,7 @@ export default defineComponent({
     },
   },
   components: {
-    UseTimeAgo, RegLog, ErrorScreenshot, RegMenu
+    UseTimeAgo, RegLog, ErrorScreenshot, RegMenu,
   },
   setup() {
     const $q = useQuasar()
@@ -280,6 +281,12 @@ export default defineComponent({
       selected.value = []
       selected.value.push(row)
     }
+    function toogleRightClick(row: any) {
+      if (selected.value.length <= 1) {
+        selected.value = []
+        selected.value.push(row)
+      }
+    }
     function getRowIndexById(Id: string) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       const index: number = regTests.value.findIndex((regTest: RegressionTestInterface) => regTest.Id === Id)
@@ -352,6 +359,7 @@ export default defineComponent({
       toggleSelectedRow,
       toggleSingleRow,
       toggleRowGroup,
+      toogleRightClick,
       date,
       initialPagination,
       regTests,
