@@ -50,6 +50,16 @@ const allColumns = [
     classes: 'ellipsis',
   },
   {
+    name: 'clientName',
+    label: 'Client',
+    field: 'ClientName',
+    sortable: true,
+    align: 'left',
+    style: 'min-width: 70px; max-width: 90px;',
+    headerStyle: 'min-width: 70px; max-width: 90px;',
+    classes: 'ellipsis',
+  },
+  {
     name: 'description',
     label: 'Description',
     field: 'Description',

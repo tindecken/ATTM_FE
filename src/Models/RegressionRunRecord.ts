@@ -10,6 +10,6 @@ export interface RegressionRunRecordInterface {
     ErrorScreenshot: string,
     Screenshot1: string,
     Screenhost2: string,
-    Comment: string,
+    Comments: string,
     Buffers?: Record<string, string>,
 }

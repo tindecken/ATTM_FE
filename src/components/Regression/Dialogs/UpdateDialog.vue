@@ -7,36 +7,37 @@
       <div class="row q-mb-sm">
         <div class="col-12">
           <q-bar>
-          <q-icon name="edit" />
-          <div>Update {{RegressionTests.length}} Test(s)</div>
-          <q-space />
-          <q-btn dense flat icon="close" v-close-popup>
-            <q-tooltip>Close</q-tooltip>
-          </q-btn>
-        </q-bar>
+            <q-icon name="edit" />
+            <div>Update {{RegressionTests.length}} Test(s)</div>
+            <q-space />
+            <q-btn dense flat icon="close" v-close-popup>
+              <q-tooltip>Close</q-tooltip>
+            </q-btn>
+          </q-bar>
         </div>
       </div>
       <div class="row">
         <div class="col-1">
         <q-tabs
-          v-model="selectedRegTest"
+          v-model="selectedRegTestId"
           dense
           active-color="primary"
           align="left"
           vertical
+          @update:model-value="changeRegressionTest(selectedRegTestId)"
         >
-          <q-tab v-for="regTest in RegressionTests" :key="regTest.Id" :name="regTest.Id" :ripple="false">
+          <q-tab v-for="regTest in RegTests" :key="regTest.Id" :name="regTest.Id" :ripple="false">
             <div class="q-mr-xs">{{regTest.TestCaseCodeName}}</div>
           </q-tab>
         </q-tabs>
         </div>
         <div class="col-11">
         <q-tab-panels
-          v-model="selectedRegTest"
+          v-model="selectedRegTestId"
           animated
           keep-alive
           >
-          <q-tab-panel v-for="regTest in RegressionTests" :key="regTest.Id" :name="regTest.Id">
+          <q-tab-panel v-for="regTest in RegTests" :key="regTest.Id" :name="regTest.Id">
             <div class="row">
                 <span class="text-subtitle2">{{ regTest.TestCaseName}}</span>
                 <q-space />
@@ -53,8 +54,115 @@
         </q-tab-panels>
         </div>
       </div>
-      <div style="white-space: pre-wrap;">
-        <!-- {{ RegressionTest.LastRegressionRunRecord.Log }} -->
+      <q-separator class="q-mt-md q-mb-md"></q-separator>
+      <div class="row justify-center q-gutter-md">
+        <div class="col-3">
+          <q-bar class="justify-center">
+            <q-icon name="play_arrow" />
+            <div>Rerun</div>
+          </q-bar>
+          <div class="q-mt-sm">
+            <q-select
+              dense
+              v-model="selectedClient"
+              @update:model-value="onChangeClient($event)"
+              :options="clients"
+              option-label="Name"
+              label="Run on specific client or blank for any client"
+              input-debounce="0"
+              use-input
+              fill-input
+              hide-selected
+              options-dense
+              clearable
+              class="row"
+            />
+            <q-checkbox v-model="isHighPriority" label="Is Highpriority?" />
+            <div class="row justify-end q-mt-sm">
+              <q-btn outline @click="run()">Run</q-btn>
+            </div>
+          </div>
+        </div>
+        <div class="col-3">
+          <q-bar class="justify-center">
+            <q-icon name="edit" />
+            <div>Analyse</div>
+          </q-bar>
+          <div class="q-mt-sm">
+            <q-select
+              dense
+              v-model="selectedAnalyseStatus"
+              :options="analyseStatuses"
+              option-label="Name"
+              label="Status"
+              input-debounce="0"
+              use-input
+              fill-input
+              hide-selected
+              options-dense
+            />
+            <q-input
+              label="Reason"
+              outlined
+              dense
+              type="textarea" rows="2"
+              v-model="reason"
+              class="q-mt-sm"
+            />
+            <q-input
+              label="IssueID: Issue Description"
+              outlined
+              dense
+              type="textarea" rows="2"
+              v-model="issue"
+              :readonly="selectedAnalyseStatus !== 'AnalyseFailed' && selectedAnalyseStatus !== 'InCompatible'"
+              class="q-mt-sm"
+            />
+            <q-input
+              label="Analyse by"
+              outlined
+              dense
+              readonly
+              class="q-mt-sm"
+              :modelValue="userName"
+            />
+            <div class="row justify-end q-mt-sm">
+              <q-btn outline @click="setAnalyseStatus()">Save</q-btn>
+            </div>
+          </div>
+        </div>
+        <div class="col-5">
+          <q-bar class="justify-center">
+            <q-icon name="comment" />
+            <div>Histories & Comments</div>
+          </q-bar>
+          <div class="q-mt-sm">
+            <q-input
+              outlined
+              dense
+              type="textarea" rows="10"
+              :modelValue="selectedRegTest?.Comments"
+              class="q-mt-sm"
+              readonly
+            />
+            <q-input
+              label="add your comment/note"
+              outlined
+              dense
+              type="textarea" rows="2"
+              v-model="commentInput"
+              class="q-mt-sm"
+            />
+            <div class="row justify-end q-mt-sm">
+              <q-btn outline @click="addCommentForAll()" :label="`Comment all (${RegressionTests.length})`">
+                <q-tooltip>Add Comment for all {{RegressionTests.length}} tests. This can't be undo</q-tooltip>
+              </q-btn>
+              <q-btn outline @click="addCommentForOne()" class="q-ml-sm" label="Comment one">
+                <q-tooltip>Add Comment for the selected test ({{selectedRegTest?.TestCaseCodeName}}). This can't be undo</q-tooltip>
+              </q-btn>
+            </div>
+          </div>
+        </div>
       </div>
     </q-layout>
   </q-dialog>
@@ -65,9 +173,14 @@ import {
   computed, defineComponent, Ref, ref, PropType, onMounted,
 } from 'vue';
 import { useStore } from 'vuex'
+import { useQuasar, useDialogPluginComponent } from 'quasar'
 import { useClipboard } from '@vueuse/core'
-import { useDialogPluginComponent } from 'quasar'
-import { RegressionTestInterface } from 'src/Models/RegressionTest';
+import _ from 'lodash'
+import { RegressionTestInterface } from 'src/Models/RegressionTest'
+import { TestClientInterface } from 'src/Models/TestClient'
+import { AddCommentDataInterface } from 'src/Models/Entities/AddCommentData'
+import { SetRegressionQueueDataInterface } from 'src/Models/Entities/SetRegressionQueueData'
+import { SetRegressionAnalyseStatusDataInterface } from 'src/Models/Entities/SetRegressionAnalyseStatusData'
 
 export default defineComponent({
   name: 'UpdateDialog',
@@ -89,19 +202,38 @@ export default defineComponent({
     } = useDialogPluginComponent()
     const { copy } = useClipboard()
     const $store = useStore()
+    const $q = useQuasar()
     const description = ref('');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const isDark = computed(() => $store.getters['global/darkTheme']);
+    const userName = computed(() => $store.getters['auth/userName'])
+    const clients: Ref<TestClientInterface[]> = computed(() => $store.getters['testclient/testClients'])
+    const selectedClient: Ref<TestClientInterface | null> = ref(null)
+    const selectedRegTest: Ref<RegressionTestInterface | null> = ref(null)
+    const RegTests: Ref<RegressionTestInterface[]> = ref([])
     const isFormValid = ref(false);
     const form: Ref<any> = ref(null);
-    const selectedRegTest = ref('');
+    const selectedRegTestId = ref('');
+    const selectedAnalyseStatus = ref('');
+    const commentInput = ref('')
+    const isHighPriority = ref(false)
+    const reason = ref('')
+    const issue = ref('')
     onMounted(() => {
-      if (props.RegressionTests.length > 0) {
-        selectedRegTest.value = props.RegressionTests[0].Id;
+      RegTests.value = _.cloneDeep(props.RegressionTests)
+      if (RegTests.value.length > 0) {
+        selectedRegTestId.value = RegTests.value[0].Id
+        // eslint-disable-next-line prefer-destructuring
+        selectedRegTest.value = RegTests.value[0]
       }
     })
     function onOKClick() {
       onDialogOK(description.value)
+    }
+    function onChangeClient(value: TestClientInterface) {
+      console.log('value', value)
+      selectedClient.value = value
+      console.log('selectedClient.value', selectedClient.value)
     }
 
     function validateForm() {
@@ -130,10 +262,197 @@ export default defineComponent({
 
       window.open(blobUrl, '_blank');
     }
+    function changeRegressionTest(regressionTestId: string) {
+      const index = RegTests.value.findIndex((regTest: RegressionTestInterface) => regTest.Id === regressionTestId);
+      if (index >= 0) {
+        selectedRegTest.value = RegTests.value[index]
+        console.log('selectedRegTest', selectedRegTest.value)
+      }
+    }
+    function addCommentForAll() {
+      if (commentInput.value === '') return
+      const regressionTestIds: string[] = []
+      RegTests.value.forEach((regTest: RegressionTestInterface) => {
+        regressionTestIds.push(regTest.Id)
+      });
+      const commentData: AddCommentDataInterface = {
+        RegressionTestIds: regressionTestIds,
+        CommentBy: userName.value,
+        Comment: commentInput.value,
+      }
+      const updateComment: Promise<any> = $store.dispatch('regression/addCommentForRegressionTests', commentData)
+      void updateComment.then((r) => {
+        console.log('updateComment', r)
+        RegTests.value.forEach((regTest: RegressionTestInterface) => {
+          r.data.data.forEach((rt: RegressionTestInterface) => {
+            if (rt.Id === regTest.Id) {
+              regTest.Comments = rt.Comments
+            }
+          });
+        });
+        commentInput.value = ''
+        $q.notify({
+          type: 'positive',
+          message: `${r.data.message}`,
+        });
+      }).catch((e) => {
+        $q.notify({
+          type: 'negative',
+          message: `${e}`,
+        });
+      })
+    }
+    function addCommentForOne() {
+      if (commentInput.value === '' || selectedRegTest.value === null) return
+      const commentData: AddCommentDataInterface = {
+        RegressionTestIds: [selectedRegTest.value.Id],
+        CommentBy: userName.value,
+        Comment: commentInput.value,
+      }
+      const updateComment: Promise<any> = $store.dispatch('regression/addCommentForRegressionTests', commentData)
+      void updateComment.then((r) => {
+        console.log('updateComment', r)
+        if (selectedRegTest.value !== null) {
+          const index = RegTests.value.findIndex((regTest: RegressionTestInterface) => regTest.Id === selectedRegTest.value?.Id);
+          if (index >= 0) {
+            RegTests.value[index].Comments = r.data.data[0].Comments
+          }
+        }
+        commentInput.value = ''
+        $q.notify({
+          type: 'positive',
+          message: `${r.data.message}`,
+        });
+      }).catch((e) => {
+        $q.notify({
+          type: 'negative',
+          message: `${e}`,
+        });
+      })
+    }
+    function run() {
+      const regressionTestIds: string[] = []
+      RegTests.value.forEach((regTest: RegressionTestInterface) => {
+        regressionTestIds.push(regTest.Id)
+      });
+      const regressionQueueData: SetRegressionQueueDataInterface = {
+        RegressionTestIds: regressionTestIds,
+        ClientName: selectedClient.value ? selectedClient.value.Name : '',
+        IsHighPriority: isHighPriority.value,
+        UpdateBy: userName.value,
+      }
+      const setQueueResult: Promise<any> = $store.dispatch('regression/setRegressionQueue', regressionQueueData)
+      void setQueueResult.then((r: any) => {
+        console.log('setQueueResult', r)
+        RegTests.value.forEach((regTest: RegressionTestInterface) => {
+          r.data.data.forEach((rt: RegressionTestInterface) => {
+            if (rt.Id === regTest.Id) {
+              regTest.Comments = rt.Comments
+            }
+          });
+        });
+        $q.notify({
+          type: 'positive',
+          message: `${r.data.message}`,
+        });
+      }).catch((e) => {
+        $q.notify({
+          type: 'negative',
+          message: `${e}`,
+        });
+      })
+    }
+    function setAnalyseStatus() {
+      // Check the conditions before save
+      switch (selectedAnalyseStatus.value) {
+        case 'AnalysePassed':
+          if (reason.value === '') {
+            $q.notify({
+              type: 'warning',
+              message: 'Reason is required when status is AnalysePassed',
+            });
+            return
+          }
+          break
+        case 'AnalyseFailed':
+          if (issue.value === '') {
+            $q.notify({
+              type: 'warning',
+              message: 'Issue is required when status is AnalyseFailed',
+            });
+            return
+          }
+          break
+        case 'InCompatible':
+          if (reason.value === '' && issue.value === '') {
+            $q.notify({
+              type: 'warning',
+              message: 'At least reason or issue is required when status is InCompatible',
+            });
+            return
+          }
+          break
+        default:
+          break
+      }
+      const regressionTestIds: string[] = []
+      RegTests.value.forEach((regTest: RegressionTestInterface) => {
+        regressionTestIds.push(regTest.Id)
+      });
+      const regressionAnalyStatusData: SetRegressionAnalyseStatusDataInterface = {
+        RegressionTestIds: regressionTestIds,
+        Status: selectedAnalyseStatus.value,
+        AnalyseBy: userName.value,
+        Reason: reason.value,
+        Issue: issue.value,
+      }
+      const setRegressionStatusResult: Promise<any> = $store.dispatch('regression/setRegressionAnalyseStatus', regressionAnalyStatusData)
+      void setRegressionStatusResult.then((r: any) => {
+        reason.value = ''
+        issue.value = ''
+        RegTests.value.forEach((regTest: RegressionTestInterface) => {
+          r.data.data.forEach((rt: RegressionTestInterface) => {
+            if (rt.Id === regTest.Id) {
+              regTest.Comments = rt.Comments
+            }
+          });
+        });
+        $q.notify({
+          type: 'positive',
+          message: `${r.data.message}`,
+        });
+      }).catch((e) => {
+        $q.notify({
+          type: 'negative',
+          message: `${e}`,
+        });
+      })
+    }
     return {
+      setAnalyseStatus,
+      reason,
+      run,
+      isHighPriority,
+      RegTests,
+      addCommentForAll,
+      addCommentForOne,
+      commentInput,
+      userName,
+      changeRegressionTest,
+      issue,
+      selectedAnalyseStatus,
+      analyseStatuses: [
+        'AnalysePassed',
+        'AnalyseFailed',
+        'InCompatible',
+      ],
+      onChangeClient,
+      selectedRegTest,
+      selectedClient,
+      clients,
       showImage,
       copy,
-      selectedRegTest,
+      selectedRegTestId,
       dialogRef,
       onDialogHide,
       onOKClick,
@@ -148,11 +467,3 @@ export default defineComponent({
   },
 });
 </script>
-
-function onMounted(arg0: () => void) {
-  throw new Error('Function not implemented.');
-}
-
-function onMounted(arg0: () => void) {
-  throw new Error('Function not implemented.');
-}

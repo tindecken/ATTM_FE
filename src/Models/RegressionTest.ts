@@ -17,6 +17,7 @@ export interface RegressionTestInterface {
     TestCaseType: string,
     Team: string,
     Status: string,
+    ClientName: string,
     WorkItem: string,
     Queue: string,
     Owner: string,
@@ -24,5 +25,5 @@ export interface RegressionTestInterface {
     LastRegressionRunRecord: RegressionRunRecordInterface,
     AnalyseBy: string,
     Issue: string,
-    Comment: string
+    Comments: string
 }

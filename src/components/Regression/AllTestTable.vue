@@ -73,6 +73,9 @@
           <q-td key="status" :props="props" class="q-c-input">
             {{ props.row.Status }}
           </q-td>
+          <q-td key="clientName" :props="props" class="q-c-input">
+            {{ props.row.ClientName }}
+          </q-td>
           <q-td key="description" :props="props" class="q-c-input">
             <div class="row no-wrap">
               <div class="col-11 ellipsis">
@@ -288,7 +291,6 @@ export default defineComponent({
       }
     }
     function getRowIndexById(Id: string) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       const index: number = regTests.value.findIndex((regTest: RegressionTestInterface) => regTest.Id === Id)
       if (index === -1) return 0
       return index
@@ -343,12 +345,15 @@ export default defineComponent({
         componentProps: {
           RegressionTests: selected.value,
         },
-      }).onOk(() => {
+      }).onOk(async () => {
         // TODO: handle ok
+        const selectedRegression = $store.getters['regression/selectedRegression']
+        await $store.dispatch('regmonitoring/getRegressionDetail', selectedRegression.Id)
         console.log('OK')
-      }).onCancel(() => {
+      }).onCancel(async () => {
         // TODO
-        console.log('Cancel')
+        const selectedRegression = $store.getters['regression/selectedRegression']
+        await $store.dispatch('regmonitoring/getRegressionDetail', selectedRegression.Id)
       }).onDismiss(() => {
         console.log('Dismiss')
       })
@@ -370,7 +375,7 @@ export default defineComponent({
       styleStatus,
       isDark,
       columns,
-      visibleColumns: ref(['testCaseFullName', 'category', 'testSuite', 'testGroup', 'status', 'description', 'testCaseType', 'team', 'errorMessage', 'log', 'errorScreenShot', 'startAt', 'endAt', 'executeTime', 'workItem', 'queue', 'isHighPriority', 'owner', 'analyseBy', 'issue', 'comment', 'runMachine', 'buffers']),
+      visibleColumns: ref(['testCaseFullName', 'category', 'testSuite', 'testGroup', 'status', 'clientName', 'description', 'testCaseType', 'team', 'errorMessage', 'log', 'errorScreenShot', 'startAt', 'endAt', 'executeTime', 'workItem', 'queue', 'isHighPriority', 'owner', 'analyseBy', 'issue', 'comment', 'runMachine', 'buffers']),
     };
   },
 });
