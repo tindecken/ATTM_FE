@@ -16,7 +16,7 @@
           </q-bar>
         </div>
       </div>
-      <div class="row">
+      <div class="row" style="">
         <div class="col-1">
         <q-tabs
           v-model="selectedRegTestId"
@@ -25,6 +25,7 @@
           align="left"
           vertical
           @update:model-value="changeRegressionTest(selectedRegTestId)"
+          style="max-height: 465px; min-height: 370px"
         >
           <q-tab v-for="regTest in RegTests" :key="regTest.Id" :name="regTest.Id" :ripple="false">
             <div class="q-mr-xs">{{regTest.TestCaseCodeName}}</div>
@@ -37,7 +38,7 @@
           animated
           keep-alive
           >
-          <q-tab-panel v-for="regTest in RegTests" :key="regTest.Id" :name="regTest.Id">
+          <q-tab-panel v-for="regTest in RegTests" :key="regTest.Id" :name="regTest.Id" style="max-height: 465px; min-height: 370px">
             <div class="row">
                 <span class="text-subtitle2">{{ regTest.TestCaseName}}</span>
                 <q-space />
@@ -54,7 +55,7 @@
         </q-tab-panels>
         </div>
       </div>
-      <q-separator class="q-mt-md q-mb-md"></q-separator>
+      <q-separator class="q-mt-sm q-mb-sm"></q-separator>
       <div class="row justify-center q-gutter-md">
         <div class="col-3">
           <q-bar class="justify-center">
@@ -171,7 +172,7 @@
 <script lang="ts">
 import {
   computed, defineComponent, Ref, ref, PropType, onMounted,
-} from 'vue';
+} from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar, useDialogPluginComponent } from 'quasar'
 import { useClipboard } from '@vueuse/core'
@@ -365,6 +366,12 @@ export default defineComponent({
     function setAnalyseStatus() {
       // Check the conditions before save
       switch (selectedAnalyseStatus.value) {
+        case '':
+          $q.notify({
+            type: 'warning',
+            message: 'Status can\'t be empty',
+          });
+          return
         case 'AnalysePassed':
           if (reason.value === '') {
             $q.notify({

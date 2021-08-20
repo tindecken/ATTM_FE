@@ -26,6 +26,8 @@ const actions: ActionTree<RegMonitoringStateInterface, StateInterface> = {
       context.commit('setTestSuiteSelections', testSuites);
       const testGroups = regressionTests.map((regTest: RegressionTestInterface) => regTest.TestGroupFullName).filter((value, index, self) => self.indexOf(value) === index)
       context.commit('setTestGroupSelections', testGroups);
+      const testClients = regressionTests.map((regTest: RegressionTestInterface) => regTest.ClientName).filter((value, index, self) => self.indexOf(value) === index && value !== '')
+      context.commit('setTestClientSelections', testClients);
     } catch (error) {
       throw error.response.data
     }

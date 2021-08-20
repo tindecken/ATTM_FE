@@ -104,12 +104,16 @@ export default defineComponent({
       if (currentNode == null) return
       switch (currentNode.nodeType) {
         case 'Category':
+          $store.commit('global/setInfoStatus', { Info: `${currentNode.Id} - ${currentNode.Name}` })
           break
         case 'TestSuite':
+          $store.commit('global/setInfoStatus', { Info: `${currentNode.Id} - ${currentNode.CodeName}: ${currentNode.Name}` })
           break
         case 'TestGroup':
+          $store.commit('global/setInfoStatus', { Info: `${currentNode.Id} - ${currentNode.CodeName}: ${currentNode.Name}` })
           break
         case 'TestCase':
+          $store.commit('global/setInfoStatus', { Info: `${currentNode.Id} - ${currentNode.CodeName}: ${currentNode.Name}` })
           const openedTCs = $store.getters['testcase/openedTCs'];
           const found = openedTCs.some((el: any) => el.Id === currentNode.Id);
           if (found) {

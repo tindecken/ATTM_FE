@@ -97,6 +97,8 @@ API:
   ☐ create new api to list all testcase in .dll file including all task, including [Test] with //
   reference to this tutorial, https://stackoverflow.com/questions/10724479/get-list-of-tests-in-nunit-library-programmatically-without-having-to-run-tests
   ✔ buildproject API should return JObject @done(21-05-09 07:39)
+  Delete TestGroup in testsuite should delete all testcase in testgroup
+  Delete TestSuite in category should delete all testgroup in testsuite, and delete all testcase in testgroup
 Node:
   In store keyword, currently not use selectedKeyword
   https://blog.hildenco.com/2020/05/configuration-in-net-core-console.html

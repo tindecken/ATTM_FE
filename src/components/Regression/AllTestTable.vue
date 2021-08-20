@@ -17,7 +17,17 @@
       :selected-rows-label="getSelectedString"
       :visible-columns="visibleColumns"
       :pagination="initialPagination"
+      :filter="filterTable.trim()"
     >
+    <template v-slot:top-left>
+        <div>
+          <q-input borderless dense debounce="300" v-model="filterTable" placeholder="Filter">
+            <template v-slot:append>
+              <q-icon name="search" />
+            </template>
+          </q-input>
+        </div>
+      </template>
       <template v-slot:top-right>
         <q-select
           v-model="visibleColumns"
@@ -75,6 +85,9 @@
           </q-td>
           <q-td key="clientName" :props="props" class="q-c-input">
             {{ props.row.ClientName }}
+          </q-td>
+          <q-td key="isHighPriority" :props="props" class="q-c-input">
+            {{ props.row.IsHighPriority }}
           </q-td>
           <q-td key="description" :props="props" class="q-c-input">
             <div class="row no-wrap">
@@ -149,9 +162,6 @@
           <q-td key="queue" :props="props" class="q-c-input">
             {{ props.row.Queue }}
           </q-td>
-          <q-td key="isHighPriority" :props="props" class="q-c-input">
-            {{ props.row.IsHighPriority }}
-          </q-td>
           <q-td key="owner" :props="props" class="q-c-input">
             {{ props.row.Owner }}
           </q-td>
@@ -161,8 +171,8 @@
           <q-td key="issue" :props="props" class="q-c-input">
             {{ props.row.Issue }}
           </q-td>
-          <q-td key="comment" :props="props" class="q-c-input">
-            {{ props.row.Comment }}
+          <q-td key="comments" :props="props" class="q-c-input">
+            {{ props.row.Comments }}
           </q-td>
           <q-td key="runMachine" :props="props" class="q-c-input">
             {{ props.row.LastRegressionRunRecord?.RunMachine }}
@@ -229,11 +239,13 @@ export default defineComponent({
     function styleStatus(status: string) {
       switch (status) {
         case 'Passed':
+        case 'AnalysePassed':
           if (isDark.value) {
             return 'bg-light-green-10'
           }
           return 'bg-light-green-2'
         case 'Failed':
+        case 'AnalyseFailed':
           if (isDark.value) {
             return 'bg-deep-orange-7'
           }
@@ -375,7 +387,8 @@ export default defineComponent({
       styleStatus,
       isDark,
       columns,
-      visibleColumns: ref(['testCaseFullName', 'category', 'testSuite', 'testGroup', 'status', 'clientName', 'description', 'testCaseType', 'team', 'errorMessage', 'log', 'errorScreenShot', 'startAt', 'endAt', 'executeTime', 'workItem', 'queue', 'isHighPriority', 'owner', 'analyseBy', 'issue', 'comment', 'runMachine', 'buffers']),
+      filterTable: ref(''),
+      visibleColumns: ref(['testCaseFullName', 'category', 'testSuite', 'testGroup', 'status', 'clientName', 'isHighPriority', 'description', 'testCaseType', 'team', 'errorMessage', 'log', 'errorScreenShot', 'startAt', 'endAt', 'executeTime', 'workItem', 'queue', 'owner', 'analyseBy', 'issue', 'comments', 'runMachine', 'buffers']),
     };
   },
 });

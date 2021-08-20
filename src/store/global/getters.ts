@@ -1,7 +1,8 @@
-import { TestAUTInterface } from 'src/Models/TestAUT';
-import { GetterTree } from 'vuex';
-import { StateInterface } from '../index';
-import { GlobalStateInterface } from './state';
+import { TestAUTInterface } from 'src/Models/TestAUT'
+import { GetterTree } from 'vuex'
+import { InfoStatusDataInterface } from 'src/Models/Entities/InfoStatusData'
+import { StateInterface } from '../index'
+import { GlobalStateInterface } from './state'
 
 const getters: GetterTree<GlobalStateInterface, StateInterface> = {
   darkTheme(state: GlobalStateInterface) : boolean {
@@ -9,6 +10,9 @@ const getters: GetterTree<GlobalStateInterface, StateInterface> = {
   },
   testAuTs(state: GlobalStateInterface) : TestAUTInterface[] {
     return state.testAUTs;
+  },
+  infoStatus(state: GlobalStateInterface) : InfoStatusDataInterface {
+    return state.infoStatus;
   },
 };
 

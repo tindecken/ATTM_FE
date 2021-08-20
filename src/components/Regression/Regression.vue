@@ -26,7 +26,7 @@
     <div class="row">
       <div class="col">
         <div class="row q-gutter-xs">
-          <q-select
+          <!-- <q-select
             dense
             clearable
             clear-icon="close"
@@ -66,23 +66,22 @@
             label="Test Group"
             style="min-width: 150px"
           />
-          <!-- <q-select
+          <q-select
             dense
             clearable
             clear-icon="close"
             outlined
             name="Client"
-            v-model="selectedClient"
-            :options="Clients"
-            @input="val => { onClientValueChange() }"
-            :loading="clientLoading"
+            v-model="selectedTestClient"
+            :options="testClientSelections"
+            @input="val => { onTestClientValueChange($event) }"
             color="primary"
             label="Client"
             style="min-width: 150px"
-          />
-          <q-input dense clearable clear-icon="close" outlined v-model="testCase" label="Test Case" style="min-width: 300px"/>
-          <q-btn outline color="primary" label="Filter" style="min-width: 100px" @click="filter()"/>
-          <q-btn outline color="secondary" label="Clear Filter" @click="clearFilter()"/> -->
+          /> -->
+          <q-input dense clearable clear-icon="close" outlined v-model="testCaseFilterText" label="Test Case" style="min-width: 300px" @keyup.enter="testCaseFilterFunc()" @keyup.esc="clearFilter()"/>
+          <q-btn outline color="primary" label="Filter" style="min-width: 100px" @click="testCaseFilterFunc()"/>
+          <q-btn outline color="secondary" label="Clear Filter" @click="clearFilter()"/>
         </div>
       </div>
     </div>
@@ -130,7 +129,7 @@
             <all-test-table :selectedRegression="selectedRegression"></all-test-table>
           </q-tab-panel>
           <q-tab-panel name="failed">
-            <failed-table></failed-table>
+            <failed-table :selectedRegression="selectedRegression"></failed-table>
           </q-tab-panel>
           <q-tab-panel name="passed">
             <passed-table></passed-table>
@@ -186,6 +185,8 @@ export default defineComponent({
     const categorySelections = computed(() => $store.getters['regmonitoring/categorySelections'] as string[])
     const testSuiteSelections = computed(() => $store.getters['regmonitoring/testSuiteSelections'] as string[])
     const testGroupSelections = computed(() => $store.getters['regmonitoring/testGroupSelections'] as string[])
+    const testClientSelections = computed(() => $store.getters['regmonitoring/testClientSelections'] as string[])
+    const regTests = computed(() => $store.getters['regmonitoring/regTests'] as RegressionTestInterface[])
     const allCount = computed(() => $store.getters['regmonitoring/regTests'].length)
     const failedCount = computed(() => {
       const all = $store.getters['regmonitoring/regTests'] as RegressionTestInterface[]
@@ -220,6 +221,8 @@ export default defineComponent({
     const selectedCategory = ref('')
     const selectedTestSuite = ref('')
     const selectedTestGroup = ref('')
+    const selectedTestClient = ref('')
+    const testCaseFilterText = ref('')
     onBeforeMount(async () => {
       try {
         await $store.dispatch('regression/getRegressions');
@@ -258,7 +261,41 @@ export default defineComponent({
       // TODO
       console.log('onTestGroupValueChange', event)
     }
+    function onTestClientValueChange(event: any) {
+      // TODO
+      console.log('onTestClientValueChange', event)
+    }
+    async function clearFilter() {
+      testCaseFilterText.value = ''
+      if (selectedRegression.value) {
+        await $store.dispatch('regmonitoring/getRegressionDetail', selectedRegression.value.Id)
+      }
+    }
+    function testCaseFilterFunc() {
+      // TODO
+      console.log('testCaseFilterFunc')
+      if (testCaseFilterText.value === '') {
+        void clearFilter()
+      } else {
+        const filteredRegTests: RegressionTestInterface[] = regTests.value.filter((rt: RegressionTestInterface) => rt.TestCaseCodeName.toLowerCase().includes(testCaseFilterText.value.toLowerCase().trim()) || rt.TestCaseName.toLowerCase().includes(testCaseFilterText.value.toLowerCase().trim()))
+        if (filteredRegTests.length > 0) {
+          $store.commit('regmonitoring/setRegTests', filteredRegTests)
+        } else {
+          $q.notify({
+            type: 'info',
+            message: 'Not found',
+          })
+        }
+      }
+    }
     return {
+      selectedTestClient,
+      onTestClientValueChange,
+      testClientSelections,
+      regTests,
+      clearFilter,
+      testCaseFilterFunc,
+      testCaseFilterText,
       allCount,
       passedCount,
       failedCount,

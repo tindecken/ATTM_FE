@@ -22,7 +22,7 @@
       <router-view />
     </q-page-container>
     <q-footer reveal bordered class="text-white row inline justify-between" style="height: 24px">
-      <div>Tindecken @ 2021</div>
+      <information-footer></information-footer>
       <div class="row inline">
         <test-client-footer></test-client-footer>
         <q-separator vertical class="q-mr-sm" />
@@ -43,6 +43,7 @@ import LeftDrawer from './LeftDrawer.vue';
 import RightDrawer from './RightDrawer.vue';
 import EnvFooter from './Footer/EnvFooter.vue';
 import TestClientFooter from './Footer/TestClientFooter.vue';
+import InformationFooter from './Footer/InformationFooter.vue';
 import config from '../config'
 
 export default defineComponent({
@@ -52,6 +53,7 @@ export default defineComponent({
     RightDrawer,
     EnvFooter,
     TestClientFooter,
+    InformationFooter,
   },
   setup() {
     const $store = useStore()
