@@ -58,6 +58,19 @@ const mutation: MutationTree<CategoryStateInterface> = {
     tempCat.children[tsIndex].children[tgIndex].children[tcIndex] = testCase
     state.Categories[catIndex] = tempCat
   },
+  deleteTestCases(state: CategoryStateInterface, testCases: TestCaseInterface[]) {
+    testCases.forEach((tc: TestCaseInterface) => {
+      const catIndex = state.Categories.findIndex((cat: CategoryInterface) => cat.Id === tc.CategoryId);
+      const tempCat = _.cloneDeep(state.Categories[catIndex])
+      // find tsIndex
+      const tsIndex = tempCat.children.findIndex((ts: TestSuiteInterface) => ts.Id === tc.TestSuiteId)
+      // find tgIndex
+      const tgIndex = tempCat.children[tsIndex].children.findIndex((tg: TestGroupInterface) => tg.Id === tc.TestGroupId)
+      const tcIndex = tempCat.children[tsIndex].children[tgIndex].children.findIndex((t: TestCaseInterface) => t.Id === tc.Id)
+      tempCat.children[tsIndex].children[tgIndex].children.splice(tcIndex, 1)
+      state.Categories[catIndex] = tempCat
+    })
+  },
 }
 
 export default mutation;

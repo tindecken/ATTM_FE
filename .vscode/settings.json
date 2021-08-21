@@ -20,11 +20,10 @@
     "testsuites",
     "updatereleaseforclient"
   ],
-  "cSpell.ignoreWords": [
-    "borderless",
-    "testgroups"
-  ],
-  "cSpell.enableFiletypes": [
-    "vue"
-  ]
+  "cSpell.ignoreWords": ["borderless", "testgroups"],
+  "cSpell.enableFiletypes": ["vue"],
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "vetur.format.defaultFormatter.js": "vscode-typescript",
+  "prettier.jsxSingleQuote": true,
+  "prettier.singleQuote": true
 }

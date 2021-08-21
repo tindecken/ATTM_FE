@@ -43,7 +43,7 @@
                   @newTestGroup="onNewTestGroup(prop.node)"
                   @newTestCase="onNewTestCase(prop.node)"
                   @edit="onEdit()"
-                  @deleteNode="onDeleteNode(prop.node)"
+                  @deleteNodes="onDeleteNodes(prop.node)"
                   >
                 </tree-context-menu>
                 <template v-if="prop.node.nodeType === 'Category'">
@@ -79,6 +79,7 @@ import TreeContextMenu from './ContextMenu/TreeContextMenu.vue'
 import NewTestSuiteDialog from './Dialog/NewTestSuiteDialog.vue'
 import NewTestGroupDialog from './Dialog/NewTestGroupDialog.vue'
 import NewTestCaseDialog from './Dialog/NewTestCaseDialog.vue'
+import DeleteTestCaseDiaglog from './Dialog/DeleteTestCaseDialog.vue'
 
 export default defineComponent({
   name: 'Tree',
@@ -367,11 +368,52 @@ export default defineComponent({
       }
     }
 
-    function onDeleteNode(value: any) {
-      $q.notify({
-        type: 'negative',
-        message: `Not develop yet: ${value}`,
-      });
+    function onDeleteNodes(node: any) {
+      const tickedNodes = tree.value.getTickedNodes();
+      if (tickedNodes.length !== 0) {
+        const testCases = tickedNodes.filter((n: any) => n.nodeType === 'TestCase') as TestCaseInterface[];
+        if (testCases.length !== 0) {
+          $q.dialog({
+            component: DeleteTestCaseDiaglog,
+            componentProps: {
+              testCases,
+            },
+          })
+            .onOk(async () => {
+              try {
+                const deleteResult = await $store.dispatch('testgroup/deleteTestCase', testCases)
+                $q.notify({
+                  type: 'positive',
+                  message: `Deleted ${deleteResult.length} test case(s) `,
+                })
+              } catch (err: any) {
+                $q.notify({
+                  type: 'negative',
+                  message: `${err}`,
+                })
+              }
+            })
+            .onCancel(() => {
+              // TODO
+            })
+            .onDismiss(() => {
+              // TODO
+            });
+        }
+      } else {
+        const currentNode = tree.value.getNodeByKey(node.Id);
+        console.log('currentNode', currentNode);
+        switch (currentNode.nodeType) {
+          case 'Category':
+            break;
+          case 'TestSuite':
+            break;
+          case 'TestGroup':
+            break;
+          default:
+            break;
+        }
+      }
     }
 
     return {
@@ -385,7 +427,7 @@ export default defineComponent({
       fnSelectedNode,
       tree,
       toggleTree,
-      onDeleteNode,
+      onDeleteNodes,
       onGenerateDevCode,
       onRun,
       onRunOn,
