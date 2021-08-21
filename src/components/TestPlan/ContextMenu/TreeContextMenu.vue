@@ -63,7 +63,7 @@
           </q-item-section>
           <q-item-section>Edit</q-item-section>
         </q-item>
-        <q-item clickable v-close-popup @click="deleteNode()">
+        <q-item clickable v-close-popup @click="deleteNodes()">
           <q-item-section avatar>
             <q-icon color="primary" name="delete_outline" />
           </q-item-section>
@@ -88,10 +88,9 @@ export default defineComponent({
   components: {},
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setup(props, { emit }) {
-    function deleteNode() {
-      emit('deleteNode', props.node)
+    function deleteNodes() {
+      emit('deleteNodes')
     }
-
     function generateDevCode() {
       emit('generateDevCode')
     }
@@ -120,7 +119,7 @@ export default defineComponent({
       emit('edit')
     }
     return {
-      deleteNode,
+      deleteNodes,
       generateDevCode,
       run,
       runOn,
