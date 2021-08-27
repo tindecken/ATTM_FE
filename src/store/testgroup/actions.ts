@@ -26,6 +26,7 @@ const actions: ActionTree<TestGroupStateInterface, StateInterface> = {
       context.commit('category/createTestCase', responseTestCase, {
         root: true,
       });
+      return responseTestCase
     } catch (error) {
       throw error.response.data;
     }
@@ -49,6 +50,9 @@ const actions: ActionTree<TestGroupStateInterface, StateInterface> = {
       const responses: any = await Promise.all(arrRequests);
       console.log('responses', responses)
       context.commit('category/deleteTestCases', testCases, { root: true });
+      testCases.forEach((tc: TestCaseInterface) => {
+        context.commit('testcase/removeOpenedTC', tc, { root: true });
+      })
       return responses
     } catch (error) {
       console.log('error.response.data', error.response.data.error);

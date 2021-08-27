@@ -2,7 +2,9 @@ import { MutationTree } from 'vuex';
 import uuid from 'uuid-random';
 import _ from 'lodash';
 import { TestCaseInterface } from 'src/Models/TestCase';
+import { TestSuiteInterface } from 'src/Models/TestSuite';
 import { TestStepInterface } from 'src/Models/TestStep';
+import { CategoryInterface } from 'src/Models/Category';
 import { TestCaseStateInterface } from './state';
 
 const mutation: MutationTree<TestCaseStateInterface> = {
@@ -35,6 +37,64 @@ const mutation: MutationTree<TestCaseStateInterface> = {
         state.selectedTestCaseId = state.openedTCs[index].Id
       }
     }
+  },
+  removeOpenedTCbyTCIds(state: TestCaseStateInterface, testCaseIds: string[]) {
+    testCaseIds.forEach((tcId: string) => {
+      const index = state.openedTCs.findIndex((el: TestCaseInterface) => el.Id === tcId);
+      if (index !== -1) {
+        state.openedTCs.splice(index, 1)
+        // set selectedTestCase --> next tab
+        if (state.openedTCs.length === 0) {
+          state.selectedTestCaseId = '';
+          return
+        }
+        if (index >= state.openedTCs.length) {
+          state.selectedTestCaseId = state.openedTCs[state.openedTCs.length - 1].Id
+        } else {
+          state.selectedTestCaseId = state.openedTCs[index].Id
+        }
+      }
+    });
+  },
+  removeOpenedTCbyTestSuite(state: TestCaseStateInterface, testSuite: TestSuiteInterface) {
+    const testCaseIds = state.openedTCs.filter((tc: TestCaseInterface) => tc.TestSuiteId === testSuite.Id).map((tc: TestCaseInterface) => tc.Id);
+    console.log('testCaseIds', testCaseIds)
+    testCaseIds.forEach((tcId: string) => {
+      const index = state.openedTCs.findIndex((el: TestCaseInterface) => el.Id === tcId);
+      if (index !== -1) {
+        state.openedTCs.splice(index, 1)
+        // set selectedTestCase --> next tab
+        if (state.openedTCs.length === 0) {
+          state.selectedTestCaseId = '';
+          return
+        }
+        if (index >= state.openedTCs.length) {
+          state.selectedTestCaseId = state.openedTCs[state.openedTCs.length - 1].Id
+        } else {
+          state.selectedTestCaseId = state.openedTCs[index].Id
+        }
+      }
+    });
+  },
+  removeOpenedTCbyCategory(state: TestCaseStateInterface, category: CategoryInterface) {
+    const testCaseIds = state.openedTCs.filter((tc: TestCaseInterface) => tc.CategoryId === category.Id).map((tc: TestCaseInterface) => tc.Id);
+    console.log('testCaseIds', testCaseIds)
+    testCaseIds.forEach((tcId: string) => {
+      const index = state.openedTCs.findIndex((el: TestCaseInterface) => el.Id === tcId);
+      if (index !== -1) {
+        state.openedTCs.splice(index, 1)
+        // set selectedTestCase --> next tab
+        if (state.openedTCs.length === 0) {
+          state.selectedTestCaseId = '';
+          return
+        }
+        if (index >= state.openedTCs.length) {
+          state.selectedTestCaseId = state.openedTCs[state.openedTCs.length - 1].Id
+        } else {
+          state.selectedTestCaseId = state.openedTCs[index].Id
+        }
+      }
+    });
   },
   addNewStep(state: TestCaseStateInterface, testCaseId: string) {
     // get last item to get Client Name

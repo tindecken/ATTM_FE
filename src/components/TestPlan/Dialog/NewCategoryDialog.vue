@@ -6,7 +6,7 @@
       style="max-height: 400px; min-height: 100px !important;"
     >
       <div class="row q-mb-sm">
-        <span class="text-h6">New Test Case</span>
+        <span class="text-h6">New Category</span>
       </div>
       <q-form
         @submit="onOKClick"
@@ -16,13 +16,13 @@
         ref="form"
       >
         <div class="row">
-          <div class="col-4 q-mr-sm">
+          <div class="col-8 q-mr-sm">
             <q-input
-              label="Code Name"
+              label="Name"
               outlined
               dense
               autofocus
-              v-model="codeName"
+              v-model="name"
               @blur="validateForm()"
               :rules="[
                 val => !!val || '* Required',
@@ -34,22 +34,6 @@
           </div>
           <div class="col">
             <q-input
-              label="Name"
-              outlined
-              dense
-              v-model="name"
-              @blur="validateForm()"
-              :rules="[
-                val => !!val || '* Required',
-                val => val.length < 50 || 'Maximum is 50 chars'
-              ]"
-              lazy-rules
-            />
-          </div>
-        </div>
-        <div class="row q-mt-sm">
-          <div class="col-4 q-mr-sm">
-            <q-input
               label="WorkItem"
               outlined
               dense
@@ -58,28 +42,6 @@
               :rules="[
                 val => val.length < 50 || 'WorkItem maximum is 50 chars'
               ]"
-            />
-          </div>
-          <div class="col-4 q-mr-sm">
-            <q-input
-              label="Type"
-              outlined
-              dense
-              v-model="type"
-              @blur="validateForm()"
-              :rules="[
-                val => val.length < 50 || 'Type maximum is 50 chars'
-              ]"
-            />
-          </div>
-          <div class="col">
-            <q-input
-              label="Author"
-              outlined
-              dense
-              v-model="author"
-              @blur="validateForm()"
-              :rules="[val => val.length < 50 || 'Author maximum is 50 chars']"
             />
           </div>
         </div>
@@ -124,82 +86,82 @@
 
 <script lang="ts">
 import {
-  computed, defineComponent, ref, PropType,
+  computed, defineComponent, ref,
 } from 'vue';
-import { TestCaseInterface } from 'src/Models/TestCase';
-import { TestGroupInterface } from 'src/Models/TestGroup';
+import { CategoryInterface } from 'src/Models/Category';
 import { useStore } from 'vuex'
-import { QForm, useDialogPluginComponent } from 'quasar'
+import { QDialog, QForm } from 'quasar';
 
 export default defineComponent({
-  name: 'NewTestCaseDialog',
+  name: 'NewCategoryDialog',
   props: {
-    testGroup: {
-      type: Object as PropType<TestGroupInterface>,
-      required: true,
-    },
   },
-  emits: [
-    // REQUIRED; need to specify some events that your
-    // component will emit through useDialogPluginComponent()
-    ...useDialogPluginComponent.emits,
-  ],
   components: {},
-  setup(props) {
-    const {
-      dialogRef, onDialogHide, onDialogOK, onDialogCancel,
-    } = useDialogPluginComponent()
+  emits: ['ok', 'cancel'],
+  setup(props, context) {
     const $store = useStore()
+    const dialogRef = ref(QDialog);
     const codeName = ref('');
     const name = ref('');
     const author = ref('');
     const description = ref('');
     const workItem = ref('');
-    const type = ref('');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const isDark = computed(() => $store.getters['global/darkTheme']);
     const isFormValid = ref(false);
     const form = ref(QForm);
-
-    function onOKClick() {
-      const { testGroup } = props
-      const newTestCase: TestCaseInterface = {
-        CodeName: codeName.value,
-        Id: '',
-        Name: name.value,
-        TestSteps: [],
-        WorkItem: workItem.value,
-        Description: description.value,
-        TestCaseType: type.value,
-        Owner: author.value,
-        CategoryId: testGroup.CategoryId,
-        TestSuiteId: testGroup.TestSuiteId,
-        TestGroupId: testGroup.Id,
-      }
-      onDialogOK(newTestCase)
-      // context.emit('ok', newTestCase)
+    function show() {
+      dialogRef.value.show();
     }
 
+    // following method is REQUIRED
+    // (don't change its name --> "hide")
+    function hide() {
+      dialogRef.value.hide();
+    }
+
+    function onDialogHide() {
+      // required to be emitted
+      // when QDialog emits "hide" event
+      context.emit('cancel');
+    }
+
+    function onOKClick() {
+      const newCategory: CategoryInterface = {
+        Id: '',
+        Name: name.value,
+        Description: description.value,
+        WorkItem: workItem.value,
+        TestSuiteIds: [],
+        children: [],
+      }
+      context.emit('ok', newCategory);
+      hide();
+    }
+
+    function onCancelClick() {
+      // we just need to hide dialog
+      hide();
+    }
     function validateForm() {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       if (form.value !== null) form.value.validate(false);
     }
     return {
       dialogRef,
       codeName,
       name,
+      show,
+      hide,
       onDialogHide,
       onOKClick,
+      onCancelClick,
       isDark,
       author,
       description,
       workItem,
-      type,
       isFormValid,
       validateForm,
       form,
-      // we can passthrough onDialogCancel directly
-      onCancelClick: onDialogCancel,
     };
   },
 });

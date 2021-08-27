@@ -24,8 +24,30 @@ const actions: ActionTree<TestSuiteStateInterface, StateInterface> = {
       // create in vuex
       // commit to category module
       context.commit('category/createTestGroup', responseTestGroup, { root: true });
+      return responseTestGroup
     } catch (error) {
       throw error.response.data;
+    }
+  },
+  async deleteTestGroup(context, testGroup: TestGroupInterface) {
+    try {
+      const response = await axios.post(
+        `${config.baseURL}/testsuites/${testGroup.TestSuiteId}/testgroups/delete`,
+        [testGroup.Id],
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${context.rootGetters['auth/token']}`,
+          },
+        },
+      );
+      console.log('response', response)
+      context.commit('category/deleteTestGroup', testGroup, { root: true });
+      context.commit('testcase/removeOpenedTCbyTCIds', testGroup.TestCaseIds, { root: true });
+      return response
+    } catch (error) {
+      console.log('error.response.data', error.response.data.error);
+      throw error.response.data.error;
     }
   },
 };

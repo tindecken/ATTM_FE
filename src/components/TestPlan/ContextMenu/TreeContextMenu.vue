@@ -33,6 +33,12 @@
         </q-item>
         <q-separator />
         <template v-if="node.nodeType == 'Category'">
+          <q-item clickable v-close-popup @click="newCategory()">
+            <q-item-section avatar>
+              <q-icon color="primary" name="playlist_add" />
+            </q-item-section>
+            <q-item-section>New Category</q-item-section>
+          </q-item>
           <q-item clickable v-close-popup @click="newTestSuite()">
             <q-item-section avatar>
               <q-icon color="primary" name="playlist_add" />
@@ -106,6 +112,9 @@ export default defineComponent({
     function debugOn() {
       emit('debugOn')
     }
+    function newCategory() {
+      emit('newCategory')
+    }
     function newTestSuite() {
       emit('newTestSuite')
     }
@@ -125,6 +134,7 @@ export default defineComponent({
       runOn,
       debug,
       debugOn,
+      newCategory,
       newTestSuite,
       newTestGroup,
       newTestCase,

@@ -6,8 +6,8 @@
       style="max-height: 400px; min-height: 100px !important;"
     >
       <div class="row q-mb-sm">
-        <span class="text-h6" v-if="testCases.length > 1">Are you sure to delete {{testCases.length}} test case(s)?</span>
-        <span class="text-h6" v-else>Are you sure to delete test case: {{testCases[0].CodeName}} - {{testCases[0].Name}}?</span>
+        <span class="text-h6" v-if="category && category.TestSuiteIds.length > 0">Are you sure to delete category: {{category.Name}}, and its {{category.TestSuiteIds.length}} test suite(s)?</span>
+        <span class="text-h6" v-else>Are you sure to category: {{category.Name}}?</span>
       </div>
         <div class="column items-end q-mt-md">
           <div class="col">
@@ -35,15 +35,15 @@
 import {
   computed, defineComponent, Ref, ref, PropType,
 } from 'vue';
-import { TestCaseInterface } from 'src/Models/TestCase';
 import { useStore } from 'vuex'
 import { useDialogPluginComponent } from 'quasar'
+import { CategoryInterface } from 'src/Models/Category';
 
 export default defineComponent({
-  name: 'DeleteTestCaseDialog',
+  name: 'DeleteCategoryDialog',
   props: {
-    testCases: {
-      type: Object as PropType<TestCaseInterface[]>,
+    category: {
+      type: Object as PropType<CategoryInterface>,
       required: true,
     },
   },
@@ -59,7 +59,7 @@ export default defineComponent({
     } = useDialogPluginComponent()
     const $store = useStore()
     const isDark = computed(() => $store.getters['global/darkTheme']);
-    const form: Ref<any> = ref(null);
+    const form: Ref<unknown> = ref(null);
 
     function onDeleteClick() {
       onDialogOK()

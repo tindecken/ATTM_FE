@@ -30,6 +30,14 @@ function paintCategories(cats: CategoryInterface[]): CategoryInterface[] {
     return { ...cat }
   })
 }
+function paintCategory(category: CategoryInterface) {
+  category.nodeKey = category.Id
+  category.label = category.Name
+  category.icon = 'folder_open'
+  category.nodeType = 'Category'
+  category.children = []
+  return { ...category }
+}
 
 function paintTestSuite(testSuite: TestSuiteInterface): TestSuiteInterface {
   testSuite.nodeKey = testSuite.Id
@@ -60,4 +68,5 @@ export {
   paintTestSuite,
   paintTestGroup,
   paintTestCase,
+  paintCategory,
 }

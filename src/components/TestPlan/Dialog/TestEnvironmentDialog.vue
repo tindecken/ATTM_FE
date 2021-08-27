@@ -95,7 +95,7 @@ import { TestEnvCategoryInterface } from 'src/Models/TestEnvCategory';
 import { TestEnvNodeInterface } from 'src/Models/TestEnvNode';
 import { TestEnvFlatNodeInterface } from 'src/Models/TestEnvFlatNode';
 import { useStore } from 'vuex'
-import { useQuasar } from 'quasar'
+import { QDialog, useQuasar } from 'quasar'
 
 export default defineComponent({
   name: 'TestEnvironmentDialog',
@@ -106,7 +106,7 @@ export default defineComponent({
     const $store = useStore()
     const $q = useQuasar()
     const testEnvTableDatas: Ref<TestEnvFlatNodeInterface[]> = ref([])
-    const dialogRef: Ref<any> = ref(null);
+    const dialogRef = ref(QDialog);
     const isReadonly: Ref<boolean> = ref(true);
     const testEnvFilter = ref('');
     const selectedTestEnv: Ref<TestEnvInterface | null> = ref(null);

@@ -5,7 +5,9 @@ import { TestSuiteInterface } from 'src/Models/TestSuite';
 import { TestGroupInterface } from 'src/Models/TestGroup';
 import { TestCaseInterface } from 'src/Models/TestCase';
 import { CategoryStateInterface } from './state';
-import { paintTestSuite, paintTestGroup, paintTestCase } from '../../components/Utils/TreeUtils'
+import {
+  paintTestSuite, paintTestGroup, paintTestCase, paintCategory,
+} from '../../components/Utils/TreeUtils'
 
 const mutation: MutationTree<CategoryStateInterface> = {
   setSelectedCategory(state: CategoryStateInterface, payload) {
@@ -41,6 +43,7 @@ const mutation: MutationTree<CategoryStateInterface> = {
     // find tgIndex
     const tgIndex = tempCat.children[tsIndex].TestGroupIds.findIndex((tgId: string) => tgId === testCase.TestGroupId)
     testCase = paintTestCase(testCase)
+    console.log('testCase', testCase)
     if (!tempCat.children[tsIndex].children[tgIndex].children) { // to make sure TestGroup has children property
       tempCat.children[tsIndex].children[tgIndex].children = []
     }
@@ -67,9 +70,39 @@ const mutation: MutationTree<CategoryStateInterface> = {
       // find tgIndex
       const tgIndex = tempCat.children[tsIndex].children.findIndex((tg: TestGroupInterface) => tg.Id === tc.TestGroupId)
       const tcIndex = tempCat.children[tsIndex].children[tgIndex].children.findIndex((t: TestCaseInterface) => t.Id === tc.Id)
+      tempCat.children[tsIndex].children[tgIndex].TestCaseIds?.splice(tcIndex, 1)
       tempCat.children[tsIndex].children[tgIndex].children.splice(tcIndex, 1)
       state.Categories[catIndex] = tempCat
     })
+  },
+  deleteTestGroup(state: CategoryStateInterface, testGroup: TestGroupInterface) {
+    const catIndex = state.Categories.findIndex((cat: CategoryInterface) => cat.Id === testGroup.CategoryId);
+    const tempCat = _.cloneDeep(state.Categories[catIndex])
+    // find tsIndex
+    const tsIndex = tempCat.children.findIndex((ts: TestSuiteInterface) => ts.Id === testGroup.TestSuiteId)
+    // find tgIndex
+    const tgIndex = tempCat.children[tsIndex].children.findIndex((tg: TestGroupInterface) => tg.Id === testGroup.Id)
+    tempCat.children[tsIndex].TestGroupIds?.splice(tgIndex, 1)
+    tempCat.children[tsIndex].children.splice(tgIndex, 1)
+    state.Categories[catIndex] = tempCat
+  },
+  deleteTestSuite(state: CategoryStateInterface, testSuite: TestSuiteInterface) {
+    const catIndex = state.Categories.findIndex((cat: CategoryInterface) => cat.Id === testSuite.CategoryId);
+    const tempCat = _.cloneDeep(state.Categories[catIndex])
+    // find tsIndex
+    const tsIndex = tempCat.children.findIndex((ts: TestSuiteInterface) => ts.Id === testSuite.Id)
+    // find tgIndex
+    tempCat.TestSuiteIds?.splice(tsIndex, 1)
+    tempCat.children.splice(tsIndex, 1)
+    state.Categories[catIndex] = tempCat
+  },
+  deleteCategory(state: CategoryStateInterface, category: CategoryInterface) {
+    const catIndex = state.Categories.findIndex((cat: CategoryInterface) => cat.Id === category.Id);
+    state.Categories.splice(catIndex, 1)
+  },
+  createCategory(state: CategoryStateInterface, category: CategoryInterface) {
+    category = paintCategory(category)
+    state.Categories.push(category)
   },
 }
 

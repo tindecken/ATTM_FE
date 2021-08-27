@@ -44,9 +44,71 @@ const actions: ActionTree<CategoryStateInterface, StateInterface> = {
         },
       )
       const responseTestSuite = await response.data as TestSuiteInterface;
-      // create in vuex
       context.commit('createTestSuite', responseTestSuite);
+      return responseTestSuite
     } catch (error) {
+      throw error.response.data;
+    }
+  },
+  async deleteTestSuite(context, testSuite: TestSuiteInterface) {
+    try {
+      const response = await axios.post(
+        `${config.baseURL}/categories/${testSuite.CategoryId}/testsuites/delete`,
+        [testSuite.Id],
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${context.rootGetters['auth/token']}`,
+          },
+        },
+      );
+      console.log('response', response)
+      context.commit('category/deleteTestSuite', testSuite, { root: true });
+      context.commit('testcase/removeOpenedTCbyTestSuite', testSuite, { root: true });
+      return response
+    } catch (error) {
+      console.log('error.response.data', error.response.data.error);
+      throw error.response.data.error;
+    }
+  },
+  async deleteCategory(context, category: CategoryInterface) {
+    try {
+      const response = await axios.post(
+        `${config.baseURL}/categories/delete`,
+        JSON.stringify(category.Id),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${context.rootGetters['auth/token']}`,
+          },
+        },
+      );
+      console.log('response', response)
+      context.commit('category/deleteCategory', category, { root: true });
+      context.commit('testcase/removeOpenedTCbyCategory', category, { root: true });
+      return response
+    } catch (error) {
+      console.log('error.response.data', error.response.data.error);
+      throw error.response.data.error;
+    }
+  },
+  async createCategory(context, category: CategoryInterface) {
+    try {
+      const response = await axios.post(
+        `${config.baseURL}/categories/create`,
+        JSON.stringify(category),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${context.rootGetters['auth/token']}`,
+          },
+        },
+      );
+      const createdCategory = response.data.data
+      context.commit('category/createCategory', createdCategory, { root: true });
+      return response.data.data
+    } catch (error) {
+      console.log('error.response.data', error.response.data);
       throw error.response.data;
     }
   },

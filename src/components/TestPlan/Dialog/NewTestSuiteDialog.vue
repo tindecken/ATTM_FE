@@ -112,11 +112,12 @@
 
 <script lang="ts">
 import {
-  computed, defineComponent, Ref, ref, PropType,
+  computed, defineComponent, ref, PropType,
 } from 'vue';
 import { CategoryInterface } from 'src/Models/Category';
 import { TestSuiteInterface } from 'src/Models/TestSuite';
 import { useStore } from 'vuex'
+import { QDialog, QForm } from 'quasar';
 
 export default defineComponent({
   name: 'NewTestSuiteDialog',
@@ -130,7 +131,7 @@ export default defineComponent({
   emits: ['ok', 'cancel'],
   setup(props, context) {
     const $store = useStore()
-    const dialogRef: Ref<any> = ref(null);
+    const dialogRef = ref(QDialog);
     const codeName = ref('');
     const name = ref('');
     const author = ref('');
@@ -139,7 +140,7 @@ export default defineComponent({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const isDark = computed(() => $store.getters['global/darkTheme']);
     const isFormValid = ref(false);
-    const form: Ref<any> = ref(null);
+    const form = ref(QForm);
     // following method is REQUIRED
     // (don't change its name --> "show")
     function show() {

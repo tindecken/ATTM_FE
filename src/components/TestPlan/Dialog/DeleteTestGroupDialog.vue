@@ -6,33 +6,9 @@
       style="max-height: 400px; min-height: 100px !important;"
     >
       <div class="row q-mb-sm">
-        <span class="text-h6">Add Description</span>
+        <span class="text-h6" v-if="testGroup && testGroup.TestCaseIds && testGroup.TestCaseIds.length > 0">Are you sure to delete test group: {{testGroup.CodeName}} - {{testGroup.Name}}, and its {{testGroup.TestCaseIds?.length}} test case(s)?</span>
+        <span class="text-h6" v-else>Are you sure to delete test group: {{testGroup.CodeName}} - {{testGroup.Name}}?</span>
       </div>
-      <q-form
-        @submit="onOKClick"
-        greedy
-        @validation-success="isFormValid = true"
-        @validation-error="isFormValid = false"
-        ref="formRef"
-      >
-        <div class="row">
-          <div class="col">
-            <q-input
-              label="Description"
-              autofocus
-              outlined
-              dense
-              v-model="description"
-              @blur="validateForm()"
-              :rules="
-              [
-                val => !!val || '* Required',
-                val => val.length < 100 || 'Maximum is 100 chars',
-              ]"
-              lazy-rules
-            />
-          </div>
-        </div>
         <div class="column items-end q-mt-md">
           <div class="col">
             <q-btn
@@ -44,14 +20,13 @@
             />
             <q-btn
               outline
-              label="Create"
-              :disable="!isFormValid"
+              label="Delete"
               type="submit"
               color="primary"
+              @click="onDeleteClick()"
             />
           </div>
         </div>
-      </q-form>
     </q-layout>
   </q-dialog>
 </template>
@@ -60,15 +35,15 @@
 import {
   computed, defineComponent, ref, PropType,
 } from 'vue';
+import { TestGroupInterface } from 'src/Models/TestGroup';
 import { useStore } from 'vuex'
 import { QForm, useDialogPluginComponent } from 'quasar'
-import { TestStepInterface } from 'src/Models/TestStep';
 
 export default defineComponent({
-  name: 'AddDescriptionDialog',
+  name: 'DeleteTestGroupDialog',
   props: {
-    TestStep: {
-      type: Object as PropType<TestStepInterface>,
+    testGroup: {
+      type: Object as PropType<TestGroupInterface>,
       required: true,
     },
   },
@@ -83,28 +58,18 @@ export default defineComponent({
       dialogRef, onDialogHide, onDialogOK, onDialogCancel,
     } = useDialogPluginComponent()
     const $store = useStore()
-    const description = ref('');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const isDark = computed(() => $store.getters['global/darkTheme']);
-    const isFormValid = ref(false);
-    const formRef = ref(QForm);
+    const form = ref(QForm);
 
-    function onOKClick() {
-      onDialogOK(description.value)
-    }
-
-    function validateForm() {
-      if (formRef.value !== null) formRef.value.validate(false);
+    function onDeleteClick() {
+      onDialogOK()
     }
     return {
       dialogRef,
       onDialogHide,
-      onOKClick,
+      onDeleteClick,
       isDark,
-      description,
-      isFormValid,
-      validateForm,
-      formRef,
+      form,
       // we can passthrough onDialogCancel directly
       onCancelClick: onDialogCancel,
     };

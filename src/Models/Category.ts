@@ -7,9 +7,9 @@ export interface CategoryInterface {
     WorkItem: string;
     TestSuiteIds: string[];
     // treeNode
-    nodeKey: string;
+    nodeKey?: string;
     children: TestSuiteInterface[];
-    label: string;
-    icon: string;
-    nodeType: string;
+    label?: string;
+    icon?: string;
+    nodeType?: string;
 }

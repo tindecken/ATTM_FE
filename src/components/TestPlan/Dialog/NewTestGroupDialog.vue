@@ -112,12 +112,12 @@
 
 <script lang="ts">
 import {
-  computed, defineComponent, Ref, ref, PropType,
+  computed, defineComponent, ref, PropType,
 } from 'vue';
 import { TestGroupInterface } from 'src/Models/TestGroup';
 import { TestSuiteInterface } from 'src/Models/TestSuite';
 import { useStore } from 'vuex'
-import { useDialogPluginComponent } from 'quasar'
+import { QForm, useDialogPluginComponent } from 'quasar'
 
 export default defineComponent({
   name: 'NewTestGroupDialog',
@@ -146,7 +146,7 @@ export default defineComponent({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const isDark = computed(() => $store.getters['global/darkTheme']);
     const isFormValid = ref(false);
-    const form: Ref<any> = ref(null);
+    const form = ref(QForm);
     // following method is REQUIRED
     // (don't change its name --> "show")
     function onOKClick() {
