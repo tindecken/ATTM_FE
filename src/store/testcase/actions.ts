@@ -25,7 +25,7 @@ const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
 
       context.commit('setOpenedTCs', testCase);
       context.commit('setSelectedTestCaseId', testCase.Id)
-    } catch (error) {
+    } catch (error: any) {
       throw error;
     }
   },
@@ -47,7 +47,7 @@ const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
       const responseData = await response.data;
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return responseData;
-    } catch (error) {
+    } catch (error: any) {
       throw error.response.data;
     }
   },

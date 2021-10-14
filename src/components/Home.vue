@@ -68,7 +68,7 @@ export default defineComponent({
         await $store.dispatch('auth/logout');
         const redirectUrl = `/${$route.query.redirect || 'login'}`;
         void $router.replace(redirectUrl);
-      } catch (error) {
+      } catch (error: any) {
         err.value = error.message || 'Something is error !';
       }
     };

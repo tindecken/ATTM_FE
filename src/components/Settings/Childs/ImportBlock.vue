@@ -62,7 +62,7 @@ export default defineComponent({
           type: 'positive',
           message: `${result.message}`,
         });
-      } catch (error) {
+      } catch (error: any) {
         $q.notify({
           type: 'negative',
           message: `${error}`,

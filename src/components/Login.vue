@@ -69,7 +69,7 @@ export default defineComponent({
           type: 'positive',
           message: 'Login success !',
         });
-      } catch (error) {
+      } catch (error: any) {
         err.value = error.data.message || 'Failed to authenticate, try later.';
         $q.notify({
           type: 'warning',

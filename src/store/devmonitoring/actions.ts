@@ -20,7 +20,7 @@ const actions: ActionTree<DevMonitoringStateInterface, StateInterface> = {
       const responseData = await response.data
       const devRunRecords = await responseData.data as DevRunRecordInterface [];
       context.commit('setDevRunRecords', devRunRecords);
-    } catch (error) {
+    } catch (error: any) {
       throw error.response.data
     }
   },
@@ -39,7 +39,7 @@ const actions: ActionTree<DevMonitoringStateInterface, StateInterface> = {
       const responseData = await response.data
       const inQueueDevRunRecords = await responseData.data as DevRunRecordInterface [];
       context.commit('setInQueueDevRunRecords', inQueueDevRunRecords);
-    } catch (error) {
+    } catch (error: any) {
       throw error.response.data
     }
   },
@@ -56,7 +56,7 @@ const actions: ActionTree<DevMonitoringStateInterface, StateInterface> = {
       );
       const responseData = await response.data
       return responseData.data
-    } catch (error) {
+    } catch (error: any) {
       throw error.response.data
     }
   },

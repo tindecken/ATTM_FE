@@ -102,6 +102,9 @@ export default defineComponent({
     function insertPasteTestSteps() {
       emit('insertPasteTestSteps')
     }
+    function deleteTestSteps() {
+      emit('deleteTestSteps')
+    }
     return {
       update,
       enableRows,
@@ -112,6 +115,7 @@ export default defineComponent({
       pasteTestSteps,
       insertTestSteps,
       insertPasteTestSteps,
+      deleteTestSteps,
     };
   },
 })

@@ -28,7 +28,7 @@ const actions: ActionTree<RegMonitoringStateInterface, StateInterface> = {
       context.commit('setTestGroupSelections', testGroups);
       const testClients = regressionTests.map((regTest: RegressionTestInterface) => regTest.ClientName).filter((value, index, self) => self.indexOf(value) === index && value !== '')
       context.commit('setTestClientSelections', testClients);
-    } catch (error) {
+    } catch (error: any) {
       throw error.response.data
     }
   },
@@ -45,7 +45,7 @@ const actions: ActionTree<RegMonitoringStateInterface, StateInterface> = {
       );
       const responseData = await response.data
       return responseData.data
-    } catch (error) {
+    } catch (error: any) {
       throw error.response.data
     }
   },

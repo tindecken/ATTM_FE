@@ -209,7 +209,7 @@ export default defineComponent({
         $store.commit('createregression/setSelectedTestCasesDetail', [])
         $store.commit('createregression/setSelectedTestCases', [])
         await $store.dispatch('createregression/getAllTestCaseDetails');
-      } catch (error) {
+      } catch (error: any) {
         $q.notify({
           type: 'negative',
           message: `${error}`,

@@ -26,7 +26,7 @@ import {
 import { TestAUTInterface } from 'src/Models/TestAUT'
 import { useStore } from 'vuex'
 import { TestStepInterface } from 'src/Models/TestStep'
-import TestAUTMenu from '../ContextMenu/DetailMenu/TestAUTMenu.vue'
+import TestAUTMenu from '../Menu/TestAUTMenu.vue'
 
 export default defineComponent({
   name: 'TestAUT',

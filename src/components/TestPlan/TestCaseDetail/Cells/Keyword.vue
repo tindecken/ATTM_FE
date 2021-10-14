@@ -27,7 +27,7 @@ import { KeywordInterface } from 'src/Models/Keyword'
 import { FlatKeywordInterface } from 'src/Models/FlatKeyword'
 import { useStore } from 'vuex'
 import { TestStepInterface } from 'src/Models/TestStep'
-import KeywordMenu from '../ContextMenu/DetailMenu/KeywordMenu.vue'
+import KeywordMenu from '../Menu/KeywordMenu.vue'
 
 export default defineComponent({
   name: 'Keyword',

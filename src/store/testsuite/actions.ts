@@ -25,7 +25,7 @@ const actions: ActionTree<TestSuiteStateInterface, StateInterface> = {
       // commit to category module
       context.commit('category/createTestGroup', responseTestGroup, { root: true });
       return responseTestGroup
-    } catch (error) {
+    } catch (error: any) {
       throw error.response.data;
     }
   },
@@ -45,7 +45,7 @@ const actions: ActionTree<TestSuiteStateInterface, StateInterface> = {
       context.commit('category/deleteTestGroup', testGroup, { root: true });
       context.commit('testcase/removeOpenedTCbyTCIds', testGroup.TestCaseIds, { root: true });
       return response
-    } catch (error) {
+    } catch (error: any) {
       console.log('error.response.data', error.response.data.error);
       throw error.response.data.error;
     }

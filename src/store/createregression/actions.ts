@@ -20,7 +20,7 @@ const actions: ActionTree<CreateRegressionStateInterface, StateInterface> = {
           },
         },
       );
-    } catch (error) {
+    } catch (error: any) {
       throw error;
     }
   },
@@ -38,7 +38,7 @@ const actions: ActionTree<CreateRegressionStateInterface, StateInterface> = {
       );
       const testcases = await response.data;
       context.commit('setAllTestCasesDetail', testcases.data);
-    } catch (error) {
+    } catch (error: any) {
       throw error;
     }
   },
@@ -60,7 +60,7 @@ const actions: ActionTree<CreateRegressionStateInterface, StateInterface> = {
           context.commit('addSelectedTestCase', response.data)
         })
       }).catch((error: any) => { throw error })
-    } catch (error) {
+    } catch (error: any) {
       throw error;
     }
   },
@@ -81,7 +81,7 @@ const actions: ActionTree<CreateRegressionStateInterface, StateInterface> = {
           },
         },
       )
-    } catch (error) {
+    } catch (error: any) {
       throw error;
     }
   },

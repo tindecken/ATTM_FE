@@ -25,7 +25,7 @@ import {
 } from 'vue';
 
 import { TestStepInterface } from 'src/Models/TestStep'
-import NoMenu from '../ContextMenu/DetailMenu/NoMenu.vue'
+import NoMenu from '../Menu/NoMenu.vue'
 
 export default defineComponent({
   name: 'No',

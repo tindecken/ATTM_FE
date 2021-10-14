@@ -27,7 +27,7 @@ const actions: ActionTree<TestGroupStateInterface, StateInterface> = {
         root: true,
       });
       return responseTestCase
-    } catch (error) {
+    } catch (error: any) {
       throw error.response.data;
     }
   },
@@ -54,7 +54,7 @@ const actions: ActionTree<TestGroupStateInterface, StateInterface> = {
         context.commit('testcase/removeOpenedTC', tc, { root: true });
       })
       return responses
-    } catch (error) {
+    } catch (error: any) {
       console.log('error.response.data', error.response.data.error);
       throw error.response.data.error;
     }

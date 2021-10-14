@@ -72,7 +72,7 @@ import { TestSuiteInterface } from 'src/Models/TestSuite';
 import { TestClientInterface } from 'src/Models/TestClient';
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
-import TreeContextMenu from './ContextMenu/TreeContextMenu.vue'
+import TreeContextMenu from './Menu/TreeContextMenu.vue'
 import NewTestSuiteDialog from './Dialog/NewTestSuiteDialog.vue'
 import NewTestGroupDialog from './Dialog/NewTestGroupDialog.vue'
 import NewTestCaseDialog from './Dialog/NewTestCaseDialog.vue'
@@ -141,7 +141,7 @@ export default defineComponent({
         allTestAUT.value = $store.getters['global/testAuTs']
         await nextTick()
         tree.value.expandAll();
-      } catch (error) {
+      } catch (error: any) {
         $q.notify({
           type: 'negative',
           message: `${error}`,
@@ -184,7 +184,7 @@ export default defineComponent({
           type: 'positive',
           message: 'Created new test suite !',
         });
-      } catch (error) {
+      } catch (error: any) {
         $q.notify({
           type: 'negative',
           message: `${error}`,
@@ -200,7 +200,7 @@ export default defineComponent({
           type: 'positive',
           message: 'Created new test group !',
         });
-      } catch (error) {
+      } catch (error: any) {
         $q.notify({
           type: 'negative',
           message: `${error}`,
@@ -217,7 +217,7 @@ export default defineComponent({
           type: 'positive',
           message: `Created new test case: ${createTestCase.Name} !`,
         });
-      } catch (error) {
+      } catch (error: any) {
         $q.notify({
           type: 'negative',
           message: `${error}`,
@@ -238,7 +238,7 @@ export default defineComponent({
             type: 'positive',
             message: `Created new category: ${category.Name}`,
           });
-        } catch (error) {
+        } catch (error: any) {
           $q.notify({
             type: 'negative',
             message: `${error}`,
@@ -274,7 +274,7 @@ export default defineComponent({
             type: 'positive',
             message: `Created new category: ${category.Name}`,
           });
-        } catch (error) {
+        } catch (error: any) {
           $q.notify({
             type: 'negative',
             message: `${error.message}`,
@@ -381,7 +381,7 @@ export default defineComponent({
           message: 'Generate code success.',
         });
         return generateDevCodeResult
-      } catch (error) {
+      } catch (error: any) {
         $q.notify({
           type: 'negative',
           message: `${error.error}`,
@@ -398,7 +398,7 @@ export default defineComponent({
           message: 'Build success.',
         });
         return buildResult
-      } catch (error) {
+      } catch (error: any) {
         $q.notify({
           progress: true,
           timeout: 10000,
@@ -419,7 +419,7 @@ export default defineComponent({
           type: 'positive',
           message: `${createDevQueueResult.count} queue(s) added.`,
         });
-      } catch (error) {
+      } catch (error: any) {
         $q.notify({
           type: 'negative',
           message: `${error.error}`,

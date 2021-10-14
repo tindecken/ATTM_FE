@@ -181,7 +181,7 @@ export default defineComponent({
     onBeforeMount(async () => {
       try {
         await $store.dispatch('testenvironment/getTestEnvironments');
-      } catch (error) {
+      } catch (error: any) {
         $q.notify({
           type: 'negative',
           message: `${error}`,

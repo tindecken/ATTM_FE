@@ -20,7 +20,7 @@ const actions: ActionTree<TestEnvironmentStateInterface, StateInterface> = {
       );
       const testEnvs = await response.data as TestEnvInterface [];
       context.commit('setTestEnvs', testEnvs);
-    } catch (error) {
+    } catch (error: any) {
       throw error.response.data
     }
   },

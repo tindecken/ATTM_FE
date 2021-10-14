@@ -7,7 +7,7 @@
           <tree></tree>
       </template>
       <template v-slot:after>
-        <detail></detail>
+        <test-case-detail></test-case-detail>
       </template>
     </q-splitter>
   </div>
@@ -15,12 +15,12 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import Tree from './Tree.vue';
-import Detail from './Detail.vue'
+import Tree from './Tree/Tree.vue';
+import TestCaseDetail from './TestCaseDetail/TestCaseDetail.vue'
 
 export default defineComponent({
   name: 'TestPlan',
-  components: { Tree, Detail },
+  components: { Tree, TestCaseDetail },
   setup() {
     const splitterModel = ref(20);
     return {

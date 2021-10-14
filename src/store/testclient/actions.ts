@@ -20,7 +20,7 @@ const actions: ActionTree<TestClientStateInterface, StateInterface> = {
       );
       const testClients: TestClientInterface[] = await response.data;
       context.commit('setTestClients', testClients);
-    } catch (error) {
+    } catch (error: any) {
       throw error;
     }
   },

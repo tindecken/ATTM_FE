@@ -363,7 +363,7 @@ export default defineComponent({
       try {
         await $store.dispatch('devmonitoring/getDevRunRecords');
         await $store.dispatch('devmonitoring/getInQueueDevRunRecords');
-      } catch (error) {
+      } catch (error: any) {
         $q.notify({
           type: 'negative',
           message: `${error}`,

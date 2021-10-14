@@ -26,7 +26,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
       const responseData = await response.data;
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return responseData;
-    } catch (error) {
+    } catch (error: any) {
       throw error.response.data;
     }
   },
@@ -48,7 +48,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
       const responseData = await response.data;
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return responseData;
-    } catch (error) {
+    } catch (error: any) {
       throw error.response.data;
     }
   },
@@ -70,7 +70,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
       console.log('response', response)
       const responseData = await response.data;
       return responseData;
-    } catch (error) {
+    } catch (error: any) {
       throw error.response.data;
     }
   },
@@ -91,7 +91,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
       const responseData = await response.data;
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return responseData;
-    } catch (error) {
+    } catch (error: any) {
       throw error.response.data;
     }
   },
@@ -111,7 +111,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
       const responseData = await response.data;
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return responseData;
-    } catch (error) {
+    } catch (error: any) {
       throw error.response.data;
     }
   },
@@ -132,7 +132,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
       const responseData = await response.data;
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return responseData;
-    } catch (error) {
+    } catch (error: any) {
       throw error.response.data;
     }
   },
@@ -153,7 +153,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
       const responseData = await response.data;
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return responseData;
-    } catch (error) {
+    } catch (error: any) {
       throw error.response.data
     }
   },
@@ -173,7 +173,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
       context.commit('setTestAUTs', {
         testAUTs: responseData,
       });
-    } catch (error) {
+    } catch (error: any) {
       throw error.response.data
     }
   },

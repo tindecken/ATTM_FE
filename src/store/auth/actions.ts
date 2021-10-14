@@ -27,7 +27,7 @@ const actions: ActionTree<AuthStateInterface, StateInterface> = {
         email: responseData.email,
         role: responseData.role,
       });
-    } catch (error) {
+    } catch (error: any) {
       throw error.response;
     }
   },

@@ -229,7 +229,7 @@ export default defineComponent({
         if (selectedRegression.value) {
           await $store.dispatch('regmonitoring/getRegressionDetail', selectedRegression.value.Id)
         }
-      } catch (error) {
+      } catch (error: any) {
         $q.notify({
           type: 'negative',
           message: `${error}`,

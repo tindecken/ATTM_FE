@@ -26,7 +26,7 @@ const actions: ActionTree<RegressionStateInterface, StateInterface> = {
       if (regressions.length > 0 && context.state.selectedRegression === undefined) {
         context.commit('setSelectedRegression', regressions[regressions.length - 1]);
       }
-    } catch (error) {
+    } catch (error: any) {
       throw error;
     }
   },
@@ -43,7 +43,7 @@ const actions: ActionTree<RegressionStateInterface, StateInterface> = {
           },
         },
       );
-    } catch (error) {
+    } catch (error: any) {
       throw error;
     }
   },
@@ -60,7 +60,7 @@ const actions: ActionTree<RegressionStateInterface, StateInterface> = {
           },
         },
       );
-    } catch (error) {
+    } catch (error: any) {
       throw error;
     }
   },
@@ -77,7 +77,7 @@ const actions: ActionTree<RegressionStateInterface, StateInterface> = {
           },
         },
       );
-    } catch (error) {
+    } catch (error: any) {
       throw error;
     }
   },

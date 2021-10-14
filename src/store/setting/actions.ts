@@ -20,7 +20,7 @@ const actions: ActionTree<SettingStateInterface, StateInterface> = {
       );
       const settings: SettingInterface[] = await response.data;
       context.commit('setSettings', settings);
-    } catch (error) {
+    } catch (error: any) {
       throw error;
     }
   },
@@ -38,7 +38,7 @@ const actions: ActionTree<SettingStateInterface, StateInterface> = {
       );
       const setting: SettingInterface = await response.data;
       return setting
-    } catch (error) {
+    } catch (error: any) {
       throw error;
     }
   },
@@ -59,7 +59,7 @@ const actions: ActionTree<SettingStateInterface, StateInterface> = {
       );
       context.commit('updateSettings', response.data.data);
       return response.data
-    } catch (error) {
+    } catch (error: any) {
       throw error;
     }
   },

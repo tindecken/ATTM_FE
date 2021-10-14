@@ -5,7 +5,7 @@ import getters from './getters';
 import mutations from './mutations';
 import { StateInterface } from '..';
 
-const authModule: Module<GlobalStateInterface, StateInterface> = {
+const globalModule: Module<GlobalStateInterface, StateInterface> = {
   namespaced: true,
   actions,
   getters,
@@ -13,4 +13,4 @@ const authModule: Module<GlobalStateInterface, StateInterface> = {
   state,
 };
 
-export default authModule;
+export default globalModule;

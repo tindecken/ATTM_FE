@@ -163,15 +163,15 @@ import { TestEnvFlatNodeInterface } from 'src/Models/TestEnvFlatNode';
 import { FlatKeywordInterface } from 'src/Models/FlatKeyword';
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
-import TestAUT from './TestCaseDetail/TestAUT.vue';
-import Keyword from './TestCaseDetail/Keyword.vue';
-import Parameter from './TestCaseDetail/Parameter.vue';
-import No from './TestCaseDetail/No.vue';
+import TestAUT from './Cells/TestAUT.vue';
+import Keyword from './Cells/Keyword.vue';
+import Parameter from './Cells/Parameter.vue';
+import No from './Cells/No.vue';
 import AddDescriptionDialog from './Dialog/AddDescriptionDialog.vue';
 import TestEnvironmentDialog from './Dialog/TestEnvironmentDialog.vue';
 
 export default defineComponent({
-  name: 'Detail',
+  name: 'TestCaseDetail',
   components: {
     'test-aut': TestAUT,
     Keyword,
@@ -723,7 +723,7 @@ export default defineComponent({
           type: 'positive',
           message: result.message,
         });
-      } catch (error) {
+      } catch (error: any) {
         $q.notify({
           type: 'warning',
           message: error.error,

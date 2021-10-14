@@ -23,7 +23,7 @@ const actions: ActionTree<CategoryStateInterface, StateInterface> = {
       let categories: CategoryInterface[] = await response.data.result;
       categories = paintCategories(categories)
       context.commit('setCategories', categories);
-    } catch (error) {
+    } catch (error: any) {
       throw error.response.data.error;
     }
   },
@@ -46,7 +46,7 @@ const actions: ActionTree<CategoryStateInterface, StateInterface> = {
       const responseTestSuite = await response.data as TestSuiteInterface;
       context.commit('createTestSuite', responseTestSuite);
       return responseTestSuite
-    } catch (error) {
+    } catch (error: any) {
       throw error.response.data;
     }
   },
@@ -66,7 +66,7 @@ const actions: ActionTree<CategoryStateInterface, StateInterface> = {
       context.commit('category/deleteTestSuite', testSuite, { root: true });
       context.commit('testcase/removeOpenedTCbyTestSuite', testSuite, { root: true });
       return response
-    } catch (error) {
+    } catch (error: any) {
       console.log('error.response.data', error.response.data.error);
       throw error.response.data.error;
     }
@@ -87,7 +87,7 @@ const actions: ActionTree<CategoryStateInterface, StateInterface> = {
       context.commit('category/deleteCategory', category, { root: true });
       context.commit('testcase/removeOpenedTCbyCategory', category, { root: true });
       return response
-    } catch (error) {
+    } catch (error: any) {
       console.log('error.response.data', error.response.data.error);
       throw error.response.data.error;
     }
@@ -107,7 +107,7 @@ const actions: ActionTree<CategoryStateInterface, StateInterface> = {
       const createdCategory = response.data.data
       context.commit('category/createCategory', createdCategory, { root: true });
       return response.data.data
-    } catch (error) {
+    } catch (error: any) {
       console.log('error.response.data', error.response.data);
       throw error.response.data;
     }

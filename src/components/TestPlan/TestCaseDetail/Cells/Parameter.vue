@@ -39,7 +39,7 @@ import { TestEnvInterface } from 'src/Models/TestEnv';
 import { TestEnvCategoryInterface } from 'src/Models/TestEnvCategory';
 import { TestEnvNodeInterface } from 'src/Models/TestEnvNode';
 import { useStore } from 'vuex'
-import ParameterMenu from '../ContextMenu/DetailMenu/ParameterMenu.vue'
+import ParameterMenu from '../Menu/ParameterMenu.vue'
 
 export default defineComponent({
   props: {
