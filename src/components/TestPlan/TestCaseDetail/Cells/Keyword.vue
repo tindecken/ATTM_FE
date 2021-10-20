@@ -1,6 +1,8 @@
 <template>
   <div>
-      <keyword-menu></keyword-menu>
+      <keyword-menu
+        @editTestStep="editTestStep()"
+      ></keyword-menu>
       <q-select
         dense
         :model-value="TestStep.Keyword"
@@ -60,11 +62,15 @@ export default defineComponent({
     function onChangeKeyword(newKeyword: FlatKeywordInterface) {
       context.emit('changeKeyword', newKeyword)
     }
+    function editTestStep() {
+      context.emit('editTestStep')
+    }
     return {
       filterKeywordFn,
       filteredKeywords,
       keywords,
       onChangeKeyword,
+      editTestStep,
       readonly,
     }
   },

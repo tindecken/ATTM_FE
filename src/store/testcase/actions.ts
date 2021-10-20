@@ -25,6 +25,7 @@ const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
 
       context.commit('setOpenedTCs', testCase);
       context.commit('setSelectedTestCaseId', testCase.Id)
+      return testCase
     } catch (error: any) {
       throw error;
     }

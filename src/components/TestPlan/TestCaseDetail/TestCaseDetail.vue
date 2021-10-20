@@ -67,10 +67,11 @@
                       borderless
                       @update:model-value="updateDescription(tc, props.row, $event)"
                       debounce="500"
-                      style="padding: 0px; font-style: oblique;"
+                      style="font-style: oblique;"
+                      class="items-center"
                     >
                       <template v-slot:before>
-                        <q-icon name="notes"  style="font-size: 0.9rem;" />
+                        <q-icon name="notes" style="font-size: 0.9rem;" />
                       </template>
                     </q-input>
                   </q-td>
@@ -101,7 +102,9 @@
                     <test-aut :TestStep="props.row" @changeTestAUT="changeTestAUT(tc, props.row, $event)"></test-aut>
                   </q-td>
                   <q-td key="keyword" :props="props" class="q-c-input">
-                    <keyword :TestStep="props.row" @changeKeyword="changeKeyword(tc, props.row, $event)" />
+                    <keyword :TestStep="props.row"
+                    @changeKeyword="changeKeyword(tc, props.row, $event)"
+                    @editTestStep="editTestStep(tc, props.row)" />
                   </q-td>
                   <q-td v-for="index in 20" :key="index" class="q-c-input">
                     <parameter
@@ -169,6 +172,8 @@ import Parameter from './Cells/Parameter.vue';
 import No from './Cells/No.vue';
 import AddDescriptionDialog from './Dialog/AddDescriptionDialog.vue';
 import TestEnvironmentDialog from './Dialog/TestEnvironmentDialog.vue';
+import CloseTestCaseDialog from './Dialog/CloseTestCaseDialog.vue';
+import KeywordEditorDialog from './Dialog/KeywordEditorDialog.vue';
 
 export default defineComponent({
   name: 'TestCaseDetail',
@@ -416,8 +421,58 @@ export default defineComponent({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const openedTCs: Ref<TestCaseInterface[]> = computed(() => $store.getters['testcase/openedTCs'])
     const copiedTestSteps: Ref<TestStepInterface[]> = computed(() => $store.getters['teststep/copiedTestSteps'])
-    function closeTab(testcase: TestCaseInterface) {
-      $store.commit('testcase/removeOpenedTC', testcase)
+    async function saveTestCase(testCaseId: string) {
+      try {
+        const currTestCase = openedTCs.value.find((tc: TestCaseInterface) => tc.Id === testCaseId) as TestCaseInterface
+        const result = await $store.dispatch('testcase/saveTestCase', currTestCase)
+        $q.notify({
+          type: 'positive',
+          message: result.message,
+        });
+      } catch (error: any) {
+        $q.notify({
+          type: 'warning',
+          message: error.error,
+        });
+      }
+    }
+    async function closeTab(testcase: TestCaseInterface) {
+      // check if testcase is modified or not
+      let isModified = false
+      // get testcase from database then verify with current one
+      const originalTestCase = await $store.dispatch('testcase/getTestCaseById', testcase.Id) as TestCaseInterface;
+      console.log('originalTestCase', originalTestCase.TestSteps)
+      console.log('testCase', testcase.TestSteps)
+      if (originalTestCase) {
+        if (_.isEqual(originalTestCase.TestSteps, testcase.TestSteps)) isModified = false
+        else isModified = true
+      }
+
+      if (isModified) {
+        $q.dialog({
+          component: CloseTestCaseDialog,
+        }).onOk((response: 'Save' | 'Discard') => {
+          switch (response) {
+            case 'Save':
+              console.log('Save')
+              void saveTestCase(testcase.Id)
+              $store.commit('testcase/removeOpenedTC', testcase)
+              break;
+            case 'Discard':
+              console.log('Discard')
+              $store.commit('testcase/removeOpenedTC', testcase)
+              break;
+            default:
+              break;
+          }
+        }).onCancel(() => {
+          // TODO
+        }).onDismiss(() => {
+          // TODO
+        })
+      } else {
+        $store.commit('testcase/removeOpenedTC', testcase)
+      }
     }
     function changeKeyword(testCase: TestCaseInterface, testStep: TestStepInterface, newKeyword: FlatKeywordInterface) {
       // find edited testStep
@@ -435,6 +490,28 @@ export default defineComponent({
       })
       $store.commit('testcase/updateOpenedTCs', tempTC)
       $store.commit('category/updateTestCase', tempTC)
+    }
+
+    function editTestStep(testCase: TestCaseInterface, testStep: TestStepInterface) {
+      console.log('editTestStep', testCase, testStep)
+      // find edited testStep
+      // const stepIndex: number = testCase.TestSteps.indexOf(testStep);
+      // const tempTC: TestCaseInterface = _.cloneDeep(testCase)
+      $q.dialog({
+        component: KeywordEditorDialog,
+        componentProps: {
+          TestCase: testCase,
+          TestStep: testStep,
+        },
+      }).onOk(() => {
+        // TODO: handle ok
+      }).onCancel(() => {
+        // TODO
+      }).onDismiss(() => {
+        // TODO
+      })
+      // $store.commit('testcase/updateOpenedTCs', tempTC)
+      // $store.commit('category/updateTestCase', tempTC)
     }
 
     function changeTestAUT(testCase: TestCaseInterface, testStep: TestStepInterface, newTestAUT: TestAUTInterface) {
@@ -714,23 +791,6 @@ export default defineComponent({
       rightClickIndex.value = testCase.TestSteps.findIndex((ts: TestStepInterface) => ts.UUID === testStep.UUID)
       console.log('rightClickIndex', rightClickIndex)
     }
-
-    async function saveTestCase(testCaseId: string) {
-      try {
-        const currTestCase = openedTCs.value.find((tc: TestCaseInterface) => tc.Id === testCaseId) as TestCaseInterface
-        const result = await $store.dispatch('testcase/saveTestCase', currTestCase)
-        $q.notify({
-          type: 'positive',
-          message: result.message,
-        });
-      } catch (error: any) {
-        $q.notify({
-          type: 'warning',
-          message: error.error,
-        });
-      }
-    }
-
     function updateDescription(testCase: TestCaseInterface, testStep: TestStepInterface, newTSDescription: string) {
       const stepIndex: number = testCase.TestSteps.indexOf(testStep);
       const tempTC: TestCaseInterface = _.cloneDeep(testCase)
@@ -772,6 +832,7 @@ export default defineComponent({
     }
 
     return {
+      editTestStep,
       onUseTestEnv,
       filterMethod,
       onInsertDescription,
@@ -816,6 +877,9 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
+:deep input.q-field__native {
+  padding: 0px;
+}
 :deep tr.tsDescription label {
   height: -webkit-fill-available;
 }

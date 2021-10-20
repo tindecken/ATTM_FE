@@ -3,7 +3,7 @@
     <q-list dense style="min-width: 100px">
       <slot>
       </slot>
-      <q-item clickable v-close-popup>
+      <q-item clickable v-close-popup @click="editTestStep()">
         <q-item-section avatar>
           <q-icon color="primary" name="create" />
         </q-item-section>
@@ -110,6 +110,9 @@ export default defineComponent({
     function insertPasteTestSteps() {
       emit('insertPasteTestSteps')
     }
+    function editTestStep() {
+      emit('editTestStep')
+    }
     return {
       deleteTestSteps,
       enableRows,
@@ -121,6 +124,7 @@ export default defineComponent({
       pasteTestSteps,
       insertTestSteps,
       insertPasteTestSteps,
+      editTestStep,
     };
   },
 })

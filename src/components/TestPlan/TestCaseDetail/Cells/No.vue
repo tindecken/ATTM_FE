@@ -49,7 +49,6 @@ export default defineComponent({
     function enableRows() {
       emit('enableRows')
     }
-
     function disableRows() {
       emit('disableRows')
     }
