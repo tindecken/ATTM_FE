@@ -72,7 +72,7 @@ export default defineComponent({
         err.value = error.message || 'Something is error !';
       }
     };
-    currentUser.value = $store.getters['auth/userName'];
+    currentUser.value = $store.getters['auth/Username'];
     onMounted(() => {
       const connection = new signalR.HubConnectionBuilder()
         .withUrl(`${config.socketServer}`)

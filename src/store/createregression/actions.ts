@@ -16,7 +16,7 @@ const actions: ActionTree<CreateRegressionStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/token']}`,
+            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
           },
         },
       );
@@ -32,7 +32,7 @@ const actions: ActionTree<CreateRegressionStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/token']}`,
+            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
           },
         },
       );
@@ -49,7 +49,7 @@ const actions: ActionTree<CreateRegressionStateInterface, StateInterface> = {
       promises.push(axios.get(`${config.baseURL}/testcases/${tc.Id}`, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${context.rootGetters['auth/token']}`,
+          Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
         },
       }))
     })
@@ -77,7 +77,7 @@ const actions: ActionTree<CreateRegressionStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/token']}`,
+            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
           },
         },
       )

@@ -16,7 +16,7 @@ const actions: ActionTree<TestSuiteStateInterface, StateInterface> = {
           headers: {
             'Content-Type': 'application/json',
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            Authorization: `Bearer ${context.rootGetters['auth/token']}`,
+            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
           },
         },
       )
@@ -37,7 +37,7 @@ const actions: ActionTree<TestSuiteStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/token']}`,
+            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
           },
         },
       );

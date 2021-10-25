@@ -1,17 +1,13 @@
-export interface AuthStateInterface {
-  token: string
-  username: string
-  role: string
-  email: string,
-  didAutoLogout: boolean,
-}
+import { UserInterface } from '../../Models/User'
 
-const state: AuthStateInterface = {
-  token: '',
-  username: '',
-  role: '',
-  email: '',
-  didAutoLogout: false,
+const state: UserInterface = {
+  Id: '',
+  Token: '',
+  Username: '',
+  Role: '',
+  Email: '',
+  DidAutoLogout: false,
+  Password: '',
 };
 
 export default state;

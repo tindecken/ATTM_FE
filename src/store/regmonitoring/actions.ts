@@ -13,7 +13,7 @@ const actions: ActionTree<RegMonitoringStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/token']}`,
+            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
           },
         },
       );
@@ -39,7 +39,7 @@ const actions: ActionTree<RegMonitoringStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/token']}`,
+            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
           },
         },
       );

@@ -503,8 +503,14 @@ export default defineComponent({
           TestCase: testCase,
           TestStep: testStep,
         },
-      }).onOk(() => {
-        // TODO: handle ok
+      }).onOk((testStepUpdated: TestStepInterface) => {
+        console.log('testStep updated', testStepUpdated)
+        const stepIndex = testCase.TestSteps.findIndex((ts: TestStepInterface) => ts.UUID === testStepUpdated.UUID)
+        if (stepIndex === -1) return
+        const tempTC = _.cloneDeep(testCase)
+        tempTC.TestSteps[stepIndex] = testStepUpdated;
+        $store.commit('testcase/updateOpenedTCs', tempTC)
+        $store.commit('category/updateTestCase', tempTC)
       }).onCancel(() => {
         // TODO
       }).onDismiss(() => {

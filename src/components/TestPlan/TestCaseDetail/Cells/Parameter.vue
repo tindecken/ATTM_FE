@@ -32,7 +32,6 @@ import {
   ref,
   PropType,
 } from 'vue';
-import { TestParamInterface } from 'src/Models/TestParam';
 import { TestEnvFlatNodeInterface } from 'src/Models/TestEnvFlatNode';
 import { TestStepInterface } from 'src/Models/TestStep';
 import { TestEnvInterface } from 'src/Models/TestEnv';
@@ -40,6 +39,7 @@ import { TestEnvCategoryInterface } from 'src/Models/TestEnvCategory';
 import { TestEnvNodeInterface } from 'src/Models/TestEnvNode';
 import { useStore } from 'vuex'
 import ParameterMenu from '../Menu/ParameterMenu.vue'
+import { getValueType } from '../Utils/utils'
 
 export default defineComponent({
   props: {
@@ -74,21 +74,6 @@ export default defineComponent({
       return false
     })
 
-    function getValueType(testParam: TestParamInterface): string {
-      if (testParam.TestNodePath) {
-        if (isDark.value) {
-          return 'testBedDark'
-        }
-        return 'testBed'
-      }
-      if (testParam.Value && testParam.Value.charAt(0) === '@' && testParam.Value.charAt(testParam.Value.length - 1) === '@') {
-        if (isDark.value) {
-          return 'testBufferDark'
-        }
-        return 'testBuffer'
-      }
-      return ''
-    }
     function setNoError() {
       isParamError.value = false
       paramErrorMessage.value = ''

@@ -17,7 +17,7 @@ import regression from './regression';
 import regmonitoring from './regmonitoring';
 import setting from './setting';
 
-import { AuthStateInterface } from './auth/state';
+import { UserInterface } from '../Models/User';
 import { GlobalStateInterface } from './global/state';
 import { KeywordStateInterface } from './keyword/state';
 import { CategoryStateInterface } from './category/state';
@@ -45,7 +45,7 @@ export interface StateInterface {
   // Define your own store structure, using submodules if needed
   // example: ExampleStateInterface;
   // Declared as unknown to avoid linting issue. Best to strongly type as per the line above.
-  auth: AuthStateInterface;
+  auth: UserInterface;
   global: GlobalStateInterface;
   keyword: KeywordStateInterface;
   category: CategoryStateInterface;

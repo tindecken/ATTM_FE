@@ -31,10 +31,10 @@ export default route<Store<StateInterface>>(({ store }) => {
     ),
   });
   Router.beforeEach((to, from, next) => {
-    if (to.meta.requiresAuth && !store.getters['auth/isAuthenticated']) {
+    if (to.meta.requiresAuth && !store.getters['auth/IsAuthenticated']) {
       // if require login but no token --> go to login
       next({ path: 'login' });
-    } else if (to.meta.requiresUnAuth && store.getters['auth/isAuthenticated']) {
+    } else if (to.meta.requiresUnAuth && store.getters['auth/IsAuthenticated']) {
       // if no require and has token --> home
       next({ path: '/' });
     } else {

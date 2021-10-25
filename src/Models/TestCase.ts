@@ -15,6 +15,7 @@ export interface TestCaseInterface {
     Owner?: string;
     Team?: string;
     CreatedDate?: Date;
+    LastModifiedBy?: string;
     LastModifiedDate?: Date;
     TimeOutInMinutes?: number;
     QueueId?: number;

@@ -1,21 +1,27 @@
 import { MutationTree } from 'vuex';
-import { AuthStateInterface } from './state';
+import { UserInterface } from '../../Models/User';
 
-const mutation: MutationTree<AuthStateInterface> = {
-  setUser(state: AuthStateInterface, payload) {
-    state.token = payload.token;
-    state.email = payload.email;
-    state.role = payload.role;
-    state.username = payload.username;
+const mutation: MutationTree<UserInterface> = {
+  setUser(state: UserInterface, payload) {
+    state.Token = payload.Token;
+    state.Email = payload.Email;
+    state.Role = payload.Role;
+    state.Username = payload.Username;
+    state.Password = payload.Password;
+    state.Id = payload.Id;
+    state.DidAutoLogout = payload.DidAutoLogout || false;
   },
-  clearUser(state: AuthStateInterface) {
-    state.token = '';
-    state.email = '';
-    state.role = '';
-    state.username = '';
+  clearUser(state: UserInterface) {
+    state.Token = '';
+    state.Email = '';
+    state.Role = '';
+    state.Username = '';
+    state.Password = '';
+    state.Id = '';
+    state.DidAutoLogout = false;
   },
   setAutoLogout(state) {
-    state.didAutoLogout = true;
+    state.DidAutoLogout = true;
   },
 };
 

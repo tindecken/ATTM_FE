@@ -62,13 +62,13 @@ import {
 } from 'vue';
 import { useStore } from 'vuex'
 import { QForm, useDialogPluginComponent } from 'quasar'
-import { TestStepInterface } from 'src/Models/TestStep';
+import { TestCaseInterface } from 'src/Models/TestCase';
 
 export default defineComponent({
-  name: 'AddDescriptionDialog',
+  name: 'EditTestCaseDialog',
   props: {
-    TestStep: {
-      type: Object as PropType<TestStepInterface>,
+    TestCase: {
+      type: Object as PropType<TestCaseInterface>,
       required: true,
     },
   },

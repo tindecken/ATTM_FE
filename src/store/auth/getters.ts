@@ -1,22 +1,31 @@
 import { GetterTree } from 'vuex';
 import { StateInterface } from '../index';
-import { AuthStateInterface } from './state';
+import { UserInterface } from '../../Models/User';
 
-const getters: GetterTree<AuthStateInterface, StateInterface> = {
-  email(state: AuthStateInterface) {
-    return state.email;
+const getters: GetterTree<UserInterface, StateInterface> = {
+  Email(state: UserInterface) {
+    return state.Email;
   },
-  userName(state: AuthStateInterface) {
-    return state.username;
+  Username(state: UserInterface) {
+    return state.Username;
   },
-  token(state: AuthStateInterface) {
-    return state.token;
+  Token(state: UserInterface) {
+    return state.Token;
   },
-  isAuthenticated(state: AuthStateInterface) {
-    return !!state.token;
+  Role(state: UserInterface) {
+    return state.Role;
   },
-  didAutoLogout(state: AuthStateInterface) {
-    return state.didAutoLogout;
+  DidAutoLogout(state: UserInterface) {
+    return state.DidAutoLogout;
+  },
+  Id(state: UserInterface) {
+    return state.Id;
+  },
+  Password(state: UserInterface) {
+    return state.Password;
+  },
+  IsAuthenticated(state: UserInterface) {
+    return !!state.Token;
   },
 };
 

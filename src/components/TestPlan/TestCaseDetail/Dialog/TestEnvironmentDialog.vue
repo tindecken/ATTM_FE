@@ -1,11 +1,19 @@
 <template>
-<q-dialog ref="dialogRef" @hide="onDialogHide" persistent>
+
+  <q-dialog ref="dialogRef" @hide="onDialogHide" persistent>
   <q-layout
     :class="isDark ? 'bg-grey-9' : 'bg-grey-3'"
     style="max-height: 400px; min-height: 100px !important;"
   >
-  <div class="q-pa-md">
-    <div class="row q-col-gutter-xs">
+  <div>
+    <q-bar class="q-mb-sm">
+      <div>Select Test nodeEnv</div>
+      <q-space />
+      <q-btn dense flat icon="close" @click="onDialogHide">
+        <q-tooltip>Close</q-tooltip>
+      </q-btn>
+    </q-bar>
+    <div class="row q-col-gutter-xs q-pa-xs">
       <div class="col">
         <q-input dense outlined v-model="testEnvFilter" label="Filter" />
       </div>
@@ -36,7 +44,7 @@
     </div>
     <q-separator class="q-mb-sm q-mt-sm" />
     <div class="row">
-      <div class="col">
+      <div class="col q-pa-xs">
         <q-table
           dense
           title="Test Environment"
@@ -79,8 +87,6 @@
       </div>
     </div>
     <q-separator class="q-mb-sm q-mt-sm" />
-    <div class="row">
-    </div>
   </div>
       </q-layout>
   </q-dialog>
@@ -95,18 +101,25 @@ import { TestEnvCategoryInterface } from 'src/Models/TestEnvCategory';
 import { TestEnvNodeInterface } from 'src/Models/TestEnvNode';
 import { TestEnvFlatNodeInterface } from 'src/Models/TestEnvFlatNode';
 import { useStore } from 'vuex'
-import { QDialog, useQuasar } from 'quasar'
+import { useQuasar, useDialogPluginComponent } from 'quasar'
 
 export default defineComponent({
   name: 'TestEnvironmentDialog',
   props: {},
+  emits: [
+    // REQUIRED; need to specify some events that your
+    // component will emit through useDialogPluginComponent()
+    ...useDialogPluginComponent.emits,
+  ],
   components: {
   },
-  setup(props, context) {
+  setup() {
+    const {
+      dialogRef, onDialogHide, onDialogOK, onDialogCancel,
+    } = useDialogPluginComponent()
     const $store = useStore()
     const $q = useQuasar()
     const testEnvTableDatas: Ref<TestEnvFlatNodeInterface[]> = ref([])
-    const dialogRef = ref(QDialog);
     const isReadonly: Ref<boolean> = ref(true);
     const testEnvFilter = ref('');
     const selectedTestEnv: Ref<TestEnvInterface | null> = ref(null);
@@ -196,12 +209,6 @@ export default defineComponent({
       void nextTick()
     })
 
-    function onDialogHide() {
-      // required to be emitted
-      // when QDialog emits "hide" event
-      context.emit('cancel');
-    }
-
     function onTestEnvChange() {
       testEnvTableDatas.value = transformToFlatNode(selectedTestEnv.value)
     }
@@ -233,14 +240,15 @@ export default defineComponent({
     function abortFilterTestEnv() {
       // TODO
     }
-    function show() {
-      dialogRef.value.show();
-    }
 
-    // following method is REQUIRED
-    // (don't change its name --> "hide")
-    function hide() {
-      dialogRef.value.hide();
+    // other methods that we used in our vue html template;
+    // these are part of our example (so not required)
+    function onOKClick() {
+      // on OK, it is REQUIRED to
+      // call onDialogOK (with optional payload)
+      onDialogOK()
+      // or with payload: onDialogOK({ ... })
+      // ...and it will also hide the dialog automatically
     }
 
     function enableEdit() {
@@ -252,28 +260,28 @@ export default defineComponent({
     }
 
     function use(flatNode: TestEnvFlatNodeInterface) {
-      context.emit('ok', flatNode)
-      hide()
+      onDialogOK(flatNode)
     }
 
     return {
+      onOKClick,
+      onDialogHide,
       testEnvColumns,
       onTestEnvChange,
-      onDialogHide,
       testEnvFilter,
       selectedTestEnv,
       filteredTestEnvs,
       filterTestEnv,
       abortFilterTestEnv,
       dialogRef,
-      show,
-      hide,
       isDark,
       enableEdit,
       applyTestEnv,
       isReadonly,
       testEnvTableDatas,
       use,
+      // we can passthrough onDialogCancel directly
+      onCancelClick: onDialogCancel,
     };
   },
 });

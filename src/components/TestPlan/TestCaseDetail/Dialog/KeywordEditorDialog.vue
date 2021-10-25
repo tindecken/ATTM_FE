@@ -2,11 +2,11 @@
 <q-dialog ref="dialogRef" @hide="onDialogHide" persistent>
   <q-layout
     :class="isDark ? 'bg-grey-9' : 'bg-grey-3'"
-    style="max-height: 400px; min-height: 100px !important;"
+    style="max-height: 400px; min-height: 100px !important; min-width: 800px"
   >
   <q-card>
         <q-bar>
-          <div>Edit Test Step: {{testStep?.Keyword?.Name}}</div>
+          <div>Edit Test Step: {{testStep.Keyword?.Name}}</div>
           <q-space />
           <q-btn dense flat icon="close" @click="onDialogHide">
             <q-tooltip>Close</q-tooltip>
@@ -14,14 +14,14 @@
         </q-bar>
 
         <q-card-section>
-          <q-input dense outlined :modelValue="testStep?.Description" label="Description" />
+          <q-input dense outlined v-model="testStep.Description" label="Description"/>
         </q-card-section>
 
         <q-card-section class="q-pt-none">
           <q-table
           dense
           title="Parameters"
-          :rows="testStep?.Params"
+          :rows="testStep.Params"
           :columns="paramColumns"
           row-key="name"
           :hide-pagination="true"
@@ -34,27 +34,30 @@
               <q-td key="no" :props="props" class="q-c-input">
                 {{ props.row.rowIndex }}
               </q-td>
-              <q-td key="name" :props="props" class="q-c-input">
+              <q-td key="name" :props="props" class="q-pl-sm">
                 {{ props.row.Name }}
               </q-td>
-              <q-td key="value" :props="props" class="q-c-input">
-                <q-input v-model="props.row.Value" dense borderless/>
+              <q-td key="value" :props="props" class="q-c-input" @click="footerInfo = props.row.Value">
+                <q-input :class="valueStyle(props.row)" v-model="props.row.Value" dense borderless :readonly="props.row.TestNodePath !== ''"/>
               </q-td>
               <q-td key="testBed" :props="props" class="q-c-input">
-                <q-btn outline color="primary" label="Use"></q-btn>
-                <q-btn outline color="primary" label="UnUse" class="q-ml-sm"></q-btn>
+                <q-btn outline color="primary" label="Use" @click="useTestEnv(props.row)"></q-btn>
+                <q-btn outline color="primary" label="UnUse" class="q-ml-sm" @click="unUseTestEnv(props.row)"></q-btn>
               </q-td>
-              <q-td key="description" :props="props" style="white-space: normal;" class="q-c-input">
+              <q-td key="description" :props="props" class="q-pl-sm"  @click="footerInfo = props.row.Description">
                 {{ props.row.Description }}
               </q-td>
             </q-tr>
           </template>
         </q-table>
         </q-card-section>
-        <q-card-section>
-          <q-btn outline  color="primary" label="OK"></q-btn>
-          <q-btn outline  color="primary" label="Cancel" class="q-ml-sm"></q-btn>
+        <q-card-section class="row reverse">
+          <q-btn outline  color="primary" label="Cancel" class="q-ml-sm" @click="onDialogHide"></q-btn>
+          <q-btn outline  color="primary" label="OK" @click="okClick()"></q-btn>
         </q-card-section>
+        <div class="row inline justify-between bg-primary text-white items-center" style="height: 24px;width: -webkit-fill-available;">
+            <span @click="copy(footerInfo)" class="q-pl-sm">{{footerInfo}}</span>
+        </div>
       </q-card>
   </q-layout>
   </q-dialog>
@@ -66,10 +69,14 @@ import {
 } from 'vue';
 import _ from 'lodash'
 import { useStore } from 'vuex'
-import { useDialogPluginComponent } from 'quasar'
+import { useDialogPluginComponent, useQuasar } from 'quasar'
 import { TestStepInterface } from 'src/Models/TestStep';
 import { TestCaseInterface } from 'src/Models/TestCase';
 import { TestParamInterface } from 'src/Models/TestParam';
+import { TestEnvFlatNodeInterface } from 'src/Models/TestEnvFlatNode';
+import { useClipboard } from '@vueuse/core'
+import TestEnvironmentDialog from './TestEnvironmentDialog.vue'
+import { getValueType } from '../Utils/utils'
 
 export default defineComponent({
   name: 'KeywordEditorDialog',
@@ -89,8 +96,9 @@ export default defineComponent({
     const {
       dialogRef, onDialogHide, onDialogOK, onDialogCancel,
     } = useDialogPluginComponent()
+    const { copy } = useClipboard()
     const $store = useStore()
-    // const $q = useQuasar()
+    const $q = useQuasar()
     const paramColumns = [
       {
         name: 'no',
@@ -117,13 +125,13 @@ export default defineComponent({
         label: 'Value',
         field: 'Value',
         sortable: false,
-        style: 'min-width: 100px',
-        headerStyle: 'min-width: 100px',
+        style: 'min-width: 200px',
+        headerStyle: 'min-width: 200px',
       },
       {
         name: 'testBed',
         align: 'left',
-        label: 'TestBed',
+        label: 'TestEnv',
         field: 'TestBed',
         sortable: false,
       },
@@ -133,17 +141,25 @@ export default defineComponent({
         label: 'Description',
         field: 'Description',
         sortable: false,
+        classes: 'ellipsis',
       },
     ]
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const isDark = computed(() => $store.getters['global/darkTheme'])
-    const testCase: Ref<TestCaseInterface | null> = ref(null)
-    const testStep: Ref<TestStepInterface | null> = ref(null)
+    const testCase: Ref<TestCaseInterface> = ref(props.TestCase)
+    const testStep: Ref<TestStepInterface> = ref(props.TestStep)
+    const footerInfo = ref('ddddddddddddd')
     onMounted(() => {
       testCase.value = _.cloneDeep(props.TestCase)
       testStep.value = _.cloneDeep(props.TestStep)
       testStep.value.Params = testStep.value.Params.map((pr: TestParamInterface, i: number) => ({ ...pr, rowIndex: i + 1 }))
     })
+
+    function valueStyle(pr: TestParamInterface) {
+      const prIndex = testStep.value.Params.findIndex((p: TestParamInterface) => p.Name === pr.Name)
+      if (prIndex === -1) return ''
+      return getValueType(testStep.value.Params[prIndex])
+    }
 
     // other methods that we used in our vue html template;
     // these are part of our example (so not required)
@@ -154,7 +170,45 @@ export default defineComponent({
       // or with payload: onDialogOK({ ... })
       // ...and it will also hide the dialog automatically
     }
+
+    function useTestEnv(pr: TestParamInterface) {
+      $q.dialog({
+        component: TestEnvironmentDialog,
+      }).onOk((testEnvNode: TestEnvFlatNodeInterface) => {
+        // TODO: handle ok
+        if (testEnvNode) {
+          const prIndex = testStep.value.Params.findIndex((p: TestParamInterface) => p.Name === pr.Name)
+          if (prIndex === -1) return
+          testStep.value.Params[prIndex].Value = testEnvNode.Value
+          testStep.value.Params[prIndex].TestNodePath = `${testEnvNode.Category}/${testEnvNode.Name}`
+        }
+      }).onCancel(() => {
+        // TODO
+      }).onDismiss(() => {
+        // TODO
+      })
+    }
+
+    function okClick() {
+      console.log('Description', testStep.value.Description)
+      onDialogOK(testStep.value)
+      onDialogHide()
+    }
+
+    function unUseTestEnv(pr: TestParamInterface) {
+      console.log('row', pr)
+      const prIndex = testStep.value.Params.findIndex((p: TestParamInterface) => p.Name === pr.Name)
+      if (prIndex === -1) return
+      testStep.value.Params[prIndex].Value = pr.Value
+      testStep.value.Params[prIndex].TestNodePath = ''
+    }
+
     return {
+      okClick,
+      copy,
+      footerInfo,
+      useTestEnv,
+      unUseTestEnv,
       testCase,
       testStep,
       onOKClick,
@@ -164,9 +218,39 @@ export default defineComponent({
       isDark,
       // we can passthrough onDialogCancel directly
       onCancelClick: onDialogCancel,
+      valueStyle,
     };
   },
 });
 </script>
 <style scoped lang="scss">
+:deep td.q-c-input {
+  padding-right: 1px;
+  padding-left: 1px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+:deep td.q-c-input .q-field__native {
+  padding-right: 0px;
+  padding-left: 5px;
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+:deep(.testBed) {
+  background-color: $teal-2;
+  background-clip: content-box;
+}
+:deep(.testBuffer) {
+  background-color: $green-2;
+  background-clip: content-box;
+}
+:deep(.testBedDark) {
+  background-color: $teal-10;
+  background-clip: content-box;
+}
+:deep(.testBufferDark) {
+  background-color: $green-10;
+  background-clip: content-box;
+}
 </style>

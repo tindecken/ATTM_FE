@@ -58,8 +58,8 @@ export default defineComponent({
     const err = ref('');
     const onSubmit = async () => {
       const actionPayload = {
-        username: username.value,
-        password: password.value,
+        Username: username.value,
+        Password: password.value,
       };
       try {
         await $store.dispatch('auth/login', actionPayload);

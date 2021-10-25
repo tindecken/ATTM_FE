@@ -14,7 +14,7 @@ const actions: ActionTree<TestClientStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/token']}`,
+            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
           },
         },
       );

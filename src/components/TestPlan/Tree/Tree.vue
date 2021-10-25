@@ -44,7 +44,7 @@
                   @newTestSuite="onNewTestSuite(prop.node)"
                   @newTestGroup="onNewTestGroup(prop.node)"
                   @newTestCase="onNewTestCase(prop.node)"
-                  @edit="onEdit()"
+                  @edit="onEdit(prop.node)"
                   @deleteNodes="onDeleteNodes(prop.node)"
                   >
                 </tree-context-menu>
@@ -81,6 +81,7 @@ import DeleteTestGroupDialog from './Dialog/DeleteTestGroupDialog.vue'
 import DeleteTestSuiteDialog from './Dialog/DeleteTestSuiteDialog.vue'
 import DeleteCategoryDialog from './Dialog/DeleteCategoryDialog.vue'
 import NewCategoryDialog from './Dialog/NewCategoryDialog.vue';
+import EditTestCaseDialog from './Dialog/EditTestCaseDialog.vue';
 
 export default defineComponent({
   name: 'Tree',
@@ -356,11 +357,35 @@ export default defineComponent({
         // TODO
       })
     }
-    function onEdit() {
-      $q.notify({
-        type: 'negative',
-        message: 'Not develop yet',
-      });
+    function onEdit(node: CategoryInterface | TestSuiteInterface | TestGroupInterface | TestCaseInterface) {
+      switch (node.nodeType) {
+        case 'TestCase':
+          $q.dialog({
+            component: EditTestCaseDialog,
+            componentProps: {
+              TestCase: node,
+            },
+          }).onOk((newTestCase: TestCaseInterface) => {
+            // TODO: handle ok
+            console.log('newTestCase', newTestCase);
+          }).onCancel(() => {
+            // TODO
+          }).onDismiss(() => {
+            // TODO
+          })
+          break;
+        case 'TestGroup':
+          // TODO
+          break;
+        case 'TestSuite':
+          // TODO
+          break;
+        case 'Category':
+          // TODO
+          break;
+        default:
+          break;
+      }
     }
 
     async function onGenerateDevCode() {
