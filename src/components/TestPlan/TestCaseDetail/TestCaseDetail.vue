@@ -10,7 +10,7 @@
           inline-label
           @input="onTabChanging()"
         >
-          <q-tab v-for="testcase in openedTCs" :key="testcase.Id" :name="testcase.Id" :ripple="false" @mouseover="showByIndex = testcase.Id" @mouseout="showByIndex = null">
+          <q-tab v-for="testcase in openedTCs" :key="testcase.Id" :name="testcase.Id" :ripple="false" @mouseover="showByIndex = testcase.Id" @mouseout="showByIndex = ''">
             <div class="q-mr-xs">{{testcase.Name}}</div>
             <q-btn dense flat icon="close" size="xs" :style="{visibility: showByIndex === testcase.Id ? 'visible' : 'hidden'}" @click.stop="closeTab(testcase)"></q-btn>
           </q-tab>
@@ -186,7 +186,7 @@ export default defineComponent({
   setup() {
     const $store = useStore()
     const $q = useQuasar()
-    const showByIndex = ref(null)
+    const showByIndex = ref('')
     const selectedKeyword = ref('')
     const selected: Ref<any[]> = ref([])
     const isDark = computed(() => $store.getters['global/darkTheme']);
@@ -443,10 +443,71 @@ export default defineComponent({
       const originalTestCase = await $store.dispatch('testcase/getTestCaseById', testcase.Id) as TestCaseInterface;
       console.log('originalTestCase', originalTestCase.TestSteps)
       console.log('testCase', testcase.TestSteps)
-      if (originalTestCase) {
-        if (_.isEqual(originalTestCase.TestSteps, testcase.TestSteps)) isModified = false
-        else isModified = true
+      if (originalTestCase.TestSteps.length !== testcase.TestSteps.length) {
+        isModified = true
+      } else {
+        // eslint-disable-next-line no-plusplus
+        for (let i = 0; i < originalTestCase.TestSteps.length; i++) {
+          if (originalTestCase.TestSteps[i].UUID !== testcase.TestSteps[i].UUID) {
+            isModified = true
+            break
+          }
+          if (originalTestCase.TestSteps[i].TestAUTId !== testcase.TestSteps[i].TestAUTId) {
+            isModified = true
+            break
+          }
+          if (originalTestCase.TestSteps[i].Keyword?.Name !== testcase.TestSteps[i].Keyword?.Name) {
+            console.log('0')
+            isModified = true
+            break
+          }
+          if (originalTestCase.TestSteps[i].Description !== testcase.TestSteps[i].Description) {
+            isModified = true
+            break
+          }
+          if (originalTestCase.TestSteps[i].IsDisabled !== testcase.TestSteps[i].IsDisabled) {
+            isModified = true
+            break
+          }
+          if (originalTestCase.TestSteps[i].IsComment !== testcase.TestSteps[i].IsComment) {
+            isModified = true
+            break
+          }
+          if (originalTestCase.TestSteps[i].KWFeature !== testcase.TestSteps[i].KWFeature) {
+            isModified = true
+            break
+          }
+          if (originalTestCase.TestSteps[i].KWCategory !== testcase.TestSteps[i].KWCategory) {
+            isModified = true
+            break
+          }
+          if (originalTestCase.TestSteps[i].Params.length !== testcase.TestSteps[i].Params.length) {
+            isModified = true
+            break
+          }
+          // eslint-disable-next-line no-plusplus
+          for (let j = 0; j < originalTestCase.TestSteps[i].Params.length; j++) {
+            if (originalTestCase.TestSteps[i].Params[j].Name !== testcase.TestSteps[i].Params[j].Name) {
+              isModified = true
+              break
+            }
+            if (originalTestCase.TestSteps[i].Params[j].TestNodePath !== testcase.TestSteps[i].Params[j].TestNodePath) {
+              console.log('1')
+              isModified = true
+              break
+            }
+            if (originalTestCase.TestSteps[i].Params[j].TestNodePath === '' && originalTestCase.TestSteps[i].Params[j].Value !== testcase.TestSteps[i].Params[j].Value) {
+              console.log('2')
+              isModified = true
+              break
+            }
+          }
+        }
       }
+      // if (originalTestCase) {
+      //   if (_.isEqual(originalTestCase.TestSteps, testcase.TestSteps)) isModified = false
+      //   else isModified = true
+      // }
 
       if (isModified) {
         $q.dialog({

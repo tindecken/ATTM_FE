@@ -7,7 +7,7 @@
   >
   <div>
     <q-bar class="q-mb-sm">
-      <div>Select Test nodeEnv</div>
+      <div>Select Test Environment</div>
       <q-space />
       <q-btn dense flat icon="close" @click="onDialogHide">
         <q-tooltip>Close</q-tooltip>
@@ -21,25 +21,13 @@
         <q-select
           dense
           outlined
-          v-model="selectedTestEnv"
-          :options="filteredTestEnvs"
+          :model-value="selectedTestEnv"
+          :options="testEnvs"
           label="Environments"
           option-label="Name"
-          @filter="filterTestEnv"
-          @filter-abort="abortFilterTestEnv"
-          @input="val => { onTestEnvChange() }"
-          use-input
-          hide-selected
-          fill-input
-          input-debounce="0"
+          @update:model-value="onTestEnvChange($event)"
           :readonly="isReadonly"
         />
-      </div>
-      <div class="col">
-        <q-btn outline @click="enableEdit()">Enable Edit</q-btn>
-      </div>
-      <div class="col">
-        <q-btn outline @click="applyTestEnv()">Apply</q-btn>
       </div>
     </div>
     <q-separator class="q-mb-sm q-mt-sm" />
@@ -120,11 +108,8 @@ export default defineComponent({
     const $store = useStore()
     const $q = useQuasar()
     const testEnvTableDatas: Ref<TestEnvFlatNodeInterface[]> = ref([])
-    const isReadonly: Ref<boolean> = ref(true);
+    const isReadonly: Ref<boolean> = ref(false);
     const testEnvFilter = ref('');
-    const selectedTestEnv: Ref<TestEnvInterface | null> = ref(null);
-    const filteredTestEnvs: Ref<TestEnvInterface[]> = ref([]);
-    const testEnvs: Ref<TestEnvInterface[]> = ref([]);
     const testEnvColumns = [
       {
         name: 'no',
@@ -178,6 +163,8 @@ export default defineComponent({
     ]
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const isDark = computed(() => $store.getters['global/darkTheme'])
+    const selectedTestEnv = computed(() => $store.getters['testenvironment/selectedTestEnv'] as TestEnvInterface)
+    const testEnvs = $store.getters['testenvironment/testEnvs'] as TestEnvInterface[]
     function transformToFlatNode(testEnv: TestEnvInterface | null): TestEnvFlatNodeInterface[] {
       let flatNodes: TestEnvFlatNodeInterface[] = []
       if (testEnv && testEnv.Categories) {
@@ -200,45 +187,15 @@ export default defineComponent({
           message: `${error}`,
         });
       }
-      testEnvs.value = $store.getters['testenvironment/testEnvs'] as TestEnvInterface[]
-      selectedTestEnv.value = $store.getters['testenvironment/selectedTestEnv'] as TestEnvInterface
-
       // testEnvTableDatas
       testEnvTableDatas.value = transformToFlatNode(selectedTestEnv.value)
-      filteredTestEnvs.value = testEnvs.value
       void nextTick()
     })
 
-    function onTestEnvChange() {
-      testEnvTableDatas.value = transformToFlatNode(selectedTestEnv.value)
-    }
-    function filterTestEnv(val: string, update: any) {
-      setTimeout(() => {
-        update(
-          () => {
-            if (val === '') {
-              filteredTestEnvs.value = testEnvs.value;
-            } else {
-              const needle = val.toLowerCase()
-              filteredTestEnvs.value = testEnvs.value.filter((testEnv: TestEnvInterface) => testEnv.Name.toLowerCase().indexOf(needle) > -1)
-            }
-          },
-
-          // next function is available in Quasar v1.7.4+;
-          // "ref" is the Vue reference to the QSelect
-          (refQ: any) => {
-            if (val !== '' && refQ.options.length > 0) {
-              refQ.setOptionIndex(-1) // reset optionIndex in case there is something selected
-              // eslint-disable-next-line max-len
-              refQ.moveOptionSelection(1, true) // focus the first selectable option and do not update the input-value
-            }
-          },
-        )
-      }, 300)
-    }
-
-    function abortFilterTestEnv() {
-      // TODO
+    function onTestEnvChange(newValue: TestEnvInterface) {
+      console.log(newValue)
+      testEnvTableDatas.value = transformToFlatNode(newValue)
+      $store.commit('testenvironment/setSelectedTestEnv', newValue)
     }
 
     // other methods that we used in our vue html template;
@@ -251,32 +208,20 @@ export default defineComponent({
       // ...and it will also hide the dialog automatically
     }
 
-    function enableEdit() {
-      isReadonly.value = false
-    }
-
-    function applyTestEnv() {
-      if (selectedTestEnv.value) $store.commit('testenvironment/setSelectedTestEnv', selectedTestEnv.value)
-    }
-
     function use(flatNode: TestEnvFlatNodeInterface) {
       onDialogOK(flatNode)
     }
 
     return {
+      testEnvs,
       onOKClick,
       onDialogHide,
       testEnvColumns,
       onTestEnvChange,
       testEnvFilter,
       selectedTestEnv,
-      filteredTestEnvs,
-      filterTestEnv,
-      abortFilterTestEnv,
       dialogRef,
       isDark,
-      enableEdit,
-      applyTestEnv,
       isReadonly,
       testEnvTableDatas,
       use,

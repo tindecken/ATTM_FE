@@ -84,6 +84,9 @@ Todo:
   ☐ Reg monitoring - define columns definition for all columns in table, also for visible columns
   ☐ Ussing highlightjs for hightlight the code https://github.com/highlightjs/vue-plugin
   ☐ add attribute: generatedCode for RegressionTest and DevRunRecord
+  ✔ bug - fix TestEnvironmentDialog select other testbed doesn't work. @done(21-11-03 02:39)
+  ☐ test feature - closeTab, compare TestStep
+  ☐ bug - import block doesn't show for the first time, must refresh to make it work.
 Test:
   ✔ one flow from create category, testsuite, testgroup, testcase from beginning @done(21-05-11 23:12)
 API:
