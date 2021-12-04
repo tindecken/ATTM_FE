@@ -1,6 +1,7 @@
 import { ActionTree } from 'vuex';
 import axios from 'axios';
 import { TestCaseInterface } from 'src/Models/TestCase';
+import { TestCaseHistoryInterface } from 'src/Models/TestCaseHistory';
 import { StateInterface } from '../index';
 import { TestCaseStateInterface } from './state';
 import config from '../../config';
@@ -33,11 +34,11 @@ const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
   updateOpenedTCs(context, value: TestCaseInterface) {
     context.commit('updateOpenedTCs', value)
   },
-  async saveTestCase(context, testCase: TestCaseInterface) {
+  async saveTestCase(context, testCaseHistory: TestCaseHistoryInterface) {
     try {
       const response = await axios.post(
         `${config.baseURL}/testcases/savetestcase`,
-        testCase,
+        testCaseHistory,
         {
           headers: {
             'Content-Type': 'application/json',

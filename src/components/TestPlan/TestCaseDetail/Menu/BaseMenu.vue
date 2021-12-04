@@ -9,6 +9,12 @@
         </q-item-section>
         <q-item-section>Edit</q-item-section>
       </q-item>
+      <q-item clickable v-close-popup @click="searchKeyword()">
+        <q-item-section avatar>
+          <q-icon color="primary" name="search" />
+        </q-item-section>
+        <q-item-section>Search</q-item-section>
+      </q-item>
       <q-item clickable v-close-popup @click="copyTestSteps()">
         <q-item-section avatar>
           <q-icon color="primary" name="content_copy" />
@@ -113,6 +119,9 @@ export default defineComponent({
     function editTestStep() {
       emit('editTestStep')
     }
+    function searchKeyword() {
+      emit('searchKeyword')
+    }
     return {
       deleteTestSteps,
       enableRows,
@@ -125,6 +134,7 @@ export default defineComponent({
       insertTestSteps,
       insertPasteTestSteps,
       editTestStep,
+      searchKeyword,
     };
   },
 })

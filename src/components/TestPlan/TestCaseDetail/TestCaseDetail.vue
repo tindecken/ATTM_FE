@@ -104,7 +104,8 @@
                   <q-td key="keyword" :props="props" class="q-c-input">
                     <keyword :TestStep="props.row"
                     @changeKeyword="changeKeyword(tc, props.row, $event)"
-                    @editTestStep="editTestStep(tc, props.row)" />
+                    @editTestStep="editTestStep(tc, props.row)"
+                    @searchKeyword="searchKeyword(tc, props.row)" />
                   </q-td>
                   <q-td v-for="index in 20" :key="index" class="q-c-input">
                     <parameter
@@ -119,9 +120,10 @@
                 </q-tr>
               </template>
             </q-table>
-            <q-btn color="primary" label="New Step" @click="addNewStep(selectedTestCaseId)"></q-btn>
-            <q-btn color="primary" label="Save" @click="saveTestCase(selectedTestCaseId)"></q-btn>
-            <div class="q-mt-md">
+            <q-separator class="q-mt-sm q-mb-sm" />
+            <q-btn outline color="primary" label="New Step" @click="addNewStep(selectedTestCaseId)"></q-btn>
+            <q-btn outline color="primary" label="Save" @click="saveTestCase(selectedTestCaseId)" class='q-ml-sm'></q-btn>
+            <!-- <div class="q-mt-md">
               Selected:
               <ul>
                 <li v-for="value in selected" :key="value.UUID">
@@ -139,7 +141,7 @@
             </div>
             <div class="q-mt-md">
               {{rightClickIndex}}
-            </div>
+            </div> -->
           </q-tab-panel>
         </q-tab-panels>
       </div>
@@ -166,6 +168,8 @@ import { TestEnvFlatNodeInterface } from 'src/Models/TestEnvFlatNode';
 import { FlatKeywordInterface } from 'src/Models/FlatKeyword';
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
+import { TestCaseHistoryInterface } from 'src/Models/TestCaseHistory';
+import { UpdateTestCaseDataInterface } from 'src/Models/Entities/UpdateTestCaseData';
 import TestAUT from './Cells/TestAUT.vue';
 import Keyword from './Cells/Keyword.vue';
 import Parameter from './Cells/Parameter.vue';
@@ -174,6 +178,7 @@ import AddDescriptionDialog from './Dialog/AddDescriptionDialog.vue';
 import TestEnvironmentDialog from './Dialog/TestEnvironmentDialog.vue';
 import CloseTestCaseDialog from './Dialog/CloseTestCaseDialog.vue';
 import KeywordEditorDialog from './Dialog/KeywordEditorDialog.vue';
+import SearchKeywordDialog from './Dialog/SearchKeywordDialog.vue';
 
 export default defineComponent({
   name: 'TestCaseDetail',
@@ -424,7 +429,15 @@ export default defineComponent({
     async function saveTestCase(testCaseId: string) {
       try {
         const currTestCase = openedTCs.value.find((tc: TestCaseInterface) => tc.Id === testCaseId) as TestCaseInterface
-        const result = await $store.dispatch('testcase/saveTestCase', currTestCase)
+        const updateTestCaseData: UpdateTestCaseDataInterface = {
+          UpdatedBy: $store.getters['user/userId'],
+          UpdatedMessage: '',
+        }
+        const testCaseHistory: TestCaseHistoryInterface = {
+          TestCase: currTestCase,
+          UpdateTestCaseData: updateTestCaseData,
+        }
+        const result = await $store.dispatch('testcase/saveTestCase', testCaseHistory)
         $q.notify({
           type: 'positive',
           message: result.message,
@@ -555,9 +568,6 @@ export default defineComponent({
 
     function editTestStep(testCase: TestCaseInterface, testStep: TestStepInterface) {
       console.log('editTestStep', testCase, testStep)
-      // find edited testStep
-      // const stepIndex: number = testCase.TestSteps.indexOf(testStep);
-      // const tempTC: TestCaseInterface = _.cloneDeep(testCase)
       $q.dialog({
         component: KeywordEditorDialog,
         componentProps: {
@@ -577,8 +587,37 @@ export default defineComponent({
       }).onDismiss(() => {
         // TODO
       })
-      // $store.commit('testcase/updateOpenedTCs', tempTC)
-      // $store.commit('category/updateTestCase', tempTC)
+    }
+    function searchKeyword(testCase: TestCaseInterface, testStep: TestStepInterface) {
+      console.log('searchKeyword', testCase, testStep)
+      $q.dialog({
+        component: SearchKeywordDialog,
+        componentProps: {
+          TestCase: testCase,
+          TestStep: testStep,
+        },
+      }).onOk((testStepUpdated: TestStepInterface) => {
+        console.log('testStep updated', testStepUpdated)
+        const stepIndex = testCase.TestSteps.findIndex((ts: TestStepInterface) => ts.UUID === testStepUpdated.UUID)
+        if (stepIndex === -1) return
+        const tempTC = _.cloneDeep(testCase)
+        tempTC.TestSteps[stepIndex].Params = []
+        tempTC.TestSteps[stepIndex].Keyword = testStepUpdated.Keyword;
+        tempTC.TestSteps[stepIndex].KWFeature = testStepUpdated.KWFeature;
+        tempTC.TestSteps[stepIndex].KWCategory = testStepUpdated.KWCategory;
+        // add default Params to testCase based on number of params of Keyword
+        testStepUpdated.Params.forEach((pr: TestParamInterface) => {
+          const prClone = _.cloneDeep(pr)
+          prClone.TestNodePath = ''
+          tempTC.TestSteps[stepIndex].Params.push(prClone);
+        })
+        $store.commit('testcase/updateOpenedTCs', tempTC)
+        $store.commit('category/updateTestCase', tempTC)
+      }).onCancel(() => {
+        // TODO
+      }).onDismiss(() => {
+        // TODO
+      })
     }
 
     function changeTestAUT(testCase: TestCaseInterface, testStep: TestStepInterface, newTestAUT: TestAUTInterface) {
@@ -938,6 +977,7 @@ export default defineComponent({
       rightClickIndex,
       onInsertTestSteps,
       onInsertPasteTestSteps,
+      searchKeyword,
     };
   },
 });

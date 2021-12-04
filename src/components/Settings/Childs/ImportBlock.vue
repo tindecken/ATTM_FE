@@ -20,7 +20,7 @@
 
 <script lang="ts">
 import {
-  defineComponent, ref, computed, PropType, Ref, onMounted,
+  defineComponent, ref, computed, PropType, Ref,
 } from 'vue';
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
@@ -42,9 +42,7 @@ export default defineComponent({
     const readonly = ref(true)
     const importBlockSetting: Ref<SettingInterface> = computed(() => props.settings.find((setting: SettingInterface) => setting.Name === 'ImportBlock') as SettingInterface)
     const importBlock = ref('')
-    onMounted(() => {
-      importBlock.value = importBlockSetting.value.Value
-    })
+    importBlock.value = importBlockSetting.value.Value
     async function updateImportBlock() {
       try {
         const newSetting: SettingInterface = {

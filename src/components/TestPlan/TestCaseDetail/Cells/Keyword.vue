@@ -2,6 +2,7 @@
   <div>
       <keyword-menu
         @editTestStep="editTestStep()"
+        @searchKeyword="searchKeyword()"
       ></keyword-menu>
       <q-select
         dense
@@ -65,6 +66,9 @@ export default defineComponent({
     function editTestStep() {
       context.emit('editTestStep')
     }
+    function searchKeyword() {
+      context.emit('searchKeyword')
+    }
     return {
       filterKeywordFn,
       filteredKeywords,
@@ -72,6 +76,7 @@ export default defineComponent({
       onChangeKeyword,
       editTestStep,
       readonly,
+      searchKeyword,
     }
   },
 });

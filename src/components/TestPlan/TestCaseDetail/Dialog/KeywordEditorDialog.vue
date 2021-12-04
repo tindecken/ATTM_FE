@@ -1,18 +1,18 @@
 <template>
 <q-dialog ref="dialogRef" @hide="onDialogHide" persistent>
-  <q-layout
+  <q-layout view="hHh lpR fFf"
     :class="isDark ? 'bg-grey-9' : 'bg-grey-3'"
-    style="max-height: 400px; min-height: 100px !important; min-width: 800px"
+    style="max-height: 900px; min-height: 100px !important; min-width: 800px"
+    container
   >
-  <q-card>
-        <q-bar>
-          <div>Edit Test Step: {{testStep.Keyword?.Name}}</div>
-          <q-space />
-          <q-btn dense flat icon="close" @click="onDialogHide">
-            <q-tooltip>Close</q-tooltip>
-          </q-btn>
-        </q-bar>
-
+    <q-header reveal bordered class="row justify-between bg-secondary">
+      <div class="self-center text-subtitle1 q-pl-sm">Edit Test Step: {{testStep.Keyword?.Name}}</div>
+      <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
+        <q-tooltip>Close</q-tooltip>
+      </q-btn>
+    </q-header>
+    <q-page-container>
+      <q-card>
         <q-card-section>
           <q-input dense outlined v-model="testStep.Description" label="Description"/>
         </q-card-section>
@@ -55,12 +55,15 @@
           <q-btn outline  color="primary" label="Cancel" class="q-ml-sm" @click="onDialogHide"></q-btn>
           <q-btn outline  color="primary" label="OK" @click="okClick()"></q-btn>
         </q-card-section>
-        <div class="row inline justify-between bg-primary text-white items-center" style="height: 24px;width: -webkit-fill-available;">
+    </q-card>
+    </q-page-container>
+    <q-footer bordered class="bg-secondary text-white"  style="height: 24px;width: -webkit-fill-available;">
+      <div class="row inline justify-between items-center">
             <span @click="copy(footerInfo)" class="q-pl-sm">{{footerInfo}}</span>
         </div>
-      </q-card>
+    </q-footer>
   </q-layout>
-  </q-dialog>
+</q-dialog>
 </template>
 <script lang="ts">
 import {
@@ -131,7 +134,7 @@ export default defineComponent({
       {
         name: 'testBed',
         align: 'left',
-        label: 'TestEnv',
+        label: 'Test Environment',
         field: 'TestBed',
         sortable: false,
       },
@@ -148,7 +151,7 @@ export default defineComponent({
     const isDark = computed(() => $store.getters['global/darkTheme'])
     const testCase: Ref<TestCaseInterface> = ref(props.TestCase)
     const testStep: Ref<TestStepInterface> = ref(props.TestStep)
-    const footerInfo = ref('ddddddddddddd')
+    const footerInfo = ref('')
     onMounted(() => {
       testCase.value = _.cloneDeep(props.TestCase)
       testStep.value = _.cloneDeep(props.TestStep)
