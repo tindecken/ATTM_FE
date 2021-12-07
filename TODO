@@ -87,7 +87,9 @@ Todo:
   ✔ bug - fix TestEnvironmentDialog select other testbed doesn't work. @done(21-11-03 02:39)
   ✔ test feature - closeTab, compare TestStep @done(21-11-04 02:09)
   ✔ bug - import block doesn't show for the first time, must refresh to make it work. @done(21-11-04 02:09)
-  ☐ delete testcase = update testcase set isDeleted = true
+  ✔ delete testcase = update testcase set isDeleted = true @done(21-12-07 22:31)
+  ✔ bug - after add new testcase, detele testgroup, it didn't show correct number testcases in testgroup @done(21-12-07 22:31)
+  ☐ delete a testcase, can't create that testcase again because of duplicate testcase name
 Test:
   ✔ one flow from create category, testsuite, testgroup, testcase from beginning @done(21-05-11 23:12)
 API:

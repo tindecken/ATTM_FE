@@ -48,6 +48,7 @@ const mutation: MutationTree<CategoryStateInterface> = {
       tempCat.children[tsIndex].children[tgIndex].children = []
     }
     tempCat.children[tsIndex].children[tgIndex].children.push(testCase)
+    tempCat.children[tsIndex].children[tgIndex].TestCaseIds?.push(testCase.Id)
     state.Categories[catIndex] = tempCat
   },
   updateTestCase(state: CategoryStateInterface, testCase: TestCaseInterface) {
