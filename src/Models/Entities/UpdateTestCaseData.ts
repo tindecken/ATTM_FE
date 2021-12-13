@@ -1,5 +1,6 @@
 export interface UpdateTestCaseDataInterface {
-    UpdatedMessage: string
-    UpdatedDate?: Date
-    UpdatedBy: string
+    UpdateMessage: string
+    UpdateDate?: Date
+    UpdateBy: string
+    UpdateType: string // Change Properties, change TestStep
 }

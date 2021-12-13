@@ -430,8 +430,9 @@ export default defineComponent({
       try {
         const currTestCase = openedTCs.value.find((tc: TestCaseInterface) => tc.Id === testCaseId) as TestCaseInterface
         const updateTestCaseData: UpdateTestCaseDataInterface = {
-          UpdatedBy: $store.getters['user/userId'],
-          UpdatedMessage: '',
+          UpdateBy: $store.getters['user/userId'],
+          UpdateMessage: '',
+          UpdateType: 'Change TestStep',
         }
         const testCaseHistory: TestCaseHistoryInterface = {
           TestCase: currTestCase,

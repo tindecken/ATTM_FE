@@ -53,12 +53,16 @@ const mutation: MutationTree<CategoryStateInterface> = {
   },
   updateTestCase(state: CategoryStateInterface, testCase: TestCaseInterface) {
     const catIndex = state.Categories.findIndex((cat: CategoryInterface) => cat.Id === testCase.CategoryId);
+    console.log('catIndex', catIndex)
     const tempCat = _.cloneDeep(state.Categories[catIndex])
     // find tsIndex
     const tsIndex = tempCat.children.findIndex((ts: TestSuiteInterface) => ts.Id === testCase.TestSuiteId)
+    console.log('tsIndex', tsIndex)
     // find tgIndex
     const tgIndex = tempCat.children[tsIndex].children.findIndex((tg: TestGroupInterface) => tg.Id === testCase.TestGroupId)
+    console.log('tgIndex', tgIndex)
     const tcIndex = tempCat.children[tsIndex].children[tgIndex].children.findIndex((tc: TestCaseInterface) => tc.Id === testCase.Id)
+    console.log('tcIndex', tcIndex)
     tempCat.children[tsIndex].children[tgIndex].children[tcIndex] = testCase
     state.Categories[catIndex] = tempCat
   },

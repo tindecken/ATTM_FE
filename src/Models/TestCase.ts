@@ -18,7 +18,8 @@ export interface TestCaseInterface {
     LastModifiedUser?: string;
     LastModifiedDate?: Date;
     TimeOutInMinutes?: number;
-    QueueId?: number;
+    Queue?: string;
+    DontRunWithQueues?: string[];
     CategoryId: string;
     TestSuiteId: string;
     TestGroupId: string;

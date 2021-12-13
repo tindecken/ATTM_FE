@@ -90,9 +90,12 @@ Todo:
   ✔ delete testcase = update testcase set isDeleted = true @done(21-12-07 22:31)
   ✔ bug - after add new testcase, detele testgroup, it didn't show correct number testcases in testgroup @done(21-12-07 22:31)
   ☐ delete a testcase, can't create that testcase again because of duplicate testcase name
+  ☐ update testcase, add 2 fields: Queue(string) and NoParallelQueues (list<string>), if Queue is in NoParallelQueues, and all of them is running, no pick.
+  ☐ bug - vueuse copy can't copy when build production, dont know why?
 Test:
   ✔ one flow from create category, testsuite, testgroup, testcase from beginning @done(21-05-11 23:12)
 API:
+  ☐ new api - update testcase
   ✔ api for saving testcase @done(21-01-23 22:28)
   ✔ api for generate code from testcases, @done(21-05-01 20:21)
   ✔ api for list all testAUT @done(21-02-02 18:47)
@@ -101,10 +104,10 @@ API:
   ✔ Ongoing - write api to display all category, it will include category, testsuite, testgroup, testcase @done(20-11-29 21:14)
   ✔ api create testsuite, testgroup, testcase haven't checking the input id is correct, exist or not @done(20-11-29 21:14)
   ☐ create new api to list all testcase in .dll file including all task, including [Test] with //
-  reference to this tutorial, https://stackoverflow.com/questions/10724479/get-list-of-tests-in-nunit-library-programmatically-without-having-to-run-tests
+  ☐ reference to this tutorial, https://stackoverflow.com/questions/10724479/get-list-of-tests-in-nunit-library-programmatically-without-having-to-run-tests
   ✔ buildproject API should return JObject @done(21-05-09 07:39)
-  Delete TestGroup in testsuite should delete all testcase in testgroup
-  Delete TestSuite in category should delete all testgroup in testsuite, and delete all testcase in testgroup
+  ☐ Delete TestGroup in testsuite should delete all testcase in testgroup
+  ☐ Delete TestSuite in category should delete all testgroup in testsuite, and delete all testcase in testgroup
 Node:
   In store keyword, currently not use selectedKeyword
   https://blog.hildenco.com/2020/05/configuration-in-net-core-console.html

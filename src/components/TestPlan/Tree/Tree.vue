@@ -72,6 +72,7 @@ import { TestSuiteInterface } from 'src/Models/TestSuite';
 import { TestClientInterface } from 'src/Models/TestClient';
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
+import { TestCaseHistoryInterface } from 'src/Models/TestCaseHistory';
 import TreeContextMenu from './Menu/TreeContextMenu.vue'
 import NewTestSuiteDialog from './Dialog/NewTestSuiteDialog.vue'
 import NewTestGroupDialog from './Dialog/NewTestGroupDialog.vue'
@@ -225,6 +226,20 @@ export default defineComponent({
         });
       }
     }
+    async function onEditTestCase(editedTestCase: TestCaseHistoryInterface) {
+      try {
+        const editTestCase = await $store.dispatch('testcase/editTestCase', editedTestCase) as TestCaseInterface;
+        $q.notify({
+          type: 'positive',
+          message: `Updated test case: ${editTestCase.Name} !`,
+        });
+      } catch (error: any) {
+        $q.notify({
+          type: 'negative',
+          message: `${error}`,
+        });
+      }
+    }
 
     function createCategory() {
       $q.dialog({
@@ -365,9 +380,10 @@ export default defineComponent({
             componentProps: {
               TestCase: node,
             },
-          }).onOk((newTestCase: TestCaseInterface) => {
+          }).onOk((editedTestCase: TestCaseHistoryInterface) => {
             // TODO: handle ok
-            console.log('newTestCase', newTestCase);
+            console.log('editedTestCase', editedTestCase);
+            void onEditTestCase(editedTestCase)
           }).onCancel(() => {
             // TODO
           }).onDismiss(() => {
