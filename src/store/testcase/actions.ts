@@ -83,6 +83,23 @@ const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
       throw error.response.data;
     }
   },
+  async getUpateHistories(context, testCaseId: string) {
+    try {
+      const response = await axios.get(
+        `${config.baseURL}/testcases/${testCaseId}/getupdatehistories`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+          },
+        },
+      );
+      const responseTestCase = (await response.data.data) as TestCaseHistoryInterface;
+      return responseTestCase
+    } catch (error: any) {
+      throw error.response.data;
+    }
+  },
 };
 
 export default actions;

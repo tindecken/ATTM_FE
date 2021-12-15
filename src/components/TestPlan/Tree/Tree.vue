@@ -46,6 +46,7 @@
                   @newTestCase="onNewTestCase(prop.node)"
                   @edit="onEdit(prop.node)"
                   @deleteNodes="onDeleteNodes(prop.node)"
+                  @viewProperties="onViewProperties(prop.node)"
                   >
                 </tree-context-menu>
               </div>
@@ -83,6 +84,7 @@ import DeleteTestSuiteDialog from './Dialog/DeleteTestSuiteDialog.vue'
 import DeleteCategoryDialog from './Dialog/DeleteCategoryDialog.vue'
 import NewCategoryDialog from './Dialog/NewCategoryDialog.vue';
 import EditTestCaseDialog from './Dialog/EditTestCaseDialog.vue';
+import TestCasePropertiesDialog from './Dialog/TestCaseProperties/TestCasePropertiesDialog.vue';
 
 export default defineComponent({
   name: 'Tree',
@@ -648,6 +650,38 @@ export default defineComponent({
         }
       }
     }
+    function onViewProperties(node: any) {
+      const currentNode = tree.value.getNodeByKey(node.Id);
+      console.log('currentNode', currentNode);
+      switch (currentNode.nodeType) {
+        case 'Category':
+          break
+        case 'TestSuite':
+          break
+        case 'TestGroup':
+          break
+        case 'TestCase':
+          const testCase: TestCaseInterface = currentNode as TestCaseInterface
+          $q.dialog({
+            component: TestCasePropertiesDialog,
+            componentProps: {
+              TestCase: testCase,
+            },
+          })
+            .onOk(async () => {
+              // TODO
+            })
+            .onCancel(() => {
+            // TODO
+            })
+            .onDismiss(() => {
+            // TODO
+            });
+          break
+        default:
+          break
+      }
+    }
 
     return {
       filter,
@@ -661,6 +695,7 @@ export default defineComponent({
       tree,
       toggleTree,
       onDeleteNodes,
+      onViewProperties,
       onGenerateDevCode,
       onRun,
       onRunOn,

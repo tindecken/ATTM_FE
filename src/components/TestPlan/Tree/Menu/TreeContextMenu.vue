@@ -76,6 +76,12 @@
           <q-item-section>Delete</q-item-section>
         </q-item>
         <q-separator />
+        <q-item clickable v-close-popup @click="viewProperties()">
+          <q-item-section avatar>
+            <q-icon color="primary" name="info" />
+          </q-item-section>
+          <q-item-section>Properties</q-item-section>
+        </q-item>
     </q-list>
   </q-menu>
 </template>
@@ -96,6 +102,9 @@ export default defineComponent({
   setup(props, { emit }) {
     function deleteNodes() {
       emit('deleteNodes')
+    }
+    function viewProperties() {
+      emit('viewProperties')
     }
     function generateDevCode() {
       emit('generateDevCode')
@@ -139,6 +148,7 @@ export default defineComponent({
       newTestGroup,
       newTestCase,
       edit,
+      viewProperties,
     };
   },
 })
