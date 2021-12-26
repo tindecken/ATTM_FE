@@ -10,7 +10,7 @@ const actions: ActionTree<KeywordStateInterface, StateInterface> = {
     // eslint-disable-next-line no-useless-catch
     try {
       const response = await axios.get(
-        `${config.baseURL}/keywords/refresh`,
+        `${config.baseURL}/keywords/getkeywords`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -18,7 +18,9 @@ const actions: ActionTree<KeywordStateInterface, StateInterface> = {
           },
         },
       );
-      const keywordCategories: KeywordCategoryInterface[] = await response.data.Categories;
+      const responseData = await response.data;
+      console.log('responseData', responseData);
+      const keywordCategories: KeywordCategoryInterface[] = await responseData.data.Categories;
       context.commit('setKeywordCategories', keywordCategories);
       context.commit('setKeywords', keywordCategories);
       return keywordCategories

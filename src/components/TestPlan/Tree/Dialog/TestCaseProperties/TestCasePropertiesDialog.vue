@@ -6,7 +6,7 @@
       container
     >
       <q-header reveal bordered class="row justify-between bg-secondary">
-        <div class="self-center text-subtitle1 q-pl-sm">Test Case Properties</div>
+        <div class="self-center text-subtitle1 q-pl-sm">{{ TestCase.CodeName}}: {{ TestCase.Name }}</div>
         <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
           <q-tooltip>Close</q-tooltip>
         </q-btn>
@@ -23,7 +23,6 @@
         <q-tab-panels
           v-model="tab"
           animated
-          swipeable
           vertical
           transition-prev="jump-down"
           transition-next="jump-down"

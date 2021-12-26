@@ -82,8 +82,8 @@
         </div>
       </q-page-container>
       <q-footer bordered class="bg-secondary text-white"  style="height: 24px;width: -webkit-fill-available;">
-      <div class="row inline justify-between items-center">
-            <span @click="copy(footerInfo)" class="q-pl-sm">{{footerInfo}}</span>
+        <div class="row inline justify-between items-center">
+          <span @click="copy(footerInfo)" class="q-pl-sm">{{footerInfo}}</span>
         </div>
     </q-footer>
     </q-layout>

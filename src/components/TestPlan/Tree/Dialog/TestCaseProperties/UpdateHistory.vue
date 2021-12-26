@@ -23,7 +23,7 @@
           <q-tooltip v-if="props.row.UpdateTestCaseData.UpdateMessage !== ''">
             {{ props.row.UpdateTestCaseData.UpdateMessage }}
           </q-tooltip>
-          <div>{{ props.row.UpdateTestCaseData.UpdateMessage }}</div>
+          <div class="ellipsis">{{ props.row.UpdateTestCaseData.UpdateMessage }}</div>
         </q-td>
         <q-td key="updateDate" :props="props">
           <q-tooltip v-if="props.row.UpdateTestCaseData.UpdateDate !== ''">
@@ -70,8 +70,8 @@ export default defineComponent({
         label: 'No',
         align: 'left',
         field: 'rowIndex',
-        sortable: false,
-        style: 'max-width: 40px',
+        sortable: true,
+        style: 'max-width: 40px; width: 40px',
         headerStyle: 'max-width: 40px',
       },
       {
@@ -81,6 +81,9 @@ export default defineComponent({
         align: 'left',
         field: 'Type',
         sortable: true,
+        style: 'max-width: 140px; width: 140px',
+        headerStyle: 'max-width: 140px',
+        classes: 'ellipsis',
       },
       {
         name: 'updateMessage',
@@ -97,7 +100,7 @@ export default defineComponent({
         align: 'left',
         label: 'Date',
         field: 'Date',
-        style: 'max-width: 100px',
+        style: 'max-width: 100px; width: 80px',
         headerStyle: 'max-width: 100px',
         sortable: true,
       },
@@ -107,6 +110,8 @@ export default defineComponent({
         label: 'Update By',
         field: 'By',
         sortable: false,
+        style: 'max-width: 100px; width: 80px',
+        headerStyle: 'max-width: 100px',
       },
     ]
     const initialPagination = {
@@ -121,6 +126,7 @@ export default defineComponent({
     onMounted(async () => {
       try {
         testUpdateHistories.value = await $store.dispatch('testcase/getUpateHistories', props.TestCase.Id)
+        testUpdateHistories.value = testUpdateHistories.value.map((value: TestCaseHistoryInterface, i: number) => ({ ...value, rowIndex: i + 1 }))
       } catch (error: any) {
         $q.notify({
           type: 'negative',
