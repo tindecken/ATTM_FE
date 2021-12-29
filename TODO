@@ -91,7 +91,7 @@ Todo:
   ✔ bug - after add new testcase, detele testgroup, it didn't show correct number testcases in testgroup @done(21-12-07 22:31)
   ☐ delete a testcase, can't create that testcase again because of duplicate testcase name
   ☐ update testcase, add 2 fields: Queue(string) and NoParallelQueues (list<string>), if Queue is in NoParallelQueues, and all of them is running, no pick.
-  ☐ bug - vueuse copy can't copy when build production, dont know why???
+  ☐ bug - vueuse copy can't copy when build production, dont know why????
 Test:
   ✔ one flow from create category, testsuite, testgroup, testcase from beginning @done(21-05-11 23:12)
 API:
