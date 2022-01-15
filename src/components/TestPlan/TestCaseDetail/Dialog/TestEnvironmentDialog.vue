@@ -41,7 +41,7 @@
               :filter="testEnvFilter"
               separator="cell"
               :pagination="initialPagination"
-              :hide-pagination="true"
+              :visible-columns="visibleColumns"
             >
             <template v-slot:top>
               <div class="col-6 q-table__title">Test Environment</div>
@@ -101,6 +101,7 @@ import { TestEnvFlatNodeInterface } from 'src/Models/TestEnvFlatNode';
 import { useStore } from 'vuex'
 import { useClipboard } from '@vueuse/core'
 import { useQuasar, useDialogPluginComponent } from 'quasar'
+import { testEnvColumns } from 'src/components/tableColumns';
 
 export default defineComponent({
   name: 'TestEnvironmentDialog',
@@ -122,6 +123,7 @@ export default defineComponent({
     const footerInfo = ref('')
     const testEnvTableDatas: Ref<TestEnvFlatNodeInterface[]> = ref([])
     const isReadonly: Ref<boolean> = ref(false);
+    const visibleColumns: Ref<string[]> = ref(['no', 'category', 'name', 'value', 'description', 'use']);
     const initialPagination = {
       sortBy: 'startAt',
       descending: true,
@@ -130,60 +132,6 @@ export default defineComponent({
       // rowsNumber: xx if getting data from a server
     }
     const testEnvFilter = ref('');
-    const testEnvColumns = [
-      {
-        name: 'no',
-        required: true,
-        label: 'No',
-        align: 'left',
-        field: 'rowIndex',
-        sortable: false,
-        style: 'max-width: 40px',
-        headerStyle: 'max-width: 40px',
-      },
-      {
-        name: 'category',
-        required: true,
-        label: 'Category',
-        align: 'left',
-        field: 'Category',
-        format: (val: any) => `${val}`,
-        sortable: false,
-      },
-      {
-        name: 'name',
-        align: 'left',
-        label: 'Name',
-        field: 'Name',
-        sortable: false,
-        style: 'min-width: 100px',
-        headerStyle: 'min-width: 100px',
-      },
-      {
-        name: 'value',
-        align: 'left',
-        label: 'Value',
-        field: 'Value',
-        style: 'max-width: 100px',
-        headerStyle: 'max-width: 100px',
-        sortable: false,
-        classes: 'ellipsis',
-      },
-      {
-        name: 'description',
-        align: 'left',
-        label: 'Description',
-        field: 'Description',
-        sortable: false,
-      },
-      {
-        name: 'use',
-        align: 'left',
-        label: '',
-        field: 'use',
-        sortable: false,
-      },
-    ]
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const isDark = computed(() => $store.getters['global/darkTheme'])
     const selectedTestEnv = computed(() => $store.getters['testenvironment/selectedTestEnv'] as TestEnvInterface)
@@ -253,6 +201,7 @@ export default defineComponent({
       footerInfo,
       copy,
       initialPagination,
+      visibleColumns,
     };
   },
 });

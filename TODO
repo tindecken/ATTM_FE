@@ -77,7 +77,7 @@ Todo:
   ✔ detail - insert blank @done(21-06-27 15:26)
   ✔ right click  means select, if already multiple selected --> no affect, if selected.length = 1 or 0 --> select it. @done(21-06-27 15:26)
   ✔ remove Team attribute @done(21-08-05 09:14) --> Decide to not remote that attribute
-  ☐ properties of testcase, has 3 tabs: Properties, DevRunRecord, RegressionRunRecord
+  ✔ properties of testcase, has 3 tabs: Properties, DevRunRecord, RegressionRunRecord @done(22-01-11 09:00)
   ✔ API to get all DevRunRecords of a testcase, sort by last running, double click to DevRunRecord to get detail running of a TestCase @done(21-08-05 08:20)
   ✔ API to get all RegressionRunRecord of a testcase (Regression Test, sort by last running --> RegressionRunRecord, sort by last running) @done(21-08-05 08:20)
   ☐ bug - when switch from TestPlan to DevMonitoring during the testcase is build, createDevQueue, it will throw error. https://i.imgur.com/DQDaShc.png
@@ -92,6 +92,9 @@ Todo:
   ☐ delete a testcase, can't create that testcase again because of duplicate testcase name
   ☐ update testcase, add 2 fields: Queue(string) and NoParallelQueues (list<string>), if Queue is in NoParallelQueues, and all of them is running, no pick.
   ☐ bug - vueuse copy can't copy when build production, dont know why?
+  ☐ find all testcases that are using keywork A (dont include deleted testcase)
+  ☐ able to restore testcase from testcase history (add new testcase history with type: restore)
+  ☐ Permanent delete testcase history
 Test:
   ✔ one flow from create category, testsuite, testgroup, testcase from beginning @done(21-05-11 23:12)
 API:
@@ -100,8 +103,8 @@ API:
   ✔ api for generate code from testcases, @done(21-05-01 20:21)
   ✔ api for list all testAUT @done(21-02-02 18:47)
   ✔ .net 5.0 support openAPI by default (swagger) ==> implement it. @done(20-12-19 17:17)
-  ☐ bug - sometime the keyword.json is used by other process --> can't get keyword list
-  ✔ Ongoing - write api to display all category, it will include category, testsuite, testgroup, testcase @done(20-11-29 21:14)
+  ✔ bug - sometime the keyword.json is used by other process --> can't get keyword list @done(22-01-11 08:59)
+  ☐ Ongoing - write api to display all category, it will include category, testsuite, testgroup, testcase
   ✔ api create testsuite, testgroup, testcase haven't checking the input id is correct, exist or not @done(20-11-29 21:14)
   ☐ create new api to list all testcase in .dll file including all task, including [Test] with //
   ☐ reference to this tutorial, https://stackoverflow.com/questions/10724479/get-list-of-tests-in-nunit-library-programmatically-without-having-to-run-tests

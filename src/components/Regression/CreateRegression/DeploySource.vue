@@ -5,7 +5,7 @@
       dense
       title="Clients"
       :rows="clients"
-      :columns="columns"
+      :columns="clientColumns"
       :visible-columns="visibleColumns"
       row-key="Id"
       :selected-rows-label="getSelectedString"
@@ -81,6 +81,7 @@ import { TestClientInterface } from 'src/Models/TestClient';
 import _ from 'lodash'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
+import { clientColumns } from 'src/components/tableColumns';
 
 export default defineComponent({
   name: 'DeploySource',
@@ -88,108 +89,6 @@ export default defineComponent({
   setup() {
     const $store = useStore()
     const $q = useQuasar()
-    const columns = [
-      {
-        name: 'Id',
-        required: false,
-        label: 'Id',
-        align: 'left',
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        field: (row: any) => row.Id,
-        format: (val: any) => `${val}`,
-        sortable: false,
-      },
-      {
-        name: 'Name',
-        required: false,
-        label: 'Name',
-        align: 'left',
-        field: 'Name',
-        format: (val: any) => `${val}`,
-        sortable: true,
-      },
-      {
-        name: 'Description',
-        required: false,
-        label: 'Description',
-        align: 'left',
-        field: 'Description',
-        format: (val: any) => `${val}`,
-        sortable: true,
-      },
-      {
-        name: 'IPAddress',
-        required: true,
-        label: 'IP Address',
-        align: 'left',
-        field: 'IPAddress',
-        format: (val: any) => `${val}`,
-        sortable: true,
-      },
-      {
-        name: 'Type',
-        required: false,
-        label: 'Type',
-        align: 'left',
-        field: 'Type',
-        format: (val: any) => `${val}`,
-        sortable: true,
-      },
-      {
-        name: 'User',
-        required: false,
-        label: 'User',
-        align: 'left',
-        field: 'User',
-        format: (val: any) => `${val}`,
-        sortable: true,
-      },
-      {
-        name: 'Password',
-        required: false,
-        label: 'Password',
-        align: 'left',
-        field: 'Password',
-        format: (val: any) => `${val}`,
-        sortable: true,
-      },
-      {
-        name: 'RegressionFolder',
-        required: false,
-        label: 'Regression Folder',
-        align: 'left',
-        field: 'RegressionFolder',
-        format: (val: any) => `${val}`,
-        sortable: true,
-      },
-      {
-        name: 'DevelopFolder',
-        required: false,
-        label: 'Develop Folder',
-        align: 'left',
-        field: 'DevelopFolder',
-        format: (val: any) => `${val}`,
-        sortable: true,
-      },
-      {
-        name: 'RunnerFolder',
-        required: false,
-        label: 'Runner Folder',
-        align: 'left',
-        field: 'RunnerFolder',
-        format: (val: any) => `${val}`,
-        sortable: true,
-      },
-      {
-        name: 'Status',
-        required: false,
-        label: 'Status',
-        align: 'left',
-        field: 'Status',
-        format: (val: any) => `${val}`,
-        sortable: true,
-      },
-    ]
     const tab = ref('')
     const deploySourceStatus = ref('')
     const deploySourceMessage = ref('')
@@ -330,7 +229,7 @@ export default defineComponent({
     }
     return {
       visibleColumns,
-      columns,
+      clientColumns,
       getSelectedString,
       clients,
       filter,
