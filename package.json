@@ -22,7 +22,7 @@
     "core-js": "^3.6.5",
     "eslint-loader": "^4.0.2",
     "lodash": "^4.17.20",
-    "quasar": "^2.4.4",
+    "quasar": "^2.4.10",
     "uuid-random": "^1.3.2",
     "vue-i18n": "^9.1.6",
     "vuex": "^4.0.1",

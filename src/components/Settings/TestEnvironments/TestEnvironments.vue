@@ -11,9 +11,10 @@
           @update:model-value="onTestEnvChange($event)"
           class="col-2 q-mr-md"
         />
-        <q-btn outline label="New" color="secondary" class="q-mr-sm" style="width: 100px;"/>
+        <q-btn outline label="New" color="secondary" class="q-mr-sm" style="width: 100px;" @click="newTestEnv()"/>
+        <q-btn outline label="Rename" color="secondary" class="q-mr-sm" style="width: 100px;" @click="renameTestEnv()"/>
         <q-btn outline label="Clone" color="secondary" class="q-mr-sm" style="width: 100px;"/>
-        <q-btn outline label="Delete" color="secondary" class="q-mr-sm" style="width: 100px;"/>
+        <q-btn outline label="Delete" color="negative" class="q-mr-sm" style="width: 100px;"/>
     </div>
     <div class="row q-mb-sm">
       <q-table
@@ -48,7 +49,12 @@
               :props="props"
               @click="footerInfo = props.row.Category"
             >
-              {{ props.row.Category }}
+              <q-input
+                v-model="props.row.Category"
+                dense
+                borderless
+              >
+              </q-input>
             </q-td>
             <q-td
               key="name"
@@ -56,37 +62,46 @@
               style="white-space: normal"
               @click="footerInfo = props.row.Name"
             >
-              <div>{{ props.row.Name }}</div>
+              <q-input
+                v-model="props.row.Name"
+                dense
+                borderless
+              >
+              </q-input>
             </q-td>
             <q-td
               key="value"
               :props="props"
               @click="footerInfo = props.row.Value"
             >
-              <q-tooltip v-if="props.row.Value !== ''">
-                {{ props.row.Value }}
-              </q-tooltip>
-              {{ props.row.Value }}
+              <q-input
+                v-model="props.row.Value"
+                dense
+                borderless
+              >
+              </q-input>
             </q-td>
             <q-td
               key="description"
               :props="props"
               @click="footerInfo = props.row.Description"
             >
-              <q-tooltip v-if="props.row.Description !== ''">
-                {{ props.row.Description }}
-              </q-tooltip>
-              {{ props.row.Description }}
+              <q-input
+                v-model="props.row.Description"
+                dense
+                borderless
+              >
+              </q-input>
             </q-td>
             <q-td key="delete" :props="props">
-              <q-btn size="sm" outline @click="deleteRow(props.row)">Delete</q-btn>
+              <q-btn size="sm" outline @click="deleteNode(props.row)">Delete</q-btn>
             </q-td>
           </q-tr>
         </template>
       </q-table>
     </div>
     <div class="row inline">
-      <q-btn outline label="New node" color="secondary" class="q-mr-sm" style="width: 110px;"/>
+      <q-btn outline label="New node" color="secondary" class="q-mr-sm" style="width: 110px;" @click="addNode()"/>
     </div>
   </div>
 </template>
@@ -100,7 +115,7 @@ export default {
 
 <script setup lang="ts">
 import {
-  ref, Ref, onBeforeMount, nextTick, computed,
+  ref, Ref, onBeforeMount, nextTick,
 } from 'vue';
 import { useStore } from 'vuex';
 import { TestEnvInterface } from 'src/Models/TestEnv';
@@ -109,6 +124,8 @@ import { TestEnvNodeInterface } from 'src/Models/TestEnvNode';
 import { TestEnvFlatNodeInterface } from 'src/Models/TestEnvFlatNode';
 import { testEnvColumns } from 'src/components/tableColumns';
 import { useQuasar } from 'quasar'
+import NewTestEnvDialog from 'src/components/Settings/TestEnvironments/Dialog/NewTestEnvDialog.vue';
+import RenameTestEnvDialog from 'src/components/Settings/TestEnvironments/Dialog/RenameTestEnvDialog.vue';
 // import { useClipboard } from '@vueuse/core'
 
 // const { copy } = useClipboard()
@@ -121,7 +138,8 @@ const testEnvFilter = ref('');
 const initialPagination = {
   rowsPerPage: 50,
 };
-const selectedTestEnv = computed(() => $store.getters['testenvironment/selectedTestEnv'] as TestEnvInterface)
+const testEnvs = $store.getters['testenvironment/testEnvs'] as TestEnvInterface[]
+const selectedTestEnv = ref<TestEnvInterface>()
 const visibleColumns: Ref<string[]> = ref(['no', 'category', 'name', 'value', 'description', 'delete']);
 function transformToFlatNode(testEnv: TestEnvInterface | null): TestEnvFlatNodeInterface[] {
   let flatNodes: TestEnvFlatNodeInterface[] = []
@@ -136,6 +154,10 @@ function transformToFlatNode(testEnv: TestEnvInterface | null): TestEnvFlatNodeI
   }
   return flatNodes
 }
+function onTestEnvChange(newValue: TestEnvInterface) {
+  selectedTestEnv.value = newValue
+  testEnvTableDatas.value = transformToFlatNode(newValue)
+}
 onBeforeMount(async () => {
   try {
     await $store.dispatch('testenvironment/getTestEnvironments');
@@ -146,10 +168,60 @@ onBeforeMount(async () => {
     });
   }
   // testEnvTableDatas
-  testEnvTableDatas.value = transformToFlatNode(selectedTestEnv.value)
+  if (selectedTestEnv.value) testEnvTableDatas.value = transformToFlatNode(selectedTestEnv.value)
   void nextTick()
 })
-function deleteRow(flatNode: TestEnvFlatNodeInterface) {
-  // TODO
+function deleteNode(flatNode: TestEnvFlatNodeInterface) {
+  const index = testEnvTableDatas.value.findIndex((value: TestEnvFlatNodeInterface) => value.Name === flatNode.Name && value.Category === flatNode.Category)
+  if (index > -1) {
+    testEnvTableDatas.value.splice(index, 1)
+    testEnvTableDatas.value = testEnvTableDatas.value.map((value: TestEnvFlatNodeInterface, i: number) => ({ ...value, rowIndex: i + 1 }))
+  }
+}
+function addNode() {
+  const newNode: TestEnvFlatNodeInterface = {
+    Name: '',
+    Value: '',
+    Description: '',
+    Category: '',
+    CategoryDescription: '',
+  }
+  testEnvTableDatas.value.push(newNode)
+  testEnvTableDatas.value = testEnvTableDatas.value.map((value: TestEnvFlatNodeInterface, i: number) => ({ ...value, rowIndex: i + 1 }))
+}
+function newTestEnv() {
+  $q.dialog({
+    component: NewTestEnvDialog,
+    componentProps: {
+    },
+  }).onOk((newName: string) => {
+    console.log('newName', newName)
+  }).onCancel(() => {
+    console.log('Cancel')
+  }).onDismiss(() => {
+    console.log('Called on OK or Cancel')
+  })
+}
+function renameTestEnv() {
+  console.log('selectedTestEnv.value', selectedTestEnv.value)
+  if (selectedTestEnv.value === null || selectedTestEnv.value === undefined) {
+    $q.notify({
+      type: 'warning',
+      message: 'Please select a test environment',
+    })
+    return
+  }
+  $q.dialog({
+    component: RenameTestEnvDialog,
+    componentProps: {
+      TestEnv: selectedTestEnv.value,
+    },
+  }).onOk((newName: string) => {
+    console.log('newName', newName)
+  }).onCancel(() => {
+    console.log('Cancel')
+  }).onDismiss(() => {
+    console.log('Called on OK or Cancel')
+  })
 }
 </script>

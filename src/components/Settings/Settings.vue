@@ -42,9 +42,9 @@ import {
 } from 'vue';
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
-import ImportBlock from './Childs/ImportBlock.vue'
-import TestClients from './Childs/TestClients.vue'
-import TestEnvironments from './Childs/TestEnvironments.vue'
+import ImportBlock from './ImportBlock/ImportBlock.vue'
+import TestClients from './TestClients/TestClients.vue'
+import TestEnvironments from './TestEnvironments/TestEnvironments.vue'
 import { SettingInterface } from '../../Models/Setting'
 
 export default defineComponent({
