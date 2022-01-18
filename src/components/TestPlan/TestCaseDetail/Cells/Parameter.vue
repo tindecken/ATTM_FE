@@ -32,11 +32,8 @@ import {
   ref,
   PropType,
 } from 'vue';
-import { TestEnvFlatNodeInterface } from 'src/Models/TestEnvFlatNode';
 import { TestStepInterface } from 'src/Models/TestStep';
-import { TestEnvInterface } from 'src/Models/TestEnv';
-import { TestEnvCategoryInterface } from 'src/Models/TestEnvCategory';
-import { TestEnvNodeInterface } from 'src/Models/TestEnvNode';
+import { TestEnvInterface, TestEnvNodeInterface } from 'src/Models/TestEnv';
 import { useStore } from 'vuex'
 import ParameterMenu from '../Menu/ParameterMenu.vue'
 import { getValueType } from '../Utils/utils'
@@ -88,10 +85,10 @@ export default defineComponent({
       const catEnv = ts.Params[prIndex].TestNodePath.split('/')[0]
       const nodeEnv = ts.Params[prIndex].TestNodePath.split('/')[1]
 
-      if (selectedTestEnv && selectedTestEnv.Categories) {
-        const cat = selectedTestEnv.Categories.find((c: TestEnvCategoryInterface) => c.Name === catEnv)
+      if (selectedTestEnv) {
+        const cat = selectedTestEnv.Nodes.find((envNode: TestEnvNodeInterface) => envNode.Category === catEnv)
         if (cat) {
-          const node = cat.Nodes.find((n: TestEnvNodeInterface) => n.Name === nodeEnv)
+          const node = selectedTestEnv.Nodes.find((n: TestEnvNodeInterface) => n.Name === nodeEnv && n.Category === catEnv)
           if (node) {
             value = node.Value
             setNoError()
@@ -132,8 +129,8 @@ export default defineComponent({
       context.emit('changeParam', newParamValue)
     }
 
-    function useTestEnv(flatNode: TestEnvFlatNodeInterface) {
-      context.emit('useTestEnv', flatNode)
+    function useTestEnv(testEnvNode: TestEnvNodeInterface) {
+      context.emit('useTestEnv', testEnvNode)
     }
 
     function unUseTestEnv() {

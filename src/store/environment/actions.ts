@@ -10,7 +10,7 @@ const actions: ActionTree<TestEnvironmentStateInterface, StateInterface> = {
     // eslint-disable-next-line no-useless-catch
     try {
       const response = await axios.get(
-        `${config.baseURL}/testenvironments/`,
+        `${config.baseURL}/testenvs/`,
         {
           headers: {
             'Content-Type': 'application/json',

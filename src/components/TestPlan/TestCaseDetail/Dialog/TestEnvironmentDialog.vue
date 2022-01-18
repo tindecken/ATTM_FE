@@ -2,7 +2,7 @@
   <q-dialog ref="dialogRef" @hide="onDialogHide" persistent>
     <q-layout view="hHh lpR fFf"
       :class="isDark ? 'bg-grey-9' : 'bg-grey-3'"
-      style="max-height: 400px; min-height: 100px !important; min-width: 800px"
+      style="max-height: 900px; min-height: 100px !important; min-width: 800px"
       container
     >
       <q-header reveal bordered class="row justify-between bg-secondary">
@@ -35,7 +35,7 @@
             <q-table
               dense
               title="Test Environment"
-              :rows="testEnvTableDatas"
+              :rows="selectedTestEnv?.Nodes"
               :columns="testEnvColumns"
               row-key="name"
               :filter="testEnvFilter"
@@ -94,10 +94,7 @@ import {
   computed,
   defineComponent, nextTick, onBeforeMount, Ref, ref,
 } from 'vue';
-import { TestEnvInterface } from 'src/Models/TestEnv';
-import { TestEnvCategoryInterface } from 'src/Models/TestEnvCategory';
-import { TestEnvNodeInterface } from 'src/Models/TestEnvNode';
-import { TestEnvFlatNodeInterface } from 'src/Models/TestEnvFlatNode';
+import { TestEnvInterface, TestEnvNodeInterface } from 'src/Models/TestEnv';
 import { useStore } from 'vuex'
 import { useClipboard } from '@vueuse/core'
 import { useQuasar, useDialogPluginComponent } from 'quasar'
@@ -121,14 +118,13 @@ export default defineComponent({
     const $q = useQuasar()
     const { copy } = useClipboard()
     const footerInfo = ref('')
-    const testEnvTableDatas: Ref<TestEnvFlatNodeInterface[]> = ref([])
     const isReadonly: Ref<boolean> = ref(false);
     const visibleColumns: Ref<string[]> = ref(['no', 'category', 'name', 'value', 'description', 'use']);
     const initialPagination = {
       sortBy: 'startAt',
       descending: true,
+      rowsPerPage: 50,
       // page: 2,
-      // rowsPerPage: 3,
       // rowsNumber: xx if getting data from a server
     }
     const testEnvFilter = ref('');
@@ -136,19 +132,6 @@ export default defineComponent({
     const isDark = computed(() => $store.getters['global/darkTheme'])
     const selectedTestEnv = computed(() => $store.getters['testenvironment/selectedTestEnv'] as TestEnvInterface)
     const testEnvs = $store.getters['testenvironment/testEnvs'] as TestEnvInterface[]
-    function transformToFlatNode(testEnv: TestEnvInterface | null): TestEnvFlatNodeInterface[] {
-      let flatNodes: TestEnvFlatNodeInterface[] = []
-      if (testEnv && testEnv.Categories) {
-        testEnv.Categories.forEach((category: TestEnvCategoryInterface) => {
-          category.Nodes.forEach((node: TestEnvNodeInterface) => {
-            const nodeEnv: TestEnvFlatNodeInterface = { ...node, Category: category.Name, CategoryDescription: category.Description };
-            flatNodes.push(nodeEnv);
-            flatNodes = flatNodes.map((value: TestEnvFlatNodeInterface, i: number) => ({ ...value, rowIndex: i + 1 }))
-          })
-        })
-      }
-      return flatNodes
-    }
     onBeforeMount(async () => {
       try {
         await $store.dispatch('testenvironment/getTestEnvironments');
@@ -158,14 +141,11 @@ export default defineComponent({
           message: `${error}`,
         });
       }
-      // testEnvTableDatas
-      testEnvTableDatas.value = transformToFlatNode(selectedTestEnv.value)
       void nextTick()
     })
 
     function onTestEnvChange(newValue: TestEnvInterface) {
       console.log(newValue)
-      testEnvTableDatas.value = transformToFlatNode(newValue)
       $store.commit('testenvironment/setSelectedTestEnv', newValue)
     }
 
@@ -179,8 +159,8 @@ export default defineComponent({
       // ...and it will also hide the dialog automatically
     }
 
-    function use(flatNode: TestEnvFlatNodeInterface) {
-      onDialogOK(flatNode)
+    function use(testEnvNode: TestEnvNodeInterface) {
+      onDialogOK(testEnvNode)
     }
 
     return {
@@ -194,7 +174,6 @@ export default defineComponent({
       dialogRef,
       isDark,
       isReadonly,
-      testEnvTableDatas,
       use,
       // we can passthrough onDialogCancel directly
       onCancelClick: onDialogCancel,

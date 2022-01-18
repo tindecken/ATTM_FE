@@ -164,7 +164,7 @@ import { TestStepInterface } from 'src/Models/TestStep';
 import { TestParamInterface } from 'src/Models/TestParam';
 import _ from 'lodash'
 import uuid from 'uuid-random'
-import { TestEnvFlatNodeInterface } from 'src/Models/TestEnvFlatNode';
+import { TestEnvNodeInterface } from 'src/Models/TestEnv';
 import { FlatKeywordInterface } from 'src/Models/FlatKeyword';
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
@@ -638,7 +638,7 @@ export default defineComponent({
       $store.commit('category/updateTestCase', tempTC)
     }
 
-    function updateTestEnvValue(testCase: TestCaseInterface, testStep: TestStepInterface, paramIndex: number, testEnvNode: TestEnvFlatNodeInterface) {
+    function updateTestEnvValue(testCase: TestCaseInterface, testStep: TestStepInterface, paramIndex: number, testEnvNode: TestEnvNodeInterface) {
       const stepIndex: number = testCase.TestSteps.indexOf(testStep);
       const tempTC: TestCaseInterface = _.cloneDeep(testCase)
       tempTC.TestSteps[stepIndex].Params[paramIndex].TestNodePath = `${testEnvNode.Category}/${testEnvNode.Name}`
@@ -921,7 +921,7 @@ export default defineComponent({
       // open new testEnv dialog
       $q.dialog({
         component: TestEnvironmentDialog,
-      }).onOk((node: TestEnvFlatNodeInterface) => {
+      }).onOk((node: TestEnvNodeInterface) => {
         // TODO: handle ok
         console.log('node', node)
         if (node) {

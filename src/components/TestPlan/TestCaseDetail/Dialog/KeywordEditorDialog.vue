@@ -76,7 +76,7 @@ import { useDialogPluginComponent, useQuasar } from 'quasar'
 import { TestStepInterface } from 'src/Models/TestStep';
 import { TestCaseInterface } from 'src/Models/TestCase';
 import { TestParamInterface } from 'src/Models/TestParam';
-import { TestEnvFlatNodeInterface } from 'src/Models/TestEnvFlatNode';
+import { TestEnvNodeInterface } from 'src/Models/TestEnv';
 import { useClipboard } from '@vueuse/core'
 import TestEnvironmentDialog from './TestEnvironmentDialog.vue'
 import { getValueType } from '../Utils/utils'
@@ -177,7 +177,7 @@ export default defineComponent({
     function useTestEnv(pr: TestParamInterface) {
       $q.dialog({
         component: TestEnvironmentDialog,
-      }).onOk((testEnvNode: TestEnvFlatNodeInterface) => {
+      }).onOk((testEnvNode: TestEnvNodeInterface) => {
         // TODO: handle ok
         if (testEnvNode) {
           const prIndex = testStep.value.Params.findIndex((p: TestParamInterface) => p.Name === pr.Name)

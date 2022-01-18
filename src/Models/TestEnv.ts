@@ -1,8 +1,14 @@
-import { TestEnvCategoryInterface } from './TestEnvCategory';
-
-export interface TestEnvInterface {
+interface TestEnvNodeInterface {
+  Category: string;
+  Name: string;
+  Value: string;
+  Description?: string;
+}
+interface TestEnvInterface {
     Id: string;
     Name: string;
     Description?: string;
-    Categories?: TestEnvCategoryInterface[]
+    Nodes: TestEnvNodeInterface[]
 }
+
+export { TestEnvInterface, TestEnvNodeInterface }

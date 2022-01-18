@@ -13,14 +13,14 @@
         />
         <q-btn outline label="New" color="secondary" class="q-mr-sm" style="width: 100px;" @click="newTestEnv()"/>
         <q-btn outline label="Rename" color="secondary" class="q-mr-sm" style="width: 100px;" @click="renameTestEnv()"/>
-        <q-btn outline label="Clone" color="secondary" class="q-mr-sm" style="width: 100px;"/>
-        <q-btn outline label="Delete" color="negative" class="q-mr-sm" style="width: 100px;"/>
+        <q-btn outline label="Clone" color="secondary" class="q-mr-sm" style="width: 100px;" @click="cloneTestEnv()"/>
+        <q-btn outline label="Delete" color="negative" class="q-mr-sm" style="width: 100px;" @click="deleteTestEnv()"/>
     </div>
     <div class="row q-mb-sm">
       <q-table
         dense
         title="Test Environment"
-        :rows="testEnvTableDatas"
+        :rows="selectedTestEnv?.Nodes"
         :columns="testEnvColumns"
         row-key="name"
         :filter="testEnvFilter"
@@ -118,18 +118,14 @@ import {
   ref, Ref, onBeforeMount, nextTick,
 } from 'vue';
 import { useStore } from 'vuex';
-import { TestEnvInterface } from 'src/Models/TestEnv';
-import { TestEnvCategoryInterface } from 'src/Models/TestEnvCategory';
-import { TestEnvNodeInterface } from 'src/Models/TestEnvNode';
-import { TestEnvFlatNodeInterface } from 'src/Models/TestEnvFlatNode';
+import { TestEnvInterface, TestEnvNodeInterface } from 'src/Models/TestEnv';
 import { testEnvColumns } from 'src/components/tableColumns';
 import { useQuasar } from 'quasar'
 import NewTestEnvDialog from 'src/components/Settings/TestEnvironments/Dialog/NewTestEnvDialog.vue';
 import RenameTestEnvDialog from 'src/components/Settings/TestEnvironments/Dialog/RenameTestEnvDialog.vue';
-// import { useClipboard } from '@vueuse/core'
+import CloneTestEnvDialog from 'src/components/Settings/TestEnvironments/Dialog/CloneTestEnvDialog.vue';
+import DeleteTestEnvDialog from 'src/components/Settings/TestEnvironments/Dialog/DeleteTestEnvDialog.vue';
 
-// const { copy } = useClipboard()
-const testEnvTableDatas: Ref<TestEnvFlatNodeInterface[]> = ref([])
 const footerInfo = ref('')
 const $q = useQuasar()
 const $store = useStore();
@@ -141,22 +137,8 @@ const initialPagination = {
 const testEnvs = $store.getters['testenvironment/testEnvs'] as TestEnvInterface[]
 const selectedTestEnv = ref<TestEnvInterface>()
 const visibleColumns: Ref<string[]> = ref(['no', 'category', 'name', 'value', 'description', 'delete']);
-function transformToFlatNode(testEnv: TestEnvInterface | null): TestEnvFlatNodeInterface[] {
-  let flatNodes: TestEnvFlatNodeInterface[] = []
-  if (testEnv && testEnv.Categories) {
-    testEnv.Categories.forEach((category: TestEnvCategoryInterface) => {
-      category.Nodes.forEach((node: TestEnvNodeInterface) => {
-        const nodeEnv: TestEnvFlatNodeInterface = { ...node, Category: category.Name, CategoryDescription: category.Description };
-        flatNodes.push(nodeEnv);
-        flatNodes = flatNodes.map((value: TestEnvFlatNodeInterface, i: number) => ({ ...value, rowIndex: i + 1 }))
-      })
-    })
-  }
-  return flatNodes
-}
 function onTestEnvChange(newValue: TestEnvInterface) {
   selectedTestEnv.value = newValue
-  testEnvTableDatas.value = transformToFlatNode(newValue)
 }
 onBeforeMount(async () => {
   try {
@@ -167,27 +149,24 @@ onBeforeMount(async () => {
       message: `${error}`,
     });
   }
-  // testEnvTableDatas
-  if (selectedTestEnv.value) testEnvTableDatas.value = transformToFlatNode(selectedTestEnv.value)
   void nextTick()
 })
-function deleteNode(flatNode: TestEnvFlatNodeInterface) {
-  const index = testEnvTableDatas.value.findIndex((value: TestEnvFlatNodeInterface) => value.Name === flatNode.Name && value.Category === flatNode.Category)
+function deleteNode(flatNode: TestEnvNodeInterface) {
+  const index = testEnvTableDatas.value.findIndex((value: TestEnvNodeInterface) => value.Name === flatNode.Name && value.Category === flatNode.Category)
   if (index > -1) {
     testEnvTableDatas.value.splice(index, 1)
-    testEnvTableDatas.value = testEnvTableDatas.value.map((value: TestEnvFlatNodeInterface, i: number) => ({ ...value, rowIndex: i + 1 }))
+    testEnvTableDatas.value = testEnvTableDatas.value.map((value: TestEnvNodeInterface, i: number) => ({ ...value, rowIndex: i + 1 }))
   }
 }
 function addNode() {
-  const newNode: TestEnvFlatNodeInterface = {
+  const newNode: TestEnvNodeInterface = {
     Name: '',
     Value: '',
     Description: '',
     Category: '',
-    CategoryDescription: '',
   }
   testEnvTableDatas.value.push(newNode)
-  testEnvTableDatas.value = testEnvTableDatas.value.map((value: TestEnvFlatNodeInterface, i: number) => ({ ...value, rowIndex: i + 1 }))
+  testEnvTableDatas.value = testEnvTableDatas.value.map((value: TestEnvNodeInterface, i: number) => ({ ...value, rowIndex: i + 1 }))
 }
 function newTestEnv() {
   $q.dialog({
@@ -218,6 +197,50 @@ function renameTestEnv() {
     },
   }).onOk((newName: string) => {
     console.log('newName', newName)
+  }).onCancel(() => {
+    console.log('Cancel')
+  }).onDismiss(() => {
+    console.log('Called on OK or Cancel')
+  })
+}
+function cloneTestEnv() {
+  console.log('selectedTestEnv.value', selectedTestEnv.value)
+  if (selectedTestEnv.value === null || selectedTestEnv.value === undefined) {
+    $q.notify({
+      type: 'warning',
+      message: 'Please select a test environment',
+    })
+    return
+  }
+  $q.dialog({
+    component: CloneTestEnvDialog,
+    componentProps: {
+      TestEnv: selectedTestEnv.value,
+    },
+  }).onOk((newName: string) => {
+    console.log('newName', newName)
+  }).onCancel(() => {
+    console.log('Cancel')
+  }).onDismiss(() => {
+    console.log('Called on OK or Cancel')
+  })
+}
+function deleteTestEnv() {
+  console.log('selectedTestEnv.value', selectedTestEnv.value)
+  if (selectedTestEnv.value === null || selectedTestEnv.value === undefined) {
+    $q.notify({
+      type: 'warning',
+      message: 'Please select a test environment',
+    })
+    return
+  }
+  $q.dialog({
+    component: DeleteTestEnvDialog,
+    componentProps: {
+      TestEnv: selectedTestEnv.value,
+    },
+  }).onOk(() => {
+    console.log('Deleting')
   }).onCancel(() => {
     console.log('Cancel')
   }).onDismiss(() => {
