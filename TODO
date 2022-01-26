@@ -95,6 +95,7 @@ Todo:
   ☐ find all testcases that are using keywork A (dont include deleted testcase)
   ☐ able to restore testcase from testcase history (add new testcase history with type: restore)
   ☐ Permanent delete testcase history
+  ☐ refactor test envronment, include Category into TestEnvNode (don't need TestEnvFlatNode anymore)
 Test:
   ✔ one flow from create category, testsuite, testgroup, testcase from beginning @done(21-05-11 23:12)
 API:

@@ -9,6 +9,10 @@ interface TestEnvInterface {
     Name: string;
     Description?: string;
     Nodes: TestEnvNodeInterface[]
+    LastModifiedDate: Date
+    LastModifiedUser: string
+    LastModifiedMessage: string
+    IsDeleted: boolean
 }
 
 export { TestEnvInterface, TestEnvNodeInterface }

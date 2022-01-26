@@ -430,7 +430,7 @@ export default defineComponent({
       try {
         const currTestCase = openedTCs.value.find((tc: TestCaseInterface) => tc.Id === testCaseId) as TestCaseInterface
         const updateTestCaseData: UpdateTestCaseDataInterface = {
-          UpdateBy: $store.getters['user/userId'],
+          UpdateBy: $store.getters['auth/Username'],
           UpdateMessage: '',
           UpdateType: 'Change TestStep',
         }

@@ -2,7 +2,7 @@
   <q-dialog ref="dialogRef" @hide="onDialogHide" persistent>
     <q-layout view="hHh lpR fFf"
       :class="isDark ? 'bg-grey-9' : 'bg-grey-3'"
-      style="max-height: 150px; min-height: 100px !important; min-width: 400px"
+      style="max-height: 250px; min-height: 100px !important; min-width: 400px"
       container
     >
       <q-header reveal bordered class="row justify-between bg-secondary">
@@ -13,7 +13,8 @@
       </q-header>
       <q-page-container>
         <div class="row q-pa-sm">
-          <q-input dense outlined v-model="testEnvName" label="Name" class="col-12"/>
+          <q-input dense outlined v-model="testEnvName" label="Name" class="col-12 q-mb-sm"/>
+          <q-input type="textarea" rows="4" dense outlined v-model="description" label="Description" class="col-12"/>
         </div>
         <div class="row q-mt-sm">
           <q-space />
@@ -41,6 +42,7 @@ import { useStore } from 'vuex'
 import { useDialogPluginComponent } from 'quasar'
 
 const testEnvName = ref('')
+const description = ref('')
 const isDark = computed(() => $store.getters['global/darkTheme'])
 const $store = useStore();
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent()

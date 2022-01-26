@@ -2,26 +2,26 @@
   <q-dialog ref="dialogRef" @hide="onDialogHide" persistent>
     <q-layout view="hHh lpR fFf"
       :class="isDark ? 'bg-grey-9' : 'bg-grey-3'"
-      style="max-height: 270px; min-height: 100px !important; min-width: 400px"
+      style="max-height: 170px; min-height: 100px !important; min-width: 400px"
       container
     >
       <q-header reveal bordered class="row justify-between bg-secondary">
-        <div class="self-center text-subtitle1 q-pl-sm">Clone Environment: {{props.TestEnv.Name}}</div>
+        <div class="self-center text-subtitle1 q-pl-sm">Save Test Environment: {{props.TestEnv.Name}}</div>
         <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
           <q-tooltip>Close</q-tooltip>
         </q-btn>
       </q-header>
       <q-page-container>
         <div class="row q-pa-sm">
-          <q-input dense outlined v-model="testEnvName" label="Name" class="col-12 q-mb-sm"
+          <q-input dense outlined v-model="saveMessage" label="Name" class="col-12 q-mb-sm"
             :rules="[val => !!val || 'Field is required']"
           />
-          <q-input type="textarea" rows="4" dense outlined v-model="description" label="Description" class="col-12"/>
         </div>
         <div class="row q-mt-sm">
           <q-space />
           <q-btn outline label="Cancel" color="secondary" class="q-mr-sm" style="width: 100px;" @click="onDialogHide"/>
-          <q-btn outline label="Clone" color="secondary" class="q-mr-sm" style="width: 100px;" @click="cloneTestEnv()"/>
+          <q-btn outline label="Discard" color="secondary" class="q-mr-sm" style="width: 100px;" @click="discard()"/>
+          <q-btn outline label="Save" color="secondary" class="q-mr-sm" style="width: 100px;" @click="save()"/>
         </div>
       </q-page-container>
     </q-layout>
@@ -30,7 +30,7 @@
 
 <script lang="ts">
 export default {
-  name: 'CloneTestEnvDialog',
+  name: 'SaveTestEnvDialog',
   inheritAttrs: false,
   customOptions: {},
 };
@@ -41,40 +41,45 @@ import {
   computed, ref, defineProps,
 } from 'vue'
 import { useStore } from 'vuex'
-import { useQuasar, useDialogPluginComponent } from 'quasar'
-import { TestEnvInterface } from 'src/Models/TestEnv';
-import { TestEnvCloneDataInterface } from 'src/Models/Entities/TestEnvCloneData';
+import { useDialogPluginComponent, useQuasar } from 'quasar'
+import { TestEnvInterface } from 'src/Models/TestEnv'
+import { UpdateTestEnvDataInterface } from 'src/Models/Entities/UpdateTestEnvData';
 import { api } from 'boot/axios'
 import config from 'src/config'
+import { TestEnvHistoryInterface } from 'src/Models/TestEnvHistory';
 
 const props = defineProps<{
   TestEnv: TestEnvInterface
 }>()
-const testEnvName = ref('')
-const description = ref('')
+
+const saveMessage = ref('')
 const isDark = computed(() => $store.getters['global/darkTheme'])
 const $store = useStore();
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent()
 const $q = useQuasar()
 
-function cloneTestEnv() {
-  if (testEnvName.value === '') {
+function save() {
+  if (saveMessage.value === '') {
     $q.notify({
       color: 'negative',
-      message: 'New clone name is required.',
+      message: 'Save message is required.',
       icon: 'report_problem',
     })
     return
   }
-  const clonedTestEnv: TestEnvCloneDataInterface = {
-    Id: props.TestEnv.Id,
-    NewName: testEnvName.value,
-    NewDescription: description.value,
-    CloneBy: $store.getters['auth/Username'],
+
+  const updateTestEnvData: UpdateTestEnvDataInterface = {
+    UpdateBy: $store.getters['auth/Username'],
+    UpdateMessage: saveMessage.value,
+    UpdateType: 'Update Test Environment',
+  }
+  const testEnvHistory: TestEnvHistoryInterface = {
+    UpdateTestEnvData: updateTestEnvData,
+    TestEnv: props.TestEnv,
   }
   api.post(
-    `${config.baseURL}/testenvs/clone`,
-    clonedTestEnv,
+    `${config.baseURL}/testenvs/update`,
+    testEnvHistory,
     {
       headers: {
         'Content-Type': 'application/json',
@@ -95,6 +100,9 @@ function cloneTestEnv() {
       icon: 'report_problem',
     })
   });
+}
+function discard() {
+  // TODO
 }
 
 </script>
