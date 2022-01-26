@@ -12,7 +12,7 @@
           class="col-2 q-mr-md"
         />
         <q-btn outline label="New" color="secondary" class="q-mr-sm" style="width: 100px;" @click="newTestEnv()"/>
-        <q-btn outline label="Rename" color="secondary" class="q-mr-sm" style="width: 100px;" @click="renameTestEnv()"/>
+        <q-btn outline label="Properties" color="secondary" class="q-mr-sm" style="width: 100px;" @click="propertiesTestEnv()"/>
         <q-btn outline label="Clone" color="secondary" class="q-mr-sm" style="width: 100px;" @click="cloneTestEnv()"/>
         <q-btn outline label="Delete" color="negative" class="q-mr-sm" style="width: 100px;" @click="deleteTestEnv()"/>
     </div>
@@ -36,7 +36,7 @@
             </template>
           </q-input>
           <q-space />
-          <q-btn outline label="Cancel" color="secondary" class="q-mr-sm" style="width: 100px;"/>
+          <q-btn outline label="Discard" color="secondary" class="q-mr-sm" style="width: 100px;" @click="discard()"/>
           <q-btn outline label="Save" color="secondary" class="q-mr-sm" style="width: 100px;" @click="saveTestEnv"/>
         </template>
         <template v-slot:body="props">
@@ -122,7 +122,7 @@ import { TestEnvInterface, TestEnvNodeInterface } from 'src/Models/TestEnv';
 import { testEnvColumns } from 'src/components/tableColumns';
 import { useQuasar } from 'quasar'
 import NewTestEnvDialog from 'src/components/Settings/TestEnvironments/Dialog/NewTestEnvDialog.vue';
-import RenameTestEnvDialog from 'src/components/Settings/TestEnvironments/Dialog/RenameTestEnvDialog.vue';
+import PropertiesTestEnvDialog from 'src/components/Settings/TestEnvironments/Dialog/PropertiesTestEnvDialog/PropertiesTestEnvDialog.vue';
 import CloneTestEnvDialog from 'src/components/Settings/TestEnvironments/Dialog/CloneTestEnvDialog.vue';
 import DeleteTestEnvDialog from 'src/components/Settings/TestEnvironments/Dialog/DeleteTestEnvDialog.vue';
 import SaveTestEnvDialog from 'src/components/Settings/TestEnvironments/Dialog/SaveTestEnvDialog.vue';
@@ -143,7 +143,7 @@ function onTestEnvChange(newTestEnv: TestEnvInterface) {
 onBeforeMount(async () => {
   try {
     await $store.dispatch('testenvironment/getTestEnvironments');
-  } catch (error: any) {
+  } catch (error) {
     $q.notify({
       type: 'negative',
       message: `${error}`,
@@ -174,15 +174,18 @@ function newTestEnv() {
     component: NewTestEnvDialog,
     componentProps: {
     },
-  }).onOk((newName: string) => {
-    console.log('newName', newName)
+  }).onOk(async (testEnv: TestEnvInterface) => {
+    await $store.dispatch('testenvironment/getTestEnvironments');
+    testEnvs.push(testEnv)
+    selectedTestEnv.value = testEnv
+    selectedTestEnv.value.Nodes = selectedTestEnv.value.Nodes.map((envNode: TestEnvNodeInterface, i: number) => ({ ...envNode, rowIndex: i + 1 }))
   }).onCancel(() => {
     console.log('Cancel')
   }).onDismiss(() => {
     console.log('Called on OK or Cancel')
   })
 }
-function renameTestEnv() {
+function propertiesTestEnv() {
   console.log('selectedTestEnv.value', selectedTestEnv.value)
   if (selectedTestEnv.value === null || selectedTestEnv.value === undefined) {
     $q.notify({
@@ -192,12 +195,23 @@ function renameTestEnv() {
     return
   }
   $q.dialog({
-    component: RenameTestEnvDialog,
+    component: PropertiesTestEnvDialog,
     componentProps: {
       TestEnv: selectedTestEnv.value,
     },
-  }).onOk((newName: string) => {
-    console.log('newName', newName)
+  }).onOk(async (testEnv: TestEnvInterface) => {
+    await $store.dispatch('testenvironment/getTestEnvironments');
+    const foundIndex = testEnvs.findIndex((te: TestEnvInterface) => te.Id === testEnv.Id);
+    if (foundIndex === -1) {
+      $q.notify({
+        type: 'warning',
+        message: `Something went wrong, can't find test environment ${testEnv.Name} with Id: ${testEnv.Id}`,
+      })
+      return
+    }
+    testEnvs[foundIndex] = testEnv
+    selectedTestEnv.value = testEnv
+    selectedTestEnv.value.Nodes = selectedTestEnv.value.Nodes.map((envNode: TestEnvNodeInterface, i: number) => ({ ...envNode, rowIndex: i + 1 }))
   }).onCancel(() => {
     console.log('Cancel')
   }).onDismiss(() => {
@@ -264,12 +278,31 @@ function saveTestEnv() {
     componentProps: {
       TestEnv: selectedTestEnv.value,
     },
-  }).onOk(() => {
-    console.log('Saved')
+  }).onOk(async (testEnv: TestEnvInterface) => {
+    await $store.dispatch('testenvironment/getTestEnvironments');
+    const foundIndex = testEnvs.findIndex((te: TestEnvInterface) => te.Id === testEnv.Id);
+    if (foundIndex === -1) {
+      $q.notify({
+        type: 'warning',
+        message: `Something went wrong, can't find test environment ${testEnv.Name} with Id: ${testEnv.Id}`,
+      })
+      return
+    }
+    testEnvs[foundIndex] = testEnv
+    selectedTestEnv.value = testEnv
+    selectedTestEnv.value.Nodes = selectedTestEnv.value.Nodes.map((envNode: TestEnvNodeInterface, i: number) => ({ ...envNode, rowIndex: i + 1 }))
   }).onCancel(() => {
     console.log('Cancel')
   }).onDismiss(() => {
     console.log('Called on OK or Cancel')
   })
+}
+
+async function discard() {
+  const testEnv = await $store.dispatch('testenvironment/getTestEnv', selectedTestEnv.value.Id);
+  const foundIndex = testEnvs.findIndex((te: TestEnvInterface) => te.Id === selectedTestEnv.value.Id);
+  testEnvs[foundIndex] = testEnv
+  selectedTestEnv.value = testEnv
+  selectedTestEnv.value.Nodes = selectedTestEnv.value.Nodes.map((envNode: TestEnvNodeInterface, i: number) => ({ ...envNode, rowIndex: i + 1 }))
 }
 </script>

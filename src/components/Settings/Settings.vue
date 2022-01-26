@@ -58,7 +58,7 @@ export default defineComponent({
     onBeforeMount(async () => {
       try {
         await $store.dispatch('setting/getSettings');
-      } catch (error: any) {
+      } catch (error) {
         $q.notify({
           type: 'negative',
           message: `${error}`,

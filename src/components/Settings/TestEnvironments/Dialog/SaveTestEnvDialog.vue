@@ -13,14 +13,13 @@
       </q-header>
       <q-page-container>
         <div class="row q-pa-sm">
-          <q-input dense outlined v-model="saveMessage" label="Name" class="col-12 q-mb-sm"
+          <q-input dense outlined v-model="saveMessage" label="Save message" class="col-12 q-mb-sm"
             :rules="[val => !!val || 'Field is required']"
           />
         </div>
         <div class="row q-mt-sm">
           <q-space />
           <q-btn outline label="Cancel" color="secondary" class="q-mr-sm" style="width: 100px;" @click="onDialogHide"/>
-          <q-btn outline label="Discard" color="secondary" class="q-mr-sm" style="width: 100px;" @click="discard()"/>
           <q-btn outline label="Save" color="secondary" class="q-mr-sm" style="width: 100px;" @click="save()"/>
         </div>
       </q-page-container>
@@ -71,7 +70,7 @@ function save() {
   const updateTestEnvData: UpdateTestEnvDataInterface = {
     UpdateBy: $store.getters['auth/Username'],
     UpdateMessage: saveMessage.value,
-    UpdateType: 'Update Test Environment',
+    UpdateType: 'Update Nodes',
   }
   const testEnvHistory: TestEnvHistoryInterface = {
     UpdateTestEnvData: updateTestEnvData,
@@ -100,9 +99,6 @@ function save() {
       icon: 'report_problem',
     })
   });
-}
-function discard() {
-  // TODO
 }
 
 </script>

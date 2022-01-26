@@ -24,6 +24,24 @@ const actions: ActionTree<TestEnvironmentStateInterface, StateInterface> = {
       throw error.response.data
     }
   },
+  async getTestEnv(context, id: string) {
+    try {
+      const response = await axios.get(
+        `${config.baseURL}/testenvs/${id}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+          },
+        },
+      );
+      const testEnv = await response.data.data as TestEnvInterface;
+      console.log('getTestEnv', testEnv);
+      return testEnv
+    } catch (error: any) {
+      throw error.response.data
+    }
+  },
 };
 
 export default actions;
