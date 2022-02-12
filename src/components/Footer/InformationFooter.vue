@@ -1,6 +1,6 @@
 <template>
   <div>
-    <span @click="copy(infoStatus.Info)">{{infoStatus.Info}}</span>
+    <span @click="copy(infoStatus.Info)" class="q-pr-sm q-pl-sm">{{infoStatus.Info}}</span>
     <q-tooltip v-if="infoStatus.Data">
       <div style="font-size: small;">
         {{ infoStatus.Data }}

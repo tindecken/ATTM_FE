@@ -24,6 +24,25 @@ const actions: ActionTree<TestClientStateInterface, StateInterface> = {
       throw error;
     }
   },
+  async ping(context, ip: string) {
+    // eslint-disable-next-line no-useless-catch
+    try {
+      const response = await axios.get(
+        `${config.baseURL}/testclients/ping/${ip}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+          },
+        },
+      );
+      const result = await response.data;
+      console.log('ping result', result);
+      return result
+    } catch (error: any) {
+      throw error;
+    }
+  },
 };
 
 export default actions;

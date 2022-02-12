@@ -161,7 +161,7 @@ import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 import { DevRunRecordInterface } from 'src/Models/DevRunRecord';
 import { UseTimeAgo } from '@vueuse/components'
-import { useClipboard } from '@vueuse/core'
+import { useClipboard, useTitle } from '@vueuse/core'
 import DevLog from './DevRunning/DevLog.vue'
 import ErrorScreenshot from './DevRunning/ErrorScreenshot.vue'
 import DevQueue from './DevQueue/DevQueue.vue'
@@ -173,6 +173,7 @@ export default defineComponent({
     UseTimeAgo, DevLog, ErrorScreenshot, DevQueue,
   },
   setup() {
+    useTitle('Dev Monitoring')
     const $q = useQuasar()
     const $store = useStore()
     const { copy } = useClipboard()

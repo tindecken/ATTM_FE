@@ -83,6 +83,7 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router'
+import { useTitle } from '@vueuse/core'
 import DeploySource from './DeploySource.vue'
 import DefineRegression from './DefineRegression.vue'
 import SelectTestCase from './SelectTestCase.vue'
@@ -99,6 +100,7 @@ export default defineComponent({
     CreateDb,
   },
   setup() {
+    useTitle('Create Regression');
     const $route = useRoute()
     const $router = useRouter()
     const stepperRef = ref(null)

@@ -471,7 +471,6 @@ export default defineComponent({
             break
           }
           if (originalTestCase.TestSteps[i].Keyword?.Name !== testcase.TestSteps[i].Keyword?.Name) {
-            console.log('0')
             isModified = true
             break
           }
@@ -506,22 +505,16 @@ export default defineComponent({
               break
             }
             if (originalTestCase.TestSteps[i].Params[j].TestNodePath !== testcase.TestSteps[i].Params[j].TestNodePath) {
-              console.log('1')
               isModified = true
               break
             }
-            if (originalTestCase.TestSteps[i].Params[j].TestNodePath === '' && originalTestCase.TestSteps[i].Params[j].Value !== testcase.TestSteps[i].Params[j].Value) {
-              console.log('2')
+            if (originalTestCase.TestSteps[i].Params[j].TestNodePath === '' && testcase.TestSteps[i].Params[j].Value && originalTestCase.TestSteps[i].Params[j].Value !== testcase.TestSteps[i].Params[j].Value) {
               isModified = true
               break
             }
           }
         }
       }
-      // if (originalTestCase) {
-      //   if (_.isEqual(originalTestCase.TestSteps, testcase.TestSteps)) isModified = false
-      //   else isModified = true
-      // }
 
       if (isModified) {
         $q.dialog({

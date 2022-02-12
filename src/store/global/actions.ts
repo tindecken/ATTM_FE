@@ -31,11 +31,10 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
     }
   },
 
-  async copycodetoclient(context, testClient: TestClientInterface) {
-    // eslint-disable-next-line no-useless-catch
+  async copydevcodetoclient(context, testClient: TestClientInterface) {
     try {
       const response = await axios.post(
-        `${config.baseURL}/testproject/copycodetoclient`,
+        `${config.baseURL}/testproject/copycodetoclient/dev`,
         testClient,
         {
           headers: {
@@ -44,7 +43,42 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
           },
         },
       );
-      console.log('response', response)
+      const responseData = await response.data;
+      return responseData;
+    } catch (error: any) {
+      throw error.response.data;
+    }
+  },
+  async checkautorunner(context, testClient: TestClientInterface) {
+    try {
+      const response = await axios.post(
+        `${config.baseURL}/testproject/checkrunner/Runner`,
+        testClient,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+          },
+        },
+      );
+      const responseData = await response.data;
+      return responseData;
+    } catch (error: any) {
+      throw error.response.data;
+    }
+  },
+  async copyregcodetoclient(context, testClient: TestClientInterface) {
+    try {
+      const response = await axios.post(
+        `${config.baseURL}/testproject/copycodetoclient/reg`,
+        testClient,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+          },
+        },
+      );
       const responseData = await response.data;
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return responseData;

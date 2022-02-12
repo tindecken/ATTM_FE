@@ -42,6 +42,7 @@ import {
 } from 'vue';
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
+import { useTitle } from '@vueuse/core'
 import ImportBlock from './ImportBlock/ImportBlock.vue'
 import TestClients from './TestClients/TestClients.vue'
 import TestEnvironments from './TestEnvironments/TestEnvironments.vue'
@@ -51,6 +52,7 @@ export default defineComponent({
   name: 'Settings',
   components: { ImportBlock, TestClients, TestEnvironments },
   setup() {
+    useTitle('Settings');
     const $store = useStore()
     const $q = useQuasar()
     const selectedTab = ref('importBlock')

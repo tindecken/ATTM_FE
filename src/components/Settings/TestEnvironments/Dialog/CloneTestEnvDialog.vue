@@ -85,14 +85,14 @@ function cloneTestEnv() {
     },
   ).then((res) => {
     $q.notify({
-      color: 'positive',
+      type: 'positive',
       message: res.data.message,
     })
     onDialogOK(res.data.data as TestEnvInterface)
     onDialogHide()
   }).catch((err) => {
     $q.notify({
-      color: 'negative',
+      type: 'negative',
       message: err.response.data.message,
       icon: 'report_problem',
     })

@@ -35,7 +35,7 @@
                 <div>{{ prop.node.label }}</div>
                 <tree-context-menu
                   :node="prop.node"
-                  @generateDevCode="onGenerateDevCode()"
+                  @generateDevCode="onGenerateDevCode(tree.getTickedNodes())"
                   @run="onRun()"
                   @runOn="onRunOn()"
                   @debug="onDebug()"
@@ -47,6 +47,7 @@
                   @edit="onEdit(prop.node)"
                   @deleteNodes="onDeleteNodes(prop.node)"
                   @viewProperties="onViewProperties(prop.node)"
+                  @viewGenerateCode="onViewGenerateCode(prop.node)"
                   >
                 </tree-context-menu>
               </div>
@@ -85,6 +86,7 @@ import DeleteCategoryDialog from './Dialog/DeleteCategoryDialog.vue'
 import NewCategoryDialog from './Dialog/NewCategoryDialog.vue';
 import EditTestCaseDialog from './Dialog/EditTestCaseDialog.vue';
 import TestCasePropertiesDialog from './Dialog/TestCaseProperties/TestCasePropertiesDialog.vue';
+import ViewGenerateCodeDialog from './Dialog/ViewGenerateCodeDialog.vue';
 
 export default defineComponent({
   name: 'Tree',
@@ -406,9 +408,8 @@ export default defineComponent({
       }
     }
 
-    async function onGenerateDevCode() {
+    async function onGenerateDevCode(tickedNodes: any[]) {
       try {
-        const tickedNodes = tree.value.getTickedNodes()
         const testcases = tickedNodes.filter((n: any) => n.nodeType === 'TestCase') as TestCaseInterface[]
         const numberOfTestCase = tickedNodes.filter((n: TestCaseInterface) => n.nodeType === 'TestCase').length
         if (numberOfTestCase === 0) {
@@ -427,7 +428,34 @@ export default defineComponent({
       } catch (error: any) {
         $q.notify({
           type: 'negative',
-          message: `${error.error}`,
+          message: `${error.message}`,
+        });
+        return null
+      }
+    }
+
+    async function copyCodeToClient() {
+      try {
+        const checkping = await $store.dispatch('testclient/ping', selectedTestClient.value.IPAddress);
+        if (checkping.data !== 'success') {
+          $q.notify({
+            type: 'negative',
+            message: `Ping to ${selectedTestClient.value.IPAddress} failed, can't deploy code to this client !`,
+            timeout: 10000,
+          });
+          return null
+        }
+        const copyCodeToClientResult: Promise<any> = await $store.dispatch('global/copydevcodetoclient', selectedTestClient.value);
+        $q.notify({
+          type: 'positive',
+          message: `Copy code to client ${selectedTestClient.value.Name} success.`,
+        });
+        return copyCodeToClientResult
+      } catch (error: any) {
+        console.log('error', error);
+        $q.notify({
+          type: 'negative',
+          message: `${error.message}`,
         });
         return null
       }
@@ -452,8 +480,7 @@ export default defineComponent({
       }
     }
 
-    async function createDevQueue() {
-      const tickedNodes = tree.value.getTickedNodes()
+    async function createDevQueue(tickedNodes: any[]) {
       const testcases = tickedNodes.filter((n: any) => n.nodeType === 'TestCase') as TestCaseInterface[]
       try {
         const createDevQueueResult: any = await $store.dispatch('global/createDevQueue', { testcases, testClient: selectedTestClient.value });
@@ -469,8 +496,32 @@ export default defineComponent({
         });
       }
     }
+
+    async function checkRunner() {
+      try {
+        const checkRunnerResult = await $store.dispatch('global/checkautorunner', selectedTestClient.value);
+        console.log('checkRunnerResult', checkRunnerResult)
+        if (checkRunnerResult.result === 'success' && checkRunnerResult.message.includes('Runner is running')) {
+          $q.notify({
+            type: 'positive',
+            message: `${checkRunnerResult.message}`,
+          });
+        } else {
+          $q.notify({
+            type: 'warning',
+            message: `${checkRunnerResult.message} Open it to run the test.`,
+            timeout: 10000,
+          })
+          $store.commit('global/setInfoStatus', { Info: `${checkRunnerResult.message} Open it to run the test.` })
+        }
+      } catch (error: any) {
+        $q.notify({
+          type: 'negative',
+          message: `${error}`,
+        });
+      }
+    }
     async function onRun() {
-      console.log('selectedTestClient', selectedTestClient)
       if (selectedTestClient.value === undefined) {
         $q.notify({
           type: 'negative',
@@ -478,10 +529,17 @@ export default defineComponent({
         });
         return
       }
-      const generateCodeResult = await onGenerateDevCode()
+      const tickedNodes = tree.value.getTickedNodes()
+      const generateCodeResult = await onGenerateDevCode(tickedNodes)
       if (generateCodeResult) {
         const buildProjectResult = await buildProject()
-        if (buildProjectResult) await createDevQueue()
+        if (buildProjectResult) {
+          const copyCodeToClientResult = await copyCodeToClient()
+          if (copyCodeToClientResult) {
+            await createDevQueue(tickedNodes)
+            await checkRunner()
+          }
+        }
       }
     }
 
@@ -682,6 +740,27 @@ export default defineComponent({
           break
       }
     }
+    function onViewGenerateCode(node: TestCaseInterface) {
+      if (node.nodeType !== 'TestCase') {
+        $q.notify({
+          type: 'negative',
+          message: 'Something errors, node Type is not TestCase',
+        });
+        return
+      }
+      $q.dialog({
+        component: ViewGenerateCodeDialog,
+        componentProps: {
+          TestCase: node,
+        },
+      }).onOk(() => {
+        // TODO
+      }).onCancel(() => {
+        // TODO
+      }).onDismiss(() => {
+        // TODO
+      })
+    }
 
     return {
       filter,
@@ -711,6 +790,8 @@ export default defineComponent({
       onCreateTestGroup,
       onCreateTestCase,
       selectedTestClient,
+      copyCodeToClient,
+      onViewGenerateCode,
     }
   },
 });

@@ -8,6 +8,7 @@
     separator="cell"
     :pagination="initialPagination"
     :hide-pagination="false"
+    no-data-label="No histories found"
   >
     <template v-slot:body="props">
       <q-tr

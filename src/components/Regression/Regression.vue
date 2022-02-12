@@ -161,6 +161,7 @@ import {
 } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
+import { useTitle } from '@vueuse/core'
 import { RegressionInterface } from 'src/Models/Regression'
 import { RegressionTestInterface } from 'src/Models/RegressionTest'
 import AllTestTable from './AllTestTable.vue'
@@ -178,6 +179,7 @@ export default defineComponent({
     AllTestTable, FailedTable, PassedTable, AnalyseFailedTable, AnalysePassedTable, InCompatibleTable, InQueueTable, RunningTable,
   },
   setup() {
+    useTitle('Regression')
     const $store = useStore()
     const $q = useQuasar()
     const regressions = computed(() => $store.getters['regression/regressions'] as RegressionInterface[])

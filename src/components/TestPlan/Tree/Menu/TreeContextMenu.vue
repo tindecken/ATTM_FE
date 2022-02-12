@@ -13,11 +13,11 @@
           </q-item-section>
           <q-item-section>Debug</q-item-section>
         </q-item>
-        <q-item clickable v-close-popup @click="runOn()">
+        <q-item clickable v-close-popup @click="viewGenerateCode()">
           <q-item-section avatar>
-            <q-icon color="primary" name="play_arrow" />
+            <q-icon color="primary" name="code" />
           </q-item-section>
-          <q-item-section>Run On</q-item-section>
+          <q-item-section>View Generate Code</q-item-section>
         </q-item>
         <q-item clickable v-close-popup @click="debugOn()">
           <q-item-section avatar>
@@ -112,8 +112,8 @@ export default defineComponent({
     function run() {
       emit('run')
     }
-    function runOn() {
-      emit('runOn')
+    function viewGenerateCode() {
+      emit('viewGenerateCode')
     }
     function debug() {
       emit('debug')
@@ -140,7 +140,7 @@ export default defineComponent({
       deleteNodes,
       generateDevCode,
       run,
-      runOn,
+      viewGenerateCode,
       debug,
       debugOn,
       newCategory,

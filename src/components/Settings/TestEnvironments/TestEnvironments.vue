@@ -20,7 +20,7 @@
       <q-table
         dense
         title="Test Environment"
-        :rows="selectedTestEnv.Nodes"
+        :rows="selectedTestEnv?.Nodes"
         :columns="testEnvColumns"
         row-key="name"
         :filter="testEnvFilter"
@@ -126,6 +126,7 @@ import PropertiesTestEnvDialog from 'src/components/Settings/TestEnvironments/Di
 import CloneTestEnvDialog from 'src/components/Settings/TestEnvironments/Dialog/CloneTestEnvDialog.vue';
 import DeleteTestEnvDialog from 'src/components/Settings/TestEnvironments/Dialog/DeleteTestEnvDialog.vue';
 import SaveTestEnvDialog from 'src/components/Settings/TestEnvironments/Dialog/SaveTestEnvDialog.vue';
+import _ from 'lodash'
 
 const $q = useQuasar()
 const $store = useStore();
@@ -134,7 +135,7 @@ const initialPagination = {
   rowsPerPage: 50,
 };
 const testEnvs = $store.getters['testenvironment/testEnvs'] as TestEnvInterface[]
-const selectedTestEnv = ref<TestEnvInterface>(testEnvs[0])
+const selectedTestEnv = ref<TestEnvInterface | null>(testEnvs.length > 0 ? testEnvs[0] : null)
 const visibleColumns: Ref<string[]> = ref(['no', 'category', 'name', 'value', 'description', 'delete']);
 function onTestEnvChange(newTestEnv: TestEnvInterface) {
   selectedTestEnv.value = newTestEnv
@@ -150,13 +151,15 @@ onBeforeMount(async () => {
     });
   }
   void nextTick()
-  selectedTestEnv.value.Nodes = selectedTestEnv.value.Nodes.map((envNode: TestEnvNodeInterface, i: number) => ({ ...envNode, rowIndex: i + 1 }))
+  if (selectedTestEnv.value) {
+    selectedTestEnv.value.Nodes = selectedTestEnv.value?.Nodes.map((envNode: TestEnvNodeInterface, i: number) => ({ ...envNode, rowIndex: i + 1 }))
+  }
 })
 function deleteNode(testEnvNote: TestEnvNodeInterface) {
-  const index = selectedTestEnv.value.Nodes.findIndex((envNode: TestEnvNodeInterface) => envNode.Name === testEnvNote.Name && envNode.Category === testEnvNote.Category)
-  if (index > -1) {
+  const index = selectedTestEnv.value?.Nodes.findIndex((envNode: TestEnvNodeInterface) => envNode.Name === testEnvNote.Name && envNode.Category === testEnvNote.Category) as number
+  if (index > -1 && selectedTestEnv.value) {
     selectedTestEnv.value.Nodes.splice(index, 1)
-    selectedTestEnv.value.Nodes = selectedTestEnv.value.Nodes.map((envNode: TestEnvNodeInterface, i: number) => ({ ...envNode, rowIndex: i + 1 }))
+    selectedTestEnv.value.Nodes = selectedTestEnv.value?.Nodes.map((envNode: TestEnvNodeInterface, i: number) => ({ ...envNode, rowIndex: i + 1 }))
   }
 }
 function addNode() {
@@ -166,8 +169,10 @@ function addNode() {
     Description: '',
     Category: '',
   }
-  selectedTestEnv.value.Nodes.push(newNode)
-  selectedTestEnv.value.Nodes = selectedTestEnv.value.Nodes.map((envNode: TestEnvNodeInterface, i: number) => ({ ...envNode, rowIndex: i + 1 }))
+  if (selectedTestEnv.value) {
+    selectedTestEnv.value.Nodes.push(newNode)
+    selectedTestEnv.value.Nodes = selectedTestEnv.value?.Nodes.map((envNode: TestEnvNodeInterface, i: number) => ({ ...envNode, rowIndex: i + 1 }))
+  }
 }
 function newTestEnv() {
   $q.dialog({
@@ -257,8 +262,28 @@ function deleteTestEnv() {
     componentProps: {
       TestEnv: selectedTestEnv.value,
     },
-  }).onOk(() => {
-    console.log('Deleting')
+  }).onOk(async (testEnv: TestEnvInterface) => {
+    await $store.dispatch('testenvironment/getTestEnvironments');
+    const foundIndex = testEnvs.findIndex((te: TestEnvInterface) => te.Id === testEnv.Id);
+    if (foundIndex === -1) {
+      $q.notify({
+        type: 'warning',
+        message: `Something went wrong, can't find test environment ${testEnv.Name} with Id: ${testEnv.Id}`,
+      })
+      return
+    }
+    console.log('foundIndex', foundIndex)
+    console.log('testEnvs before', testEnvs.length)
+    _.remove(testEnvs, (te: TestEnvInterface) => te.Id === testEnv.Id)
+    console.log('testEnvs after', testEnvs.length)
+
+    if (testEnvs.length > 0) {
+      // eslint-disable-next-line prefer-destructuring
+      selectedTestEnv.value = testEnvs[0]
+      selectedTestEnv.value.Nodes = selectedTestEnv.value.Nodes.map((envNode: TestEnvNodeInterface, i: number) => ({ ...envNode, rowIndex: i + 1 }))
+    } else {
+      selectedTestEnv.value = null
+    }
   }).onCancel(() => {
     console.log('Cancel')
   }).onDismiss(() => {
@@ -299,10 +324,10 @@ function saveTestEnv() {
 }
 
 async function discard() {
-  const testEnv = await $store.dispatch('testenvironment/getTestEnv', selectedTestEnv.value.Id);
-  const foundIndex = testEnvs.findIndex((te: TestEnvInterface) => te.Id === selectedTestEnv.value.Id);
+  const testEnv = await $store.dispatch('testenvironment/getTestEnv', selectedTestEnv.value?.Id);
+  const foundIndex = testEnvs.findIndex((te: TestEnvInterface) => te.Id === selectedTestEnv.value?.Id);
   testEnvs[foundIndex] = testEnv
   selectedTestEnv.value = testEnv
-  selectedTestEnv.value.Nodes = selectedTestEnv.value.Nodes.map((envNode: TestEnvNodeInterface, i: number) => ({ ...envNode, rowIndex: i + 1 }))
+  if (selectedTestEnv.value) selectedTestEnv.value.Nodes = selectedTestEnv.value.Nodes.map((envNode: TestEnvNodeInterface, i: number) => ({ ...envNode, rowIndex: i + 1 }))
 }
 </script>

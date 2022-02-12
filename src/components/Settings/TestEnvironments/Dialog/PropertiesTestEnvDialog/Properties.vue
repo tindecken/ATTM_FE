@@ -84,13 +84,13 @@ function onSubmit() {
     },
   ).then((res) => {
     $q.notify({
-      color: 'positive',
+      type: 'positive',
       message: res.data.message,
     })
     emit('submit', res.data.data as TestEnvInterface)
   }).catch((err) => {
     $q.notify({
-      color: 'negative',
+      type: 'negative',
       message: err.response.data.message,
       icon: 'report_problem',
     })

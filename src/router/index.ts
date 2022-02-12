@@ -33,7 +33,6 @@ export default route<Store<StateInterface>>(({ store }) => {
     ),
   });
   Router.beforeEach((to, from, next) => {
-    console.log('to', to);
     if (to.meta.requiresAuth && !store.getters['auth/IsAuthenticated']) {
       // if require login but no token --> go to login
       next({ path: 'login' });

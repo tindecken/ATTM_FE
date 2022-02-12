@@ -33,7 +33,7 @@
               @cancel="onCancelProperties()"></properties>
           </q-tab-panel>
           <q-tab-panel name="histories">
-            <histories></histories>
+            <histories :TestEnv="props.TestEnv"></histories>
           </q-tab-panel>
         </q-tab-panels>
       </q-page-container>

@@ -1,6 +1,7 @@
 import { ActionTree } from 'vuex';
 import axios from 'axios';
 import { TestEnvInterface } from 'src/Models/TestEnv';
+import { TestEnvHistoryInterface } from 'src/Models/TestEnvHistory';
 import { StateInterface } from '../index';
 import { TestEnvironmentStateInterface } from './state';
 import config from '../../config';
@@ -38,6 +39,23 @@ const actions: ActionTree<TestEnvironmentStateInterface, StateInterface> = {
       const testEnv = await response.data.data as TestEnvInterface;
       console.log('getTestEnv', testEnv);
       return testEnv
+    } catch (error: any) {
+      throw error.response.data
+    }
+  },
+  async getTestEnvHistories(context, id: string) {
+    try {
+      const response = await axios.get(
+        `${config.baseURL}/testenvs/histories/${id}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+          },
+        },
+      );
+      const testEnvHistories = await response.data.data as TestEnvHistoryInterface[];
+      return testEnvHistories
     } catch (error: any) {
       throw error.response.data
     }

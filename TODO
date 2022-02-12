@@ -54,7 +54,7 @@ Todo:
   ✔ regression run - api for create new regression @done(21-05-09 23:06)
   ✔ regression run - api for add regressionTest to regression @done(21-05-09 23:06)
   ✔ regression run - api for create regressionTest from TestCase @done(21-05-23 22:33)
-  ☐ add monitoring, able to view runtime running of test
+  ✔ add monitoring, able to view runtime running of test @done(22-01-28 16:14)
   ☐ implement feature to check if there's test or tests is/are running
   ☐ able to delete regression (set flag isDeleted?) make sure has a notitificase: Danger Zone
   ✔ able to add test case into current regression (mark new add tests? to compare with original test?) - low priority @done(21-06-13 15:32)
@@ -67,7 +67,7 @@ Todo:
   ✔ create git repo for Runner @done(21-06-13 15:31)
   ✔ create git repo for TestProject @done(21-06-13 15:31)
   ✔ detail component - fix selected rows, the issue happen while upgrading to quasar v2 @done(21-06-19 11:24)
-  ☐ refactor, every td: no, testaut, keyword, parameter has own context menu
+  ✔ refactor, every td: no, testaut, keyword, parameter has own context menu @done(22-02-01 22:13)
   ✔ bug - when change testenv multiple times (2 times), it not check incorrect @done(21-06-22 21:09)
   ✔ style testStep in case of it's disabled, able to disable multiple testStep @done(21-06-23 16:53)
   ✔ detail - copy, able to copy multiple testSteps from current testcase to another testcase @done(21-06-25 22:22)
@@ -80,26 +80,28 @@ Todo:
   ✔ properties of testcase, has 3 tabs: Properties, DevRunRecord, RegressionRunRecord @done(22-01-11 09:00)
   ✔ API to get all DevRunRecords of a testcase, sort by last running, double click to DevRunRecord to get detail running of a TestCase @done(21-08-05 08:20)
   ✔ API to get all RegressionRunRecord of a testcase (Regression Test, sort by last running --> RegressionRunRecord, sort by last running) @done(21-08-05 08:20)
-  ☐ bug - when switch from TestPlan to DevMonitoring during the testcase is build, createDevQueue, it will throw error. https://i.imgur.com/DQDaShc.png
+  ✔ bug - when switch from TestPlan to DevMonitoring during the testcase is build, createDevQueue, it will throw error. https://i.imgur.com/DQDaShc.png @done(22-02-01 21:14)
   ☐ Reg monitoring - define columns definition for all columns in table, also for visible columns
   ☐ Ussing highlightjs for hightlight the code https://github.com/highlightjs/vue-plugin
-  ☐ add attribute: generatedCode for RegressionTest and DevRunRecord
+  ✔ add attribute: generatedCode for RegressionTest and DevRunRecord --> solution: do not use it, because if anyone to view code, just re-generated again @done(22-01-28 16:19)
   ✔ bug - fix TestEnvironmentDialog select other testbed doesn't work. @done(21-11-03 02:39)
   ✔ test feature - closeTab, compare TestStep @done(21-11-04 02:09)
   ✔ bug - import block doesn't show for the first time, must refresh to make it work. @done(21-11-04 02:09)
   ✔ delete testcase = update testcase set isDeleted = true @done(21-12-07 22:31)
   ✔ bug - after add new testcase, detele testgroup, it didn't show correct number testcases in testgroup @done(21-12-07 22:31)
   ☐ delete a testcase, can't create that testcase again because of duplicate testcase name
-  ☐ update testcase, add 2 fields: Queue(string) and NoParallelQueues (list<string>), if Queue is in NoParallelQueues, and all of them is running, no pick.
-  ☐ bug - vueuse copy can't copy when build production, dont know why?
+  ✔ update testcase, add 2 fields: Queue(string) and NoParallelQueues (list<string>), if Queue is in NoParallelQueues, and all of them is running, no pick. @done(22-02-01 22:15)
+  ✔ bug - vueuse copy can't copy when build production, dont know why? @done(22-01-27 16:20)
   ☐ find all testcases that are using keywork A (dont include deleted testcase)
   ☐ able to restore testcase from testcase history (add new testcase history with type: restore)
+  ☐ able to restore test environment from testcase history (add new testcase history with type: restore)
   ☐ Permanent delete testcase history
-  ☐ refactor test envronment, include Category into TestEnvNode (don't need TestEnvFlatNode anymore)
+  ☐ Permanent delete test environment history
+  ✔ refactor test envronment, include Category into TestEnvNode (don't need TestEnvFlatNode anymore) @done(22-01-27 16:20)
 Test:
   ✔ one flow from create category, testsuite, testgroup, testcase from beginning @done(21-05-11 23:12)
 API:
-  ☐ new api - update testcase
+  ✔ new api - update testcase @done(22-01-28 16:15)
   ✔ api for saving testcase @done(21-01-23 22:28)
   ✔ api for generate code from testcases, @done(21-05-01 20:21)
   ✔ api for list all testAUT @done(21-02-02 18:47)
