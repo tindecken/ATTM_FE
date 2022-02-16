@@ -29,7 +29,6 @@
         <env-footer></env-footer>
       </div>
     </q-footer>
-
   </q-layout>
 </template>
 
@@ -45,6 +44,7 @@ import EnvFooter from './Footer/EnvFooter.vue';
 import TestClientFooter from './Footer/TestClientFooter.vue';
 import InformationFooter from './Footer/InformationFooter.vue';
 import config from '../config'
+import { useUserStore } from '../pinia/userStore';
 
 export default defineComponent({
   name: 'Home',
@@ -56,23 +56,19 @@ export default defineComponent({
     InformationFooter,
   },
   setup() {
+    const userStore = useUserStore();
     const $store = useStore()
     const $route = useRoute()
     const $router = useRouter()
     const leftDrawerOpen = ref(false);
     const rightDrawerOpen = ref(false);
     const currentUser = ref('');
-    const err = ref('');
-    const logout = async () => {
-      try {
-        await $store.dispatch('auth/logout');
-        const redirectUrl = `/${$route.query.redirect || 'login'}`;
-        void $router.replace(redirectUrl);
-      } catch (error: any) {
-        err.value = error.message || 'Something is error !';
-      }
+    const logout = () => {
+      userStore.$reset()
+      const redirectUrl = `/${$route.query.redirect || 'login'}`;
+      void $router.replace(redirectUrl);
     };
-    currentUser.value = $store.getters['auth/Username'];
+    currentUser.value = userStore.Username
     onMounted(() => {
       const connection = new signalR.HubConnectionBuilder()
         .withUrl(`${config.socketServer}`)
@@ -93,12 +89,9 @@ export default defineComponent({
       });
 
       void connection.start()
-
-      // void connection.start()
-      //   .then(() => connection.invoke('SendMessage', 'Hello'));
     });
     return {
-      leftDrawerOpen, rightDrawerOpen, err, currentUser, logout,
+      leftDrawerOpen, rightDrawerOpen, currentUser, logout,
     };
   },
 });

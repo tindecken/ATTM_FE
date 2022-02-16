@@ -2,6 +2,7 @@
   <q-layout view="hHh LpR fFf">
     <q-page-container class="row justify-center">
       <div class="col-auto">
+        <div>{{ userStore.user}}</div>
         <q-form @submit="onSubmit" @reset="onReset" style="min-width: 400px" class="q-mt-xl">
           <q-input
             filled
@@ -44,10 +45,11 @@ import { defineComponent, ref } from 'vue';
 import { useQuasar } from 'quasar'
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
+import { useUserStore } from '../pinia/userStore'
 
 export default defineComponent({
   name: 'Login',
-  components: {},
+  components: { },
   setup() {
     const $q = useQuasar()
     const $store = useStore()
@@ -56,6 +58,7 @@ export default defineComponent({
     const username = ref('');
     const password = ref('');
     const err = ref('');
+    const userStore = useUserStore()
     const onSubmit = async () => {
       const actionPayload = {
         Username: username.value,
@@ -63,6 +66,7 @@ export default defineComponent({
       };
       try {
         await $store.dispatch('auth/login', actionPayload);
+        await userStore.login(actionPayload)
         const redirectUrl = `/${$route.query.redirect || 'home'}`;
         void $router.replace(redirectUrl);
         $q.notify({
@@ -86,6 +90,7 @@ export default defineComponent({
       password,
       onSubmit,
       onReset,
+      userStore,
     };
   },
 });

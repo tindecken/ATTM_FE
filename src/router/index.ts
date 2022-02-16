@@ -5,16 +5,16 @@ import {
   createWebHashHistory,
   createWebHistory,
 } from 'vue-router';
-import { Store } from 'vuex';
 import { StateInterface } from '../store';
 import routes from './routes';
+import { useUserStore } from '../pinia/userStore';
 
 /*
  * If not building with SSR mode, you can
  * directly export the Router instantiation
  */
 
-export default route<Store<StateInterface>>(({ store }) => {
+export default route<StateInterface>(() => {
   const createHistory = process.env.SERVER
     ? createMemoryHistory
     : process.env.VUE_ROUTER_MODE === 'history'
@@ -33,10 +33,12 @@ export default route<Store<StateInterface>>(({ store }) => {
     ),
   });
   Router.beforeEach((to, from, next) => {
-    if (to.meta.requiresAuth && !store.getters['auth/IsAuthenticated']) {
+    const user = localStorage.getItem('user')
+    const a = JSON.parse(user)
+    if (to.meta.requiresAuth && !userLocalStorage.Token) {
       // if require login but no token --> go to login
       next({ path: 'login' });
-    } else if (to.meta.requiresUnAuth && store.getters['auth/IsAuthenticated']) {
+    } else if (to.meta.requiresUnAuth && userStore.IsAuthenticated) {
       // if no require and has token --> home
       next({ path: '/' });
     } else {

@@ -4,13 +4,11 @@
       :filter="filter"
       dense
       title="Clients"
-      :rows="clients"
+      :rows="testClients"
       :columns="clientColumns"
       :visible-columns="visibleColumns"
       row-key="Id"
-      :selected-rows-label="getSelectedString"
       selection="multiple"
-      v-model:selected="selectedClients"
       no-data-label="No test client"
       :pagination="initialPagination"
       separator="cell"
@@ -37,14 +35,17 @@ export default {
 import {
   ref, Ref, computed,
 } from 'vue';
-import { useStore } from 'vuex'
 import { TestClientInterface } from 'src/Models/TestClient';
 import { clientColumns } from 'src/components/tableColumns';
+import { useTestClientStore } from 'src/pinia/testClientStore';
 
-const $store = useStore()
+const testClientStore = useTestClientStore()
 const filter = ref('')
 const initialPagination = {
   rowsPerPage: 50,
 }
-const clients: Ref<TestClientInterface[]> = computed(() => $store.getters['testclient/testClients'])
+await testClientStore.getTestClients()
+const testClients: Ref<TestClientInterface[]> = computed(() => testClientStore.testClients)
+const visibleColumns = ref(['FullName', 'Category', 'TestSuite', 'TestGroup', 'Owner', 'Type', 'IsPrimary', 'Queue', 'CreatedDate', 'LastModifiedDate'])
+
 </script>

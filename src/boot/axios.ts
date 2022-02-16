@@ -16,7 +16,6 @@ declare module '@vue/runtime-core' {
 // for each client)
 const api = axios.create({
   baseURL: apiConfig.baseURL,
-
 });
 
 export default boot(({ app }) => {
@@ -31,4 +30,4 @@ export default boot(({ app }) => {
   //       so you can easily perform requests against your app's API
 });
 
-export { api };
+export { axios, api };
