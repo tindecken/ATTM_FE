@@ -46,7 +46,9 @@ import { UpdateTestEnvDataInterface } from 'src/Models/Entities/UpdateTestEnvDat
 import { api } from 'boot/axios'
 import config from 'src/config'
 import { TestEnvHistoryInterface } from 'src/Models/TestEnvHistory';
+import { useUserStore } from 'src/pinia/userStore';
 
+const userStore = useUserStore()
 const props = defineProps<{
   TestEnv: TestEnvInterface
 }>()
@@ -68,7 +70,7 @@ function save() {
   }
 
   const updateTestEnvData: UpdateTestEnvDataInterface = {
-    UpdateBy: $store.getters['auth/Username'],
+    UpdateBy: userStore.Username,
     UpdateMessage: saveMessage.value,
     UpdateType: 'Update Nodes',
   }
@@ -82,7 +84,7 @@ function save() {
     {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${$store.getters['auth/Token']}`,
+        Authorization: `Bearer ${userStore.Token}`,
       },
     },
   ).then((res) => {

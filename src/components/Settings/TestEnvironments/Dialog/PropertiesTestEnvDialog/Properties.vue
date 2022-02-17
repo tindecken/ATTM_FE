@@ -41,12 +41,12 @@ import { useQuasar, date } from 'quasar'
 import { TestEnvInterface } from 'src/Models/TestEnv';
 import { api } from 'boot/axios'
 import config from 'src/config'
-import { useStore } from 'vuex'
 import { UpdateTestEnvDataInterface } from 'src/Models/Entities/UpdateTestEnvData';
 import { TestEnvHistoryInterface } from 'src/Models/TestEnvHistory';
+import { useUserStore } from 'src/pinia/userStore';
 
+const userStore = useUserStore()
 const $q = useQuasar()
-const $store = useStore();
 const props = defineProps<{
   TestEnv: TestEnvInterface
 }>()
@@ -59,7 +59,7 @@ function onCancel() {
 }
 function onSubmit() {
   const updateTestEnvData: UpdateTestEnvDataInterface = {
-    UpdateBy: $store.getters['auth/Username'],
+    UpdateBy: userStore.Username,
     UpdateMessage: 'Update Test Properties',
     UpdateType: 'Update Properties',
   }
@@ -79,7 +79,7 @@ function onSubmit() {
     {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${$store.getters['auth/Token']}`,
+        Authorization: `Bearer ${userStore.Token}`,
       },
     },
   ).then((res) => {

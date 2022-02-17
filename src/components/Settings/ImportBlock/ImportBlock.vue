@@ -24,6 +24,7 @@ import {
 } from 'vue';
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
+import { useUserStore } from 'src/pinia/userStore';
 import { SettingInterface } from '../../../Models/Setting'
 
 export default defineComponent({
@@ -37,6 +38,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const userStore = useUserStore()
     const $store = useStore()
     const $q = useQuasar()
     const readonly = ref(true)
@@ -52,7 +54,7 @@ export default defineComponent({
           IsDeleted: importBlockSetting.value.IsDeleted,
           Description: importBlockSetting.value.Description,
           UpdatedDateTime: new Date(),
-          UpdatedBy: $store.getters['auth/userName'] as string,
+          UpdatedBy: userStore.Username,
         }
         console.log('newSetting', newSetting)
         const result = await $store.dispatch('setting/updateSetting', { settingId: importBlockSetting.value.Id, setting: newSetting });

@@ -4,12 +4,14 @@ import { RegressionInterface } from 'src/Models/Regression';
 import { AddCommentDataInterface } from 'src/Models/Entities/AddCommentData';
 import { SetRegressionQueueDataInterface } from 'src/Models/Entities/SetRegressionQueueData';
 import { SetRegressionAnalyseStatusDataInterface } from 'src/Models/Entities/SetRegressionAnalyseStatusData';
+import { useUserStore } from 'src/pinia/userStore';
 import { StateInterface } from '../index';
 import { RegressionStateInterface } from './state';
 import config from '../../config';
 
 const actions: ActionTree<RegressionStateInterface, StateInterface> = {
   async getRegressions(context) {
+    const userStore = useUserStore()
     // eslint-disable-next-line no-useless-catch
     try {
       const response = await axios.get(
@@ -17,7 +19,7 @@ const actions: ActionTree<RegressionStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );
@@ -31,6 +33,7 @@ const actions: ActionTree<RegressionStateInterface, StateInterface> = {
     }
   },
   async addCommentForRegressionTests(context: any, addCommentData: AddCommentDataInterface) {
+    const userStore = useUserStore()
     // eslint-disable-next-line no-useless-catch
     try {
       return await axios.post(
@@ -39,7 +42,7 @@ const actions: ActionTree<RegressionStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );
@@ -48,6 +51,7 @@ const actions: ActionTree<RegressionStateInterface, StateInterface> = {
     }
   },
   async setRegressionQueue(context: any, setRegressionQueuData: SetRegressionQueueDataInterface) {
+    const userStore = useUserStore()
     // eslint-disable-next-line no-useless-catch
     try {
       return await axios.post(
@@ -56,7 +60,7 @@ const actions: ActionTree<RegressionStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );
@@ -65,6 +69,7 @@ const actions: ActionTree<RegressionStateInterface, StateInterface> = {
     }
   },
   async setRegressionAnalyseStatus(context: any, setRegressionAnalyseStatusData: SetRegressionAnalyseStatusDataInterface) {
+    const userStore = useUserStore()
     // eslint-disable-next-line no-useless-catch
     try {
       return await axios.post(
@@ -73,7 +78,7 @@ const actions: ActionTree<RegressionStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );

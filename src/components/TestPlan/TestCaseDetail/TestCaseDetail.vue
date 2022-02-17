@@ -170,6 +170,7 @@ import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 import { TestCaseHistoryInterface } from 'src/Models/TestCaseHistory';
 import { UpdateTestCaseDataInterface } from 'src/Models/Entities/UpdateTestCaseData';
+import { useUserStore } from 'src/pinia/userStore';
 import TestAUT from './Cells/TestAUT.vue';
 import Keyword from './Cells/Keyword.vue';
 import Parameter from './Cells/Parameter.vue';
@@ -189,6 +190,7 @@ export default defineComponent({
     No,
   },
   setup() {
+    const userStore = useUserStore()
     const $store = useStore()
     const $q = useQuasar()
     const showByIndex = ref('')
@@ -430,7 +432,7 @@ export default defineComponent({
       try {
         const currTestCase = openedTCs.value.find((tc: TestCaseInterface) => tc.Id === testCaseId) as TestCaseInterface
         const updateTestCaseData: UpdateTestCaseDataInterface = {
-          UpdateBy: $store.getters['auth/Username'],
+          UpdateBy: userStore.Username,
           UpdateMessage: '',
           UpdateType: 'Change TestStep',
         }

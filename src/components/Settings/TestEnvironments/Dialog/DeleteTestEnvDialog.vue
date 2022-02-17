@@ -55,7 +55,9 @@ import { api } from 'boot/axios'
 import config from 'src/config'
 import { UpdateTestEnvDataInterface } from 'src/Models/Entities/UpdateTestEnvData';
 import { TestEnvHistoryInterface } from 'src/Models/TestEnvHistory';
+import { useUserStore } from 'src/pinia/userStore';
 
+const userStore = useUserStore()
 const props = defineProps<{
   TestEnv: TestEnvInterface
 }>()
@@ -67,7 +69,7 @@ const $q = useQuasar()
 
 function deleteTestEnv() {
   const updateTestEnvData: UpdateTestEnvDataInterface = {
-    UpdateBy: $store.getters['auth/Username'],
+    UpdateBy: userStore.Username,
     UpdateMessage: reason.value,
     UpdateType: 'Delete',
   }
@@ -81,7 +83,7 @@ function deleteTestEnv() {
     {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${$store.getters['auth/Token']}`,
+        Authorization: `Bearer ${userStore.Token}`,
       },
     },
   ).then((res) => {

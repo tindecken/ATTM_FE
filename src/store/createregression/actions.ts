@@ -2,12 +2,14 @@ import { ActionTree } from 'vuex';
 import axios from 'axios';
 import { TestCaseDetailInterface } from 'src/Models/TestCaseDetail';
 import { DefineRegressionInterface } from 'src/Models/DefineRegression';
+import { useUserStore } from 'src/pinia/userStore';
 import { StateInterface } from '../index';
 import { CreateRegressionStateInterface } from './state';
 import config from '../../config';
 
 const actions: ActionTree<CreateRegressionStateInterface, StateInterface> = {
   async createRegression(context, regression: DefineRegressionInterface) {
+    const userStore = useUserStore()
     // eslint-disable-next-line no-useless-catch
     try {
       return await axios.post(
@@ -16,7 +18,7 @@ const actions: ActionTree<CreateRegressionStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );
@@ -25,6 +27,7 @@ const actions: ActionTree<CreateRegressionStateInterface, StateInterface> = {
     }
   },
   async getAllTestCaseDetails(context) {
+    const userStore = useUserStore()
     // eslint-disable-next-line no-useless-catch
     try {
       const response = await axios.get(
@@ -32,7 +35,7 @@ const actions: ActionTree<CreateRegressionStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );
@@ -43,13 +46,14 @@ const actions: ActionTree<CreateRegressionStateInterface, StateInterface> = {
     }
   },
   async getAndAddSelectedTestCase(context, selectedTestCasesDetail: TestCaseDetailInterface[]) {
+    const userStore = useUserStore()
     const promises: any = []
     selectedTestCasesDetail.forEach((tc: TestCaseDetailInterface) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       promises.push(axios.get(`${config.baseURL}/testcases/${tc.Id}`, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+          Authorization: `Bearer ${userStore.Token}`,
         },
       }))
     })
@@ -65,6 +69,7 @@ const actions: ActionTree<CreateRegressionStateInterface, StateInterface> = {
     }
   },
   async createRegressionTests(context, payload: any) {
+    const userStore = useUserStore()
     // eslint-disable-next-line no-useless-catch
     try {
       const { regressionId } = payload
@@ -77,7 +82,7 @@ const actions: ActionTree<CreateRegressionStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       )

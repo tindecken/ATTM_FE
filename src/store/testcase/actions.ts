@@ -3,6 +3,7 @@ import axios from 'axios';
 import { TestCaseInterface } from 'src/Models/TestCase';
 import { TestCaseHistoryInterface } from 'src/Models/TestCaseHistory';
 import _ from 'lodash';
+import { useUserStore } from 'src/pinia/userStore';
 import { StateInterface } from '../index';
 import { TestCaseStateInterface } from './state';
 import config from '../../config';
@@ -10,6 +11,7 @@ import { paintTestCase } from '../../components/Utils/TreeUtils'
 
 const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
   async getTestCaseById(context, id: string) {
+    const userStore = useUserStore()
     // eslint-disable-next-line no-useless-catch
     try {
       const response = await axios.get(
@@ -17,7 +19,7 @@ const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );
@@ -36,6 +38,7 @@ const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
     context.commit('updateOpenedTCs', value)
   },
   async saveTestCase(context, testCaseHistory: TestCaseHistoryInterface) {
+    const userStore = useUserStore()
     try {
       const response = await axios.post(
         `${config.baseURL}/testcases/savetestcase`,
@@ -43,7 +46,7 @@ const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );
@@ -55,6 +58,7 @@ const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
     }
   },
   async editTestCase(context, testCaseHistory: TestCaseHistoryInterface) {
+    const userStore = useUserStore()
     try {
       // create in database
       const response = await axios.post(
@@ -63,7 +67,7 @@ const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );
@@ -84,13 +88,14 @@ const actions: ActionTree<TestCaseStateInterface, StateInterface> = {
     }
   },
   async getUpateHistories(context, testCaseId: string) {
+    const userStore = useUserStore()
     try {
       const response = await axios.get(
         `${config.baseURL}/testcases/${testCaseId}/getupdatehistories`,
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );

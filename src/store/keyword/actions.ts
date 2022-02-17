@@ -1,12 +1,14 @@
 import { ActionTree } from 'vuex';
 import axios from 'axios';
 import { KeywordCategoryInterface } from 'src/Models/KeywordCategory';
+import { useUserStore } from 'src/pinia/userStore';
 import { StateInterface } from '../index';
 import { KeywordStateInterface } from './state';
 import config from '../../config';
 
 const actions: ActionTree<KeywordStateInterface, StateInterface> = {
   async getKeywords(context) {
+    const userStore = useUserStore()
     // eslint-disable-next-line no-useless-catch
     try {
       const response = await axios.get(
@@ -14,7 +16,7 @@ const actions: ActionTree<KeywordStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );

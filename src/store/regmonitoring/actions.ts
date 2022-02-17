@@ -1,6 +1,7 @@
 import { ActionTree } from 'vuex';
 import axios from 'axios';
 import { RegressionTestInterface } from 'src/Models/RegressionTest';
+import { useUserStore } from 'src/pinia/userStore';
 import { StateInterface } from '../index';
 import { RegMonitoringStateInterface } from './state';
 import config from '../../config';
@@ -8,12 +9,13 @@ import config from '../../config';
 const actions: ActionTree<RegMonitoringStateInterface, StateInterface> = {
   async getRegressionDetail(context: any, regressionId: string) {
     try {
+      const userStore = useUserStore()
       const response = await axios.get(
         `${config.baseURL}/regressions/${regressionId}/getdetail`,
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );
@@ -33,13 +35,14 @@ const actions: ActionTree<RegMonitoringStateInterface, StateInterface> = {
     }
   },
   async getScreenshot(context: any, screenshotId: string) {
+    const userStore = useUserStore()
     try {
       const response = await axios.get(
         `${config.baseURL}/gridfsbucket/${screenshotId}`,
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );

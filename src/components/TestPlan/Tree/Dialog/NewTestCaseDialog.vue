@@ -163,6 +163,7 @@ import { TestCaseInterface } from 'src/Models/TestCase';
 import { TestGroupInterface } from 'src/Models/TestGroup';
 import { useStore } from 'vuex'
 import { QForm, useDialogPluginComponent } from 'quasar'
+import { useUserStore } from 'src/pinia/userStore';
 
 export default defineComponent({
   name: 'NewTestCaseDialog',
@@ -179,13 +180,14 @@ export default defineComponent({
   ],
   components: {},
   setup(props) {
+    const userStore = useUserStore();
     const {
       dialogRef, onDialogHide, onDialogOK, onDialogCancel,
     } = useDialogPluginComponent()
     const $store = useStore()
     const codeName = ref('');
     const name = ref('');
-    const author = computed(() => $store.getters['auth/Username']);
+    const author = computed(() => userStore.Username);
     const description = ref('');
     const workItem = ref('');
     const type = ref('');

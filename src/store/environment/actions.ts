@@ -2,12 +2,14 @@ import { ActionTree } from 'vuex';
 import axios from 'axios';
 import { TestEnvInterface } from 'src/Models/TestEnv';
 import { TestEnvHistoryInterface } from 'src/Models/TestEnvHistory';
+import { useUserStore } from 'src/pinia/userStore';
 import { StateInterface } from '../index';
 import { TestEnvironmentStateInterface } from './state';
 import config from '../../config';
 
 const actions: ActionTree<TestEnvironmentStateInterface, StateInterface> = {
   async getTestEnvironments(context) {
+    const userStore = useUserStore()
     // eslint-disable-next-line no-useless-catch
     try {
       const response = await axios.get(
@@ -15,7 +17,7 @@ const actions: ActionTree<TestEnvironmentStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );
@@ -26,13 +28,14 @@ const actions: ActionTree<TestEnvironmentStateInterface, StateInterface> = {
     }
   },
   async getTestEnv(context, id: string) {
+    const userStore = useUserStore()
     try {
       const response = await axios.get(
         `${config.baseURL}/testenvs/${id}`,
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );
@@ -44,13 +47,14 @@ const actions: ActionTree<TestEnvironmentStateInterface, StateInterface> = {
     }
   },
   async getTestEnvHistories(context, id: string) {
+    const userStore = useUserStore()
     try {
       const response = await axios.get(
         `${config.baseURL}/testenvs/histories/${id}`,
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );

@@ -6,9 +6,11 @@ import { StateInterface } from '../index';
 import { CategoryStateInterface } from './state';
 import config from '../../config';
 import { paintCategories } from '../../components/Utils/TreeUtils'
+import { useUserStore } from '../../pinia/userStore'
 
 const actions: ActionTree<CategoryStateInterface, StateInterface> = {
   async getAllCategories(context) {
+    const userStore = useUserStore()
     // eslint-disable-next-line no-useless-catch
     try {
       const response = await axios.get(
@@ -16,7 +18,7 @@ const actions: ActionTree<CategoryStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );
@@ -31,6 +33,7 @@ const actions: ActionTree<CategoryStateInterface, StateInterface> = {
     context.commit('setSelectedCategory', payload);
   },
   async createTestSuite(context, newTestSuite: TestSuiteInterface) {
+    const userStore = useUserStore()
     try {
       // create in database
       const response = await axios.post(
@@ -39,7 +42,7 @@ const actions: ActionTree<CategoryStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       )
@@ -51,6 +54,7 @@ const actions: ActionTree<CategoryStateInterface, StateInterface> = {
     }
   },
   async deleteTestSuite(context, testSuite: TestSuiteInterface) {
+    const userStore = useUserStore()
     try {
       const response = await axios.post(
         `${config.baseURL}/categories/${testSuite.CategoryId}/testsuites/delete`,
@@ -58,7 +62,7 @@ const actions: ActionTree<CategoryStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );
@@ -72,6 +76,7 @@ const actions: ActionTree<CategoryStateInterface, StateInterface> = {
     }
   },
   async deleteCategory(context, category: CategoryInterface) {
+    const userStore = useUserStore()
     try {
       const response = await axios.post(
         `${config.baseURL}/categories/delete`,
@@ -79,7 +84,7 @@ const actions: ActionTree<CategoryStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );
@@ -93,6 +98,7 @@ const actions: ActionTree<CategoryStateInterface, StateInterface> = {
     }
   },
   async createCategory(context, category: CategoryInterface) {
+    const userStore = useUserStore()
     try {
       const response = await axios.post(
         `${config.baseURL}/categories/create`,
@@ -100,7 +106,7 @@ const actions: ActionTree<CategoryStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );

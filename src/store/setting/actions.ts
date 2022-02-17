@@ -1,12 +1,14 @@
 import { ActionTree } from 'vuex';
 import axios from 'axios';
 import { SettingInterface } from 'src/Models/Setting';
+import { useUserStore } from 'src/pinia/userStore';
 import { StateInterface } from '../index';
 import { SettingStateInterface } from './state';
 import config from '../../config';
 
 const actions: ActionTree<SettingStateInterface, StateInterface> = {
   async getSettings(context) {
+    const userStore = useUserStore()
     // eslint-disable-next-line no-useless-catch
     try {
       const response = await axios.get(
@@ -14,7 +16,7 @@ const actions: ActionTree<SettingStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );
@@ -25,6 +27,7 @@ const actions: ActionTree<SettingStateInterface, StateInterface> = {
     }
   },
   async getSettingByName(context: any, name: string) {
+    const userStore = useUserStore()
     // eslint-disable-next-line no-useless-catch
     try {
       const response = await axios.get(
@@ -32,7 +35,7 @@ const actions: ActionTree<SettingStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );
@@ -43,6 +46,7 @@ const actions: ActionTree<SettingStateInterface, StateInterface> = {
     }
   },
   async updateSetting(context: any, payload: any) {
+    const userStore = useUserStore()
     // eslint-disable-next-line no-useless-catch
     try {
       const id = payload.settingId
@@ -53,7 +57,7 @@ const actions: ActionTree<SettingStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );

@@ -5,9 +5,9 @@ import {
   createWebHashHistory,
   createWebHistory,
 } from 'vue-router';
+import { UserInterface } from 'src/Models/User';
 import { StateInterface } from '../store';
 import routes from './routes';
-import { useUserStore } from '../pinia/userStore';
 
 /*
  * If not building with SSR mode, you can
@@ -34,11 +34,16 @@ export default route<StateInterface>(() => {
   });
   Router.beforeEach((to, from, next) => {
     const user = localStorage.getItem('user')
-    const a = JSON.parse(user)
-    if (to.meta.requiresAuth && !userLocalStorage.Token) {
+    let IsAuthenticated = false
+    if (user) {
+      const userObject = JSON.parse(user) as UserInterface
+      IsAuthenticated = !!userObject.Token
+    }
+
+    if (to.meta.requiresAuth && !IsAuthenticated) {
       // if require login but no token --> go to login
       next({ path: 'login' });
-    } else if (to.meta.requiresUnAuth && userStore.IsAuthenticated) {
+    } else if (to.meta.requiresUnAuth && IsAuthenticated) {
       // if no require and has token --> home
       next({ path: '/' });
     } else {

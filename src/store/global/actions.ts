@@ -1,6 +1,7 @@
 import { ActionTree } from 'vuex';
 import axios from 'axios';
 import { TestClientInterface } from 'src/Models/TestClient';
+import { useUserStore } from 'src/pinia/userStore';
 import { StateInterface } from '../index';
 import { GlobalStateInterface } from './state';
 import config from '../../config';
@@ -10,7 +11,8 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
     context.commit('switchTheme');
   },
 
-  async buildProject(context) {
+  async buildProject() {
+    const userStore = useUserStore()
     // eslint-disable-next-line no-useless-catch
     try {
       const response = await axios.post(
@@ -18,7 +20,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );
@@ -32,6 +34,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
   },
 
   async copydevcodetoclient(context, testClient: TestClientInterface) {
+    const userStore = useUserStore()
     try {
       const response = await axios.post(
         `${config.baseURL}/testproject/copycodetoclient/dev`,
@@ -39,7 +42,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );
@@ -50,6 +53,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
     }
   },
   async checkautorunner(context, testClient: TestClientInterface) {
+    const userStore = useUserStore()
     try {
       const response = await axios.post(
         `${config.baseURL}/testproject/checkrunner/Runner`,
@@ -57,7 +61,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );
@@ -68,6 +72,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
     }
   },
   async copyregcodetoclient(context, testClient: TestClientInterface) {
+    const userStore = useUserStore()
     try {
       const response = await axios.post(
         `${config.baseURL}/testproject/copycodetoclient/reg`,
@@ -75,7 +80,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );
@@ -87,6 +92,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
     }
   },
   async updatereleaseforclient(context, payload: any) {
+    const userStore = useUserStore()
     const testClient = payload.testClient as TestClientInterface;
     const newValue = payload.regressionName as string;
     // eslint-disable-next-line no-useless-catch
@@ -97,7 +103,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );
@@ -109,7 +115,8 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
     }
   },
 
-  async getLatestCode(context) {
+  async getLatestCode() {
+    const userStore = useUserStore()
     // eslint-disable-next-line no-useless-catch
     try {
       const response = await axios.post(
@@ -117,7 +124,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );
@@ -131,6 +138,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
   },
 
   async generateDevCode(context, testcases) {
+    const userStore = useUserStore()
     try {
       const response = await axios.post(
         `${config.baseURL}/testproject/generateDevCode`,
@@ -138,7 +146,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );
@@ -151,6 +159,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
   },
 
   async generateRegCode(context, testcasesDetail) {
+    const userStore = useUserStore()
     console.log('testcasesDetail', testcasesDetail)
     try {
       const response = await axios.post(
@@ -159,7 +168,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );
@@ -172,6 +181,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
   },
 
   async createDevQueue(context, payload) {
+    const userStore = useUserStore()
     console.log('payload', payload);
     try {
       const response = await axios.post(
@@ -180,7 +190,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );
@@ -192,6 +202,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
     }
   },
   async getTestAUT(context) {
+    const userStore = useUserStore()
     // eslint-disable-next-line no-useless-catch
     try {
       const response = await axios.get(
@@ -199,7 +210,7 @@ const actions: ActionTree<GlobalStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );

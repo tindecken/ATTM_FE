@@ -1,12 +1,14 @@
 import { ActionTree } from 'vuex';
 import axios from 'axios';
 import { TestCaseInterface } from 'src/Models/TestCase';
+import { useUserStore } from 'src/pinia/userStore';
 import { StateInterface } from '../index';
 import { TestGroupStateInterface } from './state';
 import config from '../../config';
 
 const actions: ActionTree<TestGroupStateInterface, StateInterface> = {
   async createTestCase(context, testCase: TestCaseInterface) {
+    const userStore = useUserStore()
     try {
       // create in database
       const response = await axios.post(
@@ -15,7 +17,7 @@ const actions: ActionTree<TestGroupStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );
@@ -32,6 +34,7 @@ const actions: ActionTree<TestGroupStateInterface, StateInterface> = {
     }
   },
   async deleteTestCase(context, testCases: TestCaseInterface[]) {
+    const userStore = useUserStore()
     try {
       const arrRequests: any[] = []
       testCases.forEach((tc: TestCaseInterface) => {
@@ -41,7 +44,7 @@ const actions: ActionTree<TestGroupStateInterface, StateInterface> = {
           {
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+              Authorization: `Bearer ${userStore.Token}`,
             },
           },
         );

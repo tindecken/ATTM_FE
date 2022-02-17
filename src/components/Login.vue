@@ -43,7 +43,6 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import { useQuasar } from 'quasar'
-import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '../pinia/userStore'
 
@@ -52,7 +51,6 @@ export default defineComponent({
   components: { },
   setup() {
     const $q = useQuasar()
-    const $store = useStore()
     const $route = useRoute()
     const $router = useRouter()
     const username = ref('');
@@ -65,7 +63,6 @@ export default defineComponent({
         Password: password.value,
       };
       try {
-        await $store.dispatch('auth/login', actionPayload);
         await userStore.login(actionPayload)
         const redirectUrl = `/${$route.query.redirect || 'home'}`;
         void $router.replace(redirectUrl);

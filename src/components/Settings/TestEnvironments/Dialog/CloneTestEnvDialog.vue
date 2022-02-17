@@ -55,8 +55,9 @@ import { useQuasar, useDialogPluginComponent } from 'quasar'
 import { TestEnvInterface } from 'src/Models/TestEnv';
 import { TestEnvCloneDataInterface } from 'src/Models/Entities/TestEnvCloneData';
 import { api } from 'boot/axios'
-import config from 'src/config'
+import { useUserStore } from 'src/pinia/userStore'
 
+const userStore = useUserStore()
 const props = defineProps<{
   TestEnv: TestEnvInterface
 }>()
@@ -72,15 +73,15 @@ function cloneTestEnv() {
     Id: props.TestEnv.Id,
     NewName: testEnvName.value,
     NewDescription: description.value,
-    CloneBy: $store.getters['auth/Username'],
+    CloneBy: userStore.Username,
   }
   api.post(
-    `${config.baseURL}/testenvs/clone`,
+    '/testenvs/clone',
     clonedTestEnv,
     {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${$store.getters['auth/Token']}`,
+        Authorization: `Bearer ${userStore.Token}`,
       },
     },
   ).then((res) => {

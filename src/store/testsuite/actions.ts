@@ -1,12 +1,14 @@
 import { ActionTree } from 'vuex';
 import axios from 'axios';
 import { TestGroupInterface } from 'src/Models/TestGroup';
+import { useUserStore } from 'src/pinia/userStore';
 import { StateInterface } from '../index';
 import { TestSuiteStateInterface } from './state';
 import config from '../../config';
 
 const actions: ActionTree<TestSuiteStateInterface, StateInterface> = {
   async createTestGroup(context, newTestGroup: TestGroupInterface) {
+    const userStore = useUserStore()
     try {
       // create in database
       const response = await axios.post(
@@ -16,7 +18,7 @@ const actions: ActionTree<TestSuiteStateInterface, StateInterface> = {
           headers: {
             'Content-Type': 'application/json',
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       )
@@ -30,6 +32,7 @@ const actions: ActionTree<TestSuiteStateInterface, StateInterface> = {
     }
   },
   async deleteTestGroup(context, testGroup: TestGroupInterface) {
+    const userStore = useUserStore()
     try {
       const response = await axios.post(
         `${config.baseURL}/testsuites/${testGroup.TestSuiteId}/testgroups/delete`,
@@ -37,7 +40,7 @@ const actions: ActionTree<TestSuiteStateInterface, StateInterface> = {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );

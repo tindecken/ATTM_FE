@@ -182,6 +182,7 @@ import { TestClientInterface } from 'src/Models/TestClient'
 import { AddCommentDataInterface } from 'src/Models/Entities/AddCommentData'
 import { SetRegressionQueueDataInterface } from 'src/Models/Entities/SetRegressionQueueData'
 import { SetRegressionAnalyseStatusDataInterface } from 'src/Models/Entities/SetRegressionAnalyseStatusData'
+import { useUserStore } from 'src/pinia/userStore'
 
 export default defineComponent({
   name: 'UpdateDialog',
@@ -198,6 +199,7 @@ export default defineComponent({
   ],
   components: {},
   setup(props) {
+    const userStore = useUserStore()
     const {
       dialogRef, onDialogHide, onDialogOK, onDialogCancel,
     } = useDialogPluginComponent()
@@ -207,7 +209,7 @@ export default defineComponent({
     const description = ref('');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const isDark = computed(() => $store.getters['global/darkTheme']);
-    const userName = computed(() => $store.getters['auth/userName'])
+    const userName = computed(() => userStore.Username)
     const clients: Ref<TestClientInterface[]> = computed(() => $store.getters['testclient/testClients'])
     const selectedClient: Ref<TestClientInterface | null> = ref(null)
     const selectedRegTest: Ref<RegressionTestInterface | null> = ref(null)

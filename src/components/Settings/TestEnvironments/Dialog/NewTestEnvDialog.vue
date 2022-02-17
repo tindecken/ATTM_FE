@@ -55,7 +55,9 @@ import { useDialogPluginComponent, useQuasar } from 'quasar'
 import { api } from 'boot/axios'
 import config from 'src/config'
 import { TestEnvInterface } from 'src/Models/TestEnv'
+import { useUserStore } from 'src/pinia/userStore'
 
+const userStore = useUserStore()
 const testEnvName = ref('')
 const description = ref('')
 const isDark = computed(() => $store.getters['global/darkTheme'])
@@ -69,7 +71,7 @@ function onSubmit() {
     Name: testEnvName.value,
     Description: description.value,
     Nodes: [],
-    LastModifiedUser: $store.getters['auth/Username'],
+    LastModifiedUser: userStore.Username,
   }
   api.post(
     `${config.baseURL}/testenvs/create`,
@@ -77,7 +79,7 @@ function onSubmit() {
     {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${$store.getters['auth/Token']}`,
+        Authorization: `Bearer ${userStore.Token}`,
       },
     },
   ).then((res) => {

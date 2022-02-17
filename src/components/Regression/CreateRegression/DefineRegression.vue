@@ -97,11 +97,13 @@ import {
 import { date } from 'quasar'
 import { DefineRegressionInterface } from 'src/Models/DefineRegression';
 import { useStore } from 'vuex'
+import { useUserStore } from '../../../pinia/userStore'
 
 export default defineComponent({
   name: 'DefineRegression',
   components: {},
   setup(props, context) {
+    const userStore = useUserStore()
     const $store = useStore()
     const datePicker: Ref<any> = ref(null)
     const name = ref('');
@@ -112,7 +114,7 @@ export default defineComponent({
     const form: Ref<any> = ref(null);
     const isFormValid = ref(false);
     const dateRange = reactive({ from: date.formatDate(Date.now(), 'YYYY/MM/DD'), to: date.formatDate(date.addToDate(Date.now(), { days: 7 }), 'YYYY/MM/DD') })
-    const currentUser = computed(() => $store.getters['auth/userName'] as string)
+    const currentUser = computed(() => userStore.Username)
     let defineRegressionObject: DefineRegressionInterface
     function validateForm() {
       form.value.validate().then((success: any) => {
@@ -155,7 +157,6 @@ export default defineComponent({
         console.log('dateRange.to', dateRange.to)
         validateForm()
       } else {
-        console.log('abc')
         context.emit('validateForm', false)
       }
     }

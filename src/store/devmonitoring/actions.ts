@@ -1,19 +1,21 @@
 import { ActionTree } from 'vuex';
 import axios from 'axios';
 import { DevRunRecordInterface } from 'src/Models/DevRunRecord'
+import { useUserStore } from 'src/pinia/userStore';
 import { StateInterface } from '../index';
 import { DevMonitoringStateInterface } from './state';
 import config from '../../config';
 
 const actions: ActionTree<DevMonitoringStateInterface, StateInterface> = {
   async getDevRunRecords(context: any) {
+    const userStore = useUserStore()
     try {
       const response = await axios.get(
         `${config.baseURL}/devrunrecords/getlast/testcase`,
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );
@@ -25,13 +27,14 @@ const actions: ActionTree<DevMonitoringStateInterface, StateInterface> = {
     }
   },
   async getInQueueDevRunRecords(context: any) {
+    const userStore = useUserStore()
     try {
       const response = await axios.get(
         `${config.baseURL}/devqueues/inQueue`,
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );
@@ -44,13 +47,14 @@ const actions: ActionTree<DevMonitoringStateInterface, StateInterface> = {
     }
   },
   async getScreenshot(context: any, screenshotId: string) {
+    const userStore = useUserStore()
     try {
       const response = await axios.get(
         `${config.baseURL}/gridfsbucket/${screenshotId}`,
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.rootGetters['auth/Token']}`,
+            Authorization: `Bearer ${userStore.Token}`,
           },
         },
       );
