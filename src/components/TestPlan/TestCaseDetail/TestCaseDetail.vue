@@ -171,6 +171,7 @@ import { useQuasar } from 'quasar'
 import { TestCaseHistoryInterface } from 'src/Models/TestCaseHistory';
 import { UpdateTestCaseDataInterface } from 'src/Models/Entities/UpdateTestCaseData';
 import { useUserStore } from 'src/pinia/userStore';
+import { useGlobalStore } from 'src/pinia/globalStore';
 import TestAUT from './Cells/TestAUT.vue';
 import Keyword from './Cells/Keyword.vue';
 import Parameter from './Cells/Parameter.vue';
@@ -190,13 +191,14 @@ export default defineComponent({
     No,
   },
   setup() {
+    const globalStore = useGlobalStore()
     const userStore = useUserStore()
     const $store = useStore()
     const $q = useQuasar()
     const showByIndex = ref('')
     const selectedKeyword = ref('')
     const selected: Ref<any[]> = ref([])
-    const isDark = computed(() => $store.getters['global/darkTheme']);
+    const isDark = computed(() => globalStore.darkTheme);
     const columns = ref(
       [
         {

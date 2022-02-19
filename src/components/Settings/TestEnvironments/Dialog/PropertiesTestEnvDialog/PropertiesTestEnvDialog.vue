@@ -53,18 +53,18 @@ export default {
 import {
   computed, ref, defineProps,
 } from 'vue'
-import { useStore } from 'vuex'
+import { useGlobalStore } from 'src/pinia/globalStore';
 import { useDialogPluginComponent } from 'quasar'
 import { TestEnvInterface } from 'src/Models/TestEnv';
 import Histories from './Histories.vue'
 import Properties from './Properties.vue'
 
+const globalStorage = useGlobalStore()
 const props = defineProps<{
   TestEnv: TestEnvInterface
 }>()
 const tab = ref('properties')
-const isDark = computed(() => $store.getters['global/darkTheme'])
-const $store = useStore();
+const isDark = computed(() => globalStore.darkTheme)
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent()
 
 function onSubmitProperties(testEnv: TestEnvInterface) {

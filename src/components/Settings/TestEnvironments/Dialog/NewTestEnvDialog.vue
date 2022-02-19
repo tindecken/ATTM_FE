@@ -50,18 +50,18 @@ export default {
 import {
   computed, ref,
 } from 'vue'
-import { useStore } from 'vuex'
 import { useDialogPluginComponent, useQuasar } from 'quasar'
 import { api } from 'boot/axios'
 import config from 'src/config'
 import { TestEnvInterface } from 'src/Models/TestEnv'
 import { useUserStore } from 'src/pinia/userStore'
+import { useGlobalStore } from 'src/pinia/globalStore'
 
+const globalStore = useGlobalStore()
 const userStore = useUserStore()
 const testEnvName = ref('')
 const description = ref('')
-const isDark = computed(() => $store.getters['global/darkTheme'])
-const $store = useStore();
+const isDark = computed(() => globalStore.darkTheme)
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent()
 const $q = useQuasar()
 

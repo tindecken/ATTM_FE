@@ -52,7 +52,7 @@ import {
   computed, defineComponent, ref, PropType, onMounted,
 } from 'vue';
 import { TestCaseInterface } from 'src/Models/TestCase';
-import { useStore } from 'vuex'
+import { useGlobalStore } from 'src/pinia/globalStore';
 import { useClipboard } from '@vueuse/core'
 import { QForm, useDialogPluginComponent } from 'quasar'
 import Properties from 'src/components/TestPlan/Tree/Dialog/TestCaseProperties/Properties.vue'
@@ -74,12 +74,12 @@ export default defineComponent({
   ],
   components: { Properties, RegressionHistory, UpdateHistory },
   setup(props) {
+    const globalStore = useGlobalStore()
     const {
       dialogRef, onDialogHide, onDialogOK, onDialogCancel,
     } = useDialogPluginComponent()
-    const $store = useStore()
     const { copy } = useClipboard()
-    const isDark = computed(() => $store.getters['global/darkTheme']);
+    const isDark = computed(() => globalStore.darkTheme);
     const footerInfo = ref('');
     const isFormValid = ref(false);
     const form = ref(QForm);

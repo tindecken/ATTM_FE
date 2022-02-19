@@ -35,6 +35,7 @@ import {
 import { TestStepInterface } from 'src/Models/TestStep';
 import { TestEnvInterface, TestEnvNodeInterface } from 'src/Models/TestEnv';
 import { useStore } from 'vuex'
+import { useGlobalStore } from 'src/pinia/globalStore';
 import ParameterMenu from '../Menu/ParameterMenu.vue'
 import { getValueType } from '../Utils/utils'
 
@@ -54,10 +55,11 @@ export default defineComponent({
     ParameterMenu,
   },
   setup(props, context) {
+    const globalStore = useGlobalStore()
     const $store = useStore()
     const isParamError: Ref<boolean> = ref(false)
     const paramErrorMessage = ref('')
-    const isDark = computed(() => $store.getters['global/darkTheme'] as boolean);
+    const isDark = computed(() => globalStore.darkTheme as boolean);
     const readonly = computed(() => {
       const numberOfParam: number = props.TestStep.Params.length;
       const testEnvPath = props.TestStep.Params[props.ParamIndex]?.TestNodePath

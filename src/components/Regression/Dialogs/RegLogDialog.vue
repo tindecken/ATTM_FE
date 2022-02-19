@@ -30,6 +30,7 @@ import {
 
 import { useStore } from 'vuex'
 import { useClipboard } from '@vueuse/core'
+import { useGlobalStore } from 'src/pinia/globalStore';
 
 export default defineComponent({
   name: 'RegLogDialog',
@@ -47,8 +48,9 @@ export default defineComponent({
   ],
   components: { },
   setup(props) {
+    const globalStore = useGlobalStore()
     const $store = useStore()
-    const isDark = computed(() => $store.getters['global/darkTheme'])
+    const isDark = computed(() => globalStore.darkTheme)
     // REQUIRED; must be called inside of setup()
     const {
       dialogRef, onDialogHide, onDialogOK, onDialogCancel,

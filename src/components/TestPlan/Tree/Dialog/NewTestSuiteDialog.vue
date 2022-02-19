@@ -116,7 +116,7 @@ import {
 } from 'vue';
 import { CategoryInterface } from 'src/Models/Category';
 import { TestSuiteInterface } from 'src/Models/TestSuite';
-import { useStore } from 'vuex'
+import { useGlobalStore } from 'src/pinia/globalStore';
 import { QDialog, QForm } from 'quasar';
 
 export default defineComponent({
@@ -130,15 +130,14 @@ export default defineComponent({
   components: {},
   emits: ['ok', 'cancel'],
   setup(props, context) {
-    const $store = useStore()
+    const globalStore = useGlobalStore()
     const dialogRef = ref(QDialog);
     const codeName = ref('');
     const name = ref('');
     const author = ref('');
     const description = ref('');
     const workItem = ref('');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const isDark = computed(() => $store.getters['global/darkTheme']);
+    const isDark = computed(() => globalStore.darkTheme);
     const isFormValid = ref(false);
     const form = ref(QForm);
     // following method is REQUIRED

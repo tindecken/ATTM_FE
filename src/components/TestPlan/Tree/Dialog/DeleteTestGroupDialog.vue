@@ -37,6 +37,7 @@ import {
 } from 'vue';
 import { TestGroupInterface } from 'src/Models/TestGroup';
 import { useStore } from 'vuex'
+import { useGlobalStore } from 'src/pinia/globalStore';
 import { QForm, useDialogPluginComponent } from 'quasar'
 
 export default defineComponent({
@@ -54,11 +55,11 @@ export default defineComponent({
   ],
   components: {},
   setup() {
+    const globalStore = useGlobalStore()
     const {
       dialogRef, onDialogHide, onDialogOK, onDialogCancel,
     } = useDialogPluginComponent()
-    const $store = useStore()
-    const isDark = computed(() => $store.getters['global/darkTheme']);
+    const isDark = computed(() => globalStore.darkTheme);
     const form = ref(QForm);
 
     function onDeleteClick() {

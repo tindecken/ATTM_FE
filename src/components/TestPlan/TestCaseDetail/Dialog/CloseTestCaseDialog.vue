@@ -22,7 +22,7 @@ import { useDialogPluginComponent } from 'quasar';
 import {
   computed, defineComponent,
 } from 'vue';
-import { useStore } from 'vuex'
+import { useGlobalStore } from 'src/pinia/globalStore';
 
 export default defineComponent({
   name: 'CloseTestCaseDialog',
@@ -35,12 +35,12 @@ export default defineComponent({
   ],
   components: {},
   setup(props, context) {
+    const globalStore = useGlobalStore()
     const {
       dialogRef, onDialogHide, onDialogCancel,
     } = useDialogPluginComponent()
-    const $store = useStore()
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const isDark = computed(() => $store.getters['global/darkTheme']);
+    const isDark = computed(() => globalStore.darkTheme);
 
     function save() {
       context.emit('ok', 'Save')

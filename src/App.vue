@@ -2,16 +2,16 @@
     <router-view/>
 </template>
 <script lang="ts">
-import { useStore } from 'vuex'
 import { defineComponent, onBeforeMount } from 'vue';
 import { Dark } from 'quasar';
 import { useUserStore } from './pinia/userStore'
 import { useTestClientStore } from './pinia/testClientStore'
+import { useGlobalStore } from './pinia/globalStore';
 
 export default defineComponent({
   name: 'App',
   setup() {
-    const $store = useStore()
+    const globalStore = useGlobalStore()
     const userStore = useUserStore()
     const testClientStore = useTestClientStore()
     userStore.$subscribe(() => {
@@ -32,9 +32,19 @@ export default defineComponent({
         },
       ))
     })
+    globalStore.$subscribe(() => {
+      localStorage.setItem('global', JSON.stringify({
+        darkTheme: globalStore.darkTheme,
+      }))
+      Dark.set(globalStore.darkTheme);
+    })
     onBeforeMount(() => {
-      const theme = $store.getters['global/darkTheme'];
-      Dark.set(theme);
+      // const globalStorage = localStorage.getItem('global')
+      // if (globalStorage) {
+      //   const global = JSON.parse(globalStorage)
+      //   globalStore.darkTheme = global.darkTheme
+      //   Dark.set(globalStore.darkTheme);
+      // } else Dark.set(false)
     });
   },
 });

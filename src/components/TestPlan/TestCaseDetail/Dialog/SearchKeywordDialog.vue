@@ -132,6 +132,7 @@ import { QSelect, useDialogPluginComponent, useQuasar } from 'quasar'
 import { TestStepInterface } from 'src/Models/TestStep';
 import { TestCaseInterface } from 'src/Models/TestCase';
 import { useClipboard } from '@vueuse/core'
+import { useGlobalStore } from 'src/pinia/globalStore';
 import { KeywordInterface } from 'src/Models/Keyword';
 import { KeywordFeatureInterface } from 'src/Models/KeywordFeature';
 import { KeywordCategoryInterface } from 'src/Models/KeywordCategory';
@@ -156,6 +157,7 @@ export default defineComponent({
   components: {
   },
   setup(props) {
+    const globalStore = useGlobalStore()
     const {
       dialogRef, onDialogHide, onDialogOK, onDialogCancel,
     } = useDialogPluginComponent()
@@ -184,7 +186,7 @@ export default defineComponent({
       // rowsPerPage: 3,
       // rowsNumber: xx if getting data from a server
     }
-    const isDark = computed(() => $store.getters['global/darkTheme'])
+    const isDark = computed(() => globalStore.darkTheme)
     const keywordColumns = [
       {
         name: 'no',

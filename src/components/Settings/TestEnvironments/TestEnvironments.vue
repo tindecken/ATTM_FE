@@ -47,7 +47,7 @@
             <q-td
               key="category"
               :props="props"
-              @click="$store.commit('global/setInfoStatus', { Info: props.row.Category })"
+              @click="globalStore.infoStatus.Info = props.row.Category"
             >
               <q-input
                 v-model="props.row.Category"
@@ -60,7 +60,7 @@
               key="name"
               :props="props"
               style="white-space: normal"
-              @click="$store.commit('global/setInfoStatus', { Info: props.row.Name })"
+              @click="globalStore.infoStatus.Info = props.row.Name"
             >
               <q-input
                 v-model="props.row.Name"
@@ -72,7 +72,7 @@
             <q-td
               key="value"
               :props="props"
-              @click="$store.commit('global/setInfoStatus', { Info: props.row.Value })"
+              @click="globalStore.infoStatus.Info = props.row.Value"
             >
               <q-input
                 v-model="props.row.Value"
@@ -84,7 +84,7 @@
             <q-td
               key="description"
               :props="props"
-              @click="$store.commit('global/setInfoStatus', { Info: props.row.Description })"
+              @click="globalStore.infoStatus.Info = props.row.Description"
             >
               <q-input
                 v-model="props.row.Description"
@@ -121,6 +121,7 @@ import { useStore } from 'vuex';
 import { TestEnvInterface, TestEnvNodeInterface } from 'src/Models/TestEnv';
 import { testEnvColumns } from 'src/components/tableColumns';
 import { useQuasar } from 'quasar'
+import { useGlobalStore } from 'src/pinia/globalStore';
 import NewTestEnvDialog from 'src/components/Settings/TestEnvironments/Dialog/NewTestEnvDialog.vue';
 import PropertiesTestEnvDialog from 'src/components/Settings/TestEnvironments/Dialog/PropertiesTestEnvDialog/PropertiesTestEnvDialog.vue';
 import CloneTestEnvDialog from 'src/components/Settings/TestEnvironments/Dialog/CloneTestEnvDialog.vue';
@@ -128,6 +129,7 @@ import DeleteTestEnvDialog from 'src/components/Settings/TestEnvironments/Dialog
 import SaveTestEnvDialog from 'src/components/Settings/TestEnvironments/Dialog/SaveTestEnvDialog.vue';
 import _ from 'lodash'
 
+const globalStore = useGlobalStore();
 const $q = useQuasar()
 const $store = useStore();
 const testEnvFilter = ref('');

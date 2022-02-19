@@ -71,7 +71,7 @@ import {
   defineComponent, onMounted, ref, PropType, Ref,
 } from 'vue';
 import _ from 'lodash'
-import { useStore } from 'vuex'
+import { useGlobalStore } from 'src/pinia/globalStore';
 import { useDialogPluginComponent, useQuasar } from 'quasar'
 import { TestStepInterface } from 'src/Models/TestStep';
 import { TestCaseInterface } from 'src/Models/TestCase';
@@ -96,11 +96,11 @@ export default defineComponent({
   components: {
   },
   setup(props) {
+    const globalStore = useGlobalStore()
     const {
       dialogRef, onDialogHide, onDialogOK, onDialogCancel,
     } = useDialogPluginComponent()
     const { copy } = useClipboard()
-    const $store = useStore()
     const $q = useQuasar()
     const paramColumns = [
       {
@@ -148,7 +148,7 @@ export default defineComponent({
       },
     ]
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const isDark = computed(() => $store.getters['global/darkTheme'])
+    const isDark = computed(() => globalStore.darkTheme)
     const testCase: Ref<TestCaseInterface> = ref(props.TestCase)
     const testStep: Ref<TestStepInterface> = ref(props.TestStep)
     const footerInfo = ref('')

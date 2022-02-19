@@ -162,6 +162,7 @@ import { useQuasar } from 'quasar'
 import { DevRunRecordInterface } from 'src/Models/DevRunRecord';
 import { UseTimeAgo } from '@vueuse/components'
 import { useClipboard, useTitle } from '@vueuse/core'
+import { useGlobalStore } from 'src/pinia/globalStore';
 import DevLog from './DevRunning/DevLog.vue'
 import ErrorScreenshot from './DevRunning/ErrorScreenshot.vue'
 import DevQueue from './DevQueue/DevQueue.vue'
@@ -173,6 +174,7 @@ export default defineComponent({
     UseTimeAgo, DevLog, ErrorScreenshot, DevQueue,
   },
   setup() {
+    const globalStore = useGlobalStore()
     useTitle('Dev Monitoring')
     const $q = useQuasar()
     const $store = useStore()
@@ -350,7 +352,7 @@ export default defineComponent({
         },
       ],
     )
-    const isDark = computed(() => $store.getters['global/darkTheme'])
+    const isDark = computed(() => globalStore.darkTheme)
     const selected: Ref<any[]> = ref([])
     const devRunRecords: Ref<DevRunRecordInterface[]> = computed(() => $store.getters['devmonitoring/devRunRecords'])
     const initialPagination = {

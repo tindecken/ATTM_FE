@@ -44,16 +44,16 @@
 
 import { defineComponent } from 'vue'
 import { Dark } from 'quasar'
-import { useStore } from 'vuex'
+import { useGlobalStore } from 'src/pinia/globalStore'
 
 export default defineComponent({
   name: 'LeftDrawer',
   props: {},
   setup() {
-    const $store = useStore()
+    const globalStore = useGlobalStore()
     function switchTheme() {
-      void $store.dispatch('global/switchDarkTheme');
-      Dark.set($store.getters['global/darkTheme']);
+      globalStore.switchDarkTheme()
+      Dark.set(globalStore.darkTheme);
     }
     return { switchTheme };
   },

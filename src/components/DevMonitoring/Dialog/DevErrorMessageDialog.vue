@@ -25,8 +25,8 @@ import {
   defineComponent, computed, PropType,
 } from 'vue';
 
-import { useStore } from 'vuex'
 import { useClipboard } from '@vueuse/core'
+import { useGlobalStore } from 'src/pinia/globalStore';
 
 export default defineComponent({
   name: 'DevErrorMessageDialog',
@@ -44,8 +44,8 @@ export default defineComponent({
   ],
   components: { },
   setup() {
-    const $store = useStore()
-    const isDark = computed(() => $store.getters['global/darkTheme'])
+    const globalStorage = useGlobalStore()
+    const isDark = computed(() => globalStorage.darkTheme)
     // REQUIRED; must be called inside of setup()
     const {
       dialogRef, onDialogHide, onDialogOK, onDialogCancel,

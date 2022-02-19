@@ -161,7 +161,7 @@ import {
 } from 'vue';
 import { TestCaseInterface } from 'src/Models/TestCase';
 import { TestGroupInterface } from 'src/Models/TestGroup';
-import { useStore } from 'vuex'
+import { useGlobalStore } from 'src/pinia/globalStore';
 import { QForm, useDialogPluginComponent } from 'quasar'
 import { useUserStore } from 'src/pinia/userStore';
 
@@ -180,11 +180,11 @@ export default defineComponent({
   ],
   components: {},
   setup(props) {
+    const globalStore = useGlobalStore()
     const userStore = useUserStore();
     const {
       dialogRef, onDialogHide, onDialogOK, onDialogCancel,
     } = useDialogPluginComponent()
-    const $store = useStore()
     const codeName = ref('');
     const name = ref('');
     const author = computed(() => userStore.Username);
@@ -193,8 +193,7 @@ export default defineComponent({
     const type = ref('');
     const queue = ref('');
     const dontRunWithQueues = ref('');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const isDark = computed(() => $store.getters['global/darkTheme']);
+    const isDark = computed(() => globalStore.darkTheme);
     const isFormValid = ref(false);
     const form = ref(QForm);
 

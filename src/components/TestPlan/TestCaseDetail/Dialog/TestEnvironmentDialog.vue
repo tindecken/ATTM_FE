@@ -99,6 +99,7 @@ import { useStore } from 'vuex'
 import { useClipboard } from '@vueuse/core'
 import { useQuasar, useDialogPluginComponent } from 'quasar'
 import { testEnvColumns } from 'src/components/tableColumns';
+import { useGlobalStore } from 'src/pinia/globalStore';
 
 export default defineComponent({
   name: 'TestEnvironmentDialog',
@@ -111,6 +112,7 @@ export default defineComponent({
   components: {
   },
   setup() {
+    const globalStore = useGlobalStore()
     const {
       dialogRef, onDialogHide, onDialogOK, onDialogCancel,
     } = useDialogPluginComponent()
@@ -129,7 +131,7 @@ export default defineComponent({
     }
     const testEnvFilter = ref('');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const isDark = computed(() => $store.getters['global/darkTheme'])
+    const isDark = computed(() => globalStore.darkTheme)
     const selectedTestEnv = computed(() => $store.getters['testenvironment/selectedTestEnv'] as TestEnvInterface)
     const testEnvs = $store.getters['testenvironment/testEnvs'] as TestEnvInterface[]
     onBeforeMount(async () => {

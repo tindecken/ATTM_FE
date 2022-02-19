@@ -36,8 +36,8 @@ import {
   computed, defineComponent, ref, PropType,
 } from 'vue';
 import { TestSuiteInterface } from 'src/Models/TestSuite';
-import { useStore } from 'vuex'
 import { useDialogPluginComponent } from 'quasar'
+import { useGlobalStore } from 'src/pinia/globalStore';
 
 export default defineComponent({
   name: 'DeleteTestSuiteDialog',
@@ -54,11 +54,11 @@ export default defineComponent({
   ],
   components: {},
   setup() {
+    const globalStore = useGlobalStore()
     const {
       dialogRef, onDialogHide, onDialogOK, onDialogCancel,
     } = useDialogPluginComponent()
-    const $store = useStore()
-    const isDark = computed(() => $store.getters['global/darkTheme']);
+    const isDark = computed(() => globalStore.darkTheme);
     const form = ref(null);
 
     function onDeleteClick() {

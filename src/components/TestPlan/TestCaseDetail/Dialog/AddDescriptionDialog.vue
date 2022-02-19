@@ -60,7 +60,7 @@
 import {
   computed, defineComponent, ref, PropType,
 } from 'vue';
-import { useStore } from 'vuex'
+import { useGlobalStore } from 'src/pinia/globalStore';
 import { QForm, useDialogPluginComponent } from 'quasar'
 import { TestStepInterface } from 'src/Models/TestStep';
 
@@ -79,13 +79,13 @@ export default defineComponent({
   ],
   components: {},
   setup() {
+    const globalStore = useGlobalStore()
     const {
       dialogRef, onDialogHide, onDialogOK, onDialogCancel,
     } = useDialogPluginComponent()
-    const $store = useStore()
     const description = ref('');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const isDark = computed(() => $store.getters['global/darkTheme']);
+    const isDark = computed(() => globalStore.darkTheme);
     const isFormValid = ref(false);
     const formRef = ref(QForm);
 

@@ -35,9 +35,9 @@
 import {
   computed, defineComponent, Ref, ref, PropType,
 } from 'vue';
-import { useStore } from 'vuex'
 import { useDialogPluginComponent } from 'quasar'
 import { CategoryInterface } from 'src/Models/Category';
+import { useGlobalStore } from 'src/pinia/globalStore';
 
 export default defineComponent({
   name: 'DeleteCategoryDialog',
@@ -54,11 +54,11 @@ export default defineComponent({
   ],
   components: {},
   setup() {
+    const globalStore = useGlobalStore()
     const {
       dialogRef, onDialogHide, onDialogOK, onDialogCancel,
     } = useDialogPluginComponent()
-    const $store = useStore()
-    const isDark = computed(() => $store.getters['global/darkTheme']);
+    const isDark = computed(() => globalStore.darkTheme);
     const form: Ref<unknown> = ref(null);
 
     function onDeleteClick() {

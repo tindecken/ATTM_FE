@@ -203,6 +203,7 @@ import { UseTimeAgo } from '@vueuse/components'
 import { RegressionInterface } from 'src/Models/Regression'
 import { RegressionTestInterface } from 'src/Models/RegressionTest'
 import { useQuasar, date } from 'quasar'
+import { useGlobalStore } from 'src/pinia/globalStore';
 import RegMenu from './ContextMenu/RegMenu.vue'
 import { allColumns } from './columnDefinitions'
 import RegLog from './Cells/RegLog.vue'
@@ -222,9 +223,10 @@ export default defineComponent({
     UseTimeAgo, RegLog, ErrorScreenshot, RegMenu,
   },
   setup() {
+    const globalStore = useGlobalStore()
     const $q = useQuasar()
     const $store = useStore()
-    const isDark = computed(() => $store.getters['global/darkTheme'])
+    const isDark = computed(() => globalStore.darkTheme)
     const selected: Ref<RegressionTestInterface[]> = ref([])
     const columns = allColumns
     const { copy } = useClipboard()

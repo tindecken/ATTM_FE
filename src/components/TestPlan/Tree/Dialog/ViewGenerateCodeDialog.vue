@@ -40,12 +40,14 @@ import { useStore } from 'vuex'
 import { useDialogPluginComponent, useQuasar } from 'quasar'
 import { TestCaseInterface } from 'src/Models/TestCase'
 import { useClipboard } from '@vueuse/core'
+import { useGlobalStore } from 'src/pinia/globalStore'
 
+const globalStore = useGlobalStore()
 const { copy } = useClipboard()
 const props = defineProps<{
   TestCase: TestCaseInterface
 }>()
-const isDark = computed(() => $store.getters['global/darkTheme'])
+const isDark = computed(() => globalStore.darkTheme)
 const $store = useStore()
 const $q = useQuasar()
 const { dialogRef, onDialogHide } = useDialogPluginComponent()

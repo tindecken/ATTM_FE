@@ -168,7 +168,7 @@ import {
 } from 'vue';
 import _ from 'lodash'
 import { TestCaseInterface } from 'src/Models/TestCase';
-import { useStore } from 'vuex'
+import { useGlobalStore } from 'src/pinia/globalStore';
 import { QForm, useDialogPluginComponent } from 'quasar'
 import { UpdateTestCaseDataInterface } from 'src/Models/Entities/UpdateTestCaseData';
 import { TestCaseHistoryInterface } from 'src/Models/TestCaseHistory';
@@ -188,11 +188,11 @@ export default defineComponent({
   ],
   components: {},
   setup(props) {
+    const globalStore = useGlobalStore()
     const {
       dialogRef, onDialogHide, onDialogOK, onDialogCancel,
     } = useDialogPluginComponent()
-    const $store = useStore()
-    const isDark = computed(() => $store.getters['global/darkTheme']);
+    const isDark = computed(() => globalStore.darkTheme);
     const isFormValid = ref(false);
     const form = ref(QForm);
     const editTestCase: Ref<TestCaseInterface | null> = ref(null);
