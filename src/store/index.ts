@@ -1,7 +1,6 @@
 import { store } from 'quasar/wrappers';
 import { createStore } from 'vuex'
 import VuexPersistence from 'vuex-persist';
-import global from './global';
 import keyword from './keyword';
 import category from './category';
 import testcase from './testcase';
@@ -16,7 +15,6 @@ import regression from './regression';
 import regmonitoring from './regmonitoring';
 import setting from './setting';
 
-import { GlobalStateInterface } from './global/state';
 import { KeywordStateInterface } from './keyword/state';
 import { CategoryStateInterface } from './category/state';
 import { TestCaseStateInterface } from './testcase/state';
@@ -43,7 +41,6 @@ export interface StateInterface {
   // Define your own store structure, using submodules if needed
   // example: ExampleStateInterface;
   // Declared as unknown to avoid linting issue. Best to strongly type as per the line above.
-  global: GlobalStateInterface;
   keyword: KeywordStateInterface;
   category: CategoryStateInterface;
   testcase: TestCaseStateInterface;
@@ -60,10 +57,6 @@ export interface StateInterface {
 }
 
 export default store((/* { ssrContext } */) => {
-  const persistGlobal = new VuexPersistence({
-    key: 'global',
-    modules: ['global'],
-  });
   const persistCategory = new VuexPersistence({
     key: 'category',
     modules: ['category'],
@@ -119,7 +112,6 @@ export default store((/* { ssrContext } */) => {
 
   const Store = createStore<StateInterface>({
     modules: {
-      global,
       keyword,
       category,
       testcase,
@@ -134,7 +126,7 @@ export default store((/* { ssrContext } */) => {
       regmonitoring,
       setting,
     },
-    plugins: [new VuexPersistence().plugin, persistGlobal.plugin, persistKeyword.plugin, persistTestCase.plugin, persistCategory.plugin, persistTestSuite.plugin, persistTestGroup.plugin, persistTestEnvironment.plugin, persistTestClient.plugin, persistCreateRegression.plugin, persistTestStep.plugin, persistDevMonitoring.plugin, persistRegression.plugin, persistRegMonitoring.plugin, persistSetting.plugin],
+    plugins: [new VuexPersistence().plugin, persistKeyword.plugin, persistTestCase.plugin, persistCategory.plugin, persistTestSuite.plugin, persistTestGroup.plugin, persistTestEnvironment.plugin, persistTestClient.plugin, persistCreateRegression.plugin, persistTestStep.plugin, persistDevMonitoring.plugin, persistRegression.plugin, persistRegMonitoring.plugin, persistSetting.plugin],
 
     // enable strict mode (adds overhead!)
     // for dev mode only

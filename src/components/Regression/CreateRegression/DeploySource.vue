@@ -81,12 +81,14 @@ import { TestClientInterface } from 'src/Models/TestClient';
 import _ from 'lodash'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
+import { useGlobalStore } from 'src/pinia/globalStore';
 import { clientColumns } from 'src/components/tableColumns';
 
 export default defineComponent({
   name: 'DeploySource',
   components: {},
   setup() {
+    const globalStore = useGlobalStore()
     const $store = useStore()
     const $q = useQuasar()
     const tab = ref('')
@@ -108,7 +110,7 @@ export default defineComponent({
       client.DeploySourceStatus = ''
       client.DeploySourceMessage = ''
       selectedClients.value[index] = client
-      const copyResult: Promise<any> = $store.dispatch('global/copycodetoclient', client)
+      const copyResult: Promise<any> = globalStore.copyregcodetoclient(client)
       copyResult.then((r: any) => {
         client.DeploySourceStatus = 'Success'
         if (client.UpdateReleaseStatus === 'Success') client.Status = 'green'
@@ -139,7 +141,7 @@ export default defineComponent({
         testClient: client,
         regressionName: defineRegression.value.Name,
       }
-      const updateReleaseResult: Promise<any> = $store.dispatch('global/updatereleaseforclient', payload);
+      const updateReleaseResult: Promise<any> = globalStore.updatereleaseforclient(payload)
       updateReleaseResult.then((r: any) => {
         client.UpdateReleaseStatus = 'Success'
         if (client.DeploySourceStatus === 'Success') client.Status = 'green'
@@ -180,7 +182,7 @@ export default defineComponent({
         cloneClient.DeploySourceMessage = ''
         cloneClient.UpdateReleaseStatus = ''
         cloneClient.UpdateReleaseMessage = ''
-        const copyResult: Promise<any> = $store.dispatch('global/copycodetoclient', cloneClient);
+        const copyResult: Promise<any> = globalStore.copyregcodetoclient(cloneClient)
         copyResult.then((r) => {
           cloneClient.DeploySourceStatus = 'Success'
           cloneClient.DeploySourceMessage = r.message.replace('\r\n\r\n', '\r\n')
@@ -193,7 +195,7 @@ export default defineComponent({
             testClient,
             regressionName: defineRegression.value.Name,
           }
-          const updateReleaseResult: Promise<any> = $store.dispatch('global/updatereleaseforclient', payload);
+          const updateReleaseResult: Promise<any> = globalStore.updatereleaseforclient(payload)
           updateReleaseResult.then((u) => {
             cloneClient.UpdateReleaseStatus = 'Success'
             cloneClient.UpdateReleaseMessage = u.message.replace('\r\n\r\n', '\r\n')

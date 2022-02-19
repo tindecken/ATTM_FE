@@ -74,6 +74,7 @@ import { TestSuiteInterface } from 'src/Models/TestSuite';
 import { TestClientInterface } from 'src/Models/TestClient';
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
+import { useGlobalStore } from 'src/pinia/globalStore';
 import { TestCaseHistoryInterface } from 'src/Models/TestCaseHistory';
 import TreeContextMenu from './Menu/TreeContextMenu.vue'
 import NewTestSuiteDialog from './Dialog/NewTestSuiteDialog.vue'
@@ -94,6 +95,7 @@ export default defineComponent({
     TreeContextMenu,
   },
   setup() {
+    const globalStore = useGlobalStore()
     const $store = useStore()
     const $q = useQuasar()
     const filter: Ref<string> = ref('');
@@ -112,16 +114,16 @@ export default defineComponent({
       if (currentNode == null) return
       switch (currentNode.nodeType) {
         case 'Category':
-          $store.commit('global/setInfoStatus', { Info: `${currentNode.Id} - ${currentNode.Name}` })
+          globalStore.infoStatus.Info = `${currentNode.Id} - ${currentNode.Name}`
           break
         case 'TestSuite':
-          $store.commit('global/setInfoStatus', { Info: `${currentNode.Id} - ${currentNode.CodeName}: ${currentNode.Name}` })
+          globalStore.infoStatus.Info = `${currentNode.Id} - ${currentNode.CodeName}: ${currentNode.Name}`
           break
         case 'TestGroup':
-          $store.commit('global/setInfoStatus', { Info: `${currentNode.Id} - ${currentNode.CodeName}: ${currentNode.Name}` })
+          globalStore.infoStatus.Info = `${currentNode.Id} - ${currentNode.CodeName}: ${currentNode.Name}`
           break
         case 'TestCase':
-          $store.commit('global/setInfoStatus', { Info: `${currentNode.Id} - ${currentNode.CodeName}: ${currentNode.Name}` })
+          globalStore.infoStatus.Info = `${currentNode.Id} - ${currentNode.CodeName}: ${currentNode.Name}`
           const openedTCs = $store.getters['testcase/openedTCs'];
           const found = openedTCs.some((el: any) => el.Id === currentNode.Id);
           if (found) {
@@ -135,16 +137,15 @@ export default defineComponent({
           break
       }
     }
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const selectedTestClient = computed(() => $store.getters['testclient/selectedTestClient'] as TestClientInterface);
     onMounted(async () => {
       try {
         // get category
         await $store.dispatch('category/getAllCategories');
         allCat.value = $store.getters['category/categories'];
-        // gt all TestAUT
-        await $store.dispatch('global/getTestAUT');
-        allTestAUT.value = $store.getters['global/testAuTs']
+        // get all TestAUT
+        await globalStore.getTestAUT()
+        allTestAUT.value = globalStore.testAUTs
         await nextTick()
         tree.value.expandAll();
       } catch (error: any) {
@@ -419,7 +420,7 @@ export default defineComponent({
           });
           return null
         }
-        const generateDevCodeResult: Promise<any> = await $store.dispatch('global/generateDevCode', testcases);
+        const generateDevCodeResult: Promise<any> = await globalStore.generateDevCode(testcases)
         $q.notify({
           type: 'positive',
           message: 'Generate code success.',
@@ -445,7 +446,7 @@ export default defineComponent({
           });
           return null
         }
-        const copyCodeToClientResult: Promise<any> = await $store.dispatch('global/copydevcodetoclient', selectedTestClient.value);
+        const copyCodeToClientResult: Promise<any> = await globalStore.copydevcodetoclient(selectedTestClient.value)
         $q.notify({
           type: 'positive',
           message: `Copy code to client ${selectedTestClient.value.Name} success.`,
@@ -463,7 +464,7 @@ export default defineComponent({
 
     async function buildProject() {
       try {
-        const buildResult: Promise<any> = await $store.dispatch('global/buildProject');
+        const buildResult: Promise<any> = await globalStore.buildProject()
         $q.notify({
           type: 'positive',
           message: 'Build success.',
@@ -483,7 +484,7 @@ export default defineComponent({
     async function createDevQueue(tickedNodes: any[]) {
       const testcases = tickedNodes.filter((n: any) => n.nodeType === 'TestCase') as TestCaseInterface[]
       try {
-        const createDevQueueResult: any = await $store.dispatch('global/createDevQueue', { testcases, testClient: selectedTestClient.value });
+        const createDevQueueResult: any = await globalStore.createDevQueue({ testcases, testClient: selectedTestClient.value })
         console.log('createDevQueueResult', createDevQueueResult)
         $q.notify({
           type: 'positive',
@@ -499,7 +500,7 @@ export default defineComponent({
 
     async function checkRunner() {
       try {
-        const checkRunnerResult = await $store.dispatch('global/checkautorunner', selectedTestClient.value);
+        const checkRunnerResult = await globalStore.checkautorunner(selectedTestClient.value)
         console.log('checkRunnerResult', checkRunnerResult)
         if (checkRunnerResult.result === 'success' && checkRunnerResult.message.includes('Runner is running')) {
           $q.notify({
@@ -512,7 +513,7 @@ export default defineComponent({
             message: `${checkRunnerResult.message} Open it to run the test.`,
             timeout: 10000,
           })
-          $store.commit('global/setInfoStatus', { Info: `${checkRunnerResult.message} Open it to run the test.` })
+          globalStore.infoStatus.Info = `${checkRunnerResult.message} Open it to run the test.`
         }
       } catch (error: any) {
         $q.notify({

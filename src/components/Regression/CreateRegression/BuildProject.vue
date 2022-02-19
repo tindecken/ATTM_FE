@@ -64,12 +64,14 @@ import { TestCaseInterface } from 'src/Models/TestCase';
 import { TestCaseDetailInterface } from 'src/Models/TestCaseDetail';
 import { useQuasar } from 'quasar'
 import { useStore } from 'vuex'
+import { useGlobalStore } from 'src/pinia/globalStore';
 import { useClipboard } from '@vueuse/core'
 
 export default defineComponent({
   name: 'BuildProject',
   components: {},
   setup() {
+    const globalStore = useGlobalStore()
     const $store = useStore()
     const $q = useQuasar()
     const tab = ref('getLatestCode')
@@ -99,7 +101,7 @@ export default defineComponent({
       $store.commit('createregression/setSelectedTestCases', [])
       await $store.dispatch('createregression/getAndAddSelectedTestCase', selectedTestCasesDetail.value);
       console.log('selectedTestCases.value', selectedTestCases.value)
-      const getLatestCodeResult: Promise<any> = $store.dispatch('global/getLatestCode');
+      const getLatestCodeResult: Promise<any> = globalStore.getLatestCode();
 
       getLatestCodeResult.then((r) => {
         console.log('r', r)
@@ -109,7 +111,7 @@ export default defineComponent({
           type: 'positive',
           message: 'Get Latest Code success !',
         });
-        const generateDevCodeResult: Promise<any> = $store.dispatch('global/generateDevCode', selectedTestCases.value);
+        const generateDevCodeResult: Promise<any> = globalStore.generateDevCode(selectedTestCases.value)
         generateDevCodeResult.then((g) => {
           tab.value = 'generateCode'
           generateCodeStatus.value = 'Success'
@@ -123,7 +125,7 @@ export default defineComponent({
             type: 'positive',
             message: 'Generate Code Success !',
           });
-          const buildResult: Promise<any> = $store.dispatch('global/buildProject');
+          const buildResult: Promise<any> = globalStore.buildProject()
           buildResult.then((b) => {
             tab.value = 'buildProject'
             buildProjectStatus.value = 'Success'

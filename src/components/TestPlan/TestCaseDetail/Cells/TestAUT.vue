@@ -24,7 +24,7 @@ import {
   computed, defineComponent, ref, Ref, PropType,
 } from 'vue';
 import { TestAUTInterface } from 'src/Models/TestAUT'
-import { useStore } from 'vuex'
+import { useGlobalStore } from 'src/pinia/globalStore';
 import { TestStepInterface } from 'src/Models/TestStep'
 import TestAUTMenu from '../Menu/TestAUTMenu.vue'
 
@@ -39,9 +39,9 @@ export default defineComponent({
   },
   components: { 'test-aut-menu': TestAUTMenu },
   setup(props, context) {
-    const $store = useStore()
+    const globalStore = useGlobalStore()
     const filteredTestAUTs: Ref<TestAUTInterface[]> = ref([])
-    const testAUTs: Ref<TestAUTInterface[]> = computed(() => $store.getters['global/testAuTs'] as TestAUTInterface[]);
+    const testAUTs: Ref<TestAUTInterface[]> = computed(() => globalStore.testAUTs as TestAUTInterface[]);
     const readonly = computed(() => {
       if (props.TestStep.IsDisabled) return true
       return false

@@ -72,6 +72,7 @@ import { DefineRegressionInterface } from 'src/Models/DefineRegression';
 import { TestCaseInterface } from 'src/Models/TestCase';
 import { TestCaseDetailInterface } from 'src/Models/TestCaseDetail';
 import { useStore } from 'vuex'
+import { useGlobalStore } from 'src/pinia/globalStore';
 import { useQuasar } from 'quasar'
 import { useClipboard } from '@vueuse/core'
 
@@ -79,6 +80,7 @@ export default defineComponent({
   name: 'CreateDb',
   components: {},
   setup() {
+    const globalStore = useGlobalStore()
     const $store = useStore()
     const $q = useQuasar()
     const { copy } = useClipboard()
@@ -145,7 +147,7 @@ export default defineComponent({
             type: 'positive',
             message: `Created regression Tests: ${t.data.message}`,
           });
-          const generateRegCodeResult: Promise<any> = $store.dispatch('global/generateRegCode', t.data.data);
+          const generateRegCodeResult: Promise<any> = globalStore.generateRegCode(t.data.data)
           generateRegCodeResult.then((g) => {
             tab.value = 'generateRegCode'
             generateRegCodeStatus.value = 'Success'
@@ -159,7 +161,7 @@ export default defineComponent({
               type: 'positive',
               message: `Generate Regression Code Successful for ${g.count} test case(s) !`,
             });
-            const buildResult: Promise<any> = $store.dispatch('global/buildProject');
+            const buildResult: Promise<any> = globalStore.buildProject()
             buildResult.then((b) => {
               console.log('b', b)
               tab.value = 'buildProject'

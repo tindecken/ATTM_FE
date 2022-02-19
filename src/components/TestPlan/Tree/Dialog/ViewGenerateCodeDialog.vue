@@ -36,7 +36,6 @@ export default {
 import {
   computed, defineProps, onBeforeMount, ref,
 } from 'vue'
-import { useStore } from 'vuex'
 import { useDialogPluginComponent, useQuasar } from 'quasar'
 import { TestCaseInterface } from 'src/Models/TestCase'
 import { useClipboard } from '@vueuse/core'
@@ -48,12 +47,11 @@ const props = defineProps<{
   TestCase: TestCaseInterface
 }>()
 const isDark = computed(() => globalStore.darkTheme)
-const $store = useStore()
 const $q = useQuasar()
 const { dialogRef, onDialogHide } = useDialogPluginComponent()
 const code = ref('')
 onBeforeMount(async () => {
-  const generateDevCodeResult = await $store.dispatch('global/generateDevCode', [props.TestCase]);
+  const generateDevCodeResult = await globalStore.generateDevCode([props.TestCase])
   if (generateDevCodeResult.result === 'success') {
     code.value = generateDevCodeResult.message[0].generatedCode.trim();
     code.value = `\`\`\`js\n${code.value}\n\`\`\``;

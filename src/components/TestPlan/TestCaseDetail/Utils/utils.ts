@@ -1,10 +1,10 @@
 import { TestParamInterface } from 'src/Models/TestParam';
 import { computed } from 'vue'
-import { useStore } from 'vuex'
-
-const isDark = computed(() => useStore().getters['global/darkTheme'] as boolean);
+import { useGlobalStore } from 'src/pinia/globalStore';
 
 function getValueType(testParam: TestParamInterface): string {
+  const globalStore = useGlobalStore()
+  const isDark = computed(() => globalStore.darkTheme);
   if (testParam.TestNodePath) {
     if (isDark.value) {
       return 'testBedDark'
