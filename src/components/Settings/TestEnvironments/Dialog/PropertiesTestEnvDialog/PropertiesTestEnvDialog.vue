@@ -59,7 +59,7 @@ import { TestEnvInterface } from 'src/Models/TestEnv';
 import Histories from './Histories.vue'
 import Properties from './Properties.vue'
 
-const globalStorage = useGlobalStore()
+const globalStore = useGlobalStore()
 const props = defineProps<{
   TestEnv: TestEnvInterface
 }>()

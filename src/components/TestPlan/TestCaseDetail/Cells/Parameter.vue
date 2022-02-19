@@ -59,7 +59,7 @@ export default defineComponent({
     const $store = useStore()
     const isParamError: Ref<boolean> = ref(false)
     const paramErrorMessage = ref('')
-    const isDark = computed(() => globalStore.darkTheme as boolean);
+    const isDark = computed(() => globalStore.darkTheme);
     const readonly = computed(() => {
       const numberOfParam: number = props.TestStep.Params.length;
       const testEnvPath = props.TestStep.Params[props.ParamIndex]?.TestNodePath

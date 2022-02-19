@@ -36,7 +36,6 @@ import {
   computed, defineComponent, ref, PropType,
 } from 'vue';
 import { TestGroupInterface } from 'src/Models/TestGroup';
-import { useStore } from 'vuex'
 import { useGlobalStore } from 'src/pinia/globalStore';
 import { QForm, useDialogPluginComponent } from 'quasar'
 
