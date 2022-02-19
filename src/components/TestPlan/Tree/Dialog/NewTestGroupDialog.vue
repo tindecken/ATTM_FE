@@ -116,7 +116,7 @@ import {
 } from 'vue';
 import { TestGroupInterface } from 'src/Models/TestGroup';
 import { TestSuiteInterface } from 'src/Models/TestSuite';
-import { useStore } from 'vuex'
+import { useGlobalStore } from 'src/pinia/globalStore';
 import { QForm, useDialogPluginComponent } from 'quasar'
 
 export default defineComponent({
@@ -134,7 +134,7 @@ export default defineComponent({
   ],
   components: {},
   setup(props) {
-    const $store = useStore()
+    const globalStore = useGlobalStore()
     const {
       dialogRef, onDialogHide, onDialogOK, onDialogCancel,
     } = useDialogPluginComponent()
@@ -143,8 +143,7 @@ export default defineComponent({
     const author = ref('');
     const description = ref('');
     const workItem = ref('');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const isDark = computed(() => $store.getters['global/darkTheme']);
+    const isDark = computed(() => globalStore.darkTheme);
     const isFormValid = ref(false);
     const form = ref(QForm);
     // following method is REQUIRED
