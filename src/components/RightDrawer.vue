@@ -136,7 +136,7 @@
 import {
   defineComponent, onBeforeMount, Ref, ref,
 } from 'vue'
-import { useStore } from 'vuex'
+import { useKeywordStore } from 'src/pinia/keywordStore'
 import { KeywordInterface } from 'src/Models/Keyword'
 import { KeywordCategoryInterface } from 'src/Models/KeywordCategory'
 import { KeywordFeatureInterface } from 'src/Models/KeywordFeature'
@@ -147,7 +147,7 @@ export default defineComponent({
   name: 'RightDrawer',
   props: {},
   setup() {
-    const $store = useStore()
+    const keywordStore = useKeywordStore()
     const $q = useQuasar()
     const keywordCategories: Ref<KeywordCategoryInterface[]> = ref([]);
     const filteredKeywordCategories: Ref<KeywordCategoryInterface[]> = ref([]);
@@ -270,7 +270,7 @@ export default defineComponent({
 
     onBeforeMount(async () => {
       try {
-        await $store.dispatch('keyword/getKeywords');
+        await keywordStore.getKeywords()
       } catch (error: any) {
         $q.notify({
           type: 'negative',

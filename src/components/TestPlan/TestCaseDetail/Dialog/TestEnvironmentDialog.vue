@@ -95,8 +95,8 @@ import {
   defineComponent, nextTick, onBeforeMount, Ref, ref,
 } from 'vue';
 import { TestEnvInterface, TestEnvNodeInterface } from 'src/Models/TestEnv';
-import { useStore } from 'vuex'
 import { useClipboard } from '@vueuse/core'
+import { useTestEnvironmentStore } from 'src/pinia/testEnvironmentStore';
 import { useQuasar, useDialogPluginComponent } from 'quasar'
 import { testEnvColumns } from 'src/components/tableColumns';
 import { useGlobalStore } from 'src/pinia/globalStore';
@@ -113,10 +113,10 @@ export default defineComponent({
   },
   setup() {
     const globalStore = useGlobalStore()
+    const testEnvironmentStore = useTestEnvironmentStore()
     const {
       dialogRef, onDialogHide, onDialogOK, onDialogCancel,
     } = useDialogPluginComponent()
-    const $store = useStore()
     const $q = useQuasar()
     const { copy } = useClipboard()
     const footerInfo = ref('')
@@ -132,11 +132,11 @@ export default defineComponent({
     const testEnvFilter = ref('');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const isDark = computed(() => globalStore.darkTheme)
-    const selectedTestEnv = computed(() => $store.getters['testenvironment/selectedTestEnv'] as TestEnvInterface)
-    const testEnvs = $store.getters['testenvironment/testEnvs'] as TestEnvInterface[]
+    const selectedTestEnv = computed(() => testEnvironmentStore.selectedTestEnv)
+    const testEnvs = testEnvironmentStore.testEnvs as TestEnvInterface[]
     onBeforeMount(async () => {
       try {
-        await $store.dispatch('testenvironment/getTestEnvironments');
+        await testEnvironmentStore.getTestEnvironments()
       } catch (error: any) {
         $q.notify({
           type: 'negative',
@@ -148,7 +148,7 @@ export default defineComponent({
 
     function onTestEnvChange(newValue: TestEnvInterface) {
       console.log(newValue)
-      $store.commit('testenvironment/setSelectedTestEnv', newValue)
+      testEnvironmentStore.selectedTestEnv = newValue
     }
 
     // other methods that we used in our vue html template;

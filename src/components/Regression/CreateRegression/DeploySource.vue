@@ -82,6 +82,7 @@ import _ from 'lodash'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 import { useGlobalStore } from 'src/pinia/globalStore';
+import { useTestClientStore } from 'src/pinia/testClientStore';
 import { clientColumns } from 'src/components/tableColumns';
 
 export default defineComponent({
@@ -89,6 +90,7 @@ export default defineComponent({
   components: {},
   setup() {
     const globalStore = useGlobalStore()
+    const testClientStore = useTestClientStore()
     const $store = useStore()
     const $q = useQuasar()
     const tab = ref('')
@@ -101,7 +103,7 @@ export default defineComponent({
       rowsPerPage: 50,
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const clients: Ref<TestClientInterface[]> = computed(() => $store.getters['testclient/testClients'])
+    const clients: Ref<TestClientInterface[]> = computed(() => testClientStore.testClients)
     const selectedClients: Ref<TestClientInterface[]> = ref([])
     const visibleColumns = ref(['Name', 'Description', 'IPAddress', 'Type', 'User', 'RegressionFolder', 'DevelopFolder', 'RunnerFolder'])
     const defineRegression = computed(() => $store.getters['createregression/defineRegression'] as DefineRegressionInterface);

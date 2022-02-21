@@ -57,11 +57,11 @@ import {
 import { TestEnvHistoryInterface } from 'src/Models/TestEnvHistory';
 import { useQuasar } from 'quasar'
 import { UseTimeAgo } from '@vueuse/components'
-import { useStore } from 'vuex'
+import { useTestEnvironmentStore } from 'src/pinia/testEnvironmentStore';
 import { TestEnvInterface } from 'src/Models/TestEnv';
 
+const testEnvironmentStore = useTestEnvironmentStore()
 const $q = useQuasar()
-const $store = useStore();
 const props = defineProps<{
   TestEnv: TestEnvInterface
 }>()
@@ -128,7 +128,7 @@ const testEnvHistories: Ref<TestEnvHistoryInterface[]> = ref([])
 onMounted(async () => {
   try {
     console.log('props.TestEnv.Id', props.TestEnv.Id)
-    testEnvHistories.value = await $store.dispatch('testenvironment/getTestEnvHistories', props.TestEnv.Id)
+    testEnvHistories.value = await testEnvironmentStore.getTestEnvHistories(props.TestEnv.Id)
     testEnvHistories.value = testEnvHistories.value.map((value: TestEnvHistoryInterface, i: number) => ({ ...value, rowIndex: i + 1 }))
   } catch (error: any) {
     $q.notify({

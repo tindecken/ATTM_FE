@@ -127,12 +127,12 @@ import {
   defineComponent, ref, PropType, Ref, onBeforeMount, computed,
 } from 'vue';
 import _ from 'lodash'
-import { useStore } from 'vuex'
 import { QSelect, useDialogPluginComponent, useQuasar } from 'quasar'
 import { TestStepInterface } from 'src/Models/TestStep';
 import { TestCaseInterface } from 'src/Models/TestCase';
 import { useClipboard } from '@vueuse/core'
 import { useGlobalStore } from 'src/pinia/globalStore';
+import { useKeywordStore } from 'src/pinia/keywordStore';
 import { KeywordInterface } from 'src/Models/Keyword';
 import { KeywordFeatureInterface } from 'src/Models/KeywordFeature';
 import { KeywordCategoryInterface } from 'src/Models/KeywordCategory';
@@ -158,15 +158,15 @@ export default defineComponent({
   },
   setup(props) {
     const globalStore = useGlobalStore()
+    const keywordStore = useKeywordStore()
     const {
       dialogRef, onDialogHide, onDialogOK, onDialogCancel,
     } = useDialogPluginComponent()
     const { copy } = useClipboard()
-    const $store = useStore()
     const $q = useQuasar()
     const footerInfoLeft = ref('')
-    const keywordCategories = computed(() => $store.getters['keyword/keywordCategories'] as KeywordCategoryInterface [])
-    const keywords = computed(() => $store.getters['keyword/keywords'] as KeywordInterface[])
+    const keywordCategories = computed(() => keywordStore.keywordCategories as KeywordCategoryInterface [])
+    const keywords = computed(() => keywordStore.keywords as KeywordInterface[])
     const footerInfoRight = computed(() => `${keywords.value.length} keywords`)
     const filteredKeywordCategories: Ref<KeywordCategoryInterface[]> = ref([]);
     const keywordFeatures: Ref<KeywordFeatureInterface[]> = ref([]);
@@ -249,7 +249,7 @@ export default defineComponent({
 
     onBeforeMount(async () => {
       try {
-        const allKeywords = await $store.dispatch('keyword/getKeywords');
+        const allKeywords = await keywordStore.getKeywords()
         console.log('keywords', allKeywords)
       } catch (error: any) {
         $q.notify({

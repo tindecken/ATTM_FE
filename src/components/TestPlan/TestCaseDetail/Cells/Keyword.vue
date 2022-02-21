@@ -28,7 +28,7 @@ import {
 
 import { KeywordInterface } from 'src/Models/Keyword'
 import { FlatKeywordInterface } from 'src/Models/FlatKeyword'
-import { useStore } from 'vuex'
+import { useKeywordStore } from 'src/pinia/keywordStore';
 import { TestStepInterface } from 'src/Models/TestStep'
 import KeywordMenu from '../Menu/KeywordMenu.vue'
 
@@ -43,9 +43,9 @@ export default defineComponent({
   },
   components: { KeywordMenu },
   setup(props, context) {
-    const $store = useStore()
+    const keywordStore = useKeywordStore()
     const filteredKeywords: Ref<FlatKeywordInterface[]> = ref([])
-    const keywords: Ref<FlatKeywordInterface[]> = computed(() => $store.getters['keyword/keywords'] as FlatKeywordInterface[]);
+    const keywords: Ref<FlatKeywordInterface[]> = computed(() => keywordStore.keywords as FlatKeywordInterface[]);
     onMounted(() => {
       filteredKeywords.value = keywords.value;
     })

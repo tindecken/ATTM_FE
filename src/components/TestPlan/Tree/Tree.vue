@@ -72,9 +72,13 @@ import { TestGroupInterface } from 'src/Models/TestGroup';
 import { TestCaseInterface } from 'src/Models/TestCase';
 import { TestSuiteInterface } from 'src/Models/TestSuite';
 import { TestClientInterface } from 'src/Models/TestClient';
-import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 import { useGlobalStore } from 'src/pinia/globalStore';
+import { useCategoryStore } from 'src/pinia/categoryStore';
+import { useTestCaseStore } from 'src/pinia/testCaseStore';
+import { useTestSuiteStore } from 'src/pinia/testSuiteStore';
+import { useTestGroupStore } from 'src/pinia/testGroupStore';
+import { useTestClientStore } from 'src/pinia/testClientStore';
 import { TestCaseHistoryInterface } from 'src/Models/TestCaseHistory';
 import TreeContextMenu from './Menu/TreeContextMenu.vue'
 import NewTestSuiteDialog from './Dialog/NewTestSuiteDialog.vue'
@@ -96,7 +100,11 @@ export default defineComponent({
   },
   setup() {
     const globalStore = useGlobalStore()
-    const $store = useStore()
+    const categoryStore = useCategoryStore()
+    const testCaseStore = useTestCaseStore()
+    const testSuiteStore = useTestSuiteStore()
+    const testGroupStore = useTestGroupStore()
+    const testClientStore = useTestClientStore()
     const $q = useQuasar()
     const filter: Ref<string> = ref('');
     const filterInput: Ref<any> = ref(null)
@@ -124,25 +132,25 @@ export default defineComponent({
           break
         case 'TestCase':
           globalStore.infoStatus.Info = `${currentNode.Id} - ${currentNode.CodeName}: ${currentNode.Name}`
-          const openedTCs = $store.getters['testcase/openedTCs'];
+          const { openedTCs } = testCaseStore
           const found = openedTCs.some((el: any) => el.Id === currentNode.Id);
           if (found) {
-            const testcase = openedTCs.find((el: any) => el.Id === currentNode.Id)
-            $store.commit('testcase/setOpenedTCs', testcase);
+            const testcase = openedTCs.find((el: any) => el.Id === currentNode.Id) as TestCaseInterface;
+            testCaseStore.setOpenedTCs(testcase)
           } else {
-            await $store.dispatch('testcase/getTestCaseById', currentNode.Id);
+            await testCaseStore.getTestCaseById(currentNode.Id)
           }
           break
         default:
           break
       }
     }
-    const selectedTestClient = computed(() => $store.getters['testclient/selectedTestClient'] as TestClientInterface);
+    const selectedTestClient = computed(() => testClientStore.selectedTestClient);
     onMounted(async () => {
       try {
         // get category
-        await $store.dispatch('category/getAllCategories');
-        allCat.value = $store.getters['category/categories'];
+        await categoryStore.getAllCategories()
+        allCat.value = categoryStore.Categories
         // get all TestAUT
         await globalStore.getTestAUT()
         allTestAUT.value = globalStore.testAUTs
@@ -184,7 +192,7 @@ export default defineComponent({
 
     async function onCreateTestSuite(tsInfo: any) {
       try {
-        const testsuite = await $store.dispatch('category/createTestSuite', tsInfo) as TestSuiteInterface;
+        const testsuite = await categoryStore.createTestSuite(tsInfo)
         tree.value.setExpanded(testsuite.CategoryId, true)
         selectedNode.value = testsuite.Id
         $q.notify({
@@ -200,7 +208,7 @@ export default defineComponent({
     }
     async function onCreateTestGroup(newTestGroup: TestGroupInterface) {
       try {
-        const testGroup = await $store.dispatch('testsuite/createTestGroup', newTestGroup) as TestGroupInterface;
+        const testGroup = await testSuiteStore.createTestGroup(newTestGroup)
         tree.value.setExpanded(testGroup.TestSuiteId, true)
         selectedNode.value = testGroup.Id
         $q.notify({
@@ -217,7 +225,7 @@ export default defineComponent({
 
     async function onCreateTestCase(testCase: TestCaseInterface) {
       try {
-        const createTestCase = await $store.dispatch('testgroup/createTestCase', testCase) as TestCaseInterface;
+        const createTestCase = await testGroupStore.createTestCase(testCase)
         tree.value.setExpanded(createTestCase.TestGroupId, true)
         selectedNode.value = createTestCase.Id
         $q.notify({
@@ -233,7 +241,7 @@ export default defineComponent({
     }
     async function onEditTestCase(editedTestCase: TestCaseHistoryInterface) {
       try {
-        const editTestCase = await $store.dispatch('testcase/editTestCase', editedTestCase) as TestCaseInterface;
+        const editTestCase = await testCaseStore.editTestCase(editedTestCase)
         $q.notify({
           type: 'positive',
           message: `Updated test case: ${editTestCase.Name} !`,
@@ -253,7 +261,7 @@ export default defineComponent({
         },
       }).onOk(async (newCategory: CategoryInterface) => {
         try {
-          const category = await $store.dispatch('category/createCategory', newCategory);
+          const category = await categoryStore.createCategory(newCategory)
           console.log('category', category);
           $q.notify({
             type: 'positive',
@@ -289,7 +297,7 @@ export default defineComponent({
         },
       }).onOk(async (newCategory: CategoryInterface) => {
         try {
-          const category = await $store.dispatch('category/createCategory', newCategory);
+          const category = await categoryStore.createCategory(newCategory)
           console.log('category', category);
           $q.notify({
             type: 'positive',
@@ -437,19 +445,19 @@ export default defineComponent({
 
     async function copyCodeToClient() {
       try {
-        const checkping = await $store.dispatch('testclient/ping', selectedTestClient.value.IPAddress);
+        const checkping = await testClientStore.ping(selectedTestClient.value?.IPAddress as string)
         if (checkping.data !== 'success') {
           $q.notify({
             type: 'negative',
-            message: `Ping to ${selectedTestClient.value.IPAddress} failed, can't deploy code to this client !`,
+            message: `Ping to ${selectedTestClient.value?.IPAddress as string} failed, can't deploy code to this client !`,
             timeout: 10000,
           });
           return null
         }
-        const copyCodeToClientResult: Promise<any> = await globalStore.copydevcodetoclient(selectedTestClient.value)
+        const copyCodeToClientResult: Promise<any> = await globalStore.copydevcodetoclient(selectedTestClient.value as TestClientInterface)
         $q.notify({
           type: 'positive',
-          message: `Copy code to client ${selectedTestClient.value.Name} success.`,
+          message: `Copy code to client ${selectedTestClient.value?.Name as string} success.`,
         });
         return copyCodeToClientResult
       } catch (error: any) {
@@ -500,7 +508,7 @@ export default defineComponent({
 
     async function checkRunner() {
       try {
-        const checkRunnerResult = await globalStore.checkautorunner(selectedTestClient.value)
+        const checkRunnerResult = await globalStore.checkautorunner(selectedTestClient.value as TestClientInterface)
         console.log('checkRunnerResult', checkRunnerResult)
         if (checkRunnerResult.result === 'success' && checkRunnerResult.message.includes('Runner is running')) {
           $q.notify({
@@ -561,7 +569,7 @@ export default defineComponent({
           })
             .onOk(async () => {
               try {
-                const deleteResult = await $store.dispatch('testgroup/deleteTestCase', testCases)
+                const deleteResult = await testGroupStore.deleteTestCase(testCases)
                 $q.notify({
                   type: 'positive',
                   message: `Deleted ${deleteResult.length} test case(s) `,
@@ -595,7 +603,7 @@ export default defineComponent({
             })
               .onOk(async () => {
                 try {
-                  const deleteResult = await $store.dispatch('category/deleteCategory', category)
+                  const deleteResult = await categoryStore.deleteCategory(category)
                   console.log('deleteResult', deleteResult)
                   $q.notify({
                     type: 'positive',
@@ -625,7 +633,7 @@ export default defineComponent({
             })
               .onOk(async () => {
                 try {
-                  const deleteResult = await $store.dispatch('category/deleteTestSuite', testSuite)
+                  const deleteResult = await categoryStore.deleteTestSuite(testSuite)
                   console.log('deleteResult', deleteResult)
                   $q.notify({
                     type: 'positive',
@@ -655,7 +663,7 @@ export default defineComponent({
             })
               .onOk(async () => {
                 try {
-                  const deleteResult = await $store.dispatch('testsuite/deleteTestGroup', testGroup)
+                  const deleteResult = await testSuiteStore.deleteTestGroup(testGroup)
                   console.log('deleteResult', deleteResult)
                   $q.notify({
                     type: 'positive',
@@ -685,7 +693,7 @@ export default defineComponent({
             })
               .onOk(async () => {
                 try {
-                  const deleteResult = await $store.dispatch('testgroup/deleteTestCase', [testCase])
+                  const deleteResult = await testGroupStore.deleteTestCase([testCase])
                   $q.notify({
                     type: 'positive',
                     message: `Deleted ${deleteResult.length} test case(s) `,

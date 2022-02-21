@@ -48,7 +48,7 @@ import { TestCaseHistoryInterface } from 'src/Models/TestCaseHistory';
 import {
   defineComponent, onMounted, PropType, ref, Ref,
 } from 'vue';
-import { useStore } from 'vuex'
+import { useTestCaseStore } from 'src/pinia/testCaseStore';
 import { UseTimeAgo } from '@vueuse/components'
 import { useQuasar } from 'quasar'
 
@@ -62,7 +62,7 @@ export default defineComponent({
   },
   components: { UseTimeAgo },
   setup(props) {
-    const $store = useStore()
+    const testCaseStore = useTestCaseStore()
     const $q = useQuasar()
     const columns = [
       {
@@ -126,7 +126,7 @@ export default defineComponent({
     const testUpdateHistories: Ref<TestCaseHistoryInterface[]> = ref([])
     onMounted(async () => {
       try {
-        testUpdateHistories.value = await $store.dispatch('testcase/getUpateHistories', props.TestCase.Id)
+        testUpdateHistories.value = await testCaseStore.getUpateHistories(props.TestCase.Id)
         testUpdateHistories.value = testUpdateHistories.value.map((value: TestCaseHistoryInterface, i: number) => ({ ...value, rowIndex: i + 1 }))
       } catch (error: any) {
         $q.notify({

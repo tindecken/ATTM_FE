@@ -4,7 +4,7 @@
       <q-toolbar style="height: 24px">
         <q-btn dense flat round icon="menu" @click="leftDrawerOpen = !leftDrawerOpen" />
         <q-toolbar-title>
-          Auto Test Management v0.0.2
+          Auto Test Management {{ $q.version}}
         </q-toolbar-title>
         <span>{{currentUser}}</span>
         <q-btn flat round icon="exit_to_app" @click="logout" />

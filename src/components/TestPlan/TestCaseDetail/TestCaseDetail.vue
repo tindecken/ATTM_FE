@@ -166,12 +166,14 @@ import _ from 'lodash'
 import uuid from 'uuid-random'
 import { TestEnvNodeInterface } from 'src/Models/TestEnv';
 import { FlatKeywordInterface } from 'src/Models/FlatKeyword';
-import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 import { TestCaseHistoryInterface } from 'src/Models/TestCaseHistory';
 import { UpdateTestCaseDataInterface } from 'src/Models/Entities/UpdateTestCaseData';
 import { useUserStore } from 'src/pinia/userStore';
 import { useGlobalStore } from 'src/pinia/globalStore';
+import { useCategoryStore } from 'src/pinia/categoryStore';
+import { useTestCaseStore } from 'src/pinia/testCaseStore';
+import { useTestStepStore } from 'src/pinia/testStepStore';
 import TestAUT from './Cells/TestAUT.vue';
 import Keyword from './Cells/Keyword.vue';
 import Parameter from './Cells/Parameter.vue';
@@ -193,7 +195,9 @@ export default defineComponent({
   setup() {
     const globalStore = useGlobalStore()
     const userStore = useUserStore()
-    const $store = useStore()
+    const categoryStore = useCategoryStore()
+    const testCaseStore = useTestCaseStore()
+    const testStepStore = useTestStepStore()
     const $q = useQuasar()
     const showByIndex = ref('')
     const selectedKeyword = ref('')
@@ -414,10 +418,9 @@ export default defineComponent({
     )
     const rightClickIndex = ref(-1)
     const selectedTestCaseId: Ref<string> = computed({
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      get: () => $store.getters['testcase/selectedTestCaseId'],
+      get: () => testCaseStore.selectedTestCaseId,
       set: (val) => {
-        $store.commit('testcase/setSelectedTestCaseId', val);
+        testCaseStore.setSelectedTestCaseId(val)
       },
     })
 
@@ -427,9 +430,8 @@ export default defineComponent({
         return 'disabledLight'
       } return ''
     }
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const openedTCs: Ref<TestCaseInterface[]> = computed(() => $store.getters['testcase/openedTCs'])
-    const copiedTestSteps: Ref<TestStepInterface[]> = computed(() => $store.getters['teststep/copiedTestSteps'])
+    const openedTCs: Ref<TestCaseInterface[]> = computed(() => testCaseStore.openedTCs)
+    const copiedTestSteps: Ref<TestStepInterface[]> = computed(() => testStepStore.copiedTestSteps)
     async function saveTestCase(testCaseId: string) {
       try {
         const currTestCase = openedTCs.value.find((tc: TestCaseInterface) => tc.Id === testCaseId) as TestCaseInterface
@@ -442,7 +444,7 @@ export default defineComponent({
           TestCase: currTestCase,
           UpdateTestCaseData: updateTestCaseData,
         }
-        const result = await $store.dispatch('testcase/saveTestCase', testCaseHistory)
+        const result = await testCaseStore.saveTestCase(testCaseHistory)
         $q.notify({
           type: 'positive',
           message: result.message,
@@ -458,7 +460,7 @@ export default defineComponent({
       // check if testcase is modified or not
       let isModified = false
       // get testcase from database then verify with current one
-      const originalTestCase = await $store.dispatch('testcase/getTestCaseById', testcase.Id) as TestCaseInterface;
+      const originalTestCase = await testCaseStore.getTestCaseById(testcase.Id)
       console.log('originalTestCase', originalTestCase.TestSteps)
       console.log('testCase', testcase.TestSteps)
       if (originalTestCase.TestSteps.length !== testcase.TestSteps.length) {
@@ -526,13 +528,11 @@ export default defineComponent({
         }).onOk((response: 'Save' | 'Discard') => {
           switch (response) {
             case 'Save':
-              console.log('Save')
               void saveTestCase(testcase.Id)
-              $store.commit('testcase/removeOpenedTC', testcase)
+              testCaseStore.removeOpenedTC(testcase)
               break;
             case 'Discard':
-              console.log('Discard')
-              $store.commit('testcase/removeOpenedTC', testcase)
+              testCaseStore.removeOpenedTC(testcase)
               break;
             default:
               break;
@@ -543,7 +543,7 @@ export default defineComponent({
           // TODO
         })
       } else {
-        $store.commit('testcase/removeOpenedTC', testcase)
+        testCaseStore.removeOpenedTC(testcase)
       }
     }
     function changeKeyword(testCase: TestCaseInterface, testStep: TestStepInterface, newKeyword: FlatKeywordInterface) {
@@ -560,8 +560,8 @@ export default defineComponent({
         prClone.TestNodePath = ''
         tempTC.TestSteps[stepIndex].Params.push(prClone);
       })
-      $store.commit('testcase/updateOpenedTCs', tempTC)
-      $store.commit('category/updateTestCase', tempTC)
+      testCaseStore.updateOpenedTCs(tempTC)
+      categoryStore.updateTestCase(tempTC)
     }
 
     function editTestStep(testCase: TestCaseInterface, testStep: TestStepInterface) {
@@ -578,8 +578,8 @@ export default defineComponent({
         if (stepIndex === -1) return
         const tempTC = _.cloneDeep(testCase)
         tempTC.TestSteps[stepIndex] = testStepUpdated;
-        $store.commit('testcase/updateOpenedTCs', tempTC)
-        $store.commit('category/updateTestCase', tempTC)
+        testCaseStore.updateOpenedTCs(tempTC)
+        categoryStore.updateTestCase(tempTC)
       }).onCancel(() => {
         // TODO
       }).onDismiss(() => {
@@ -609,8 +609,8 @@ export default defineComponent({
           prClone.TestNodePath = ''
           tempTC.TestSteps[stepIndex].Params.push(prClone);
         })
-        $store.commit('testcase/updateOpenedTCs', tempTC)
-        $store.commit('category/updateTestCase', tempTC)
+        testCaseStore.updateOpenedTCs(tempTC)
+        categoryStore.updateTestCase(tempTC)
       }).onCancel(() => {
         // TODO
       }).onDismiss(() => {
@@ -623,16 +623,16 @@ export default defineComponent({
       const stepIndex: number = testCase.TestSteps.indexOf(testStep);
       const tempTC: TestCaseInterface = _.cloneDeep(testCase)
       tempTC.TestSteps[stepIndex].TestAUTId = newTestAUT.Id;
-      $store.commit('testcase/updateOpenedTCs', tempTC)
-      $store.commit('category/updateTestCase', tempTC)
+      testCaseStore.updateOpenedTCs(tempTC)
+      categoryStore.updateTestCase(tempTC)
     }
 
     function changeParam(testCase: TestCaseInterface, testStep: TestStepInterface, paramIndex: number, newValue: string) {
       const stepIndex: number = testCase.TestSteps.indexOf(testStep);
       const tempTC: TestCaseInterface = _.cloneDeep(testCase)
       tempTC.TestSteps[stepIndex].Params[paramIndex].Value = newValue;
-      $store.commit('testcase/updateOpenedTCs', tempTC)
-      $store.commit('category/updateTestCase', tempTC)
+      testCaseStore.updateOpenedTCs(tempTC)
+      categoryStore.updateTestCase(tempTC)
     }
 
     function updateTestEnvValue(testCase: TestCaseInterface, testStep: TestStepInterface, paramIndex: number, testEnvNode: TestEnvNodeInterface) {
@@ -640,8 +640,8 @@ export default defineComponent({
       const tempTC: TestCaseInterface = _.cloneDeep(testCase)
       tempTC.TestSteps[stepIndex].Params[paramIndex].TestNodePath = `${testEnvNode.Category}/${testEnvNode.Name}`
       tempTC.TestSteps[stepIndex].Params[paramIndex].Value = testEnvNode.Value;
-      $store.commit('testcase/updateOpenedTCs', tempTC)
-      $store.commit('category/updateTestCase', tempTC)
+      testCaseStore.updateOpenedTCs(tempTC)
+      categoryStore.updateTestCase(tempTC)
     }
 
     function onUnUseTestEnv(testCase: TestCaseInterface, testStep: TestStepInterface, paramIndex: number, currentValue: string) {
@@ -649,8 +649,8 @@ export default defineComponent({
       const tempTC: TestCaseInterface = _.cloneDeep(testCase)
       tempTC.TestSteps[stepIndex].Params[paramIndex].TestNodePath = ''
       tempTC.TestSteps[stepIndex].Params[paramIndex].Value = currentValue
-      $store.commit('testcase/updateOpenedTCs', tempTC)
-      $store.commit('category/updateTestCase', tempTC)
+      testCaseStore.updateOpenedTCs(tempTC)
+      categoryStore.updateTestCase(tempTC)
     }
 
     function onRowHover(params: any) {
@@ -750,7 +750,7 @@ export default defineComponent({
     }
 
     function addNewStep(testCaseId: string) {
-      $store.commit('testcase/addNewStep', testCaseId);
+      testCaseStore.addNewStep(testCaseId)
     }
 
     function onDeleteTestSteps() {
@@ -758,7 +758,7 @@ export default defineComponent({
       selected.value.forEach((selectedTestStep: TestStepInterface) => {
         currTestCase.TestSteps.forEach((testStep: TestStepInterface) => {
           if (testStep.UUID === selectedTestStep.UUID) {
-            $store.commit('testcase/deleteStep', { testCaseId: selectedTestCaseId.value, stepUUID: selectedTestStep.UUID });
+            testCaseStore.deleteStep({ testCaseId: selectedTestCaseId.value, stepUUID: selectedTestStep.UUID })
           }
         })
       })
@@ -770,7 +770,7 @@ export default defineComponent({
       selected.value.forEach((selectedRow: any) => {
         currTestCase.TestSteps.forEach((testStep: TestStepInterface) => {
           if (testStep.UUID === selectedRow.UUID) {
-            $store.commit('testcase/enableStep', { testCaseId: selectedTestCaseId.value, stepUUID: selectedRow.UUID });
+            testCaseStore.enableStep({ testCaseId: selectedTestCaseId.value, stepUUID: selectedRow.UUID })
           }
         })
       })
@@ -781,7 +781,7 @@ export default defineComponent({
       selected.value.forEach((selectedRow: any) => {
         currTestCase.TestSteps.forEach((testStep: TestStepInterface) => {
           if (testStep.UUID === selectedRow.UUID) {
-            $store.commit('testcase/disableStep', { testCaseId: selectedTestCaseId.value, stepUUID: selectedRow.UUID });
+            testCaseStore.disableStep({ testCaseId: selectedTestCaseId.value, stepUUID: selectedRow.UUID })
           }
         })
       })
@@ -790,7 +790,7 @@ export default defineComponent({
     function onCopyTestSteps(testCase: TestCaseInterface) {
       selected.value.sort((a, b) => testCase.TestSteps.indexOf(a) - testCase.TestSteps.indexOf(b));
       if (selected.value.length > 0) {
-        $store.commit('teststep/setCopiedTestSteps', selected.value);
+        testStepStore.setCopiedTestSteps(selected.value)
       }
     }
     function onCutTestSteps(testCase: TestCaseInterface) {
@@ -817,8 +817,8 @@ export default defineComponent({
           KWCategory: '',
         })
       }
-      $store.commit('testcase/updateOpenedTCs', tempTC)
-      $store.commit('category/updateTestCase', tempTC)
+      testCaseStore.updateOpenedTCs(tempTC)
+      categoryStore.updateTestCase(tempTC)
     }
 
     function onPasteTestSteps(testCase: TestCaseInterface) {
@@ -830,8 +830,8 @@ export default defineComponent({
         rightClickIndex.value += 1
         console.log('after', rightClickIndex.value)
       })
-      $store.commit('testcase/updateOpenedTCs', tempTC)
-      $store.commit('category/updateTestCase', tempTC)
+      testCaseStore.updateOpenedTCs(tempTC)
+      categoryStore.updateTestCase(tempTC)
     }
 
     function onInsertPasteTestSteps(testCase: TestCaseInterface) {
@@ -862,8 +862,8 @@ export default defineComponent({
         rightClickIndex.value += 1
         console.log('after', rightClickIndex.value)
       })
-      $store.commit('testcase/updateOpenedTCs', tempTC)
-      $store.commit('category/updateTestCase', tempTC)
+      testCaseStore.updateOpenedTCs(tempTC)
+      categoryStore.updateTestCase(tempTC)
     }
 
     function onInsertDescription(testCase: TestCaseInterface, testStep: TestStepInterface) {
@@ -876,8 +876,8 @@ export default defineComponent({
           const stepIndex: number = testCase.TestSteps.indexOf(testStep);
           const tempTC: TestCaseInterface = _.cloneDeep(testCase)
           tempTC.TestSteps[stepIndex].Description = newDescription;
-          $store.commit('testcase/updateOpenedTCs', tempTC)
-          $store.commit('category/updateTestCase', tempTC)
+          testCaseStore.updateOpenedTCs(tempTC)
+          categoryStore.updateTestCase(tempTC)
         }
       }).onCancel(() => {
         // TODO
@@ -899,8 +899,8 @@ export default defineComponent({
       const stepIndex: number = testCase.TestSteps.indexOf(testStep);
       const tempTC: TestCaseInterface = _.cloneDeep(testCase)
       tempTC.TestSteps[stepIndex].Description = newTSDescription;
-      $store.commit('testcase/updateOpenedTCs', tempTC)
-      $store.commit('category/updateTestCase', tempTC)
+      testCaseStore.updateOpenedTCs(tempTC)
+      categoryStore.updateTestCase(tempTC)
     }
     function filterMethod(rows: TestStepInterface[], filter: string): TestStepInterface[] {
       let filtered: TestStepInterface[] = []

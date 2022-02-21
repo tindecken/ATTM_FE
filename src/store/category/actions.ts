@@ -118,6 +118,7 @@ const actions: ActionTree<CategoryStateInterface, StateInterface> = {
       throw error.response.data;
     }
   },
+
 };
 
 export default actions;

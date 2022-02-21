@@ -177,6 +177,7 @@ import { useStore } from 'vuex'
 import { useQuasar, useDialogPluginComponent } from 'quasar'
 import { useClipboard } from '@vueuse/core'
 import { useGlobalStore } from 'src/pinia/globalStore'
+import { useTestClientStore } from 'src/pinia/testClientStore'
 import _ from 'lodash'
 import { RegressionTestInterface } from 'src/Models/RegressionTest'
 import { TestClientInterface } from 'src/Models/TestClient'
@@ -202,6 +203,7 @@ export default defineComponent({
   setup(props) {
     const globalStore = useGlobalStore()
     const userStore = useUserStore()
+    const testClientStore = useTestClientStore()
     const {
       dialogRef, onDialogHide, onDialogOK, onDialogCancel,
     } = useDialogPluginComponent()
@@ -212,7 +214,7 @@ export default defineComponent({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const isDark = computed(() => globalStore.darkTheme);
     const userName = computed(() => userStore.Username)
-    const clients: Ref<TestClientInterface[]> = computed(() => $store.getters['testclient/testClients'])
+    const clients: Ref<TestClientInterface[]> = computed(() => testClientStore.testClients)
     const selectedClient: Ref<TestClientInterface | null> = ref(null)
     const selectedRegTest: Ref<RegressionTestInterface | null> = ref(null)
     const RegTests: Ref<RegressionTestInterface[]> = ref([])

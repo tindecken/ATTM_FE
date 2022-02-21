@@ -34,7 +34,7 @@ import {
 } from 'vue';
 import { TestStepInterface } from 'src/Models/TestStep';
 import { TestEnvInterface, TestEnvNodeInterface } from 'src/Models/TestEnv';
-import { useStore } from 'vuex'
+import { useTestEnvironmentStore } from 'src/pinia/testEnvironmentStore';
 import { useGlobalStore } from 'src/pinia/globalStore';
 import ParameterMenu from '../Menu/ParameterMenu.vue'
 import { getValueType } from '../Utils/utils'
@@ -56,7 +56,7 @@ export default defineComponent({
   },
   setup(props, context) {
     const globalStore = useGlobalStore()
-    const $store = useStore()
+    const testEnvironmentStore = useTestEnvironmentStore()
     const isParamError: Ref<boolean> = ref(false)
     const paramErrorMessage = ref('')
     const isDark = computed(() => globalStore.darkTheme);
@@ -83,7 +83,7 @@ export default defineComponent({
     }
     function getValueFromTestEnv(ts: TestStepInterface, prIndex: number): string {
       let value = ''
-      const selectedTestEnv = $store.getters['testenvironment/selectedTestEnv'] as TestEnvInterface
+      const selectedTestEnv = testEnvironmentStore.selectedTestEnv as TestEnvInterface
       const catEnv = ts.Params[prIndex].TestNodePath.split('/')[0]
       const nodeEnv = ts.Params[prIndex].TestNodePath.split('/')[1]
 

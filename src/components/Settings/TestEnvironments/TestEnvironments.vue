@@ -117,11 +117,11 @@ export default {
 import {
   ref, Ref, onBeforeMount, nextTick,
 } from 'vue';
-import { useStore } from 'vuex';
 import { TestEnvInterface, TestEnvNodeInterface } from 'src/Models/TestEnv';
 import { testEnvColumns } from 'src/components/tableColumns';
 import { useQuasar } from 'quasar'
 import { useGlobalStore } from 'src/pinia/globalStore';
+import { useTestEnvironmentStore } from 'src/pinia/testEnvironmentStore';
 import NewTestEnvDialog from 'src/components/Settings/TestEnvironments/Dialog/NewTestEnvDialog.vue';
 import PropertiesTestEnvDialog from 'src/components/Settings/TestEnvironments/Dialog/PropertiesTestEnvDialog/PropertiesTestEnvDialog.vue';
 import CloneTestEnvDialog from 'src/components/Settings/TestEnvironments/Dialog/CloneTestEnvDialog.vue';
@@ -130,13 +130,13 @@ import SaveTestEnvDialog from 'src/components/Settings/TestEnvironments/Dialog/S
 import _ from 'lodash'
 
 const globalStore = useGlobalStore();
+const testEnvironmentStore = useTestEnvironmentStore();
 const $q = useQuasar()
-const $store = useStore();
 const testEnvFilter = ref('');
 const initialPagination = {
   rowsPerPage: 50,
 };
-const testEnvs = $store.getters['testenvironment/testEnvs'] as TestEnvInterface[]
+const testEnvs = testEnvironmentStore.testEnvs as TestEnvInterface[];
 const selectedTestEnv = ref<TestEnvInterface | null>(testEnvs.length > 0 ? testEnvs[0] : null)
 const visibleColumns: Ref<string[]> = ref(['no', 'category', 'name', 'value', 'description', 'delete']);
 function onTestEnvChange(newTestEnv: TestEnvInterface) {
@@ -145,7 +145,7 @@ function onTestEnvChange(newTestEnv: TestEnvInterface) {
 }
 onBeforeMount(async () => {
   try {
-    await $store.dispatch('testenvironment/getTestEnvironments');
+    await testEnvironmentStore.getTestEnvironments()
   } catch (error) {
     $q.notify({
       type: 'negative',
@@ -182,7 +182,7 @@ function newTestEnv() {
     componentProps: {
     },
   }).onOk(async (testEnv: TestEnvInterface) => {
-    await $store.dispatch('testenvironment/getTestEnvironments');
+    await testEnvironmentStore.getTestEnvironments()
     testEnvs.push(testEnv)
     selectedTestEnv.value = testEnv
     selectedTestEnv.value.Nodes = selectedTestEnv.value.Nodes.map((envNode: TestEnvNodeInterface, i: number) => ({ ...envNode, rowIndex: i + 1 }))
@@ -207,7 +207,7 @@ function propertiesTestEnv() {
       TestEnv: selectedTestEnv.value,
     },
   }).onOk(async (testEnv: TestEnvInterface) => {
-    await $store.dispatch('testenvironment/getTestEnvironments');
+    await testEnvironmentStore.getTestEnvironments()
     const foundIndex = testEnvs.findIndex((te: TestEnvInterface) => te.Id === testEnv.Id);
     if (foundIndex === -1) {
       $q.notify({
@@ -240,7 +240,7 @@ function cloneTestEnv() {
       TestEnv: selectedTestEnv.value,
     },
   }).onOk(async (newTestEnv: TestEnvInterface) => {
-    await $store.dispatch('testenvironment/getTestEnvironments');
+    await testEnvironmentStore.getTestEnvironments()
     testEnvs.push(newTestEnv)
     selectedTestEnv.value = newTestEnv
     selectedTestEnv.value.Nodes = selectedTestEnv.value.Nodes.map((envNode: TestEnvNodeInterface, i: number) => ({ ...envNode, rowIndex: i + 1 }))
@@ -265,7 +265,7 @@ function deleteTestEnv() {
       TestEnv: selectedTestEnv.value,
     },
   }).onOk(async (testEnv: TestEnvInterface) => {
-    await $store.dispatch('testenvironment/getTestEnvironments');
+    await testEnvironmentStore.getTestEnvironments()
     const foundIndex = testEnvs.findIndex((te: TestEnvInterface) => te.Id === testEnv.Id);
     if (foundIndex === -1) {
       $q.notify({
@@ -306,7 +306,7 @@ function saveTestEnv() {
       TestEnv: selectedTestEnv.value,
     },
   }).onOk(async (testEnv: TestEnvInterface) => {
-    await $store.dispatch('testenvironment/getTestEnvironments');
+    await testEnvironmentStore.getTestEnvironments()
     const foundIndex = testEnvs.findIndex((te: TestEnvInterface) => te.Id === testEnv.Id);
     if (foundIndex === -1) {
       $q.notify({
@@ -326,7 +326,7 @@ function saveTestEnv() {
 }
 
 async function discard() {
-  const testEnv = await $store.dispatch('testenvironment/getTestEnv', selectedTestEnv.value?.Id);
+  const testEnv = await testEnvironmentStore.getTestEnv(selectedTestEnv.value?.Id as string)
   const foundIndex = testEnvs.findIndex((te: TestEnvInterface) => te.Id === selectedTestEnv.value?.Id);
   testEnvs[foundIndex] = testEnv
   selectedTestEnv.value = testEnv
