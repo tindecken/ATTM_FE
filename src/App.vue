@@ -7,6 +7,7 @@ import { Dark } from 'quasar';
 import { useUserStore } from './pinia/userStore'
 import { useTestClientStore } from './pinia/testClientStore'
 import { useGlobalStore } from './pinia/globalStore';
+import { useSettingStore } from './pinia/settingStore';
 
 export default defineComponent({
   name: 'App',
@@ -14,6 +15,7 @@ export default defineComponent({
     const globalStore = useGlobalStore()
     const userStore = useUserStore()
     const testClientStore = useTestClientStore()
+    const settingStore = useSettingStore()
     userStore.$subscribe(() => {
       localStorage.setItem('user', JSON.stringify({
         Id: userStore.Id,
@@ -37,6 +39,11 @@ export default defineComponent({
         darkTheme: globalStore.darkTheme,
       }))
       Dark.set(globalStore.darkTheme);
+    })
+    settingStore.$subscribe(() => {
+      localStorage.setItem('setting', JSON.stringify({
+        setting: settingStore.settings,
+      }))
     })
     onBeforeMount(() => {
       const user = localStorage.getItem('user')

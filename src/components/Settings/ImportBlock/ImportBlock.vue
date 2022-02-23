@@ -4,7 +4,7 @@
       <div class="col-sm-12 col-xs-12 col-md-10 col-lg-6">
         <div class="row">
           <div class="col">
-            <q-input :readonly="readonly" v-model="importBlock" type="textarea" rows="20" />
+            <q-input :readonly="readonly" v-model="importBlockSetting.Value" type="textarea" rows="20" />
           </div>
         </div>
         <div class="row reverse q-mt-md">
@@ -31,8 +31,8 @@ export default defineComponent({
   name: 'ImportBlock',
   components: {},
   props: {
-    settings: {
-      type: Object as PropType<SettingInterface[]>,
+    importBlock: {
+      type: Object as PropType<SettingInterface>,
       required: true,
       default: () => ({}),
     },
@@ -42,15 +42,13 @@ export default defineComponent({
     const settingStore = useSettingStore()
     const $q = useQuasar()
     const readonly = ref(true)
-    const importBlockSetting: Ref<SettingInterface> = computed(() => props.settings.find((setting: SettingInterface) => setting.Name === 'ImportBlock') as SettingInterface)
-    const importBlock = ref('')
-    importBlock.value = importBlockSetting.value?.Value
+    const importBlockSetting: Ref<SettingInterface> = computed(() => props.importBlock)
     async function updateImportBlock() {
       try {
         const newSetting: SettingInterface = {
           Id: importBlockSetting.value.Id,
           Name: 'ImportBlock',
-          Value: importBlock.value,
+          Value: importBlockSetting.value.Value,
           IsDeleted: importBlockSetting.value.IsDeleted,
           Description: importBlockSetting.value.Description,
           UpdatedDateTime: new Date(),
@@ -69,15 +67,12 @@ export default defineComponent({
         });
       }
     }
-    function update(event: any) {
-      importBlock.value = event
-    }
     return {
-      importBlock,
-      update,
       readonly,
       updateImportBlock,
+      importBlockSetting,
     };
   },
 });
+
 </script>

@@ -8,6 +8,7 @@ export const useSettingStore = defineStore('setting', {
     settings: [] as SettingInterface[],
   }),
   getters: {
+    importBlock: (state): SettingInterface => state.settings.find((setting: SettingInterface) => setting.Name === 'ImportBlock') as SettingInterface,
   },
   actions: {
     async getSettings() {

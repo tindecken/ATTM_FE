@@ -191,7 +191,7 @@ export default defineComponent({
     const testGroupSelections = computed(() => regMonitoringStore.testGroupSelections)
     const testClientSelections = computed(() => regMonitoringStore.testClientSelections)
     const regTests = computed(() => regMonitoringStore.regTests)
-    const allCount = computed(() => regMonitoringStore.regTests.length)
+    const allCount = computed(() => regMonitoringStore.regTests?.length)
     const failedCount = computed(() => {
       const all = regMonitoringStore.regTests
       return all.filter((r: RegressionTestInterface) => r.Status === 'Failed').length

@@ -22,7 +22,7 @@
         </q-tabs>
         <q-tab-panels v-model="selectedTab" animated keep-alive>
           <q-tab-panel name="importBlock">
-            <import-block :settings="settings"></import-block>
+            <import-block :importBlock="settingStore.importBlock"></import-block>
           </q-tab-panel>
           <q-tab-panel name="testClients">
             <test-clients></test-clients>
@@ -68,6 +68,7 @@ export default defineComponent({
       }
     })
     return {
+      settingStore,
       settings,
       selectedTab,
     };

@@ -15,9 +15,6 @@ export const useRegMonitoringStore = defineStore('regMonitoring', {
     regressionFilterCriteria: {} as RegressionFilterCriteriaDataInterface,
   }),
   getters: {
-    regTests(state) {
-      return state.regTests;
-    },
     failedRegTests(state) {
       return state.regTests.filter((test: RegressionTestInterface) => test.Status === 'Failed');
     },
