@@ -197,7 +197,6 @@
 import {
   computed, defineComponent, ref, Ref, PropType,
 } from 'vue';
-import { useStore } from 'vuex'
 import { useClipboard } from '@vueuse/core'
 import { UseTimeAgo } from '@vueuse/components'
 import { RegressionInterface } from 'src/Models/Regression'
@@ -229,7 +228,6 @@ export default defineComponent({
     const regressionStore = useRegressionStore()
     const regMonitoringStore = useRegMonitoringStore()
     const $q = useQuasar()
-    const $store = useStore()
     const isDark = computed(() => globalStore.darkTheme)
     const selected: Ref<RegressionTestInterface[]> = ref([])
     const columns = allColumns

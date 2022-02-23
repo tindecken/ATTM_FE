@@ -159,7 +159,6 @@
 import {
   computed, defineComponent, onBeforeMount, ref, Ref, onMounted,
 } from 'vue'
-import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 import { useTitle } from '@vueuse/core'
 import { useRegressionStore } from 'src/pinia/regressionStore'
@@ -182,7 +181,6 @@ export default defineComponent({
   },
   setup() {
     useTitle('Regression')
-    const $store = useStore()
     const regressionStore = useRegressionStore()
     const regMonitoringStore = useRegMonitoringStore()
     const $q = useQuasar()

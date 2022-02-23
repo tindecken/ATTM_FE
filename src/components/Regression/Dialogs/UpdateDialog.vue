@@ -173,7 +173,6 @@
 import {
   computed, defineComponent, Ref, ref, PropType, onMounted,
 } from 'vue'
-import { useStore } from 'vuex'
 import { useQuasar, useDialogPluginComponent } from 'quasar'
 import { useClipboard } from '@vueuse/core'
 import { useGlobalStore } from 'src/pinia/globalStore'
@@ -212,7 +211,6 @@ export default defineComponent({
       dialogRef, onDialogHide, onDialogOK, onDialogCancel,
     } = useDialogPluginComponent()
     const { copy } = useClipboard()
-    const $store = useStore()
     const $q = useQuasar()
     const description = ref('');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
