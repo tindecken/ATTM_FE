@@ -162,8 +162,10 @@ import {
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 import { useTitle } from '@vueuse/core'
+import { useRegressionStore } from 'src/pinia/regressionStore'
 import { RegressionInterface } from 'src/Models/Regression'
 import { RegressionTestInterface } from 'src/Models/RegressionTest'
+import { useRegMonitoringStore } from 'src/pinia/regMonitoring'
 import AllTestTable from './AllTestTable.vue'
 import FailedTable from './FailedTable.vue'
 import PassedTable from './PassedTable.vue'
@@ -181,41 +183,43 @@ export default defineComponent({
   setup() {
     useTitle('Regression')
     const $store = useStore()
+    const regressionStore = useRegressionStore()
+    const regMonitoringStore = useRegMonitoringStore()
     const $q = useQuasar()
-    const regressions = computed(() => $store.getters['regression/regressions'] as RegressionInterface[])
-    const selectedRegression = computed(() => $store.getters['regression/selectedRegression'] as RegressionInterface)
-    const categorySelections = computed(() => $store.getters['regmonitoring/categorySelections'] as string[])
-    const testSuiteSelections = computed(() => $store.getters['regmonitoring/testSuiteSelections'] as string[])
-    const testGroupSelections = computed(() => $store.getters['regmonitoring/testGroupSelections'] as string[])
-    const testClientSelections = computed(() => $store.getters['regmonitoring/testClientSelections'] as string[])
-    const regTests = computed(() => $store.getters['regmonitoring/regTests'] as RegressionTestInterface[])
-    const allCount = computed(() => $store.getters['regmonitoring/regTests'].length)
+    const regressions = computed(() => regressionStore.regressions)
+    const selectedRegression = computed(() => regressionStore.selectedRegression)
+    const categorySelections = computed(() => regMonitoringStore.categorySelections)
+    const testSuiteSelections = computed(() => regMonitoringStore.testSuiteSelections)
+    const testGroupSelections = computed(() => regMonitoringStore.testGroupSelections)
+    const testClientSelections = computed(() => regMonitoringStore.testClientSelections)
+    const regTests = computed(() => regMonitoringStore.regTests)
+    const allCount = computed(() => regMonitoringStore.regTests.length)
     const failedCount = computed(() => {
-      const all = $store.getters['regmonitoring/regTests'] as RegressionTestInterface[]
+      const all = regMonitoringStore.regTests
       return all.filter((r: RegressionTestInterface) => r.Status === 'Failed').length
     })
     const passedCount = computed(() => {
-      const all = $store.getters['regmonitoring/regTests'] as RegressionTestInterface[]
+      const all = regMonitoringStore.regTests
       return all.filter((r: RegressionTestInterface) => r.Status === 'Passed').length
     })
     const inQueueCount = computed(() => {
-      const all = $store.getters['regmonitoring/regTests'] as RegressionTestInterface[]
+      const all = regMonitoringStore.regTests
       return all.filter((r: RegressionTestInterface) => r.Status === 'InQueue').length
     })
     const runningCount = computed(() => {
-      const all = $store.getters['regmonitoring/regTests'] as RegressionTestInterface[]
+      const all = regMonitoringStore.regTests
       return all.filter((r: RegressionTestInterface) => r.Status === 'Running' || r.Status === 'Inconclusive').length
     })
     const analyseFailedCount = computed(() => {
-      const all = $store.getters['regmonitoring/regTests'] as RegressionTestInterface[]
+      const all = regMonitoringStore.regTests
       return all.filter((r: RegressionTestInterface) => r.Status === 'AnalyseFailed').length
     })
     const analysePassedCount = computed(() => {
-      const all = $store.getters['regmonitoring/regTests'] as RegressionTestInterface[]
+      const all = regMonitoringStore.regTests
       return all.filter((r: RegressionTestInterface) => r.Status === 'AnalysePassed').length
     })
     const inCompatibleCount = computed(() => {
-      const all = $store.getters['regmonitoring/regTests'] as RegressionTestInterface[]
+      const all = regMonitoringStore.regTests
       return all.filter((r: RegressionTestInterface) => r.Status === 'InCompatible').length
     })
     const filteredRegressions: Ref<RegressionInterface[]> = ref([])
@@ -227,9 +231,9 @@ export default defineComponent({
     const testCaseFilterText = ref('')
     onBeforeMount(async () => {
       try {
-        await $store.dispatch('regression/getRegressions');
+        await regressionStore.getRegressions()
         if (selectedRegression.value) {
-          await $store.dispatch('regmonitoring/getRegressionDetail', selectedRegression.value.Id)
+          await regMonitoringStore.getRegressionDetail(selectedRegression.value.Id)
         }
       } catch (error: any) {
         $q.notify({
@@ -242,8 +246,8 @@ export default defineComponent({
       filteredRegressions.value = regressions.value
     })
     async function onChangeRegression(regression: RegressionInterface) {
-      $store.commit('regression/setSelectedRegression', regression)
-      await $store.dispatch('regmonitoring/getRegressionDetail', regression.Id)
+      regressionStore.selectedRegression = regression
+      await regMonitoringStore.getRegressionDetail(regression.Id)
     }
     function filterRegressionFn(val: string, update: any) {
       update(() => {
@@ -270,7 +274,7 @@ export default defineComponent({
     async function clearFilter() {
       testCaseFilterText.value = ''
       if (selectedRegression.value) {
-        await $store.dispatch('regmonitoring/getRegressionDetail', selectedRegression.value.Id)
+        await regMonitoringStore.getRegressionDetail(selectedRegression.value.Id)
       }
     }
     function testCaseFilterFunc() {
@@ -281,7 +285,7 @@ export default defineComponent({
       } else {
         const filteredRegTests: RegressionTestInterface[] = regTests.value.filter((rt: RegressionTestInterface) => rt.TestCaseCodeName.toLowerCase().includes(testCaseFilterText.value.toLowerCase().trim()) || rt.TestCaseName.toLowerCase().includes(testCaseFilterText.value.toLowerCase().trim()))
         if (filteredRegTests.length > 0) {
-          $store.commit('regmonitoring/setRegTests', filteredRegTests)
+          regMonitoringStore.regTests = filteredRegTests
         } else {
           $q.notify({
             type: 'info',

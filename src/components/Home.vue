@@ -33,11 +33,11 @@
 </template>
 
 <script lang="ts">
-import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
 import { defineComponent, ref, onMounted } from 'vue';
 import * as signalR from '@microsoft/signalr';
 import { DevRunRecordInterface } from 'src/Models/DevRunRecord';
+import { useDevMonitoringStore } from 'src/pinia/devMonitoringStore';
 import LeftDrawer from './LeftDrawer.vue';
 import RightDrawer from './RightDrawer.vue';
 import EnvFooter from './Footer/EnvFooter.vue';
@@ -57,7 +57,7 @@ export default defineComponent({
   },
   setup() {
     const userStore = useUserStore();
-    const $store = useStore()
+    const devMonitoringStore = useDevMonitoringStore()
     const $route = useRoute()
     const $router = useRouter()
     const leftDrawerOpen = ref(false);
@@ -75,17 +75,17 @@ export default defineComponent({
         .build()
 
       connection.on('DevRunningInfo', (devRunRecord: DevRunRecordInterface) => {
-        $store.commit('devmonitoring/updateDevRunRecords', devRunRecord)
+        devMonitoringStore.updateDevRunRecords(devRunRecord)
       });
 
       connection.on('DevRunningFail', (devRunRecord: DevRunRecordInterface) => {
-        $store.commit('devmonitoring/updateDevRunRecords', devRunRecord)
+        devMonitoringStore.updateDevRunRecords(devRunRecord)
       });
       connection.on('DevRunningPass', (devRunRecord: DevRunRecordInterface) => {
-        $store.commit('devmonitoring/updateDevRunRecords', devRunRecord)
+        devMonitoringStore.updateDevRunRecords(devRunRecord)
       });
       connection.on('TakeDevQueue', (devQueue: any) => {
-        $store.commit('devmonitoring/updateInDevRunRecords', devQueue)
+        devMonitoringStore.updateInDevRunRecords(devQueue)
       });
 
       void connection.start()

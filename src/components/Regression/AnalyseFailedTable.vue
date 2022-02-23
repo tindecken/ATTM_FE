@@ -204,6 +204,8 @@ import { RegressionInterface } from 'src/Models/Regression'
 import { RegressionTestInterface } from 'src/Models/RegressionTest'
 import { useQuasar, date } from 'quasar'
 import { useGlobalStore } from 'src/pinia/globalStore';
+import { useRegressionStore } from 'src/pinia/regressionStore';
+import { useRegMonitoringStore } from 'src/pinia/regMonitoring';
 import RegMenu from './ContextMenu/RegMenu.vue'
 import { allColumns } from './columnDefinitions'
 import RegLog from './Cells/RegLog.vue'
@@ -223,6 +225,8 @@ export default defineComponent({
     UseTimeAgo, RegLog, ErrorScreenshot, RegMenu,
   },
   setup() {
+    const regressionStore = useRegressionStore()
+    const regMonitoringStore = useRegMonitoringStore()
     const globalStore = useGlobalStore()
     const $q = useQuasar()
     const $store = useStore()
@@ -230,7 +234,7 @@ export default defineComponent({
     const selected: Ref<RegressionTestInterface[]> = ref([])
     const columns = allColumns
     const { copy } = useClipboard()
-    const regTests: Ref<RegressionTestInterface[]> = computed(() => $store.getters['regmonitoring/analyseFailedRegTests'])
+    const regTests: Ref<RegressionTestInterface[]> = computed(() => regMonitoringStore.analyseFailedRegTests)
     const initialPagination = {
       sortBy: 'startAt',
       descending: true,
@@ -360,14 +364,14 @@ export default defineComponent({
           RegressionTests: selected.value,
         },
       }).onOk(async () => {
-        // TODO: handle ok
-        const selectedRegression = $store.getters['regression/selectedRegression']
-        await $store.dispatch('regmonitoring/getRegressionDetail', selectedRegression.Id)
+        // TODO: handle ok.
+        const { selectedRegression } = regressionStore
+        await regMonitoringStore.getRegressionDetail(selectedRegression?.Id as string)
         console.log('OK')
       }).onCancel(async () => {
         // TODO
-        const selectedRegression = $store.getters['regression/selectedRegression']
-        await $store.dispatch('regmonitoring/getRegressionDetail', selectedRegression.Id)
+        const { selectedRegression } = regressionStore
+        await regMonitoringStore.getRegressionDetail(selectedRegression?.Id as string)
       }).onDismiss(() => {
         console.log('Dismiss')
       })

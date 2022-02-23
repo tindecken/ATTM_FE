@@ -73,7 +73,7 @@ import {
 } from 'vue';
 
 import { DevRunRecordInterface } from 'src/Models/DevRunRecord';
-import { useStore } from 'vuex'
+import { useDevMonitoringStore } from 'src/pinia/devMonitoringStore';
 import { UseTimeAgo } from '@vueuse/components'
 import { useGlobalStore } from 'src/pinia/globalStore';
 
@@ -89,7 +89,7 @@ export default defineComponent({
   components: { UseTimeAgo },
   setup() {
     const globalStore = useGlobalStore()
-    const $store = useStore()
+    const devMonitoringStore = useDevMonitoringStore()
     const columns = ref(
       [
         {
@@ -164,7 +164,7 @@ export default defineComponent({
         },
       ],
     )
-    const inQueueDevRunRecords: Ref<any[]> = computed(() => $store.getters['devmonitoring/inQueueDevRunRecords'])
+    const inQueueDevRunRecords: Ref<any[]> = computed(() => devMonitoringStore.inQueueDevRunRecords)
     const isDark = computed(() => globalStore.darkTheme)
     const initialPagination = {
       sortBy: 'createAt',

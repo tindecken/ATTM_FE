@@ -157,12 +157,12 @@ import {
   computed,
   defineComponent, ref, Ref, onBeforeMount,
 } from 'vue'
-import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 import { DevRunRecordInterface } from 'src/Models/DevRunRecord';
 import { UseTimeAgo } from '@vueuse/components'
 import { useClipboard, useTitle } from '@vueuse/core'
 import { useGlobalStore } from 'src/pinia/globalStore';
+import { useDevMonitoringStore } from 'src/pinia/devMonitoringStore';
 import DevLog from './DevRunning/DevLog.vue'
 import ErrorScreenshot from './DevRunning/ErrorScreenshot.vue'
 import DevQueue from './DevQueue/DevQueue.vue'
@@ -175,9 +175,9 @@ export default defineComponent({
   },
   setup() {
     const globalStore = useGlobalStore()
+    const devMonitoringStore = useDevMonitoringStore()
     useTitle('Dev Monitoring')
     const $q = useQuasar()
-    const $store = useStore()
     const { copy } = useClipboard()
     const columns = ref(
       [
@@ -354,7 +354,7 @@ export default defineComponent({
     )
     const isDark = computed(() => globalStore.darkTheme)
     const selected: Ref<any[]> = ref([])
-    const devRunRecords: Ref<DevRunRecordInterface[]> = computed(() => $store.getters['devmonitoring/devRunRecords'])
+    const devRunRecords: Ref<DevRunRecordInterface[]> = computed(() => devMonitoringStore.devRunRecords)
     const initialPagination = {
       sortBy: 'startAt',
       descending: true,
@@ -364,8 +364,8 @@ export default defineComponent({
     }
     onBeforeMount(async () => {
       try {
-        await $store.dispatch('devmonitoring/getDevRunRecords');
-        await $store.dispatch('devmonitoring/getInQueueDevRunRecords');
+        await devMonitoringStore.getDevRunRecords()
+        await devMonitoringStore.getInQueueDevRunRecords()
       } catch (error: any) {
         $q.notify({
           type: 'negative',

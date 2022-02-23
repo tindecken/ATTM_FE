@@ -178,6 +178,8 @@ import { useQuasar, useDialogPluginComponent } from 'quasar'
 import { useClipboard } from '@vueuse/core'
 import { useGlobalStore } from 'src/pinia/globalStore'
 import { useTestClientStore } from 'src/pinia/testClientStore'
+import { useRegressionStore } from 'src/pinia/regressionStore'
+import { useRegMonitoringStore } from 'src/pinia/regMonitoring'
 import _ from 'lodash'
 import { RegressionTestInterface } from 'src/Models/RegressionTest'
 import { TestClientInterface } from 'src/Models/TestClient'
@@ -204,6 +206,8 @@ export default defineComponent({
     const globalStore = useGlobalStore()
     const userStore = useUserStore()
     const testClientStore = useTestClientStore()
+    const regressionStore = useRegressionStore()
+    const regMonitoringStore = useRegMonitoringStore()
     const {
       dialogRef, onDialogHide, onDialogOK, onDialogCancel,
     } = useDialogPluginComponent()
@@ -248,7 +252,7 @@ export default defineComponent({
       if (form.value !== null) form.value.validate(false);
     }
     async function showImage(regTest: RegressionTestInterface) {
-      const image = await $store.dispatch('regmonitoring/getScreenshot', regTest.LastRegressionRunRecord?.ErrorScreenshot);
+      const image = await regMonitoringStore.getScreenshot(regTest.LastRegressionRunRecord?.ErrorScreenshot)
       const contentType = 'image/png';
       const byteCharacters = atob(image.substr(`data:${contentType};base64,`.length));
       const byteArrays = [];
@@ -287,7 +291,7 @@ export default defineComponent({
         CommentBy: userName.value,
         Comment: commentInput.value,
       }
-      const updateComment: Promise<any> = $store.dispatch('regression/addCommentForRegressionTests', commentData)
+      const updateComment: Promise<any> = regressionStore.addCommentForRegressionTests(commentData)
       void updateComment.then((r) => {
         console.log('updateComment', r)
         RegTests.value.forEach((regTest: RegressionTestInterface) => {
@@ -316,7 +320,7 @@ export default defineComponent({
         CommentBy: userName.value,
         Comment: commentInput.value,
       }
-      const updateComment: Promise<any> = $store.dispatch('regression/addCommentForRegressionTests', commentData)
+      const updateComment: Promise<any> = regressionStore.addCommentForRegressionTests(commentData)
       void updateComment.then((r) => {
         console.log('updateComment', r)
         if (selectedRegTest.value !== null) {
@@ -348,7 +352,7 @@ export default defineComponent({
         IsHighPriority: isHighPriority.value,
         UpdateBy: userName.value,
       }
-      const setQueueResult: Promise<any> = $store.dispatch('regression/setRegressionQueue', regressionQueueData)
+      const setQueueResult: Promise<any> = regressionStore.setRegressionQueue(regressionQueueData)
       void setQueueResult.then((r: any) => {
         console.log('setQueueResult', r)
         RegTests.value.forEach((regTest: RegressionTestInterface) => {
@@ -419,7 +423,7 @@ export default defineComponent({
         Reason: reason.value,
         Issue: issue.value,
       }
-      const setRegressionStatusResult: Promise<any> = $store.dispatch('regression/setRegressionAnalyseStatus', regressionAnalyStatusData)
+      const setRegressionStatusResult: Promise<any> = regressionStore.setRegressionAnalyseStatus(regressionAnalyStatusData)
       void setRegressionStatusResult.then((r: any) => {
         reason.value = ''
         issue.value = ''

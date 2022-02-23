@@ -60,19 +60,17 @@
 
 <script lang="ts">
 import { computed, defineComponent, ref } from 'vue';
-import { TestCaseInterface } from 'src/Models/TestCase';
-import { TestCaseDetailInterface } from 'src/Models/TestCaseDetail';
 import { useQuasar } from 'quasar'
-import { useStore } from 'vuex'
 import { useGlobalStore } from 'src/pinia/globalStore';
+import { useCreateRegressionStore } from 'src/pinia/createRegressionStore';
 import { useClipboard } from '@vueuse/core'
 
 export default defineComponent({
   name: 'BuildProject',
   components: {},
   setup() {
+    const createRegressionStore = useCreateRegressionStore()
     const globalStore = useGlobalStore()
-    const $store = useStore()
     const $q = useQuasar()
     const tab = ref('getLatestCode')
     const { copy } = useClipboard()
@@ -83,8 +81,8 @@ export default defineComponent({
     const buildProjectStatus = ref('')
     const buildProjectMessage = ref('')
     const splitterModel = ref(7)
-    const selectedTestCasesDetail = computed(() => $store.getters['createregression/selectedTestCasesDetail'] as TestCaseDetailInterface[]);
-    const selectedTestCases = computed(() => $store.getters['createregression/selectedTestCases'] as TestCaseInterface[]);
+    const selectedTestCasesDetail = computed(() => createRegressionStore.selectedTestCasesDetail);
+    const selectedTestCases = computed(() => createRegressionStore.selectedTestCases);
     console.log('selectedTestCasesDetail', selectedTestCasesDetail)
     function clearStatusAndMessage() {
       getLatestCodeStatus.value = ''
@@ -98,8 +96,8 @@ export default defineComponent({
       clearStatusAndMessage()
       tab.value = 'getLatestCode'
       console.log('generateAndBuildProject')
-      $store.commit('createregression/setSelectedTestCases', [])
-      await $store.dispatch('createregression/getAndAddSelectedTestCase', selectedTestCasesDetail.value);
+      createRegressionStore.selectedTestCases = []
+      await createRegressionStore.getAndAddSelectedTestCase(selectedTestCasesDetail.value)
       console.log('selectedTestCases.value', selectedTestCases.value)
       const getLatestCodeResult: Promise<any> = globalStore.getLatestCode();
 

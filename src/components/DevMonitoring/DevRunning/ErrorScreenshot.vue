@@ -12,7 +12,7 @@ import {
 } from 'vue';
 
 import { DevRunRecordInterface } from 'src/Models/DevRunRecord';
-import { useStore } from 'vuex'
+import { useDevMonitoringStore } from 'src/pinia/devMonitoringStore';
 
 export default defineComponent({
   name: 'ErrorScreenshot',
@@ -25,9 +25,9 @@ export default defineComponent({
   },
   components: { },
   setup(props) {
-    const $store = useStore()
+    const devMonitoringStore = useDevMonitoringStore()
     async function showImage() {
-      const image = await $store.dispatch('devmonitoring/getScreenshot', props.DevRunRecord.ErrorScreenshot);
+      const image = await devMonitoringStore.getScreenshot(props.DevRunRecord.ErrorScreenshot as string)
       const contentType = 'image/png';
       const byteCharacters = atob(image.substr(`data:${contentType};base64,`.length));
       const byteArrays = [];

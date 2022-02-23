@@ -22,9 +22,9 @@
 import {
   defineComponent, ref, computed, PropType, Ref,
 } from 'vue';
-import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 import { useUserStore } from 'src/pinia/userStore';
+import { useSettingStore } from 'src/pinia/settingStore';
 import { SettingInterface } from '../../../Models/Setting'
 
 export default defineComponent({
@@ -39,7 +39,7 @@ export default defineComponent({
   },
   setup(props) {
     const userStore = useUserStore()
-    const $store = useStore()
+    const settingStore = useSettingStore()
     const $q = useQuasar()
     const readonly = ref(true)
     const importBlockSetting: Ref<SettingInterface> = computed(() => props.settings.find((setting: SettingInterface) => setting.Name === 'ImportBlock') as SettingInterface)
@@ -57,7 +57,7 @@ export default defineComponent({
           UpdatedBy: userStore.Username,
         }
         console.log('newSetting', newSetting)
-        const result = await $store.dispatch('setting/updateSetting', { settingId: importBlockSetting.value.Id, setting: newSetting });
+        const result = await settingStore.updateSetting({ settingId: importBlockSetting.value.Id, setting: newSetting })
         $q.notify({
           type: 'positive',
           message: `${result.message}`,

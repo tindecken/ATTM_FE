@@ -76,13 +76,12 @@
 import {
   computed, defineComponent, ref, Ref,
 } from 'vue';
-import { DefineRegressionInterface } from 'src/Models/DefineRegression';
 import { TestClientInterface } from 'src/Models/TestClient';
 import _ from 'lodash'
-import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 import { useGlobalStore } from 'src/pinia/globalStore';
 import { useTestClientStore } from 'src/pinia/testClientStore';
+import { useCreateRegressionStore } from 'src/pinia/createRegressionStore';
 import { clientColumns } from 'src/components/tableColumns';
 
 export default defineComponent({
@@ -91,7 +90,7 @@ export default defineComponent({
   setup() {
     const globalStore = useGlobalStore()
     const testClientStore = useTestClientStore()
-    const $store = useStore()
+    const createRegressionStore = useCreateRegressionStore()
     const $q = useQuasar()
     const tab = ref('')
     const deploySourceStatus = ref('')
@@ -106,7 +105,7 @@ export default defineComponent({
     const clients: Ref<TestClientInterface[]> = computed(() => testClientStore.testClients)
     const selectedClients: Ref<TestClientInterface[]> = ref([])
     const visibleColumns = ref(['Name', 'Description', 'IPAddress', 'Type', 'User', 'RegressionFolder', 'DevelopFolder', 'RunnerFolder'])
-    const defineRegression = computed(() => $store.getters['createregression/defineRegression'] as DefineRegressionInterface);
+    const defineRegression = computed(() => createRegressionStore.defineRegression);
     function retryDeploySource(client: TestClientInterface) {
       const index: number = selectedClients.value.findIndex((c: TestClientInterface) => c.Id === client.Id);
       client.DeploySourceStatus = ''
@@ -141,7 +140,7 @@ export default defineComponent({
       selectedClients.value[index] = client
       const payload = {
         testClient: client,
-        regressionName: defineRegression.value.Name,
+        regressionName: defineRegression.value?.Name,
       }
       const updateReleaseResult: Promise<any> = globalStore.updatereleaseforclient(payload)
       updateReleaseResult.then((r: any) => {
@@ -195,7 +194,7 @@ export default defineComponent({
           });
           const payload = {
             testClient,
-            regressionName: defineRegression.value.Name,
+            regressionName: defineRegression.value?.Name,
           }
           const updateReleaseResult: Promise<any> = globalStore.updatereleaseforclient(payload)
           updateReleaseResult.then((u) => {

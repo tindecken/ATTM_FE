@@ -28,9 +28,9 @@ import {
   defineComponent, computed, PropType,
 } from 'vue';
 
-import { useStore } from 'vuex'
 import { useClipboard } from '@vueuse/core'
 import { useGlobalStore } from 'src/pinia/globalStore';
+import { useRegMonitoringStore } from 'src/pinia/regMonitoring';
 
 export default defineComponent({
   name: 'RegLogDialog',
@@ -49,7 +49,7 @@ export default defineComponent({
   components: { },
   setup(props) {
     const globalStore = useGlobalStore()
-    const $store = useStore()
+    const regMonitoringStore = useRegMonitoringStore()
     const isDark = computed(() => globalStore.darkTheme)
     // REQUIRED; must be called inside of setup()
     const {
@@ -57,7 +57,7 @@ export default defineComponent({
     } = useDialogPluginComponent()
     const { copy } = useClipboard()
     async function showImage() {
-      const image = await $store.dispatch('regmonitoring/getScreenshot', props.RegressionTest.LastRegressionRunRecord?.ErrorScreenshot);
+      const image = await regMonitoringStore.getScreenshot(props.RegressionTest.LastRegressionRunRecord?.ErrorScreenshot)
       const contentType = 'image/png';
       const byteCharacters = atob(image.substr(`data:${contentType};base64,`.length));
       const byteArrays = [];

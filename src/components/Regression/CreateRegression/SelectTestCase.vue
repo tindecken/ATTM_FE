@@ -34,14 +34,14 @@ import {
   computed, defineComponent, onMounted, Ref, ref, watch,
 } from 'vue';
 import { TestCaseDetailInterface } from 'src/Models/TestCaseDetail';
-import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
+import { useCreateRegressionStore } from 'src/pinia/createRegressionStore';
 
 export default defineComponent({
   name: 'SelectTestCase',
   components: {},
   setup(props, context) {
-    const $store = useStore()
+    const createRegressionStore = useCreateRegressionStore()
     const $q = useQuasar()
     const columns = [
       {
@@ -186,7 +186,7 @@ export default defineComponent({
       rowsPerPage: 50,
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const testCases: Ref<TestCaseDetailInterface[]> = computed(() => $store.getters['createregression/allTestCasesDetail'])
+    const testCases: Ref<TestCaseDetailInterface[]> = computed(() => createRegressionStore.allTestCasesDetail)
     const selected: Ref<TestCaseDetailInterface[]> = ref([])
     const visibleColumns = ref(['FullName', 'Category', 'TestSuite', 'TestGroup', 'Owner', 'Type', 'IsPrimary', 'Queue', 'CreatedDate', 'LastModifiedDate'])
     function getSelectedString() {
@@ -195,7 +195,7 @@ export default defineComponent({
     watch(
       () => selected.value,
       () => {
-        $store.commit('createregression/setSelectedTestCasesDetail', selected.value)
+        createRegressionStore.selectedTestCasesDetail = selected.value
         if (selected.value.length === 0) {
           context.emit('validateForm', false)
         } else {
@@ -206,9 +206,9 @@ export default defineComponent({
     onMounted(async () => {
       try {
         context.emit('validateForm', false)
-        $store.commit('createregression/setSelectedTestCasesDetail', [])
-        $store.commit('createregression/setSelectedTestCases', [])
-        await $store.dispatch('createregression/getAllTestCaseDetails');
+        createRegressionStore.selectedTestCasesDetail = []
+        createRegressionStore.selectedTestCases = []
+        await createRegressionStore.getAllTestCaseDetails()
       } catch (error: any) {
         $q.notify({
           type: 'negative',

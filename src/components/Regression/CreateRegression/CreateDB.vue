@@ -69,10 +69,9 @@
 <script lang="ts">
 import { computed, defineComponent, ref } from 'vue';
 import { DefineRegressionInterface } from 'src/Models/DefineRegression';
-import { TestCaseInterface } from 'src/Models/TestCase';
 import { TestCaseDetailInterface } from 'src/Models/TestCaseDetail';
-import { useStore } from 'vuex'
 import { useGlobalStore } from 'src/pinia/globalStore';
+import { useCreateRegressionStore } from 'src/pinia/createRegressionStore';
 import { useQuasar } from 'quasar'
 import { useClipboard } from '@vueuse/core'
 
@@ -81,7 +80,7 @@ export default defineComponent({
   components: {},
   setup() {
     const globalStore = useGlobalStore()
-    const $store = useStore()
+    const createRegressionStore = useCreateRegressionStore()
     const $q = useQuasar()
     const { copy } = useClipboard()
     const splitterModel = ref(10)
@@ -94,9 +93,9 @@ export default defineComponent({
     const generateRegCodeMessage = ref('')
     const buildProjectStatus = ref('')
     const buildProjectMessage = ref('')
-    const selectedTestCasesDetail = computed(() => $store.getters['createregression/selectedTestCasesDetail'] as TestCaseDetailInterface[]);
-    const selectedTestCases = computed(() => $store.getters['createregression/selectedTestCases'] as TestCaseInterface[]);
-    const defineRegression = computed(() => $store.getters['createregression/defineRegression'] as DefineRegressionInterface);
+    const selectedTestCasesDetail = computed(() => createRegressionStore.selectedTestCasesDetail)
+    const selectedTestCases = computed(() => createRegressionStore.selectedTestCases);
+    const defineRegression = computed(() => createRegressionStore.defineRegression);
     console.log('selectedTestCasesDetail', selectedTestCasesDetail)
     console.log('selectedTestCases', selectedTestCases)
     console.log('defineRegression', defineRegression)
@@ -113,7 +112,7 @@ export default defineComponent({
     }
     function createDB() {
       clearStatusAndMessage()
-      const createRegression: Promise<any> = $store.dispatch('createregression/createRegression', defineRegression.value);
+      const createRegression: Promise<any> = createRegressionStore.createRegression(defineRegression.value as DefineRegressionInterface)
       createRegression.then((r) => {
         tab.value = 'createRegression'
         createRegressionStatus.value = 'Success'
@@ -134,7 +133,7 @@ export default defineComponent({
         selectedTestCasesDetail.value.forEach((c: TestCaseDetailInterface) => {
           Ids.push(c.Id)
         })
-        const createRegressionTest: Promise<any> = $store.dispatch('createregression/createRegressionTests', { regressionId: r.data.Id, selectedTestCasesDetailIds: Ids });
+        const createRegressionTest: Promise<any> = createRegressionStore.createRegressionTests({ regressionId: r.data.Id, selectedTestCasesDetailIds: Ids })
         createRegressionTest.then((t) => {
           tab.value = 'createRegressionTest'
           createRegressionTestStatus.value = 'Success'

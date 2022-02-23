@@ -11,7 +11,7 @@ import {
   defineComponent, PropType,
 } from 'vue';
 
-import { useStore } from 'vuex'
+import { useRegMonitoringStore } from 'src/pinia/regMonitoring';
 import { RegressionTestInterface } from 'src/Models/RegressionTest';
 
 export default defineComponent({
@@ -25,9 +25,9 @@ export default defineComponent({
   },
   components: { },
   setup(props) {
-    const $store = useStore()
+    const regMonitoringStore = useRegMonitoringStore()
     async function showImage() {
-      const image = await $store.dispatch('regmonitoring/getScreenshot', props.RegTest.LastRegressionRunRecord?.ErrorScreenshot);
+      const image = await regMonitoringStore.getScreenshot(props.RegTest.LastRegressionRunRecord?.ErrorScreenshot)
       const contentType = 'image/png';
       const byteCharacters = atob(image.substr(`data:${contentType};base64,`.length));
       const byteArrays = [];

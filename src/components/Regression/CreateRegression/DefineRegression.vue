@@ -96,7 +96,7 @@ import {
 } from 'vue';
 import { date } from 'quasar'
 import { DefineRegressionInterface } from 'src/Models/DefineRegression';
-import { useStore } from 'vuex'
+import { useCreateRegressionStore } from 'src/pinia/createRegressionStore';
 import { useUserStore } from '../../../pinia/userStore'
 
 export default defineComponent({
@@ -104,7 +104,7 @@ export default defineComponent({
   components: {},
   setup(props, context) {
     const userStore = useUserStore()
-    const $store = useStore()
+    const createRegressionStore = useCreateRegressionStore()
     const datePicker: Ref<any> = ref(null)
     const name = ref('');
     const release = ref('');
@@ -132,7 +132,7 @@ export default defineComponent({
               RegressionTestIds: [],
             }
             context.emit('validateForm', true)
-            $store.commit('createregression/setDefineRegression', defineRegressionObject)
+            createRegressionStore.defineRegression = defineRegressionObject
           } else {
             context.emit('validateForm', false)
           }
@@ -140,7 +140,8 @@ export default defineComponent({
       });
     }
 
-    onMounted(() => $store.commit('createregression/setDefineRegression', null));
+    // eslint-disable-next-line no-return-assign
+    onMounted(() => createRegressionStore.defineRegression = null);
 
     function rangeStart(startDate: any) {
       dateRange.from = date.formatDate(date.buildDate({ year: startDate.year, month: startDate.month, date: startDate.day }, true), 'YYYY/MM/DD')

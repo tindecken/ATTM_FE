@@ -40,9 +40,9 @@
 import {
   defineComponent, ref, onBeforeMount, Ref, computed,
 } from 'vue';
-import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 import { useTitle } from '@vueuse/core'
+import { useSettingStore } from 'src/pinia/settingStore';
 import ImportBlock from './ImportBlock/ImportBlock.vue'
 import TestClients from './TestClients/TestClients.vue'
 import TestEnvironments from './TestEnvironments/TestEnvironments.vue'
@@ -53,13 +53,13 @@ export default defineComponent({
   components: { ImportBlock, TestClients, TestEnvironments },
   setup() {
     useTitle('Settings');
-    const $store = useStore()
+    const settingStore = useSettingStore()
     const $q = useQuasar()
     const selectedTab = ref('importBlock')
-    const settings: Ref<SettingInterface[]> = computed(() => $store.getters['setting/settings'] as SettingInterface[])
+    const settings: Ref<SettingInterface[]> = computed(() => settingStore.settings)
     onBeforeMount(async () => {
       try {
-        await $store.dispatch('setting/getSettings');
+        await settingStore.getSettings()
       } catch (error) {
         $q.notify({
           type: 'negative',
