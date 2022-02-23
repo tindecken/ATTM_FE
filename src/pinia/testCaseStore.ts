@@ -74,7 +74,6 @@ export const useTestCaseStore = defineStore('testcase', {
         const responseTestCase = (await response.data.data) as TestCaseInterface;
         let testCase = _.cloneDeep(responseTestCase)
         testCase = paintTestCase(testCase);
-        // create in vuex
         categoryStore.updateTestCase(testCase)
         this.updateOpenedTCs(testCase);
         return responseTestCase

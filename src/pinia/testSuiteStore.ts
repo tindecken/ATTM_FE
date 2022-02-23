@@ -29,7 +29,6 @@ export const useTestSuiteStore = defineStore('testsuite', {
           },
         )
         const responseTestGroup = await response.data as TestGroupInterface;
-        // create in vuex
         // commit to category module
         categoryStore.createTestGroup(responseTestGroup)
         return responseTestGroup

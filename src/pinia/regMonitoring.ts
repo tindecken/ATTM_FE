@@ -3,7 +3,6 @@ import { useUserStore } from 'src/pinia/userStore'
 import { api } from 'boot/axios'
 import { RegressionFilterCriteriaDataInterface } from 'src/Models/Entities/RegressionFilterCriteriaData'
 import { RegressionTestInterface } from 'src/Models/RegressionTest'
-import { RegMonitoringStateInterface } from 'src/store/regmonitoring/state'
 
 export const useRegMonitoringStore = defineStore('regMonitoring', {
   state: () => ({
@@ -16,46 +15,46 @@ export const useRegMonitoringStore = defineStore('regMonitoring', {
     regressionFilterCriteria: {} as RegressionFilterCriteriaDataInterface,
   }),
   getters: {
-    regTests(state: RegMonitoringStateInterface) {
+    regTests(state) {
       return state.regTests;
     },
-    failedRegTests(state: RegMonitoringStateInterface) {
+    failedRegTests(state) {
       return state.regTests.filter((test: RegressionTestInterface) => test.Status === 'Failed');
     },
-    passedRegTests(state: RegMonitoringStateInterface) {
+    passedRegTests(state) {
       return state.regTests.filter((test: RegressionTestInterface) => test.Status === 'Passed');
     },
-    inQueueRegTests(state: RegMonitoringStateInterface) {
+    inQueueRegTests(state) {
       return state.regTests.filter((test: RegressionTestInterface) => test.Status === 'InQueue');
     },
-    runningRegTests(state: RegMonitoringStateInterface) {
+    runningRegTests(state) {
       return state.regTests.filter((test: RegressionTestInterface) => test.Status === 'Running' || test.Status === 'Inconclusive');
     },
-    analyseFailedRegTests(state: RegMonitoringStateInterface) {
+    analyseFailedRegTests(state) {
       return state.regTests.filter((test: RegressionTestInterface) => test.Status === 'AnalyseFailed');
     },
-    analysePassedRegTests(state: RegMonitoringStateInterface) {
+    analysePassedRegTests(state) {
       return state.regTests.filter((test: RegressionTestInterface) => test.Status === 'AnalysePassed');
     },
-    inCompatibleRegTests(state: RegMonitoringStateInterface) {
+    inCompatibleRegTests(state) {
       return state.regTests.filter((test: RegressionTestInterface) => test.Status === 'InCompatible');
     },
-    selectedRegTest(state: RegMonitoringStateInterface) {
+    selectedRegTest(state) {
       return state.selectedRegTest;
     },
-    categorySelections(state: RegMonitoringStateInterface) {
+    categorySelections(state) {
       return state.categorySelections;
     },
-    testSuiteSelections(state: RegMonitoringStateInterface) {
+    testSuiteSelections(state) {
       return state.testSuiteSelections;
     },
-    testGroupSelections(state: RegMonitoringStateInterface) {
+    testGroupSelections(state) {
       return state.testGroupSelections;
     },
-    testClientSelections(state: RegMonitoringStateInterface) {
+    testClientSelections(state) {
       return state.testClientSelections;
     },
-    regressionFilterCriteria(state: RegMonitoringStateInterface) {
+    regressionFilterCriteria(state) {
       return state.regressionFilterCriteria;
     },
   },
