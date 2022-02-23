@@ -6,7 +6,6 @@ import {
   createWebHistory,
 } from 'vue-router';
 import { UserInterface } from 'src/Models/User';
-import { StateInterface } from '../store';
 import routes from './routes';
 
 /*
@@ -14,7 +13,7 @@ import routes from './routes';
  * directly export the Router instantiation
  */
 
-export default route<StateInterface>(() => {
+export default route(() => {
   const createHistory = process.env.SERVER
     ? createMemoryHistory
     : process.env.VUE_ROUTER_MODE === 'history'

@@ -39,12 +39,19 @@ export default defineComponent({
       Dark.set(globalStore.darkTheme);
     })
     onBeforeMount(() => {
-      // const globalStorage = localStorage.getItem('global')
-      // if (globalStorage) {
-      //   const global = JSON.parse(globalStorage)
-      //   globalStore.darkTheme = global.darkTheme
-      //   Dark.set(globalStore.darkTheme);
-      // } else Dark.set(false)
+      const user = localStorage.getItem('user')
+      if (user) {
+        userStore.Id = JSON.parse(user).Id
+        userStore.Token = JSON.parse(user).Token
+        userStore.Username = JSON.parse(user).Username
+        userStore.Role = JSON.parse(user).Role
+        userStore.Email = JSON.parse(user).Email
+        userStore.DidAutoLogout = JSON.parse(user).DidAutoLogout
+      }
+      const globalStorage = localStorage.getItem('global')
+      if (globalStorage) {
+        globalStore.darkTheme = JSON.parse(globalStorage).darkTheme
+      }
     });
   },
 });
