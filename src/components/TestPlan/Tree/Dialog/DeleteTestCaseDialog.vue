@@ -1,14 +1,21 @@
 <template>
   <q-dialog ref="dialogRef" @hide="onDialogHide" persistent>
-    <q-layout
-      class="q-pa-sm"
+    <q-layout view="hHh lpR fFf"
       :class="isDark ? 'bg-grey-9' : 'bg-grey-3'"
-      style="max-height: 400px; min-height: 100px !important;"
+      style="max-height: 130px; min-height: 100px !important; min-width: 200px"
+      container
     >
-      <div class="row q-mb-sm">
-        <span class="text-h6" v-if="testCases.length > 1">Are you sure to delete {{testCases.length}} test case(s)?</span>
-        <span class="text-h6" v-else>Are you sure to delete test case: {{testCases[0].CodeName}} - {{testCases[0].Name}}?</span>
-      </div>
+      <q-header reveal bordered class="row justify-between bg-secondary">
+        <div class="self-center text-subtitle1 q-pl-sm">Delete test case</div>
+        <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
+          <q-tooltip>Close</q-tooltip>
+        </q-btn>
+      </q-header>
+      <q-page-container class="q-pa-sm">
+        <div class="row q-mb-sm">
+          <span class="text-subtitle1" v-if="testCases.length > 1">Are you sure to delete {{testCases.length}} test case(s)?</span>
+          <span class="text-subtitle1" v-else>Are you sure to delete test case: {{testCases[0].CodeName}} - {{testCases[0].Name}}?</span>
+        </div>
         <div class="column items-end q-mt-md">
           <div class="col">
             <q-btn
@@ -22,11 +29,12 @@
               outline
               label="Delete"
               type="submit"
-              color="primary"
+              color="negative"
               @click="onDeleteClick()"
             />
           </div>
         </div>
+      </q-page-container>
     </q-layout>
   </q-dialog>
 </template>
