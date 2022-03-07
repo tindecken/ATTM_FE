@@ -27,9 +27,10 @@ Todo:
   ✔ add menu new testsuite in category, implement this feature @done(21-02-26 22:20)
   ✔ add menu new testgroup in testsuite, implement this feature @done(21-02-26 22:20)
   ☐ add menu new testcase in testgroup, implement this feature
-  ☐ after create new testsuite --> let tree select it automatically
-  ☐ after create new testgroup --> let tree select it automatically
-  ☐ after create new testcase --> let tree select it automatically
+  ✔ after create new testsuite --> let tree select it automatically @done(22-02-26 20:32)
+  ✔ after create new testgroup --> let tree select it automatically @done(22-02-26 20:32)
+  ✔ after create new testcase --> let tree select it automatically @done(22-02-26 20:32)
+  ☐ after create new testcase -->
   ☐ add mockdata for multiple category, multiple t-est suite, multiple test groups, allow generate code from multiple categories
   ☐ generate code for multiple category
   ☐ treeview - paint the category --> testsuite --> testgroup

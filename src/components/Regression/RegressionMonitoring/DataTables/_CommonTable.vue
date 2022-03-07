@@ -15,7 +15,7 @@
       :rows-per-page-options="[0]"
       no-data-label="No regression test record found"
       :selected-rows-label="getSelectedString"
-      :visible-columns="visibleColumns"
+      :visible-columns="visibleCols"
       :pagination="initialPagination"
       :filter="filterTable.trim()"
     >
@@ -30,7 +30,7 @@
       </template>
       <template v-slot:top-right>
         <q-select
-          v-model="visibleColumns"
+          v-model="visibleCols"
           multiple
           borderless
           dense
@@ -61,7 +61,6 @@
           :props="props"
           @click.ctrl="toggleSelectedRow(props.row)"
           @click.exact="toggleSingleRow(props.row)"
-          @click.shift="toggleRowGroup(props.row)"
           @click.right="toogleRightClick(props.row)"
           :class="styleStatus(props.row.Status)"
           >
@@ -183,19 +182,19 @@
         </q-tr>
       </template>
     </q-table>
-    <div class="q-mt-md">
-      Selected:
-      <ul>
-        <li v-for="value in selected" :key="value.Id">
-          {{value.Id}}
-        </li>
-      </ul>
-    </div>
 </template>
 
 <script lang="ts">
+export default {
+  name: 'CommonTable',
+  inheritAttrs: false,
+  customOptions: {},
+}
+</script>
+
+<script setup lang="ts">
 import {
-  computed, defineComponent, ref, Ref, PropType,
+  computed, ref, Ref, defineProps, PropType,
 } from 'vue';
 import { useClipboard } from '@vueuse/core'
 import { UseTimeAgo } from '@vueuse/components'
@@ -205,197 +204,112 @@ import { useQuasar, date } from 'quasar'
 import { useGlobalStore } from 'src/pinia/globalStore';
 import { useRegressionStore } from 'src/pinia/regressionStore';
 import { useRegMonitoringStore } from 'src/pinia/regMonitoring';
-import RegMenu from './ContextMenu/RegMenu.vue'
-import { allColumns } from './columnDefinitions'
-import RegLog from './Cells/RegLog.vue'
-import ErrorScreenshot from './Cells/ErrorScreenshot.vue'
-import UpdateDialog from './Dialogs/UpdateDialog.vue'
+import RegMenu from '../ContextMenu/RegMenu.vue'
+import { allColumns } from '../columnDefinitions'
+import RegLog from '../Cells/RegLog.vue'
+import ErrorScreenshot from '../Cells/ErrorScreenshot.vue'
+import UpdateDialog from '../Dialogs/UpdateDialog.vue'
 
-export default defineComponent({
-  name: 'PassedTable',
-  props: {
-    selectedRegression: {
-      type: Object as PropType<RegressionInterface>,
-      required: true,
-      default: () => ({}),
-    },
-  },
-  components: {
-    UseTimeAgo, RegLog, ErrorScreenshot, RegMenu,
-  },
-  setup() {
-    const globalStore = useGlobalStore()
-    const regressionStore = useRegressionStore()
-    const regMonitoringStore = useRegMonitoringStore()
-    const $q = useQuasar()
-    const isDark = computed(() => globalStore.darkTheme)
-    const selected: Ref<RegressionTestInterface[]> = ref([])
-    const columns = allColumns
-    const { copy } = useClipboard()
-    const regTests: Ref<RegressionTestInterface[]> = computed(() => regMonitoringStore.passedRegTests)
-    const initialPagination = {
-      sortBy: 'startAt',
-      descending: true,
-      // page: 2,
-      // rowsPerPage: 3,
-      // rowsNumber: xx if getting data from a server
-    }
-    function styleStatus(status: string) {
-      switch (status) {
-        case 'Passed':
-        case 'AnalysePassed':
-          if (isDark.value) {
-            return 'bg-light-green-10'
-          }
-          return 'bg-light-green-2'
-        case 'Failed':
-        case 'AnalyseFailed':
-          if (isDark.value) {
-            return 'bg-deep-orange-7'
-          }
-          return 'bg-red-2'
-        default:
-          return ''
+const props = defineProps({
+  filterTestCase: { type: Object as PropType<string>, required: true },
+  selectedRegression: { type: Object as PropType<RegressionInterface>, required: true },
+  testCases: { type: Object as PropType<RegressionTestInterface[]>, required: true },
+  visibleColumns: { type: Object as PropType<string[]>, required: true },
+})
+const visibleCols: Ref<string[]> = ref(props.visibleColumns)
+
+console.log('props.selectedRegression', props.selectedRegression)
+
+const globalStore = useGlobalStore()
+const regressionStore = useRegressionStore()
+const regMonitoringStore = useRegMonitoringStore()
+const $q = useQuasar()
+const isDark = computed(() => globalStore.darkTheme)
+const selected: Ref<RegressionTestInterface[]> = ref([])
+const columns = allColumns
+const { copy } = useClipboard()
+const regTests: Ref<RegressionTestInterface[]> = ref(props.testCases)
+const initialPagination = {
+  sortBy: 'startAt',
+  descending: true,
+  // page: 2,
+  // rowsPerPage: 3,
+  // rowsNumber: xx if getting data from a server
+}
+const filterTable = ref('')
+// const visibleColumns = ref(['testCaseFullName', 'category', 'testSuite', 'testGroup', 'status', 'clientName', 'isHighPriority', 'description', 'testCaseType', 'team', 'errorMessage', 'log', 'errorScreenShot', 'startAt', 'endAt', 'executeTime', 'workItem', 'queue', 'owner', 'analyseBy', 'issue', 'comments', 'runMachine', 'buffers'])
+function styleStatus(status: string) {
+  switch (status) {
+    case 'Passed':
+    case 'AnalysePassed':
+      if (isDark.value) {
+        return 'bg-light-green-10'
       }
-    }
-    function showErrorMessageDialog(regTest: RegressionTestInterface) {
-      // TODO
-      console.log('regTest', regTest)
-      // $q.dialog({
-      //   component: DevErrorMessageDialog,
-      //   componentProps: {
-      //     DevRunRecord: devRunRecord,
-      //   },
-      // }).onOk(() => {
-      //   // TODO: handle ok
-      //   console.log('OK')
-      // }).onCancel(() => {
-      //   // TODO
-      //   console.log('Cancel')
-      // }).onDismiss(() => {
-      //   console.log('Dismiss')
-      // })
-    }
-    function getSelectedString() {
-      return selected.value.length === 0 ? '' : `${selected.value.length} regresion test${selected.value.length > 1 ? 's' : ''} selected.`
-    }
-    function toggleSelectedRow(row: any) {
-      if (selected.value.length > 0) { // We can add another row
-        // But if clicking one already selected, we'll remove it instead
-        let i = 0
-        const matched = selected.value.find((item: any, index: number) => {
-          i = index
-          return item.Id === row.Id
-        })
-        if (matched) { // This row was already selected, so remove it
-          selected.value.splice(i, 1)
-        } else { // Add to selection
-          selected.value.push(row)
-        }
-      } else { // First selection - add it
-        selected.value.push(row)
+      return 'bg-light-green-2'
+    case 'Failed':
+    case 'AnalyseFailed':
+      if (isDark.value) {
+        return 'bg-deep-orange-7'
       }
-    }
-    function toggleSingleRow(row: any) {
-      selected.value = []
+      return 'bg-red-2'
+    default:
+      return ''
+  }
+}
+function showErrorMessageDialog(regTest: RegressionTestInterface) {
+  // TODO
+  console.log('regTest', regTest)
+}
+function getSelectedString() {
+  return selected.value.length === 0 ? '' : `${selected.value.length} regresion test${selected.value.length > 1 ? 's' : ''} selected.`
+}
+function toggleSelectedRow(row: any) {
+  if (selected.value.length > 0) { // We can add another row
+    // But if clicking one already selected, we'll remove it instead
+    let i = 0
+    const matched = selected.value.find((item: any, index: number) => {
+      i = index
+      return item.Id === row.Id
+    })
+    if (matched) { // This row was already selected, so remove it
+      selected.value.splice(i, 1)
+    } else { // Add to selection
       selected.value.push(row)
     }
-    function toogleRightClick(row: any) {
-      if (selected.value.length <= 1) {
-        selected.value = []
-        selected.value.push(row)
-      }
-    }
-    function getRowIndexById(Id: string) {
-      const index: number = regTests.value.findIndex((regTest: RegressionTestInterface) => regTest.Id === Id)
-      if (index === -1) return 0
-      return index
-    }
-
-    // With Shift pressed, select contiguous group
-    function toggleRowGroup(row: any) {
-      if (selected.value.length === 1) { // There is a previous selection
-        // Select contiguous block from previous selection to this one
-        // But if clicked one already selected, remove any selected since then
-        const matched = selected.value.find((item: any) => item.Id === row.Id)
-        if (matched) { // Had already selected this one --> do nothing
-        } else { // New selection - add it and any between
-          // find previous selected teststep
-          const previousSelectedRegressionTest = regTests.value.find((regTest: RegressionTestInterface) => regTest.Id === selected.value[0].Id) as RegressionTestInterface
-
-          // get index for previousRegressionTest and currentSelectedRegressionTest
-          const previousIndex = getRowIndexById(previousSelectedRegressionTest.Id)
-          const currentIndex = getRowIndexById(row.Id)
-
-          let first: number
-          let last: number
-
-          if (previousIndex < currentIndex) {
-            first = previousIndex
-            last = currentIndex
-          } else {
-            first = currentIndex
-            last = previousIndex
-          }
-
-          // row Index need to push
-          // eslint-disable-next-line no-plusplus
-          for (let index = first + 1; index < last; index++) {
-            selected.value.push(regTests.value[index])
-          }
-
-          selected.value.push(row)
-        }
-      } else if (selected.value.length > 1) { // there're multiple row previous selection
-        selected.value = []
-        selected.value.push(row)
-      } else { // No previous selection - just select this one
-        selected.value = []
-        selected.value.push(row)
-      }
-    }
-    function onUpdate() {
-      console.log('oneUpdate')
-      $q.dialog({
-        component: UpdateDialog,
-        componentProps: {
-          RegressionTests: selected.value,
-        },
-      }).onOk(async () => {
-        // TODO: handle ok
-        const { selectedRegression } = regressionStore
-        await regMonitoringStore.getRegressionDetail(selectedRegression?.Id as string)
-        console.log('OK')
-      }).onCancel(async () => {
-        // TODO
-        const { selectedRegression } = regressionStore
-        await regMonitoringStore.getRegressionDetail(selectedRegression?.Id as string)
-      }).onDismiss(() => {
-        console.log('Dismiss')
-      })
-    }
-
-    return {
-      onUpdate,
-      toggleSelectedRow,
-      toggleSingleRow,
-      toggleRowGroup,
-      toogleRightClick,
-      date,
-      initialPagination,
-      regTests,
-      selected,
-      getSelectedString,
-      showErrorMessageDialog,
-      copy,
-      styleStatus,
-      isDark,
-      columns,
-      filterTable: ref(''),
-      visibleColumns: ref(['testCaseFullName', 'category', 'testSuite', 'testGroup', 'status', 'clientName', 'isHighPriority', 'description', 'testCaseType', 'team', 'errorMessage', 'log', 'errorScreenShot', 'startAt', 'endAt', 'executeTime', 'workItem', 'queue', 'owner', 'analyseBy', 'issue', 'comments', 'runMachine', 'buffers']),
-    };
-  },
-});
+  } else { // First selection - add it
+    selected.value.push(row)
+  }
+}
+function toggleSingleRow(row: any) {
+  selected.value = []
+  selected.value.push(row)
+}
+function toogleRightClick(row: any) {
+  if (selected.value.length <= 1) {
+    selected.value = []
+    selected.value.push(row)
+  }
+}
+function onUpdate() {
+  console.log('oneUpdate')
+  $q.dialog({
+    component: UpdateDialog,
+    componentProps: {
+      RegressionTests: selected.value,
+    },
+  }).onOk(async () => {
+    // TODO: handle ok
+    const { selectedRegression } = regressionStore
+    await regMonitoringStore.getRegressionDetail(selectedRegression?.Id as string)
+    console.log('OK')
+  }).onCancel(async () => {
+    // TODO
+    const { selectedRegression } = regressionStore
+    await regMonitoringStore.getRegressionDetail(selectedRegression?.Id as string)
+  }).onDismiss(() => {
+    console.log('Dismiss')
+  })
+}
 </script>
 
 <style lang="sass" scoped>

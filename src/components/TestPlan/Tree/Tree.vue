@@ -117,7 +117,7 @@ export default defineComponent({
       filter.value = ''
       filterInput.value.focus();
     }
-    async function fnSelectedNode(target: any) {
+    async function fnSelectedNode(target: string) {
       const currentNode = tree.value.getNodeByKey(target) as TestCaseInterface;
       if (currentNode == null) return
       switch (currentNode.nodeType) {
@@ -228,6 +228,7 @@ export default defineComponent({
         const createTestCase = await testGroupStore.createTestCase(testCase)
         tree.value.setExpanded(createTestCase.TestGroupId, true)
         selectedNode.value = createTestCase.Id
+        void fnSelectedNode(createTestCase.Id)
         $q.notify({
           type: 'positive',
           message: `Created new test case: ${createTestCase.Name} !`,

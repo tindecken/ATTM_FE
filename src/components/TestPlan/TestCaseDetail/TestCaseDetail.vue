@@ -11,8 +11,9 @@
           @input="onTabChanging()"
         >
           <q-tab v-for="testcase in openedTCs" :key="testcase.Id" :name="testcase.Id" :ripple="false" @mouseover="showByIndex = testcase.Id" @mouseout="showByIndex = ''">
-            <div class="q-mr-xs">{{testcase.Name}}</div>
+            <div class="q-mr-xs">{{testcase.CodeName}}: {{testcase.Name}}</div>
             <q-btn dense flat icon="close" size="xs" :style="{visibility: showByIndex === testcase.Id ? 'visible' : 'hidden'}" @click.stop="closeTab(testcase)"></q-btn>
+            <q-separator vertical></q-separator>
           </q-tab>
         </q-tabs>
 

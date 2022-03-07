@@ -32,7 +32,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: '/regression',
-        component: () => import('components/Regression/Regression.vue'),
+        component: () => import('src/components/Regression/RegressionMonitoring/Regression.vue'),
         meta: {
           requiresAuth: true,
         },

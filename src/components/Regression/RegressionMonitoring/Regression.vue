@@ -126,28 +126,21 @@
         </q-tabs>
         <q-tab-panels v-model="selectedTab" animated keep-alive>
           <q-tab-panel name="all">
-            <all-test-table :selectedRegression="selectedRegression"></all-test-table>
           </q-tab-panel>
           <q-tab-panel name="failed">
-            <failed-table :selectedRegression="selectedRegression"></failed-table>
           </q-tab-panel>
           <q-tab-panel name="passed">
-            <passed-table></passed-table>
           </q-tab-panel>
           <q-tab-panel name="inQueue">
-            <in-queue-table></in-queue-table>
           </q-tab-panel>
            <q-tab-panel name="running">
-            <running-table></running-table>
           </q-tab-panel>
            <q-tab-panel name="analyseFailed">
-            <analyse-failed-table></analyse-failed-table>
+            <analyse-failed-table filterTestCase=""></analyse-failed-table>
           </q-tab-panel>
            <q-tab-panel name="analysePassed">
-            <analyse-passed-table></analyse-passed-table>
           </q-tab-panel>
            <q-tab-panel name="inCompatible">
-            <in-compatible-table></in-compatible-table>
           </q-tab-panel>
         </q-tab-panels>
       </div>
@@ -165,19 +158,12 @@ import { useRegressionStore } from 'src/pinia/regressionStore'
 import { RegressionInterface } from 'src/Models/Regression'
 import { RegressionTestInterface } from 'src/Models/RegressionTest'
 import { useRegMonitoringStore } from 'src/pinia/regMonitoring'
-import AllTestTable from './AllTestTable.vue'
-import FailedTable from './FailedTable.vue'
-import PassedTable from './PassedTable.vue'
-import AnalyseFailedTable from './AnalyseFailedTable.vue'
-import AnalysePassedTable from './AnalysePassedTable.vue'
-import InCompatibleTable from './InCompatibleTable.vue'
-import InQueueTable from './InQueueTable.vue'
-import RunningTable from './RunningTable.vue'
+import AnalyseFailedTable from 'src/components/Regression/RegressionMonitoring/DataTables/AnalyseFailedTable.vue'
 
 export default defineComponent({
   name: 'Regression',
   components: {
-    AllTestTable, FailedTable, PassedTable, AnalyseFailedTable, AnalysePassedTable, InCompatibleTable, InQueueTable, RunningTable,
+    AnalyseFailedTable,
   },
   setup() {
     useTitle('Regression')

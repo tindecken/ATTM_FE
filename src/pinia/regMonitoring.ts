@@ -28,6 +28,7 @@ export const useRegMonitoringStore = defineStore('regMonitoring', {
       return state.regTests.filter((test: RegressionTestInterface) => test.Status === 'Running' || test.Status === 'Inconclusive');
     },
     analyseFailedRegTests(state) {
+      console.log('AAAAAAAAAAA')
       return state.regTests.filter((test: RegressionTestInterface) => test.Status === 'AnalyseFailed');
     },
     analysePassedRegTests(state) {
