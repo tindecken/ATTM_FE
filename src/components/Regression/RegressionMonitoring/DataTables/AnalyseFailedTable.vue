@@ -19,7 +19,7 @@ const props = defineProps({
   filterTestCase: { type: Object as PropType<string>, required: true },
 })
 const testCases: Ref<RegressionTestInterface[]> = computed(() => regMonitoringStore.analyseFailedRegTests)
-const visibleColumns = ['testCaseFullName', 'category', 'testSuite', 'testGroup', 'status', 'clientName', 'isHighPriority', 'description', 'testCaseType', 'team', 'errorMessage', 'log', 'errorScreenShot', 'startAt', 'endAt', 'executeTime', 'workItem', 'queue', 'owner', 'analyseBy', 'issue', 'comments', 'runMachine', 'buffers']
+const visibleColumns = ['testCaseFullName', 'category', 'testSuite', 'testGroup', 'clientName', 'isHighPriority', 'description', 'testCaseType', 'team', 'errorMessage', 'log', 'errorScreenShot', 'startAt', 'endAt', 'executeTime', 'workItem', 'queue', 'owner', 'analyseBy', 'issue', 'comments', 'runMachine', 'buffers']
 </script>
 
 <style lang="sass" scoped>

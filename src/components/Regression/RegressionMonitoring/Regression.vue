@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md">
     <div class="row q-col-gutter-xs">
-      <div class="col">
+      <div>
         <q-select
           dense
           v-model="selectedRegression"
@@ -11,16 +11,12 @@
           outlined
           @update:model-value="onChangeRegression($event)"
           @filter="filterRegressionFn"
-          input-debounce="0"
           use-input
           fill-input
           hide-selected
           options-dense
         />
       </div>
-      <div class="col"></div>
-      <div class="col"></div>
-      <div class="col"></div>
     </div>
     <q-separator class="q-mb-sm q-mt-sm" />
     <div class="row">

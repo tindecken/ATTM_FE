@@ -42,14 +42,14 @@
             <div class="row">
                 <span class="text-subtitle2">{{ regTest.TestCaseName}}</span>
                 <q-space />
-              <q-btn size="sm" outline icon="visibility" primary @click="showImage(regTest)" class="q-mr-sm" v-if="regTest.LastRegressionRunRecord.ErrorScreenshot">View Screenshot</q-btn>
+              <q-btn size="sm" outline icon="visibility" primary @click="showImage(regTest)" class="q-mr-sm" v-if="regTest.LastRegressionRunRecord?.ErrorScreenshot">View Screenshot</q-btn>
               <q-btn size="sm" outline icon="content_copy" primary @click="copy(regTest.TestCaseCodeName)" class="q-mr-sm">TestCase Code Name</q-btn>
               <q-btn size="sm" outline icon="content_copy"  primary @click="copy(regTest.TestCaseName)" class="q-mr-sm">TestCase Name</q-btn>
               <q-btn size="sm" outline icon="content_copy"  primary @click="copy(regTest.LastRegressionRunRecord?.Log || '')">Log</q-btn>
             </div>
             <q-separator class="q-mb-sm q-mt-sm"></q-separator>
             <div class="row">
-              {{ regTest.LastRegressionRunRecord.Log}}
+              {{ regTest.LastRegressionRunRecord?.Log}}
             </div>
           </q-tab-panel>
         </q-tab-panels>

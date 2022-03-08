@@ -68,7 +68,14 @@
             @update="onUpdate()"
           ></reg-menu>
           <q-td key="testCaseFullName" :props="props" class="q-c-input">
-            {{ props.row.TestCaseCodeName }}: {{ props.row.TestCaseName }}
+            <div class="row no-wrap justify-between items-center">
+              <div class="ellipsis">
+                {{ props.row.TestCaseCodeName }}: {{ props.row.TestCaseName }}
+              </div>
+              <div>
+                <q-btn flat round icon="content_copy" size="xs" primary @click="copy(`${props.row.TestCaseCodeName}: ${props.row.TestCaseName}`)" class="order-last"></q-btn>
+              </div>
+            </div>
           </q-td>
           <q-td key="category" :props="props" class="q-c-input">
             {{ props.row.CategoryName }}
@@ -89,11 +96,11 @@
             {{ props.row.IsHighPriority }}
           </q-td>
           <q-td key="description" :props="props" class="q-c-input">
-            <div class="row no-wrap">
-              <div class="col-11 ellipsis">
+            <div class="row no-wrap justify-between items-center">
+              <div class="ellipsis">
                 {{ props.row.Description }}
               </div>
-              <div class="col-1" v-if="props.row.Description">
+              <div v-if="props.row.Description">
                 <q-btn flat round icon="content_copy" size="xs" primary @click="copy(props.row.Description)" class="order-last"></q-btn>
               </div>
             </div>
@@ -105,8 +112,8 @@
             {{ props.row.Team }}
           </q-td>
           <q-td key="errorMessage" :props="props" class="q-c-input">
-            <div class="row no-wrap">
-              <div class="col-11 ellipsis" @click="showErrorMessageDialog(props.row)">
+            <div class="row no-wrap items-center justify-between">
+              <div class="ellipsis" @click="showErrorMessageDialog(props.row)">
                 <q-tooltip :delay="300" max-width="1200px">
                   <div style="white-space: pre-wrap; font-size: medium;">
                     {{ props.row.LastRegressionRunRecord?.ErrorMessage }}
@@ -114,17 +121,17 @@
                 </q-tooltip>
                 {{ props.row.LastRegressionRunRecord?.ErrorMessage }}
               </div>
-              <div class="col-1" v-if="props.row.LastRegressionRunRecord?.ErrorMessage">
+              <div v-if="props.row.LastRegressionRunRecord?.ErrorMessage">
                 <q-btn flat round icon="content_copy" size="xs" primary @click="copy(props.row.LastRegressionRunRecord?.ErrorMessage)" class="order-last"></q-btn>
               </div>
             </div>
           </q-td>
           <q-td key="log" :props="props" class="q-c-input">
-            <div class="row no-wrap">
-              <div class="col-11">
+            <div class="row no-wrap items-center justify-between">
+              <div>
                 <reg-log :RegressionTest="props.row" class="ellipsis"></reg-log>
               </div>
-              <div class="col-1" v-if="props.row.LastRegressionRunRecord?.Log">
+              <div v-if="props.row.LastRegressionRunRecord?.Log">
                 <q-btn flat round icon="content_copy" size="xs" primary @click="copy(props.row.LastRegressionRunRecord.Log)" class="order-last"></q-btn>
               </div>
             </div>
@@ -171,7 +178,19 @@
             {{ props.row.Issue }}
           </q-td>
           <q-td key="comments" :props="props" class="q-c-input">
-            {{ props.row.Comments }}
+            <div class="row no-wrap items-center justify-between">
+              <div class="ellipsis">
+                <q-tooltip :delay="300" max-width="1200px">
+                  <div style="white-space: pre-wrap; font-size: medium;">
+                    {{ props.row.Comments }}
+                  </div>
+                </q-tooltip>
+                {{ props.row.Comments }}
+              </div>
+              <div v-if="props.row.Comments">
+                <q-btn flat round icon="content_copy" size="xs" primary @click="copy(props.row.Comments)" class="order-last"></q-btn>
+              </div>
+            </div>
           </q-td>
           <q-td key="runMachine" :props="props" class="q-c-input">
             {{ props.row.LastRegressionRunRecord?.RunMachine }}
@@ -198,7 +217,6 @@ import {
 } from 'vue';
 import { useClipboard } from '@vueuse/core'
 import { UseTimeAgo } from '@vueuse/components'
-import { RegressionInterface } from 'src/Models/Regression'
 import { RegressionTestInterface } from 'src/Models/RegressionTest'
 import { useQuasar, date } from 'quasar'
 import { useGlobalStore } from 'src/pinia/globalStore';
@@ -212,13 +230,10 @@ import UpdateDialog from '../Dialogs/UpdateDialog.vue'
 
 const props = defineProps({
   filterTestCase: { type: Object as PropType<string>, required: true },
-  selectedRegression: { type: Object as PropType<RegressionInterface>, required: true },
   testCases: { type: Object as PropType<RegressionTestInterface[]>, required: true },
   visibleColumns: { type: Object as PropType<string[]>, required: true },
 })
 const visibleCols: Ref<string[]> = ref(props.visibleColumns)
-
-console.log('props.selectedRegression', props.selectedRegression)
 
 const globalStore = useGlobalStore()
 const regressionStore = useRegressionStore()
@@ -228,7 +243,7 @@ const isDark = computed(() => globalStore.darkTheme)
 const selected: Ref<RegressionTestInterface[]> = ref([])
 const columns = allColumns
 const { copy } = useClipboard()
-const regTests: Ref<RegressionTestInterface[]> = ref(props.testCases)
+const regTests: Ref<RegressionTestInterface[]> = computed(() => props.testCases)
 const initialPagination = {
   sortBy: 'startAt',
   descending: true,
@@ -237,7 +252,6 @@ const initialPagination = {
   // rowsNumber: xx if getting data from a server
 }
 const filterTable = ref('')
-// const visibleColumns = ref(['testCaseFullName', 'category', 'testSuite', 'testGroup', 'status', 'clientName', 'isHighPriority', 'description', 'testCaseType', 'team', 'errorMessage', 'log', 'errorScreenShot', 'startAt', 'endAt', 'executeTime', 'workItem', 'queue', 'owner', 'analyseBy', 'issue', 'comments', 'runMachine', 'buffers'])
 function styleStatus(status: string) {
   switch (status) {
     case 'Passed':
