@@ -10,7 +10,7 @@
           inline-label
           @input="onTabChanging()"
         >
-          <q-tab v-for="testcase in openedTCs" :key="testcase.Id" :name="testcase.Id" :ripple="false" @mouseover="showByIndex = testcase.Id" @mouseout="showByIndex = ''">
+          <q-tab no-caps v-for="testcase in openedTCs" :key="testcase.Id" :name="testcase.Id" :ripple="false" @mouseover="showByIndex = testcase.Id" @mouseout="showByIndex = ''">
             <div class="q-mr-xs">{{testcase.CodeName}}: {{testcase.Name}}</div>
             <q-btn dense flat icon="close" size="xs" :style="{visibility: showByIndex === testcase.Id ? 'visible' : 'hidden'}" @click.stop="closeTab(testcase)"></q-btn>
             <q-separator vertical></q-separator>
@@ -184,6 +184,7 @@ import TestEnvironmentDialog from './Dialog/TestEnvironmentDialog.vue';
 import CloseTestCaseDialog from './Dialog/CloseTestCaseDialog.vue';
 import KeywordEditorDialog from './Dialog/KeywordEditorDialog.vue';
 import SearchKeywordDialog from './Dialog/SearchKeywordDialog.vue';
+import SaveTestCaseDialog from './Dialog/SaveTestCaseDialog.vue';
 
 export default defineComponent({
   name: 'TestCaseDetail',
@@ -433,29 +434,40 @@ export default defineComponent({
     }
     const openedTCs: Ref<TestCaseInterface[]> = computed(() => testCaseStore.openedTCs)
     const copiedTestSteps: Ref<TestStepInterface[]> = computed(() => testStepStore.copiedTestSteps)
-    async function saveTestCase(testCaseId: string) {
-      try {
-        const currTestCase = openedTCs.value.find((tc: TestCaseInterface) => tc.Id === testCaseId) as TestCaseInterface
-        const updateTestCaseData: UpdateTestCaseDataInterface = {
-          UpdateBy: userStore.Username,
-          UpdateMessage: '',
-          UpdateType: 'Change TestStep',
-        }
-        const testCaseHistory: TestCaseHistoryInterface = {
+    function saveTestCase(testCaseId: string) {
+      const currTestCase = openedTCs.value.find((tc: TestCaseInterface) => tc.Id === testCaseId) as TestCaseInterface
+      $q.dialog({
+        component: SaveTestCaseDialog,
+        componentProps: {
           TestCase: currTestCase,
-          UpdateTestCaseData: updateTestCaseData,
+        },
+      }).onOk(async (saveMessage: string) => {
+        try {
+          const updateTestCaseData: UpdateTestCaseDataInterface = {
+            UpdateBy: userStore.Username,
+            UpdateMessage: saveMessage,
+            UpdateType: 'Change TestStep',
+          }
+          const testCaseHistory: TestCaseHistoryInterface = {
+            TestCase: currTestCase,
+            UpdateTestCaseData: updateTestCaseData,
+          }
+          const result = await testCaseStore.saveTestCase(testCaseHistory)
+          $q.notify({
+            type: 'positive',
+            message: result.message,
+          });
+        } catch (error: any) {
+          $q.notify({
+            type: 'warning',
+            message: error.error,
+          });
         }
-        const result = await testCaseStore.saveTestCase(testCaseHistory)
-        $q.notify({
-          type: 'positive',
-          message: result.message,
-        });
-      } catch (error: any) {
-        $q.notify({
-          type: 'warning',
-          message: error.error,
-        });
-      }
+      }).onCancel(() => {
+        console.log('Cancel')
+      }).onDismiss(() => {
+        console.log('Called on OK or Cancel')
+      })
     }
     async function closeTab(testcase: TestCaseInterface) {
       // check if testcase is modified or not

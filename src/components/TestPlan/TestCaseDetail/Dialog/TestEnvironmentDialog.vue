@@ -132,7 +132,7 @@ export default defineComponent({
     const testEnvFilter = ref('');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const isDark = computed(() => globalStore.darkTheme)
-    const selectedTestEnv = computed(() => testEnvironmentStore.selectedTestEnv)
+    const selectedTestEnv = ref<TestEnvInterface>(testEnvironmentStore.selectedTestEnv as TestEnvInterface)
     const testEnvs = testEnvironmentStore.testEnvs as TestEnvInterface[]
     onBeforeMount(async () => {
       try {
@@ -144,11 +144,15 @@ export default defineComponent({
         });
       }
       void nextTick()
+      if (selectedTestEnv.value) {
+        selectedTestEnv.value.Nodes = selectedTestEnv.value?.Nodes.map((envNode: TestEnvNodeInterface, i: number) => ({ ...envNode, rowIndex: i + 1 }))
+      }
     })
 
-    function onTestEnvChange(newValue: TestEnvInterface) {
-      console.log(newValue)
-      testEnvironmentStore.selectedTestEnv = newValue
+    function onTestEnvChange(newTestEnv: TestEnvInterface) {
+      testEnvironmentStore.selectedTestEnv = newTestEnv
+      selectedTestEnv.value = newTestEnv
+      selectedTestEnv.value.Nodes = selectedTestEnv.value?.Nodes.map((envNode: TestEnvNodeInterface, i: number) => ({ ...envNode, rowIndex: i + 1 }))
     }
 
     // other methods that we used in our vue html template;

@@ -26,13 +26,13 @@ Todo:
   ✔ detail view - configure autocomplete for keyword column (able to search) @done(21-02-02 22:49)
   ✔ add menu new testsuite in category, implement this feature @done(21-02-26 22:20)
   ✔ add menu new testgroup in testsuite, implement this feature @done(21-02-26 22:20)
-  ☐ add menu new testcase in testgroup, implement this feature
+  ✔ add menu new testcase in testgroup, implement this feature @done(22-03-09 07:15)
   ✔ after create new testsuite --> let tree select it automatically @done(22-02-26 20:32)
   ✔ after create new testgroup --> let tree select it automatically @done(22-02-26 20:32)
   ✔ after create new testcase --> let tree select it automatically @done(22-02-26 20:32)
-  ☐ after create new testcase -->
-  ☐ add mockdata for multiple category, multiple t-est suite, multiple test groups, allow generate code from multiple categories
-  ☐ generate code for multiple category
+  ✔ after create new testcase --> @done(22-03-09 07:15)
+  ✔ add mockdata for multiple category, multiple t-est suite, multiple test groups, allow generate code from multiple categories @done(22-03-09 07:15)
+  ✔ generate code for multiple category @done(22-03-09 07:15)
   ☐ treeview - paint the category --> testsuite --> testgroup
   ☐ treewiew - paint the category --> testsuite --> testgroup --> testcase
   ☐ treeview - reformat, using slot for it
@@ -82,7 +82,7 @@ Todo:
   ✔ API to get all DevRunRecords of a testcase, sort by last running, double click to DevRunRecord to get detail running of a TestCase @done(21-08-05 08:20)
   ✔ API to get all RegressionRunRecord of a testcase (Regression Test, sort by last running --> RegressionRunRecord, sort by last running) @done(21-08-05 08:20)
   ✔ bug - when switch from TestPlan to DevMonitoring during the testcase is build, createDevQueue, it will throw error. https://i.imgur.com/DQDaShc.png @done(22-02-01 21:14)
-  ☐ Reg monitoring - define columns definition for all columns in table, also for visible columns
+  ✔ Reg monitoring - define columns definition for all columns in table, also for visible columns @done(22-03-09 07:14)
   ☐ Ussing highlightjs for hightlight the code https://github.com/highlightjs/vue-plugin
   ✔ add attribute: generatedCode for RegressionTest and DevRunRecord --> solution: do not use it, because if anyone to view code, just re-generated again @done(22-01-28 16:19)
   ✔ bug - fix TestEnvironmentDialog select other testbed doesn't work. @done(21-11-03 02:39)
@@ -90,7 +90,7 @@ Todo:
   ✔ bug - import block doesn't show for the first time, must refresh to make it work. @done(21-11-04 02:09)
   ✔ delete testcase = update testcase set isDeleted = true @done(21-12-07 22:31)
   ✔ bug - after add new testcase, detele testgroup, it didn't show correct number testcases in testgroup @done(21-12-07 22:31)
-  ☐ delete a testcase, can't create that testcase again because of duplicate testcase name
+  ✔ delete a testcase, can't create that testcase again because of duplicate testcase name @done(22-03-09 07:16)
   ✔ update testcase, add 2 fields: Queue(string) and NoParallelQueues (list<string>), if Queue is in NoParallelQueues, and all of them is running, no pick. @done(22-02-01 22:15)
   ✔ bug - vueuse copy can't copy when build production, dont know why? @done(22-01-27 16:20)
   ☐ find all testcases that are using keywork A (dont include deleted testcase)
