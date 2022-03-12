@@ -6,7 +6,7 @@
       container
     >
       <q-header reveal bordered class="row justify-between bg-secondary">
-        <div class="self-center text-subtitle1 q-pl-sm">Save Test Case: {{props.TestCase.CodeName}} - {{props.TestCase.Name}}</div>
+        <div class="self-center text-subtitle1 q-pl-sm">Save Test Case: {{props.TestCase.CodeName}}</div>
         <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
           <q-tooltip>Close</q-tooltip>
         </q-btn>
@@ -18,8 +18,8 @@
           @submit="save"
           ref="form">
           <div class="row q-pa-sm">
-            <q-input dense outlined v-model="saveMessage" label="Save message" class="col-12 q-mb-sm"
-              :rules="[val => !!val || 'Field is required']"
+            <q-input autofocus dense outlined v-model="saveMessage" label="Save message" class="col-12 q-mb-sm"
+              :rules="[val => !!val || 'Field is required']" @keyup.enter="save()"
             />
           </div>
           <div class="row q-mt-sm">
@@ -66,6 +66,7 @@ function save() {
       message: 'Save message is required.',
       icon: 'report_problem',
     })
+    return
   }
   onDialogOK(saveMessage.value)
   onDialogHide()
