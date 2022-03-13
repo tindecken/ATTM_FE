@@ -1,19 +1,24 @@
 <template>
   <q-dialog ref="dialogRef" @hide="onDialogHide" persistent>
-    <q-layout
-      class="q-pa-sm"
+    <q-layout view="hHh lpR fFf"
       :class="isDark ? 'bg-grey-9' : 'bg-grey-3'"
-      style="max-height: 400px; min-height: 100px !important;"
+      style="max-height: 180px; min-height: 100px !important; min-width: 600px"
+      container
     >
-      <div class="row q-mb-sm">
-        <span class="text-h6">Add Description</span>
-      </div>
+      <q-header reveal bordered class="row justify-between bg-secondary">
+      <div class="self-center text-subtitle1 q-pl-sm">Add Description</div>
+      <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
+        <q-tooltip>Close</q-tooltip>
+      </q-btn>
+    </q-header>
+    <q-page-container>
       <q-form
         @submit="onOKClick"
         greedy
         @validation-success="isFormValid = true"
         @validation-error="isFormValid = false"
         ref="formRef"
+        class="q-pa-sm"
       >
         <div class="row">
           <div class="col">
@@ -30,6 +35,7 @@
                 val => val.length < 100 || 'Maximum is 100 chars',
               ]"
               lazy-rules
+              @mouseup.enter="onOKClick()"
             />
           </div>
         </div>
@@ -45,13 +51,13 @@
             <q-btn
               outline
               label="Create"
-              :disable="!isFormValid"
               type="submit"
               color="primary"
             />
           </div>
         </div>
       </q-form>
+    </q-page-container>
     </q-layout>
   </q-dialog>
 </template>

@@ -7,12 +7,6 @@
           </q-item-section>
           <q-item-section>Run</q-item-section>
         </q-item>
-        <q-item clickable v-close-popup @click="debug()">
-          <q-item-section avatar>
-            <q-icon color="primary" name="play_circle" />
-          </q-item-section>
-          <q-item-section>Debug</q-item-section>
-        </q-item>
         <template v-if="node.nodeType == 'TestCase'">
           <q-item clickable v-close-popup @click="copy()">
           <q-item-section avatar>
@@ -26,12 +20,6 @@
             <q-icon color="primary" name="code" />
           </q-item-section>
           <q-item-section>View Generate Code</q-item-section>
-        </q-item>
-        <q-item clickable v-close-popup @click="debugOn()">
-          <q-item-section avatar>
-            <q-icon color="primary" name="play_circle" />
-          </q-item-section>
-          <q-item-section>Debug On</q-item-section>
         </q-item>
         <q-item clickable v-close-popup @click="generateDevCode()">
           <q-item-section avatar>
@@ -129,12 +117,6 @@ export default defineComponent({
     function viewGenerateCode() {
       emit('viewGenerateCode')
     }
-    function debug() {
-      emit('debug')
-    }
-    function debugOn() {
-      emit('debugOn')
-    }
     function newCategory() {
       emit('newCategory')
     }
@@ -161,8 +143,6 @@ export default defineComponent({
       generateDevCode,
       run,
       viewGenerateCode,
-      debug,
-      debugOn,
       newCategory,
       newTestSuite,
       newTestGroup,

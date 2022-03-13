@@ -40,12 +40,20 @@
               :filter-method="filterMethod"
               :selected-rows-label="getSelectedString"
             >
-              <template v-slot:top-left>
-                <q-input borderless dense debounce="300" v-model="filterTable" placeholder="Filter">
+              <template v-slot:top-left class="row inline justify-start">
+                <q-input dense debounce="300" v-model="filterTable" placeholder="Filter" class="q-mr-sm">
                   <template v-slot:append>
                     <q-icon name="search" />
                   </template>
                 </q-input>
+                <q-btn color="primary" outline class="q-mr-sm">
+                  <q-icon left name="play_arrow"></q-icon>
+                  <div>Run</div>
+                </q-btn>
+                <q-btn color="primary" outline @click="saveTestCase(selectedTestCaseId)">
+                  <q-icon left name="save"></q-icon>
+                  <div>Save</div>
+                </q-btn>
               </template>
               <template v-slot:header="props">
                 <q-tr :props="props">
@@ -122,8 +130,7 @@
               </template>
             </q-table>
             <q-separator class="q-mt-sm q-mb-sm" />
-            <q-btn outline color="primary" label="New Step" @click="addNewStep(selectedTestCaseId)"></q-btn>
-            <q-btn outline color="primary" label="Save" @click="saveTestCase(selectedTestCaseId)" class='q-ml-sm'></q-btn>
+            <q-btn outline color="primary" label="New Step" @click="addNewStep(selectedTestCaseId)" icon="add"></q-btn>
             <!-- <div class="q-mt-md">
               Selected:
               <ul>
@@ -995,6 +1002,9 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
+:deep .q-table-control {
+  display: flex;
+}
 :deep input.q-field__native {
   padding: 0px;
 }

@@ -9,7 +9,7 @@
         </q-input>
       </div>
       <div class="col self-center">
-        <q-btn dense @click="toggleTree()" v-if="allCat.length > 0">Toggle</q-btn>
+        <q-btn outline color="primary" @click="toggleTree()" v-if="allCat.length > 0">Toggle</q-btn>
       </div>
     </div>
     <q-scroll-area style="height: 85vh; max-width: 600px;">
@@ -41,8 +41,6 @@
                   @pasteTestCase="onPasteTestCase(prop.node)"
                   @run="onRun()"
                   @runOn="onRunOn()"
-                  @debug="onDebug()"
-                  @debugOn="onDebugOn()"
                   @newCategory="onNewCategory(prop.node)"
                   @newTestSuite="onNewTestSuite(prop.node)"
                   @newTestGroup="onNewTestGroup(prop.node)"
@@ -178,18 +176,6 @@ export default defineComponent({
       }
     }
     function onRunOn() {
-      $q.notify({
-        type: 'negative',
-        message: 'Not develop yet',
-      });
-    }
-    function onDebug() {
-      $q.notify({
-        type: 'negative',
-        message: 'Not develop yet',
-      });
-    }
-    function onDebugOn() {
       $q.notify({
         type: 'negative',
         message: 'Not develop yet',
@@ -844,8 +830,6 @@ export default defineComponent({
       onGenerateDevCode,
       onRun,
       onRunOn,
-      onDebug,
-      onDebugOn,
       onEdit,
       onNewTestSuite,
       onNewTestGroup,

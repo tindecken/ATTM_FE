@@ -47,6 +47,9 @@
               <q-td key="description" :props="props" class="q-pl-sm"  @click="footerInfo = props.row.Description">
                 {{ props.row.Description }}
               </q-td>
+              <q-td key="exampleValue" :props="props" class="q-pl-sm"  @click="footerInfo = props.row.ExampleValue">
+                {{ props.row.ExampleValue }}
+              </q-td>
             </q-tr>
           </template>
         </q-table>
@@ -143,6 +146,14 @@ export default defineComponent({
         align: 'left',
         label: 'Description',
         field: 'Description',
+        sortable: false,
+        classes: 'ellipsis',
+      },
+      {
+        name: 'exampleValue',
+        align: 'left',
+        label: 'Example',
+        field: 'ExampleValue',
         sortable: false,
         classes: 'ellipsis',
       },
