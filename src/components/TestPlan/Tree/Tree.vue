@@ -27,15 +27,18 @@
             ref="tree"
             selected-color="primary"
             no-nodes-label="There is no category, create one!"
+            no-selection-unset
           >
           <template v-slot:default-header="prop">
             <div class="row items-center">
               <div style="display: inherit">
-                <q-icon :name="prop.node.icon || 'share'" class="q-mr-sm" />
+                <q-icon :name="prop.node.icon || 'share'" class="q-mr-sm self-center" />
                 <div>{{ prop.node.label }}</div>
                 <tree-context-menu
                   :node="prop.node"
                   @generateDevCode="onGenerateDevCode(tree.getTickedNodes())"
+                  @copy="onCopyTestCase(prop.node)"
+                  @pasteTestCase="onPasteTestCase(prop.node)"
                   @run="onRun()"
                   @runOn="onRunOn()"
                   @debug="onDebug()"
@@ -73,6 +76,7 @@ import { TestCaseInterface } from 'src/Models/TestCase';
 import { TestSuiteInterface } from 'src/Models/TestSuite';
 import { TestClientInterface } from 'src/Models/TestClient';
 import { useQuasar } from 'quasar'
+import uuid from 'uuid-random'
 import { useGlobalStore } from 'src/pinia/globalStore';
 import { useCategoryStore } from 'src/pinia/categoryStore';
 import { useTestCaseStore } from 'src/pinia/testCaseStore';
@@ -80,6 +84,8 @@ import { useTestSuiteStore } from 'src/pinia/testSuiteStore';
 import { useTestGroupStore } from 'src/pinia/testGroupStore';
 import { useTestClientStore } from 'src/pinia/testClientStore';
 import { TestCaseHistoryInterface } from 'src/Models/TestCaseHistory';
+import _ from 'lodash';
+import { TestStepInterface } from 'src/Models/TestStep';
 import TreeContextMenu from './Menu/TreeContextMenu.vue'
 import NewTestSuiteDialog from './Dialog/NewTestSuiteDialog.vue'
 import NewTestGroupDialog from './Dialog/NewTestGroupDialog.vue'
@@ -771,6 +777,56 @@ export default defineComponent({
         // TODO
       })
     }
+    function onCopyTestCase(testCase: TestCaseInterface) {
+      console.log('a', testCase.TestSteps)
+      const copiedTC = _.cloneDeep(testCase)
+      copiedTC.CodeName = `${testCase.CodeName}`
+      copiedTC.Id = ''
+      copiedTC.TestGroupId = ''
+      copiedTC.TestSuiteId = ''
+      copiedTC.CategoryId = ''
+      copiedTC.TestSteps = copiedTC.TestSteps.map((step: TestStepInterface) => {
+        step.UUID = uuid()
+        return {
+          ...step,
+        }
+      })
+      console.log('b', copiedTC.TestSteps)
+      testCaseStore.copiedTC = copiedTC
+    }
+    async function onPasteTestCase(node: any) {
+      console.log('onPasteTestCase', node)
+      if (node.nodeType !== 'TestGroup') {
+        $q.notify({
+          type: 'negative',
+          message: 'Something errors, node Type is not TestGroup',
+        });
+        return
+      }
+      console.log('testCaseStore.copiedTC', testCaseStore.copiedTC)
+      if (testCaseStore.copiedTC === undefined) {
+        $q.notify({
+          type: 'warning',
+          message: 'No test case is copied, nothing to paste !',
+        });
+        return
+      }
+      const testGroup: TestGroupInterface = node as TestGroupInterface
+      const tempTC = _.cloneDeep(testCaseStore.copiedTC)
+      tempTC.CodeName = `${tempTC.CodeName}_${Math.floor(Math.random() * 100)}`
+      tempTC.TestGroupId = testGroup.Id
+      tempTC.TestSuiteId = testGroup.TestSuiteId
+      tempTC.CategoryId = testGroup.CategoryId
+      try {
+        const createTestCaseResponse = await testGroupStore.createTestCase(tempTC)
+        console.log('createTestCaseResponse', createTestCaseResponse)
+      } catch (err: any) {
+        $q.notify({
+          type: 'negative',
+          message: `${err}`,
+        });
+      }
+    }
 
     return {
       filter,
@@ -802,6 +858,8 @@ export default defineComponent({
       selectedTestClient,
       copyCodeToClient,
       onViewGenerateCode,
+      onCopyTestCase,
+      onPasteTestCase,
     }
   },
 });

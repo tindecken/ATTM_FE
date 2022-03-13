@@ -14,6 +14,7 @@ import { useCategoryStore } from './categoryStore'
 export const useTestCaseStore = defineStore('testcase', {
   state: () => ({
     openedTCs: [] as TestCaseInterface[],
+    copiedTC: undefined as TestCaseInterface | undefined,
     selectedTestCaseId: '',
   }),
   getters: {

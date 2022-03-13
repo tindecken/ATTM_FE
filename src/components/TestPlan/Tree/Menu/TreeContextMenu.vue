@@ -13,6 +13,14 @@
           </q-item-section>
           <q-item-section>Debug</q-item-section>
         </q-item>
+        <template v-if="node.nodeType == 'TestCase'">
+          <q-item clickable v-close-popup @click="copy()">
+          <q-item-section avatar>
+            <q-icon color="primary" name="content_copy" />
+          </q-item-section>
+          <q-item-section>Copy</q-item-section>
+        </q-item>
+        </template>
         <q-item clickable v-close-popup @click="viewGenerateCode()">
           <q-item-section avatar>
             <q-icon color="primary" name="code" />
@@ -60,6 +68,12 @@
               <q-icon color="primary" name="playlist_add" />
             </q-item-section>
             <q-item-section>New Test Case</q-item-section>
+          </q-item>
+          <q-item clickable v-close-popup @click="pasteTestCase()">
+            <q-item-section avatar>
+              <q-icon color="primary" name="content_paste" />
+            </q-item-section>
+            <q-item-section>Paste</q-item-section>
           </q-item>
         </template>
         <q-separator />
@@ -136,6 +150,12 @@ export default defineComponent({
     function edit() {
       emit('edit')
     }
+    function copy() {
+      emit('copy')
+    }
+    function pasteTestCase() {
+      emit('pasteTestCase')
+    }
     return {
       deleteNodes,
       generateDevCode,
@@ -149,6 +169,8 @@ export default defineComponent({
       newTestCase,
       edit,
       viewProperties,
+      copy,
+      pasteTestCase,
     };
   },
 })

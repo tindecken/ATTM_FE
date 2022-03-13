@@ -30,7 +30,6 @@ export const useTestGroupStore = defineStore('testgroup', {
         );
         const responseTestCase = (await response.data) as TestCaseInterface;
         console.log('responseTestCase', responseTestCase);
-        // create in vuex
         // commit to category module
         categoryStore.createTestCase(responseTestCase)
         return responseTestCase
