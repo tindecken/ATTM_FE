@@ -128,14 +128,14 @@ import {
 } from 'vue';
 import _ from 'lodash'
 import { QSelect, useDialogPluginComponent, useQuasar } from 'quasar'
-import { TestStepInterface } from 'src/Models/TestStep';
-import { TestCaseInterface } from 'src/Models/TestCase';
+import { TestStepInterface } from '../../../../Models/TestStep';
+import { TestCaseInterface } from '../../../../Models/TestCase';
 import { useClipboard } from '@vueuse/core'
-import { useGlobalStore } from 'src/pinia/globalStore';
-import { useKeywordStore } from 'src/pinia/keywordStore';
-import { KeywordInterface } from 'src/Models/Keyword';
-import { KeywordFeatureInterface } from 'src/Models/KeywordFeature';
-import { KeywordCategoryInterface } from 'src/Models/KeywordCategory';
+import { useGlobalStore } from '../../../../pinia/globalStore';
+import { useKeywordStore } from '../../../../pinia/keywordStore';
+import { KeywordInterface } from '../../../../Models/Keyword';
+import { KeywordFeatureInterface } from '../../../../Models/KeywordFeature';
+import { KeywordCategoryInterface } from '../../../../Models/KeywordCategory';
 
 export default defineComponent({
   name: 'SearchKeywordDialog',

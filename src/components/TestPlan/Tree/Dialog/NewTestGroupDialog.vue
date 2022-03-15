@@ -1,13 +1,20 @@
 <template>
   <q-dialog ref="dialogRef" @hide="onDialogHide" persistent>
-    <q-layout view="hHh lpR fFf"
+    <q-layout
+      view="hHh lpR fFf"
       :class="isDark ? 'bg-grey-9' : 'bg-grey-3'"
       style="max-height: 340px; min-height: 100px !important; min-width: 400px"
       container
     >
       <q-header reveal bordered class="row justify-between bg-secondary">
         <div class="self-center text-subtitle1 q-pl-sm">New Test Group</div>
-        <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
+        <q-btn
+          class="self-center"
+          dense
+          flat
+          icon="close"
+          @click="onDialogHide"
+        >
           <q-tooltip>Close</q-tooltip>
         </q-btn>
       </q-header>
@@ -30,9 +37,10 @@
                 v-model="codeName"
                 @blur="validateForm()"
                 :rules="[
-                  val => !!val || '* Required',
-                  val => val.length < 15 || 'Maximum is 15 chars',
-                  val => isNaN(val.charAt(0)) || 'First char can not a number'
+                  (val) => !!val || '* Required',
+                  (val) => val.length < 15 || 'Maximum is 15 chars',
+                  (val) =>
+                    isNaN(val.charAt(0)) || 'First char can not a number',
                 ]"
                 lazy-rules
               />
@@ -45,8 +53,8 @@
                 v-model="name"
                 @blur="validateForm()"
                 :rules="[
-                  val => !!val || '* Required',
-                  val => val.length < 50 || 'Maximum is 50 chars'
+                  (val) => !!val || '* Required',
+                  (val) => val.length < 50 || 'Maximum is 50 chars',
                 ]"
                 lazy-rules
               />
@@ -61,7 +69,7 @@
                 v-model="workItem"
                 @blur="validateForm()"
                 :rules="[
-                  val => val.length < 50 || 'WorkItem maximum is 50 chars'
+                  (val) => val.length < 50 || 'WorkItem maximum is 50 chars',
                 ]"
               />
             </div>
@@ -72,7 +80,9 @@
                 dense
                 v-model="author"
                 @blur="validateForm()"
-                :rules="[val => val.length < 50 || 'Author maximum is 50 chars']"
+                :rules="[
+                  (val) => val.length < 50 || 'Author maximum is 50 chars',
+                ]"
               />
             </div>
           </div>
@@ -87,7 +97,8 @@
                 v-model="description"
                 @blur="validateForm()"
                 :rules="[
-                  val => val.length < 500 || 'Description maximum is 500 chars'
+                  (val) =>
+                    val.length < 500 || 'Description maximum is 500 chars',
                 ]"
               />
             </div>
@@ -117,13 +128,11 @@
 </template>
 
 <script lang="ts">
-import {
-  computed, defineComponent, ref, PropType,
-} from 'vue';
-import { TestGroupInterface } from 'src/Models/TestGroup';
-import { TestSuiteInterface } from 'src/Models/TestSuite';
-import { useGlobalStore } from 'src/pinia/globalStore';
-import { QForm, useDialogPluginComponent } from 'quasar'
+import { computed, defineComponent, ref, PropType } from 'vue';
+import { TestGroupInterface } from '../../../../Models/TestGroup';
+import { TestSuiteInterface } from '../../../../Models/TestSuite';
+import { useGlobalStore } from '../../../../pinia/globalStore';
+import { QForm, useDialogPluginComponent } from 'quasar';
 
 export default defineComponent({
   name: 'NewTestGroupDialog',
@@ -140,10 +149,9 @@ export default defineComponent({
   ],
   components: {},
   setup(props) {
-    const globalStore = useGlobalStore()
-    const {
-      dialogRef, onDialogHide, onDialogOK, onDialogCancel,
-    } = useDialogPluginComponent()
+    const globalStore = useGlobalStore();
+    const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
+      useDialogPluginComponent();
     const codeName = ref('');
     const name = ref('');
     const author = ref('');
@@ -155,7 +163,7 @@ export default defineComponent({
     // following method is REQUIRED
     // (don't change its name --> "show")
     function onOKClick() {
-      const { TestSuite } = props
+      const { TestSuite } = props;
       const newTestGroup: TestGroupInterface = {
         Id: '',
         CodeName: codeName.value.trim(),
@@ -166,9 +174,9 @@ export default defineComponent({
         TestSuiteId: TestSuite.Id,
         CategoryId: TestSuite.CategoryId,
         children: [],
-      }
+      };
       // context.emit('ok', newTestGroup);
-      onDialogOK(newTestGroup)
+      onDialogOK(newTestGroup);
     }
 
     function validateForm() {

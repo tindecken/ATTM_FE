@@ -5,7 +5,7 @@ import {
   createWebHashHistory,
   createWebHistory,
 } from 'vue-router';
-import { UserInterface } from 'src/Models/User';
+import { UserInterface } from '../Models/User';
 import routes from './routes';
 
 /*

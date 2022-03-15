@@ -1,23 +1,27 @@
-import { TestParamInterface } from 'src/Models/TestParam';
-import { computed } from 'vue'
-import { useGlobalStore } from 'src/pinia/globalStore';
+import { TestParamInterface } from '../../../../Models/TestParam';
+import { computed } from 'vue';
+import { useGlobalStore } from '../../../../pinia/globalStore';
 
 function getValueType(testParam: TestParamInterface): string {
-  const globalStore = useGlobalStore()
+  const globalStore = useGlobalStore();
   const isDark = computed(() => globalStore.darkTheme);
   if (testParam.TestNodePath) {
     if (isDark.value) {
-      return 'testBedDark'
+      return 'testBedDark';
     }
-    return 'testBed'
+    return 'testBed';
   }
-  if (testParam.Value && testParam.Value.charAt(0) === '@' && testParam.Value.charAt(testParam.Value.length - 1) === '@') {
+  if (
+    testParam.Value &&
+    testParam.Value.charAt(0) === '@' &&
+    testParam.Value.charAt(testParam.Value.length - 1) === '@'
+  ) {
     if (isDark.value) {
-      return 'testBufferDark'
+      return 'testBufferDark';
     }
-    return 'testBuffer'
+    return 'testBuffer';
   }
-  return ''
+  return '';
 }
 
-export { getValueType }
+export { getValueType };

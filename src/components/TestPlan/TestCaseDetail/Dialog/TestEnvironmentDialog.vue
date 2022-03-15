@@ -121,12 +121,15 @@ import {
   Ref,
   ref,
 } from 'vue';
-import { TestEnvInterface, TestEnvNodeInterface } from 'src/Models/TestEnv';
+import {
+  TestEnvInterface,
+  TestEnvNodeInterface,
+} from '../../../../Models/TestEnv';
 import { useClipboard } from '@vueuse/core';
-import { useTestEnvironmentStore } from 'src/pinia/testEnvironmentStore';
+import { useTestEnvironmentStore } from '../../../../pinia/testEnvironmentStore';
 import { useQuasar, useDialogPluginComponent } from 'quasar';
-import { testEnvColumns } from 'src/components/tableColumns';
-import { useGlobalStore } from 'src/pinia/globalStore';
+import { testEnvColumns } from '../../../../components/tableColumns';
+import { useGlobalStore } from '../../../../pinia/globalStore';
 
 export default defineComponent({
   name: 'TestEnvironmentDialog',

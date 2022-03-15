@@ -10,7 +10,7 @@
       "pages/*": ["src/pages/*"],
       "assets/*": ["src/assets/*"],
       "boot/*": ["src/boot/*"],
-      "stores/*": ["src/stores/*"]
+      "pinia/*": ["src/pinia/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],

@@ -14,7 +14,11 @@
           option-label="Name"
           @filter="filterCategory"
           @filter-abort="abortFilterCategory"
-          @input="val => { onCategoryChange() }"
+          @input="
+            (val) => {
+              onCategoryChange();
+            }
+          "
           use-input
           hide-selected
           fill-input
@@ -32,7 +36,11 @@
           option-label="Name"
           @filter="filterFeature"
           @filter-abort="abortFilterFeature"
-          @input="val => { onFeatureChange() }"
+          @input="
+            (val) => {
+              onFeatureChange();
+            }
+          "
           use-input
           hide-selected
           fill-input
@@ -40,8 +48,7 @@
           clearable
         />
       </div>
-      <div class="col">
-      </div>
+      <div class="col"></div>
     </div>
     <q-separator class="q-mb-sm q-mt-sm" />
     <div class="row">
@@ -53,28 +60,40 @@
           :columns="keywordColumns"
           row-key="name"
           :hide-pagination="true"
-          :filter = "kwFilter"
+          :filter="kwFilter"
           separator="cell"
           :visible-columns="keywordVisibleColumns"
         >
-        <template v-slot:top>
-          <div class="col-2 q-table__title">Keywords</div>
-          <q-toggle v-model="keywordVisibleColumns" val="owner" label="Owner" />
-          <q-toggle v-model="keywordVisibleColumns" val="createdDate" label="CreatedDate" />
-        </template>
+          <template v-slot:top>
+            <div class="col-2 q-table__title">Keywords</div>
+            <q-toggle
+              v-model="keywordVisibleColumns"
+              val="owner"
+              label="Owner"
+            />
+            <q-toggle
+              v-model="keywordVisibleColumns"
+              val="createdDate"
+              label="CreatedDate"
+            />
+          </template>
           <template v-slot:body="props">
             <q-tr
               :props="props"
               @click="onSelectKeyword(props.row)"
               class="cursor-pointer"
-              >
+            >
               <q-td key="no" :props="props">
                 {{ props.row.rowIndex }}
               </q-td>
               <q-td key="name" :props="props">
                 {{ props.row.Name }}
               </q-td>
-              <q-td key="description" :props="props" style="white-space: normal;">
+              <q-td
+                key="description"
+                :props="props"
+                style="white-space: normal"
+              >
                 <div>{{ props.row.Description }}</div>
               </q-td>
               <q-td key="owner" :props="props">
@@ -104,9 +123,7 @@
           separator="cell"
         >
           <template v-slot:body="props">
-            <q-tr
-              :props="props"
-              >
+            <q-tr :props="props">
               <q-td key="no" :props="props" class="q-c-input">
                 {{ props.row.rowIndex }}
               </q-td>
@@ -114,15 +131,25 @@
                 {{ props.row.Name }}
               </q-td>
               <q-td key="value" :props="props" class="q-c-input">
-                <q-input v-model="props.row.Value" dense borderless/>
+                <q-input v-model="props.row.Value" dense borderless />
               </q-td>
               <q-td key="testBed" :props="props" class="q-c-input">
                 {{ props.row.TestBed }}
               </q-td>
-              <q-td key="description" :props="props" style="white-space: normal;" class="q-c-input">
+              <q-td
+                key="description"
+                :props="props"
+                style="white-space: normal"
+                class="q-c-input"
+              >
                 {{ props.row.Description }}
               </q-td>
-              <q-td key="example" :props="props" class="q-c-input" style="white-space: normal;">
+              <q-td
+                key="example"
+                :props="props"
+                class="q-c-input"
+                style="white-space: normal"
+              >
                 {{ props.row.ExampleValue }}
               </q-td>
             </q-tr>
@@ -133,30 +160,30 @@
   </div>
 </template>
 <script lang="ts">
-import {
-  defineComponent, onBeforeMount, Ref, ref,
-} from 'vue'
-import { useKeywordStore } from 'src/pinia/keywordStore'
-import { KeywordInterface } from 'src/Models/Keyword'
-import { KeywordCategoryInterface } from 'src/Models/KeywordCategory'
-import { KeywordFeatureInterface } from 'src/Models/KeywordFeature'
-import { TestParamInterface } from 'src/Models/TestParam'
-import { QSelect, useQuasar } from 'quasar'
+import { defineComponent, onBeforeMount, Ref, ref } from 'vue';
+import { useKeywordStore } from '../pinia/keywordStore';
+import { KeywordInterface } from '../Models/Keyword';
+import { KeywordCategoryInterface } from '../Models/KeywordCategory';
+import { KeywordFeatureInterface } from '../Models/KeywordFeature';
+import { TestParamInterface } from '../Models/TestParam';
+import { QSelect, useQuasar } from 'quasar';
 
 export default defineComponent({
   name: 'RightDrawer',
   props: {},
   setup() {
-    const keywordStore = useKeywordStore()
-    const $q = useQuasar()
+    const keywordStore = useKeywordStore();
+    const $q = useQuasar();
     const keywordCategories: Ref<KeywordCategoryInterface[]> = ref([]);
     const filteredKeywordCategories: Ref<KeywordCategoryInterface[]> = ref([]);
     const keywordFeatures: Ref<KeywordFeatureInterface[]> = ref([]);
     const filteredKeywordFeatures: Ref<KeywordFeatureInterface[]> = ref([]);
     const keywords: Ref<KeywordInterface[]> = ref([]);
     const filteredKeywords: Ref<KeywordInterface[]> = ref([]);
-    const selectedKeywordCategory: Ref<KeywordCategoryInterface | null> = ref(null);
-    const selectedKeywordFeature: Ref<KeywordFeatureInterface | null> = ref(null);
+    const selectedKeywordCategory: Ref<KeywordCategoryInterface | null> =
+      ref(null);
+    const selectedKeywordFeature: Ref<KeywordFeatureInterface | null> =
+      ref(null);
     const selectedKeyword: Ref<KeywordInterface | null> = ref(null);
     const kwFilter = ref('');
     const isShowOwner = ref(true);
@@ -214,7 +241,7 @@ export default defineComponent({
         style: 'max-width: 100px',
         headerStyle: 'max-width: 100px',
       },
-    ]
+    ];
     const keywordColumns = [
       {
         name: 'no',
@@ -266,11 +293,18 @@ export default defineComponent({
         sortable: false,
       },
     ];
-    const keywordVisibleColumns: Ref<string[]> = ref(['no', 'name', 'description', 'owner', 'updatedMessage', 'createdDate']);
+    const keywordVisibleColumns: Ref<string[]> = ref([
+      'no',
+      'name',
+      'description',
+      'owner',
+      'updatedMessage',
+      'createdDate',
+    ]);
 
     onBeforeMount(async () => {
       try {
-        await keywordStore.getKeywords()
+        await keywordStore.getKeywords();
       } catch (error: any) {
         $q.notify({
           type: 'negative',
@@ -278,29 +312,39 @@ export default defineComponent({
         });
       }
       // get all keywordFeatures
-      keywordCategories.value.forEach((kwCategory: KeywordCategoryInterface) => {
-        if (kwCategory.Features) {
-          kwCategory.Features.forEach((kwFeature: KeywordFeatureInterface) => {
-            keywordFeatures.value.push(kwFeature);
-          })
+      keywordCategories.value.forEach(
+        (kwCategory: KeywordCategoryInterface) => {
+          if (kwCategory.Features) {
+            kwCategory.Features.forEach(
+              (kwFeature: KeywordFeatureInterface) => {
+                keywordFeatures.value.push(kwFeature);
+              }
+            );
+          }
         }
-      })
+      );
       // get all keywords
-      keywordCategories.value.forEach((kwCategory: KeywordCategoryInterface) => {
-        if (kwCategory.Features) {
-          kwCategory.Features.forEach((kwFeature: KeywordFeatureInterface) => {
-            if (kwFeature.Keywords) {
-              kwFeature.Keywords.forEach((keyword: KeywordInterface) => {
-                keywords.value.push(keyword);
-              })
-            }
-          })
+      keywordCategories.value.forEach(
+        (kwCategory: KeywordCategoryInterface) => {
+          if (kwCategory.Features) {
+            kwCategory.Features.forEach(
+              (kwFeature: KeywordFeatureInterface) => {
+                if (kwFeature.Keywords) {
+                  kwFeature.Keywords.forEach((keyword: KeywordInterface) => {
+                    keywords.value.push(keyword);
+                  });
+                }
+              }
+            );
+          }
         }
-      })
+      );
       // set filteredKeyword and add number
-      filteredKeywords.value = keywords.value
-      filteredKeywords.value = filteredKeywords.value.map((kw: KeywordInterface, i: number) => ({ ...kw, rowIndex: i + 1 }))
-    })
+      filteredKeywords.value = keywords.value;
+      filteredKeywords.value = filteredKeywords.value.map(
+        (kw: KeywordInterface, i: number) => ({ ...kw, rowIndex: i + 1 })
+      );
+    });
 
     function filterCategory(val: string, update: any) {
       setTimeout(() => {
@@ -309,8 +353,11 @@ export default defineComponent({
             if (val === '') {
               filteredKeywordCategories.value = keywordCategories.value;
             } else {
-              const needle = val.toLowerCase()
-              filteredKeywordCategories.value = keywordCategories.value.filter((kwCategory: KeywordCategoryInterface) => kwCategory.Name.toLowerCase().indexOf(needle) > -1)
+              const needle = val.toLowerCase();
+              filteredKeywordCategories.value = keywordCategories.value.filter(
+                (kwCategory: KeywordCategoryInterface) =>
+                  kwCategory.Name.toLowerCase().indexOf(needle) > -1
+              );
             }
           },
 
@@ -318,74 +365,92 @@ export default defineComponent({
           // "ref" is the Vue reference to the QSelect
           (refQ: QSelect) => {
             if (val !== '' && refQ.options && refQ.options.length > 0) {
-              refQ.setOptionIndex(-1) // reset optionIndex in case there is something selected
+              refQ.setOptionIndex(-1); // reset optionIndex in case there is something selected
               // eslint-disable-next-line max-len
-              refQ.moveOptionSelection(1, true) // focus the first selectable option and do not update the input-value
+              refQ.moveOptionSelection(1, true); // focus the first selectable option and do not update the input-value
             }
-          },
-        )
-      }, 300)
+          }
+        );
+      }, 300);
     }
     function abortFilterCategory() {
       // TODO
     }
 
     function onFeatureChange() {
-      filteredKeywords.value = []
-      if (selectedKeywordCategory.value == null) { // No category is selected
+      filteredKeywords.value = [];
+      if (selectedKeywordCategory.value == null) {
+        // No category is selected
         if (selectedKeywordFeature.value == null) {
-          filteredKeywords.value = keywords.value
+          filteredKeywords.value = keywords.value;
         } else {
           // Load all keywords base on Feature
-          keywordCategories.value.forEach((kwCategory: KeywordCategoryInterface) => {
-            if (kwCategory.Features) {
-              kwCategory.Features.forEach((kwFeature: KeywordFeatureInterface) => {
-                if (kwFeature.Name === selectedKeywordFeature.value?.Name) {
-                  if (kwFeature.Keywords) {
-                    kwFeature.Keywords.forEach((kwKeyword: KeywordInterface) => {
-                      filteredKeywords.value.push(kwKeyword)
-                    })
+          keywordCategories.value.forEach(
+            (kwCategory: KeywordCategoryInterface) => {
+              if (kwCategory.Features) {
+                kwCategory.Features.forEach(
+                  (kwFeature: KeywordFeatureInterface) => {
+                    if (kwFeature.Name === selectedKeywordFeature.value?.Name) {
+                      if (kwFeature.Keywords) {
+                        kwFeature.Keywords.forEach(
+                          (kwKeyword: KeywordInterface) => {
+                            filteredKeywords.value.push(kwKeyword);
+                          }
+                        );
+                      }
+                    }
                   }
-                }
-              })
+                );
+              }
             }
-          })
+          );
         }
-      } else if (selectedKeywordFeature.value == null) { // No Feature is selected
+      } else if (selectedKeywordFeature.value == null) {
+        // No Feature is selected
         // Load all keyword that contains category
-        const kwCategory = keywordCategories.value.find((kwCat: KeywordCategoryInterface) => kwCat.Name === selectedKeywordCategory.value?.Name)
+        const kwCategory = keywordCategories.value.find(
+          (kwCat: KeywordCategoryInterface) =>
+            kwCat.Name === selectedKeywordCategory.value?.Name
+        );
         if (kwCategory !== undefined && kwCategory.Features) {
           kwCategory.Features.forEach((kwFeature: KeywordFeatureInterface) => {
             if (kwFeature.Keywords) {
               kwFeature.Keywords.forEach((keyword: KeywordInterface) => {
-                filteredKeywords.value.push(keyword)
-              })
+                filteredKeywords.value.push(keyword);
+              });
             }
-          })
+          });
         }
       } else {
         // Load all keyword that contains both category and feature
         // filteredKeywords.value = keywords.value
-        const kwCategory = keywordCategories.value.find((kwCat: KeywordCategoryInterface) => kwCat.Name === selectedKeywordCategory.value?.Name)
+        const kwCategory = keywordCategories.value.find(
+          (kwCat: KeywordCategoryInterface) =>
+            kwCat.Name === selectedKeywordCategory.value?.Name
+        );
         if (kwCategory !== undefined && kwCategory.Features) {
           kwCategory.Features.forEach((kwFeature: KeywordFeatureInterface) => {
             if (kwFeature.Name === selectedKeywordFeature.value?.Name) {
               if (kwFeature.Keywords) {
                 kwFeature.Keywords.forEach((keyword: KeywordInterface) => {
-                  filteredKeywords.value.push(keyword)
-                })
+                  filteredKeywords.value.push(keyword);
+                });
               }
             }
-          })
+          });
         }
       }
-      filteredKeywords.value = filteredKeywords.value.map((kw: KeywordInterface, i: number) => ({ ...kw, rowIndex: i + 1 }))
+      filteredKeywords.value = filteredKeywords.value.map(
+        (kw: KeywordInterface, i: number) => ({ ...kw, rowIndex: i + 1 })
+      );
     }
 
     function onCategoryChange() {
-      if (selectedKeywordCategory.value === null) { // will display all features
-        filteredKeywordFeatures.value = keywordFeatures.value
-      } else if (selectedKeywordCategory.value?.Features !== undefined) filteredKeywordFeatures.value = selectedKeywordCategory.value?.Features
+      if (selectedKeywordCategory.value === null) {
+        // will display all features
+        filteredKeywordFeatures.value = keywordFeatures.value;
+      } else if (selectedKeywordCategory.value?.Features !== undefined)
+        filteredKeywordFeatures.value = selectedKeywordCategory.value?.Features;
       onFeatureChange();
     }
 
@@ -394,11 +459,14 @@ export default defineComponent({
         update(
           () => {
             if (val === '') {
-              onCategoryChange()
+              onCategoryChange();
             } else {
-              const needle = val.toLowerCase()
+              const needle = val.toLowerCase();
               // eslint-disable-next-line max-len
-              filteredKeywordFeatures.value = keywordFeatures.value.filter((kwFeature: KeywordFeatureInterface) => kwFeature.Name.toLowerCase().indexOf(needle) > -1)
+              filteredKeywordFeatures.value = keywordFeatures.value.filter(
+                (kwFeature: KeywordFeatureInterface) =>
+                  kwFeature.Name.toLowerCase().indexOf(needle) > -1
+              );
             }
           },
 
@@ -406,30 +474,33 @@ export default defineComponent({
           // "ref" is the Vue reference to the QSelect
           (refQ: QSelect) => {
             if (val !== '' && refQ.options && refQ.options.length > 0) {
-              refQ.setOptionIndex(-1) // reset optionIndex in case there is something selected
+              refQ.setOptionIndex(-1); // reset optionIndex in case there is something selected
               // eslint-disable-next-line max-len
-              refQ.moveOptionSelection(1, true) // focus the first selectable option and do not update the input-value
+              refQ.moveOptionSelection(1, true); // focus the first selectable option and do not update the input-value
             }
-          },
-        )
-      }, 300)
+          }
+        );
+      }, 300);
     }
     function abortFilterFeature() {
       // TODO
     }
 
     function showParams(selectedKw: KeywordInterface) {
-      params.value = []
+      params.value = [];
       selectedKw.Params.forEach((p: any) => {
-        params.value.push(p)
+        params.value.push(p);
       });
-      params.value = params.value.map((pr: TestParamInterface, i: number) => ({ ...pr, rowIndex: i + 1 }))
+      params.value = params.value.map((pr: TestParamInterface, i: number) => ({
+        ...pr,
+        rowIndex: i + 1,
+      }));
       // params.value = params.value.map((v: any, i: number) => ({ ...v, rowIndex: i + 1 }))
     }
 
     function onSelectKeyword(kw: KeywordInterface) {
-      selectedKeyword.value = kw
-      showParams(selectedKeyword.value)
+      selectedKeyword.value = kw;
+      showParams(selectedKeyword.value);
     }
 
     return {

@@ -1,7 +1,7 @@
 <template>
   <div>
     <q-table
-      :class="[isDark ? 'sticky-header-dark': 'sticky-header-light']"
+      :class="[isDark ? 'sticky-header-dark' : 'sticky-header-light']"
       dense
       :rows="inQueueDevRunRecords"
       :columns="columns"
@@ -16,7 +16,13 @@
     >
       <template v-slot:top-left>
         <span class="text-h5">Queues</span>
-        <q-input borderless dense debounce="300" v-model="filter" placeholder="Filter">
+        <q-input
+          borderless
+          dense
+          debounce="300"
+          v-model="filter"
+          placeholder="Filter"
+        >
           <template v-slot:append>
             <q-icon name="search" />
           </template>
@@ -35,9 +41,7 @@
         </q-tr>
       </template>
       <template v-slot:body="props">
-        <q-tr
-          :props="props"
-          >
+        <q-tr :props="props">
           <q-td key="id" :props="props" class="q-c-input">
             {{ props.row.Id }}
           </q-td>
@@ -68,14 +72,12 @@
 </template>
 
 <script lang="ts">
-import {
-  defineComponent, PropType, ref, computed, Ref,
-} from 'vue';
+import { defineComponent, PropType, ref, computed, Ref } from 'vue';
 
-import { DevRunRecordInterface } from 'src/Models/DevRunRecord';
-import { useDevMonitoringStore } from 'src/pinia/devMonitoringStore';
-import { UseTimeAgo } from '@vueuse/components'
-import { useGlobalStore } from 'src/pinia/globalStore';
+import { DevRunRecordInterface } from '../../../Models/DevRunRecord';
+import { useDevMonitoringStore } from '../../../pinia/devMonitoringStore';
+import { UseTimeAgo } from '@vueuse/components';
+import { useGlobalStore } from '../../../pinia/globalStore';
 
 export default defineComponent({
   name: 'DevQueue',
@@ -88,98 +90,98 @@ export default defineComponent({
   },
   components: { UseTimeAgo },
   setup() {
-    const globalStore = useGlobalStore()
-    const devMonitoringStore = useDevMonitoringStore()
-    const columns = ref(
-      [
-        {
-          name: 'id',
-          align: 'left',
-          label: 'Id',
-          field: 'Id',
-          sortable: true,
-          style: 'min-width: 80px; max-width: 300px',
-          headerStyle: 'min-width: 80px; max-width: 300px',
-          classes: 'ellipsis',
-        },
-        {
-          name: 'testCase',
-          label: 'Test Case',
-          field: 'TestCaseFullName',
-          sortable: true,
-          align: 'left',
-          style: 'min-width: 100px;',
-          headerStyle: 'min-width: 100px',
-          classes: 'ellipsis',
-        },
-        {
-          name: 'queueStatus',
-          label: 'Queue Status',
-          field: 'Queue Status',
-          sortable: true,
-          align: 'left',
-          style: 'min-width: 120px;',
-          headerStyle: 'min-width: 120px',
-          classes: 'ellipsis',
-        },
-        {
-          name: 'queueType',
-          label: 'Queue Type',
-          field: 'QueueType',
-          sortable: true,
-          align: 'left',
-          style: 'min-width: 120px;',
-          headerStyle: 'min-width: 120px',
-          classes: 'ellipsis',
-        },
-        {
-          name: 'createdAt',
-          label: 'Created At',
-          field: 'CreateAt',
-          sortable: true,
-          align: 'left',
-          style: 'min-width: 135px;',
-          headerStyle: 'min-width: 135px',
-          classes: 'ellipsis',
-        },
-        {
-          name: 'clientName',
-          label: 'Client',
-          field: 'ClientName',
-          sortable: true,
-          align: 'left',
-          style: 'min-width: 90px;',
-          headerStyle: 'min-width: 90px',
-          classes: 'ellipsis',
-        },
-        {
-          name: 'isHighPriority',
-          label: 'High Priority',
-          field: 'IsHightPriority',
-          sortable: true,
-          align: 'left',
-          style: 'min-width: 70px; max-width: 90px;',
-          headerStyle: 'min-width: 70px; max-width: 90px;',
-          classes: 'ellipsis',
-        },
-      ],
-    )
-    const inQueueDevRunRecords: Ref<any[]> = computed(() => devMonitoringStore.inQueueDevRunRecords)
-    const isDark = computed(() => globalStore.darkTheme)
+    const globalStore = useGlobalStore();
+    const devMonitoringStore = useDevMonitoringStore();
+    const columns = ref([
+      {
+        name: 'id',
+        align: 'left',
+        label: 'Id',
+        field: 'Id',
+        sortable: true,
+        style: 'min-width: 80px; max-width: 300px',
+        headerStyle: 'min-width: 80px; max-width: 300px',
+        classes: 'ellipsis',
+      },
+      {
+        name: 'testCase',
+        label: 'Test Case',
+        field: 'TestCaseFullName',
+        sortable: true,
+        align: 'left',
+        style: 'min-width: 100px;',
+        headerStyle: 'min-width: 100px',
+        classes: 'ellipsis',
+      },
+      {
+        name: 'queueStatus',
+        label: 'Queue Status',
+        field: 'Queue Status',
+        sortable: true,
+        align: 'left',
+        style: 'min-width: 120px;',
+        headerStyle: 'min-width: 120px',
+        classes: 'ellipsis',
+      },
+      {
+        name: 'queueType',
+        label: 'Queue Type',
+        field: 'QueueType',
+        sortable: true,
+        align: 'left',
+        style: 'min-width: 120px;',
+        headerStyle: 'min-width: 120px',
+        classes: 'ellipsis',
+      },
+      {
+        name: 'createdAt',
+        label: 'Created At',
+        field: 'CreateAt',
+        sortable: true,
+        align: 'left',
+        style: 'min-width: 135px;',
+        headerStyle: 'min-width: 135px',
+        classes: 'ellipsis',
+      },
+      {
+        name: 'clientName',
+        label: 'Client',
+        field: 'ClientName',
+        sortable: true,
+        align: 'left',
+        style: 'min-width: 90px;',
+        headerStyle: 'min-width: 90px',
+        classes: 'ellipsis',
+      },
+      {
+        name: 'isHighPriority',
+        label: 'High Priority',
+        field: 'IsHightPriority',
+        sortable: true,
+        align: 'left',
+        style: 'min-width: 70px; max-width: 90px;',
+        headerStyle: 'min-width: 70px; max-width: 90px;',
+        classes: 'ellipsis',
+      },
+    ]);
+    const inQueueDevRunRecords: Ref<any[]> = computed(
+      () => devMonitoringStore.inQueueDevRunRecords
+    );
+    const isDark = computed(() => globalStore.darkTheme);
     const initialPagination = {
       sortBy: 'createAt',
       descending: true,
       // page: 2,
       // rowsPerPage: 3,
       // rowsNumber: xx if getting data from a server
-    }
+    };
     return {
       columns,
       inQueueDevRunRecords,
       isDark,
       filter: ref(''),
       initialPagination,
-    }
+    };
   },
 });
 </script>

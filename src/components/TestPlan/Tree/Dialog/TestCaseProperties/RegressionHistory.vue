@@ -1,15 +1,11 @@
 <template>
-  <div>
-    Regression History
-  </div>
+  <div>Regression History</div>
 </template>
 
 <script lang="ts">
-import {
-  defineComponent, PropType,
-} from 'vue';
+import { defineComponent, PropType } from 'vue';
 
-import { TestCaseInterface } from 'src/Models/TestCase';
+import { TestCaseInterface } from '../../../../../Models/TestCase';
 
 export default defineComponent({
   name: 'RegressionHistory',
@@ -20,10 +16,9 @@ export default defineComponent({
       default: () => ({}),
     },
   },
-  components: { },
+  components: {},
   setup() {
-    return {
-    }
+    return {};
   },
 });
 </script>

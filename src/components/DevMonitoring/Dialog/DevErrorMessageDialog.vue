@@ -3,15 +3,25 @@
     <q-layout
       class="q-pa-sm"
       :class="isDark ? 'bg-grey-9' : 'bg-grey-3'"
-      style="max-width: 1200px; min-height: 400px !important;"
+      style="max-width: 1200px; min-height: 400px !important"
     >
       <div class="row q-mb-sm">
-        <span class="text-h6">{{ DevRunRecord.TestCaseCodeName }}: {{ DevRunRecord.TestCaseName }}</span>
+        <span class="text-h6"
+          >{{ DevRunRecord.TestCaseCodeName }}:
+          {{ DevRunRecord.TestCaseName }}</span
+        >
         <q-space />
-        <q-btn outline icon="content_copy" primary @click="copy(DevRunRecord.ErrorMessage || '')" class="q-mr-sm">Copy Error</q-btn>
+        <q-btn
+          outline
+          icon="content_copy"
+          primary
+          @click="copy(DevRunRecord.ErrorMessage || '')"
+          class="q-mr-sm"
+          >Copy Error</q-btn
+        >
       </div>
       <q-separator class="q-mb-sm q-mt-sm" />
-      <div style="white-space: pre-wrap;">
+      <div style="white-space: pre-wrap">
         {{ DevRunRecord.ErrorMessage }}
       </div>
     </q-layout>
@@ -20,13 +30,11 @@
 
 <script lang="ts">
 import { useDialogPluginComponent } from 'quasar';
-import { DevRunRecordInterface } from 'src/Models/DevRunRecord';
-import {
-  defineComponent, computed, PropType,
-} from 'vue';
+import { DevRunRecordInterface } from '../../../Models/DevRunRecord';
+import { defineComponent, computed, PropType } from 'vue';
 
-import { useClipboard } from '@vueuse/core'
-import { useGlobalStore } from 'src/pinia/globalStore';
+import { useClipboard } from '@vueuse/core';
+import { useGlobalStore } from '../../../pinia/globalStore';
 
 export default defineComponent({
   name: 'DevErrorMessageDialog',
@@ -42,15 +50,14 @@ export default defineComponent({
     // component will emit through useDialogPluginComponent()
     ...useDialogPluginComponent.emits,
   ],
-  components: { },
+  components: {},
   setup() {
-    const globalStorage = useGlobalStore()
-    const isDark = computed(() => globalStorage.darkTheme)
+    const globalStorage = useGlobalStore();
+    const isDark = computed(() => globalStorage.darkTheme);
     // REQUIRED; must be called inside of setup()
-    const {
-      dialogRef, onDialogHide, onDialogOK, onDialogCancel,
-    } = useDialogPluginComponent()
-    const { copy } = useClipboard()
+    const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
+      useDialogPluginComponent();
+    const { copy } = useClipboard();
     return {
       copy,
       isDark,
@@ -65,14 +72,14 @@ export default defineComponent({
       onOKClick() {
         // on OK, it is REQUIRED to
         // call onDialogOK (with optional payload)
-        onDialogOK()
+        onDialogOK();
         // or with payload: onDialogOK({ ... })
         // ...and it will also hide the dialog automatically
       },
 
       // we can passthrough onDialogCancel directly
       onCancelClick: onDialogCancel,
-    }
+    };
   },
 });
 </script>

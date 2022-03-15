@@ -14,7 +14,13 @@
       separator="cell"
     >
       <template v-slot:top-right>
-        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+        <q-input
+          borderless
+          dense
+          debounce="300"
+          v-model="filter"
+          placeholder="Search"
+        >
           <template v-slot:append>
             <q-icon name="search" />
           </template>
@@ -28,24 +34,34 @@
 export default {
   inheritAttrs: false,
   customOptions: {},
-}
+};
 </script>
 
 <script setup lang="ts">
-import {
-  ref, Ref, computed,
-} from 'vue';
-import { TestClientInterface } from 'src/Models/TestClient';
-import { clientColumns } from 'src/components/tableColumns';
-import { useTestClientStore } from 'src/pinia/testClientStore';
+import { ref, Ref, computed } from 'vue';
+import { TestClientInterface } from '../../../Models/TestClient';
+import { clientColumns } from '../../../components/tableColumns';
+import { useTestClientStore } from '../../../pinia/testClientStore';
 
-const testClientStore = useTestClientStore()
-const filter = ref('')
+const testClientStore = useTestClientStore();
+const filter = ref('');
 const initialPagination = {
   rowsPerPage: 50,
-}
-await testClientStore.getTestClients()
-const testClients: Ref<TestClientInterface[]> = computed(() => testClientStore.testClients)
-const visibleColumns = ref(['FullName', 'Category', 'TestSuite', 'TestGroup', 'Owner', 'Type', 'IsPrimary', 'Queue', 'CreatedDate', 'LastModifiedDate'])
-
+};
+await testClientStore.getTestClients();
+const testClients: Ref<TestClientInterface[]> = computed(
+  () => testClientStore.testClients
+);
+const visibleColumns = ref([
+  'FullName',
+  'Category',
+  'TestSuite',
+  'TestGroup',
+  'Owner',
+  'Type',
+  'IsPrimary',
+  'Queue',
+  'CreatedDate',
+  'LastModifiedDate',
+]);
 </script>

@@ -16,7 +16,13 @@
       separator="cell"
     >
       <template v-slot:top-right>
-        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+        <q-input
+          borderless
+          dense
+          debounce="300"
+          v-model="filter"
+          placeholder="Search"
+        >
           <template v-slot:append>
             <q-icon name="search" />
           </template>
@@ -30,19 +36,17 @@
 </template>
 
 <script lang="ts">
-import {
-  computed, defineComponent, onMounted, Ref, ref, watch,
-} from 'vue';
-import { TestCaseDetailInterface } from 'src/Models/TestCaseDetail';
-import { useQuasar } from 'quasar'
-import { useCreateRegressionStore } from 'src/pinia/createRegressionStore';
+import { computed, defineComponent, onMounted, Ref, ref, watch } from 'vue';
+import { TestCaseDetailInterface } from '../../../Models/TestCaseDetail';
+import { useQuasar } from 'quasar';
+import { useCreateRegressionStore } from '../../../pinia/createRegressionStore';
 
 export default defineComponent({
   name: 'SelectTestCase',
   components: {},
   setup(props, context) {
-    const createRegressionStore = useCreateRegressionStore()
-    const $q = useQuasar()
+    const createRegressionStore = useCreateRegressionStore();
+    const $q = useQuasar();
     const columns = [
       {
         name: 'Id',
@@ -180,35 +184,52 @@ export default defineComponent({
         format: (val: any) => `${val}`,
         sortable: true,
       },
-    ]
-    const filter = ref('')
+    ];
+    const filter = ref('');
     const initialPagination = {
       rowsPerPage: 50,
-    }
+    };
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const testCases: Ref<TestCaseDetailInterface[]> = computed(() => createRegressionStore.allTestCasesDetail)
-    const selected: Ref<TestCaseDetailInterface[]> = ref([])
-    const visibleColumns = ref(['FullName', 'Category', 'TestSuite', 'TestGroup', 'Owner', 'Type', 'IsPrimary', 'Queue', 'CreatedDate', 'LastModifiedDate'])
+    const testCases: Ref<TestCaseDetailInterface[]> = computed(
+      () => createRegressionStore.allTestCasesDetail
+    );
+    const selected: Ref<TestCaseDetailInterface[]> = ref([]);
+    const visibleColumns = ref([
+      'FullName',
+      'Category',
+      'TestSuite',
+      'TestGroup',
+      'Owner',
+      'Type',
+      'IsPrimary',
+      'Queue',
+      'CreatedDate',
+      'LastModifiedDate',
+    ]);
     function getSelectedString() {
-      return selected.value.length === 0 ? '' : `${selected.value.length} record${selected.value.length > 1 ? 's' : ''} selected of ${testCases.value.length}`
+      return selected.value.length === 0
+        ? ''
+        : `${selected.value.length} record${
+            selected.value.length > 1 ? 's' : ''
+          } selected of ${testCases.value.length}`;
     }
     watch(
       () => selected.value,
       () => {
-        createRegressionStore.selectedTestCasesDetail = selected.value
+        createRegressionStore.selectedTestCasesDetail = selected.value;
         if (selected.value.length === 0) {
-          context.emit('validateForm', false)
+          context.emit('validateForm', false);
         } else {
-          context.emit('validateForm', true)
+          context.emit('validateForm', true);
         }
-      },
-    )
+      }
+    );
     onMounted(async () => {
       try {
-        context.emit('validateForm', false)
-        createRegressionStore.selectedTestCasesDetail = []
-        createRegressionStore.selectedTestCases = []
-        await createRegressionStore.getAllTestCaseDetails()
+        context.emit('validateForm', false);
+        createRegressionStore.selectedTestCasesDetail = [];
+        createRegressionStore.selectedTestCases = [];
+        await createRegressionStore.getAllTestCaseDetails();
       } catch (error: any) {
         $q.notify({
           type: 'negative',
@@ -225,7 +246,7 @@ export default defineComponent({
       filter,
       selected,
       initialPagination,
-    }
+    };
   },
 });
 </script>

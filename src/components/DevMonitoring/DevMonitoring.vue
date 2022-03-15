@@ -185,11 +185,11 @@
 <script lang="ts">
 import { computed, defineComponent, ref, Ref, onBeforeMount } from 'vue';
 import { useQuasar } from 'quasar';
-import { DevRunRecordInterface } from 'src/Models/DevRunRecord';
+import { DevRunRecordInterface } from '../../Models/DevRunRecord';
 import { UseTimeAgo } from '@vueuse/components';
 import { useClipboard, useTitle } from '@vueuse/core';
-import { useGlobalStore } from 'src/pinia/globalStore';
-import { useDevMonitoringStore } from 'src/pinia/devMonitoringStore';
+import { useGlobalStore } from '../../pinia/globalStore';
+import { useDevMonitoringStore } from '../../pinia/devMonitoringStore';
 import DevLog from './DevRunning/DevLog.vue';
 import ErrorScreenshot from './DevRunning/ErrorScreenshot.vue';
 import DevQueue from './DevQueue/DevQueue.vue';

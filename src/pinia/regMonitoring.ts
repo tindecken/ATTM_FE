@@ -1,8 +1,8 @@
-import { defineStore } from 'pinia'
-import { useUserStore } from 'src/pinia/userStore'
-import { api } from 'boot/axios'
-import { RegressionFilterCriteriaDataInterface } from 'src/Models/Entities/RegressionFilterCriteriaData'
-import { RegressionTestInterface } from 'src/Models/RegressionTest'
+import { defineStore } from 'pinia';
+import { useUserStore } from '../pinia/userStore';
+import { api } from '../boot/axios';
+import { RegressionFilterCriteriaDataInterface } from '../Models/Entities/RegressionFilterCriteriaData';
+import { RegressionTestInterface } from '../Models/RegressionTest';
 
 export const useRegMonitoringStore = defineStore('regMonitoring', {
   state: () => ({
@@ -16,25 +16,40 @@ export const useRegMonitoringStore = defineStore('regMonitoring', {
   }),
   getters: {
     failedRegTests(state) {
-      return state.regTests.filter((test: RegressionTestInterface) => test.Status === 'Failed');
+      return state.regTests.filter(
+        (test: RegressionTestInterface) => test.Status === 'Failed'
+      );
     },
     passedRegTests(state) {
-      return state.regTests.filter((test: RegressionTestInterface) => test.Status === 'Passed');
+      return state.regTests.filter(
+        (test: RegressionTestInterface) => test.Status === 'Passed'
+      );
     },
     inQueueRegTests(state) {
-      return state.regTests.filter((test: RegressionTestInterface) => test.Status === 'InQueue');
+      return state.regTests.filter(
+        (test: RegressionTestInterface) => test.Status === 'InQueue'
+      );
     },
     runningRegTests(state) {
-      return state.regTests.filter((test: RegressionTestInterface) => test.Status === 'Running' || test.Status === 'Inconclusive');
+      return state.regTests.filter(
+        (test: RegressionTestInterface) =>
+          test.Status === 'Running' || test.Status === 'Inconclusive'
+      );
     },
     analyseFailedRegTests(state) {
-      return state.regTests.filter((test: RegressionTestInterface) => test.Status === 'AnalyseFailed');
+      return state.regTests.filter(
+        (test: RegressionTestInterface) => test.Status === 'AnalyseFailed'
+      );
     },
     analysePassedRegTests(state) {
-      return state.regTests.filter((test: RegressionTestInterface) => test.Status === 'AnalysePassed');
+      return state.regTests.filter(
+        (test: RegressionTestInterface) => test.Status === 'AnalysePassed'
+      );
     },
     inCompatibleRegTests(state) {
-      return state.regTests.filter((test: RegressionTestInterface) => test.Status === 'InCompatible');
+      return state.regTests.filter(
+        (test: RegressionTestInterface) => test.Status === 'InCompatible'
+      );
     },
     selectedRegTest(state) {
       return state.selectedRegTest;
@@ -58,7 +73,7 @@ export const useRegMonitoringStore = defineStore('regMonitoring', {
   actions: {
     async getRegressionDetail(regressionId: string) {
       try {
-        const userStore = useUserStore()
+        const userStore = useUserStore();
         const response = await api.get(
           `/regressions/${regressionId}/getdetail`,
           {
@@ -66,40 +81,49 @@ export const useRegMonitoringStore = defineStore('regMonitoring', {
               'Content-Type': 'application/json',
               Authorization: `Bearer ${userStore.Token}`,
             },
-          },
+          }
         );
-        const responseData = await response.data
-        const regressionTests = await responseData.data as RegressionTestInterface [];
+        const responseData = await response.data;
+        const regressionTests =
+          (await responseData.data) as RegressionTestInterface[];
         this.regTests = regressionTests;
-        const categories = regressionTests.map((regTest: RegressionTestInterface) => regTest.CategoryName).filter((value, index, self) => self.indexOf(value) === index)
+        const categories = regressionTests
+          .map((regTest: RegressionTestInterface) => regTest.CategoryName)
+          .filter((value, index, self) => self.indexOf(value) === index);
         this.categorySelections = categories;
-        const testSuites = regressionTests.map((regTest: RegressionTestInterface) => regTest.TestSuiteFullName).filter((value, index, self) => self.indexOf(value) === index)
+        const testSuites = regressionTests
+          .map((regTest: RegressionTestInterface) => regTest.TestSuiteFullName)
+          .filter((value, index, self) => self.indexOf(value) === index);
         this.testSuiteSelections = testSuites;
-        const testGroups = regressionTests.map((regTest: RegressionTestInterface) => regTest.TestGroupFullName).filter((value, index, self) => self.indexOf(value) === index)
+        const testGroups = regressionTests
+          .map((regTest: RegressionTestInterface) => regTest.TestGroupFullName)
+          .filter((value, index, self) => self.indexOf(value) === index);
         this.testGroupSelections = testGroups;
-        const testClients = regressionTests.map((regTest: RegressionTestInterface) => regTest.ClientName).filter((value, index, self) => self.indexOf(value) === index && value !== '')
+        const testClients = regressionTests
+          .map((regTest: RegressionTestInterface) => regTest.ClientName)
+          .filter(
+            (value, index, self) =>
+              self.indexOf(value) === index && value !== ''
+          );
         this.testClientSelections = testClients;
       } catch (error: any) {
-        throw error.response.data
+        throw error.response.data;
       }
     },
     async getScreenshot(screenshotId: string) {
-      const userStore = useUserStore()
+      const userStore = useUserStore();
       try {
-        const response = await api.get(
-          `/gridfsbucket/${screenshotId}`,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${userStore.Token}`,
-            },
+        const response = await api.get(`/gridfsbucket/${screenshotId}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userStore.Token}`,
           },
-        );
-        const responseData = await response.data
-        return responseData.data
+        });
+        const responseData = await response.data;
+        return responseData.data;
       } catch (error: any) {
-        throw error.response.data
+        throw error.response.data;
       }
     },
   },
-})
+});

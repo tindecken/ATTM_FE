@@ -1,88 +1,146 @@
 <template>
-<q-dialog ref="dialogRef" @hide="onDialogHide" persistent>
-  <q-layout view="hHh lpR fFf"
-    :class="isDark ? 'bg-grey-9' : 'bg-grey-3'"
-    style="max-height: 900px; min-height: 100px !important; min-width: 800px"
-    container
-  >
-    <q-header reveal bordered class="row justify-between bg-secondary">
-      <div class="self-center text-subtitle1 q-pl-sm">Edit Test Step: {{testStep.Keyword?.Name}}</div>
-      <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
-        <q-tooltip>Close</q-tooltip>
-      </q-btn>
-    </q-header>
-    <q-page-container>
-      <q-card>
-        <q-card-section>
-          <q-input dense outlined v-model="testStep.Description" label="Description"/>
-        </q-card-section>
-
-        <q-card-section class="q-pt-none">
-          <q-table
-          dense
-          title="Parameters"
-          :rows="testStep.Params"
-          :columns="paramColumns"
-          row-key="name"
-          :hide-pagination="true"
-          separator="cell"
-        >
-          <template v-slot:body="props">
-            <q-tr
-              :props="props"
-              >
-              <q-td key="no" :props="props" class="q-c-input">
-                {{ props.row.rowIndex }}
-              </q-td>
-              <q-td key="name" :props="props" class="q-pl-sm">
-                {{ props.row.Name }}
-              </q-td>
-              <q-td key="value" :props="props" class="q-c-input" @click="footerInfo = props.row.Value">
-                <q-input :class="valueStyle(props.row)" v-model="props.row.Value" dense borderless :readonly="props.row.TestNodePath !== ''"/>
-              </q-td>
-              <q-td key="testBed" :props="props" class="q-c-input">
-                <q-btn outline color="primary" label="Use" @click="useTestEnv(props.row)"></q-btn>
-                <q-btn outline color="primary" label="UnUse" class="q-ml-sm" @click="unUseTestEnv(props.row)"></q-btn>
-              </q-td>
-              <q-td key="description" :props="props" class="q-pl-sm"  @click="footerInfo = props.row.Description">
-                {{ props.row.Description }}
-              </q-td>
-              <q-td key="exampleValue" :props="props" class="q-pl-sm"  @click="footerInfo = props.row.ExampleValue">
-                {{ props.row.ExampleValue }}
-              </q-td>
-            </q-tr>
-          </template>
-        </q-table>
-        </q-card-section>
-        <q-card-section class="row reverse">
-          <q-btn outline  color="primary" label="Cancel" class="q-ml-sm" @click="onDialogHide"></q-btn>
-          <q-btn outline  color="primary" label="OK" @click="okClick()"></q-btn>
-        </q-card-section>
-    </q-card>
-    </q-page-container>
-    <q-footer bordered class="bg-secondary text-white"  style="height: 24px;width: -webkit-fill-available;">
-      <div class="row inline justify-between items-center">
-            <span @click="copy(footerInfo)" class="q-pl-sm">{{footerInfo}}</span>
+  <q-dialog ref="dialogRef" @hide="onDialogHide" persistent>
+    <q-layout
+      view="hHh lpR fFf"
+      :class="isDark ? 'bg-grey-9' : 'bg-grey-3'"
+      style="max-height: 900px; min-height: 100px !important; min-width: 800px"
+      container
+    >
+      <q-header reveal bordered class="row justify-between bg-secondary">
+        <div class="self-center text-subtitle1 q-pl-sm">
+          Edit Test Step: {{ testStep.Keyword?.Name }}
         </div>
-    </q-footer>
-  </q-layout>
-</q-dialog>
+        <q-btn
+          class="self-center"
+          dense
+          flat
+          icon="close"
+          @click="onDialogHide"
+        >
+          <q-tooltip>Close</q-tooltip>
+        </q-btn>
+      </q-header>
+      <q-page-container>
+        <q-card>
+          <q-card-section>
+            <q-input
+              dense
+              outlined
+              v-model="testStep.Description"
+              label="Description"
+            />
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            <q-table
+              dense
+              title="Parameters"
+              :rows="testStep.Params"
+              :columns="paramColumns"
+              row-key="name"
+              :hide-pagination="true"
+              separator="cell"
+            >
+              <template v-slot:body="props">
+                <q-tr :props="props">
+                  <q-td key="no" :props="props" class="q-c-input">
+                    {{ props.row.rowIndex }}
+                  </q-td>
+                  <q-td key="name" :props="props" class="q-pl-sm">
+                    {{ props.row.Name }}
+                  </q-td>
+                  <q-td
+                    key="value"
+                    :props="props"
+                    class="q-c-input"
+                    @click="footerInfo = props.row.Value"
+                  >
+                    <q-input
+                      :class="valueStyle(props.row)"
+                      v-model="props.row.Value"
+                      dense
+                      borderless
+                      :readonly="props.row.TestNodePath !== ''"
+                    />
+                  </q-td>
+                  <q-td key="testBed" :props="props" class="q-c-input">
+                    <q-btn
+                      outline
+                      color="primary"
+                      label="Use"
+                      @click="useTestEnv(props.row)"
+                    ></q-btn>
+                    <q-btn
+                      outline
+                      color="primary"
+                      label="UnUse"
+                      class="q-ml-sm"
+                      @click="unUseTestEnv(props.row)"
+                    ></q-btn>
+                  </q-td>
+                  <q-td
+                    key="description"
+                    :props="props"
+                    class="q-pl-sm"
+                    @click="footerInfo = props.row.Description"
+                  >
+                    {{ props.row.Description }}
+                  </q-td>
+                  <q-td
+                    key="exampleValue"
+                    :props="props"
+                    class="q-pl-sm"
+                    @click="footerInfo = props.row.ExampleValue"
+                  >
+                    {{ props.row.ExampleValue }}
+                  </q-td>
+                </q-tr>
+              </template>
+            </q-table>
+          </q-card-section>
+          <q-card-section class="row reverse">
+            <q-btn
+              outline
+              color="primary"
+              label="Cancel"
+              class="q-ml-sm"
+              @click="onDialogHide"
+            ></q-btn>
+            <q-btn
+              outline
+              color="primary"
+              label="OK"
+              @click="okClick()"
+            ></q-btn>
+          </q-card-section>
+        </q-card>
+      </q-page-container>
+      <q-footer
+        bordered
+        class="bg-secondary text-white"
+        style="height: 24px; width: -webkit-fill-available"
+      >
+        <div class="row inline justify-between items-center">
+          <span @click="copy(footerInfo)" class="q-pl-sm">{{
+            footerInfo
+          }}</span>
+        </div>
+      </q-footer>
+    </q-layout>
+  </q-dialog>
 </template>
 <script lang="ts">
-import {
-  computed,
-  defineComponent, onMounted, ref, PropType, Ref,
-} from 'vue';
-import _ from 'lodash'
-import { useGlobalStore } from 'src/pinia/globalStore';
-import { useDialogPluginComponent, useQuasar } from 'quasar'
-import { TestStepInterface } from 'src/Models/TestStep';
-import { TestCaseInterface } from 'src/Models/TestCase';
-import { TestParamInterface } from 'src/Models/TestParam';
-import { TestEnvNodeInterface } from 'src/Models/TestEnv';
-import { useClipboard } from '@vueuse/core'
-import TestEnvironmentDialog from './TestEnvironmentDialog.vue'
-import { getValueType } from '../Utils/utils'
+import { computed, defineComponent, onMounted, ref, PropType, Ref } from 'vue';
+import _ from 'lodash';
+import { useGlobalStore } from '../../../../pinia/globalStore';
+import { useDialogPluginComponent, useQuasar } from 'quasar';
+import { TestStepInterface } from '../../../../Models/TestStep';
+import { TestCaseInterface } from '../../../../Models/TestCase';
+import { TestParamInterface } from '../../../../Models/TestParam';
+import { TestEnvNodeInterface } from '../../../../Models/TestEnv';
+import { useClipboard } from '@vueuse/core';
+import TestEnvironmentDialog from './TestEnvironmentDialog.vue';
+import { getValueType } from '../Utils/utils';
 
 export default defineComponent({
   name: 'KeywordEditorDialog',
@@ -96,15 +154,13 @@ export default defineComponent({
       required: true,
     },
   },
-  components: {
-  },
+  components: {},
   setup(props) {
-    const globalStore = useGlobalStore()
-    const {
-      dialogRef, onDialogHide, onDialogOK, onDialogCancel,
-    } = useDialogPluginComponent()
-    const { copy } = useClipboard()
-    const $q = useQuasar()
+    const globalStore = useGlobalStore();
+    const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
+      useDialogPluginComponent();
+    const { copy } = useClipboard();
+    const $q = useQuasar();
     const paramColumns = [
       {
         name: 'no',
@@ -157,22 +213,26 @@ export default defineComponent({
         sortable: false,
         classes: 'ellipsis',
       },
-    ]
+    ];
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const isDark = computed(() => globalStore.darkTheme)
-    const testCase: Ref<TestCaseInterface> = ref(props.TestCase)
-    const testStep: Ref<TestStepInterface> = ref(props.TestStep)
-    const footerInfo = ref('')
+    const isDark = computed(() => globalStore.darkTheme);
+    const testCase: Ref<TestCaseInterface> = ref(props.TestCase);
+    const testStep: Ref<TestStepInterface> = ref(props.TestStep);
+    const footerInfo = ref('');
     onMounted(() => {
-      testCase.value = _.cloneDeep(props.TestCase)
-      testStep.value = _.cloneDeep(props.TestStep)
-      testStep.value.Params = testStep.value.Params.map((pr: TestParamInterface, i: number) => ({ ...pr, rowIndex: i + 1 }))
-    })
+      testCase.value = _.cloneDeep(props.TestCase);
+      testStep.value = _.cloneDeep(props.TestStep);
+      testStep.value.Params = testStep.value.Params.map(
+        (pr: TestParamInterface, i: number) => ({ ...pr, rowIndex: i + 1 })
+      );
+    });
 
     function valueStyle(pr: TestParamInterface) {
-      const prIndex = testStep.value.Params.findIndex((p: TestParamInterface) => p.Name === pr.Name)
-      if (prIndex === -1) return ''
-      return getValueType(testStep.value.Params[prIndex])
+      const prIndex = testStep.value.Params.findIndex(
+        (p: TestParamInterface) => p.Name === pr.Name
+      );
+      if (prIndex === -1) return '';
+      return getValueType(testStep.value.Params[prIndex]);
     }
 
     // other methods that we used in our vue html template;
@@ -180,7 +240,7 @@ export default defineComponent({
     function onOKClick() {
       // on OK, it is REQUIRED to
       // call onDialogOK (with optional payload)
-      onDialogOK()
+      onDialogOK();
       // or with payload: onDialogOK({ ... })
       // ...and it will also hide the dialog automatically
     }
@@ -188,33 +248,42 @@ export default defineComponent({
     function useTestEnv(pr: TestParamInterface) {
       $q.dialog({
         component: TestEnvironmentDialog,
-      }).onOk((testEnvNode: TestEnvNodeInterface) => {
-        // TODO: handle ok
-        if (testEnvNode) {
-          const prIndex = testStep.value.Params.findIndex((p: TestParamInterface) => p.Name === pr.Name)
-          if (prIndex === -1) return
-          testStep.value.Params[prIndex].Value = testEnvNode.Value
-          testStep.value.Params[prIndex].TestNodePath = `${testEnvNode.Category}/${testEnvNode.Name}`
-        }
-      }).onCancel(() => {
-        // TODO
-      }).onDismiss(() => {
-        // TODO
       })
+        .onOk((testEnvNode: TestEnvNodeInterface) => {
+          // TODO: handle ok
+          if (testEnvNode) {
+            const prIndex = testStep.value.Params.findIndex(
+              (p: TestParamInterface) => p.Name === pr.Name
+            );
+            if (prIndex === -1) return;
+            testStep.value.Params[prIndex].Value = testEnvNode.Value;
+            testStep.value.Params[
+              prIndex
+            ].TestNodePath = `${testEnvNode.Category}/${testEnvNode.Name}`;
+          }
+        })
+        .onCancel(() => {
+          // TODO
+        })
+        .onDismiss(() => {
+          // TODO
+        });
     }
 
     function okClick() {
-      console.log('Description', testStep.value.Description)
-      onDialogOK(testStep.value)
-      onDialogHide()
+      console.log('Description', testStep.value.Description);
+      onDialogOK(testStep.value);
+      onDialogHide();
     }
 
     function unUseTestEnv(pr: TestParamInterface) {
-      console.log('row', pr)
-      const prIndex = testStep.value.Params.findIndex((p: TestParamInterface) => p.Name === pr.Name)
-      if (prIndex === -1) return
-      testStep.value.Params[prIndex].Value = pr.Value
-      testStep.value.Params[prIndex].TestNodePath = ''
+      console.log('row', pr);
+      const prIndex = testStep.value.Params.findIndex(
+        (p: TestParamInterface) => p.Name === pr.Name
+      );
+      if (prIndex === -1) return;
+      testStep.value.Params[prIndex].Value = pr.Value;
+      testStep.value.Params[prIndex].TestNodePath = '';
     }
 
     return {

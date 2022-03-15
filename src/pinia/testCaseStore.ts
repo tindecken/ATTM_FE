@@ -1,15 +1,15 @@
-import { defineStore } from 'pinia'
-import { useUserStore } from 'src/pinia/userStore'
-import { api } from 'boot/axios'
-import _ from 'lodash'
-import uuid from 'uuid-random'
-import { TestCaseInterface } from 'src/Models/TestCase'
-import { paintTestCase } from 'src/components/Utils/TreeUtils'
-import { TestStepInterface } from 'src/Models/TestStep'
-import { TestSuiteInterface } from 'src/Models/TestSuite'
-import { CategoryInterface } from 'src/Models/Category'
-import { TestCaseHistoryInterface } from 'src/Models/TestCaseHistory'
-import { useCategoryStore } from './categoryStore'
+import { defineStore } from 'pinia';
+import { useUserStore } from '../pinia/userStore';
+import { api } from '../boot/axios';
+import _ from 'lodash';
+import uuid from 'uuid-random';
+import { TestCaseInterface } from '../Models/TestCase';
+import { paintTestCase } from '../components/Utils/TreeUtils';
+import { TestStepInterface } from '../Models/TestStep';
+import { TestSuiteInterface } from '../Models/TestSuite';
+import { CategoryInterface } from '../Models/Category';
+import { TestCaseHistoryInterface } from '../Models/TestCaseHistory';
+import { useCategoryStore } from './categoryStore';
 
 export const useTestCaseStore = defineStore('testcase', {
   state: () => ({
@@ -17,28 +17,24 @@ export const useTestCaseStore = defineStore('testcase', {
     copiedTC: undefined as TestCaseInterface | undefined,
     selectedTestCaseId: '',
   }),
-  getters: {
-  },
+  getters: {},
   actions: {
     async getTestCaseById(id: string) {
-      const userStore = useUserStore()
-      const response = await api.get(
-        `/testcases/${id}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${userStore.Token}`,
-          },
+      const userStore = useUserStore();
+      const response = await api.get(`/testcases/${id}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userStore.Token}`,
         },
-      );
-      let testCase = await response.data as TestCaseInterface;
+      });
+      let testCase = (await response.data) as TestCaseInterface;
       testCase = paintTestCase(testCase);
       this.setOpenedTCs(testCase);
-      this.setSelectedTestCaseId(testCase.Id)
-      return testCase
+      this.setSelectedTestCaseId(testCase.Id);
+      return testCase;
     },
     async saveTestCase(testCaseHistory: TestCaseHistoryInterface) {
-      const userStore = useUserStore()
+      const userStore = useUserStore();
       try {
         const response = await api.post(
           '/testcases/savetestcase',
@@ -48,7 +44,7 @@ export const useTestCaseStore = defineStore('testcase', {
               'Content-Type': 'application/json',
               Authorization: `Bearer ${userStore.Token}`,
             },
-          },
+          }
         );
         const responseData = await response.data;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -58,8 +54,8 @@ export const useTestCaseStore = defineStore('testcase', {
       }
     },
     async editTestCase(testCaseHistory: TestCaseHistoryInterface) {
-      const userStore = useUserStore()
-      const categoryStore = useCategoryStore()
+      const userStore = useUserStore();
+      const categoryStore = useCategoryStore();
       try {
         // create in database
         const response = await api.post(
@@ -70,20 +66,21 @@ export const useTestCaseStore = defineStore('testcase', {
               'Content-Type': 'application/json',
               Authorization: `Bearer ${userStore.Token}`,
             },
-          },
+          }
         );
-        const responseTestCase = (await response.data.data) as TestCaseInterface;
-        let testCase = _.cloneDeep(responseTestCase)
+        const responseTestCase = (await response.data
+          .data) as TestCaseInterface;
+        let testCase = _.cloneDeep(responseTestCase);
         testCase = paintTestCase(testCase);
-        categoryStore.updateTestCase(testCase)
+        categoryStore.updateTestCase(testCase);
         this.updateOpenedTCs(testCase);
-        return responseTestCase
+        return responseTestCase;
       } catch (error: any) {
         throw error.response.data;
       }
     },
     async getUpateHistories(testCaseId: string) {
-      const userStore = useUserStore()
+      const userStore = useUserStore();
       try {
         const response = await api.get(
           `/testcases/${testCaseId}/getupdatehistories`,
@@ -92,110 +89,135 @@ export const useTestCaseStore = defineStore('testcase', {
               'Content-Type': 'application/json',
               Authorization: `Bearer ${userStore.Token}`,
             },
-          },
+          }
         );
-        const responseTestCase = (await response.data.data) as TestCaseHistoryInterface[];
-        return responseTestCase
+        const responseTestCase = (await response.data
+          .data) as TestCaseHistoryInterface[];
+        return responseTestCase;
       } catch (error: any) {
         throw error.response.data;
       }
     },
     setOpenedTCs(testCase: TestCaseInterface) {
-      const found = this.openedTCs.some((el: TestCaseInterface) => el.Id === testCase.Id);
+      const found = this.openedTCs.some(
+        (el: TestCaseInterface) => el.Id === testCase.Id
+      );
       if (!found) {
         this.openedTCs.push(testCase);
       }
       this.selectedTestCaseId = testCase.Id;
     },
     updateOpenedTCs(testCase: TestCaseInterface) {
-      const index = this.openedTCs.findIndex((tc: TestCaseInterface) => tc.Id === testCase.Id);
-      this.openedTCs[index] = testCase
+      const index = this.openedTCs.findIndex(
+        (tc: TestCaseInterface) => tc.Id === testCase.Id
+      );
+      this.openedTCs[index] = testCase;
     },
     setSelectedTestCaseId(testCaseId: string) {
       this.selectedTestCaseId = testCaseId;
     },
     removeOpenedTC(testCase: TestCaseInterface) {
-      const index = this.openedTCs.findIndex((el: TestCaseInterface) => el.Id === testCase.Id);
+      const index = this.openedTCs.findIndex(
+        (el: TestCaseInterface) => el.Id === testCase.Id
+      );
       if (index !== -1) {
-        this.openedTCs.splice(index, 1)
+        this.openedTCs.splice(index, 1);
         // set selectedTestCase --> next tab
         if (this.openedTCs.length === 0) {
           this.selectedTestCaseId = '';
-          return
+          return;
         }
         if (index >= this.openedTCs.length) {
-          this.selectedTestCaseId = this.openedTCs[this.openedTCs.length - 1].Id
+          this.selectedTestCaseId =
+            this.openedTCs[this.openedTCs.length - 1].Id;
         } else {
-          this.selectedTestCaseId = this.openedTCs[index].Id
+          this.selectedTestCaseId = this.openedTCs[index].Id;
         }
       }
     },
     removeOpenedTCbyTCIds(testCaseIds: string[]) {
       testCaseIds.forEach((tcId: string) => {
-        const index = this.openedTCs.findIndex((el: TestCaseInterface) => el.Id === tcId);
+        const index = this.openedTCs.findIndex(
+          (el: TestCaseInterface) => el.Id === tcId
+        );
         if (index !== -1) {
-          this.openedTCs.splice(index, 1)
+          this.openedTCs.splice(index, 1);
           // set selectedTestCase --> next tab
           if (this.openedTCs.length === 0) {
             this.selectedTestCaseId = '';
-            return
+            return;
           }
           if (index >= this.openedTCs.length) {
-            this.selectedTestCaseId = this.openedTCs[this.openedTCs.length - 1].Id
+            this.selectedTestCaseId =
+              this.openedTCs[this.openedTCs.length - 1].Id;
           } else {
-            this.selectedTestCaseId = this.openedTCs[index].Id
+            this.selectedTestCaseId = this.openedTCs[index].Id;
           }
         }
       });
     },
     removeOpenedTCbyTestSuite(testSuite: TestSuiteInterface) {
-      const testCaseIds = this.openedTCs.filter((tc: TestCaseInterface) => tc.TestSuiteId === testSuite.Id).map((tc: TestCaseInterface) => tc.Id);
-      console.log('testCaseIds', testCaseIds)
+      const testCaseIds = this.openedTCs
+        .filter((tc: TestCaseInterface) => tc.TestSuiteId === testSuite.Id)
+        .map((tc: TestCaseInterface) => tc.Id);
+      console.log('testCaseIds', testCaseIds);
       testCaseIds.forEach((tcId: string) => {
-        const index = this.openedTCs.findIndex((el: TestCaseInterface) => el.Id === tcId);
+        const index = this.openedTCs.findIndex(
+          (el: TestCaseInterface) => el.Id === tcId
+        );
         if (index !== -1) {
-          this.openedTCs.splice(index, 1)
+          this.openedTCs.splice(index, 1);
           // set selectedTestCase --> next tab
           if (this.openedTCs.length === 0) {
             this.selectedTestCaseId = '';
-            return
+            return;
           }
           if (index >= this.openedTCs.length) {
-            this.selectedTestCaseId = this.openedTCs[this.openedTCs.length - 1].Id
+            this.selectedTestCaseId =
+              this.openedTCs[this.openedTCs.length - 1].Id;
           } else {
-            this.selectedTestCaseId = this.openedTCs[index].Id
+            this.selectedTestCaseId = this.openedTCs[index].Id;
           }
         }
       });
     },
     removeOpenedTCbyCategory(category: CategoryInterface) {
-      const testCaseIds = this.openedTCs.filter((tc: TestCaseInterface) => tc.CategoryId === category.Id).map((tc: TestCaseInterface) => tc.Id);
-      console.log('testCaseIds', testCaseIds)
+      const testCaseIds = this.openedTCs
+        .filter((tc: TestCaseInterface) => tc.CategoryId === category.Id)
+        .map((tc: TestCaseInterface) => tc.Id);
+      console.log('testCaseIds', testCaseIds);
       testCaseIds.forEach((tcId: string) => {
-        const index = this.openedTCs.findIndex((el: TestCaseInterface) => el.Id === tcId);
+        const index = this.openedTCs.findIndex(
+          (el: TestCaseInterface) => el.Id === tcId
+        );
         if (index !== -1) {
-          this.openedTCs.splice(index, 1)
+          this.openedTCs.splice(index, 1);
           // set selectedTestCase --> next tab
           if (this.openedTCs.length === 0) {
             this.selectedTestCaseId = '';
-            return
+            return;
           }
           if (index >= this.openedTCs.length) {
-            this.selectedTestCaseId = this.openedTCs[this.openedTCs.length - 1].Id
+            this.selectedTestCaseId =
+              this.openedTCs[this.openedTCs.length - 1].Id;
           } else {
-            this.selectedTestCaseId = this.openedTCs[index].Id
+            this.selectedTestCaseId = this.openedTCs[index].Id;
           }
         }
       });
     },
     addNewStep(testCaseId: string) {
       // get last item to get Client Name
-      const index = this.openedTCs.findIndex((el: TestCaseInterface) => el.Id === testCaseId);
+      const index = this.openedTCs.findIndex(
+        (el: TestCaseInterface) => el.Id === testCaseId
+      );
       if (index !== -1) {
-        const tempTC = _.cloneDeep(this.openedTCs[index])
+        const tempTC = _.cloneDeep(this.openedTCs[index]);
         let lastTestAUTId = '';
-        if (tempTC.TestSteps.length > 0) { // incase there's no testSteps
-          lastTestAUTId = tempTC.TestSteps[tempTC.TestSteps.length - 1].TestAUTId
+        if (tempTC.TestSteps.length > 0) {
+          // incase there's no testSteps
+          lastTestAUTId =
+            tempTC.TestSteps[tempTC.TestSteps.length - 1].TestAUTId;
         }
         tempTC.TestSteps.push({
           UUID: uuid(),
@@ -206,44 +228,55 @@ export const useTestCaseStore = defineStore('testcase', {
           IsComment: false,
           KWFeature: '',
           KWCategory: '',
-        })
-        this.openedTCs[index] = tempTC
+        });
+        this.openedTCs[index] = tempTC;
       }
     },
     deleteStep(payload: any) {
-      const { testCaseId } = payload
-      const { stepUUID } = payload
+      const { testCaseId } = payload;
+      const { stepUUID } = payload;
       const index = this.openedTCs.findIndex((el: any) => el.Id === testCaseId);
-      const tempTC = _.cloneDeep(this.openedTCs[index])
-      if (tempTC.TestSteps.length > 0) { // incase there's no test steps
-        tempTC.TestSteps = tempTC.TestSteps.filter((step: any) => step.UUID !== stepUUID)
+      const tempTC = _.cloneDeep(this.openedTCs[index]);
+      if (tempTC.TestSteps.length > 0) {
+        // incase there's no test steps
+        tempTC.TestSteps = tempTC.TestSteps.filter(
+          (step: any) => step.UUID !== stepUUID
+        );
       }
-      this.openedTCs[index] = tempTC
+      this.openedTCs[index] = tempTC;
     },
     disableStep(payload: any) {
-      console.log('payload', payload)
-      const { testCaseId } = payload
-      const { stepUUID } = payload
+      console.log('payload', payload);
+      const { testCaseId } = payload;
+      const { stepUUID } = payload;
       const index = this.openedTCs.findIndex((el: any) => el.Id === testCaseId);
-      const tempTC = _.cloneDeep(this.openedTCs[index])
-      if (tempTC.TestSteps.length > 0) { // incase there's no test steps
-        const indexTestStep: number = tempTC.TestSteps.findIndex((ts: TestStepInterface) => ts.UUID === stepUUID);
-        console.log('indexTestStep', indexTestStep)
-        if (indexTestStep !== -1) tempTC.TestSteps[indexTestStep].IsDisabled = true;
+      const tempTC = _.cloneDeep(this.openedTCs[index]);
+      if (tempTC.TestSteps.length > 0) {
+        // incase there's no test steps
+        const indexTestStep: number = tempTC.TestSteps.findIndex(
+          (ts: TestStepInterface) => ts.UUID === stepUUID
+        );
+        console.log('indexTestStep', indexTestStep);
+        if (indexTestStep !== -1)
+          tempTC.TestSteps[indexTestStep].IsDisabled = true;
       }
-      this.openedTCs[index] = tempTC
+      this.openedTCs[index] = tempTC;
     },
     enableStep(payload: any) {
-      console.log('payload', payload)
-      const { testCaseId } = payload
-      const { stepUUID } = payload
+      console.log('payload', payload);
+      const { testCaseId } = payload;
+      const { stepUUID } = payload;
       const index = this.openedTCs.findIndex((el: any) => el.Id === testCaseId);
-      const tempTC = _.cloneDeep(this.openedTCs[index])
-      if (tempTC.TestSteps.length > 0) { // incase there's no test steps
-        const indexTestStep: number = tempTC.TestSteps.findIndex((ts: TestStepInterface) => ts.UUID === stepUUID);
-        if (indexTestStep !== -1) tempTC.TestSteps[indexTestStep].IsDisabled = false;
+      const tempTC = _.cloneDeep(this.openedTCs[index]);
+      if (tempTC.TestSteps.length > 0) {
+        // incase there's no test steps
+        const indexTestStep: number = tempTC.TestSteps.findIndex(
+          (ts: TestStepInterface) => ts.UUID === stepUUID
+        );
+        if (indexTestStep !== -1)
+          tempTC.TestSteps[indexTestStep].IsDisabled = false;
       }
-      this.openedTCs[index] = tempTC
+      this.openedTCs[index] = tempTC;
     },
   },
-})
+});

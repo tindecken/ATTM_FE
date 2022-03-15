@@ -6,17 +6,9 @@
       @click="getLatestCodeThenGenerateAndBuildProject"
       label="Get Latest Code, Generate Code and Build Project"
     />
-    <q-splitter
-      v-model="splitterModel"
-      style="height: 250px"
-    >
-
+    <q-splitter v-model="splitterModel" style="height: 250px">
       <template v-slot:before>
-        <q-tabs
-          v-model="tab"
-          vertical
-          no-caps
-        >
+        <q-tabs v-model="tab" vertical no-caps>
           <q-tab name="getLatestCode" label="Get Latest Code" />
           <q-tab name="generateCode" label="Generate Code" />
           <q-tab name="buildProject" label="Build Project" />
@@ -33,24 +25,54 @@
           transition-next="jump-up"
         >
           <q-tab-panel name="getLatestCode">
-            <div class="text-h6 q-mb-md">Status: {{getLatestCodeStatus}}
-              <q-btn flat round icon="content_copy" size="md" primary @click="copy(getLatestCodeMessage || '')" class="q-mr-sm" v-if="getLatestCodeStatus"></q-btn>
+            <div class="text-h6 q-mb-md">
+              Status: {{ getLatestCodeStatus }}
+              <q-btn
+                flat
+                round
+                icon="content_copy"
+                size="md"
+                primary
+                @click="copy(getLatestCodeMessage || '')"
+                class="q-mr-sm"
+                v-if="getLatestCodeStatus"
+              ></q-btn>
             </div>
-            <p style="white-space: pre-wrap;">{{getLatestCodeMessage}}</p>
+            <p style="white-space: pre-wrap">{{ getLatestCodeMessage }}</p>
           </q-tab-panel>
 
           <q-tab-panel name="generateCode">
-            <div class="text-h6 q-mb-md">Status: {{generateCodeStatus}}
-              <q-btn flat round icon="content_copy" size="md" primary @click="copy(generateCodeMessage || '')" class="q-mr-sm" v-if="generateCodeStatus"></q-btn>
+            <div class="text-h6 q-mb-md">
+              Status: {{ generateCodeStatus }}
+              <q-btn
+                flat
+                round
+                icon="content_copy"
+                size="md"
+                primary
+                @click="copy(generateCodeMessage || '')"
+                class="q-mr-sm"
+                v-if="generateCodeStatus"
+              ></q-btn>
             </div>
-            <p style="white-space: pre-wrap;">{{generateCodeMessage}}</p>
+            <p style="white-space: pre-wrap">{{ generateCodeMessage }}</p>
           </q-tab-panel>
 
           <q-tab-panel name="buildProject">
-            <div class="text-h6 q-mb-md">Status: {{buildProjectStatus}}
-              <q-btn flat round icon="content_copy" size="md" primary @click="copy(buildProjectMessage || '')" class="q-mr-sm" v-if="buildProjectStatus"></q-btn>
+            <div class="text-h6 q-mb-md">
+              Status: {{ buildProjectStatus }}
+              <q-btn
+                flat
+                round
+                icon="content_copy"
+                size="md"
+                primary
+                @click="copy(buildProjectMessage || '')"
+                class="q-mr-sm"
+                v-if="buildProjectStatus"
+              ></q-btn>
             </div>
-            <p style="white-space: pre-wrap;">{{buildProjectMessage}}</p>
+            <p style="white-space: pre-wrap">{{ buildProjectMessage }}</p>
           </q-tab-panel>
         </q-tab-panels>
       </template>
@@ -60,103 +82,116 @@
 
 <script lang="ts">
 import { computed, defineComponent, ref } from 'vue';
-import { useQuasar } from 'quasar'
-import { useGlobalStore } from 'src/pinia/globalStore';
-import { useCreateRegressionStore } from 'src/pinia/createRegressionStore';
-import { useClipboard } from '@vueuse/core'
+import { useQuasar } from 'quasar';
+import { useGlobalStore } from '../../../pinia/globalStore';
+import { useCreateRegressionStore } from '../../../pinia/createRegressionStore';
+import { useClipboard } from '@vueuse/core';
 
 export default defineComponent({
   name: 'BuildProject',
   components: {},
   setup() {
-    const createRegressionStore = useCreateRegressionStore()
-    const globalStore = useGlobalStore()
-    const $q = useQuasar()
-    const tab = ref('getLatestCode')
-    const { copy } = useClipboard()
-    const getLatestCodeStatus = ref('')
-    const getLatestCodeMessage = ref('')
-    const generateCodeStatus = ref('')
-    const generateCodeMessage = ref('')
-    const buildProjectStatus = ref('')
-    const buildProjectMessage = ref('')
-    const splitterModel = ref(7)
-    const selectedTestCasesDetail = computed(() => createRegressionStore.selectedTestCasesDetail);
-    const selectedTestCases = computed(() => createRegressionStore.selectedTestCases);
-    console.log('selectedTestCasesDetail', selectedTestCasesDetail)
+    const createRegressionStore = useCreateRegressionStore();
+    const globalStore = useGlobalStore();
+    const $q = useQuasar();
+    const tab = ref('getLatestCode');
+    const { copy } = useClipboard();
+    const getLatestCodeStatus = ref('');
+    const getLatestCodeMessage = ref('');
+    const generateCodeStatus = ref('');
+    const generateCodeMessage = ref('');
+    const buildProjectStatus = ref('');
+    const buildProjectMessage = ref('');
+    const splitterModel = ref(7);
+    const selectedTestCasesDetail = computed(
+      () => createRegressionStore.selectedTestCasesDetail
+    );
+    const selectedTestCases = computed(
+      () => createRegressionStore.selectedTestCases
+    );
+    console.log('selectedTestCasesDetail', selectedTestCasesDetail);
     function clearStatusAndMessage() {
-      getLatestCodeStatus.value = ''
-      getLatestCodeMessage.value = ''
-      generateCodeStatus.value = ''
-      generateCodeMessage.value = ''
-      buildProjectStatus.value = ''
-      buildProjectMessage.value = ''
+      getLatestCodeStatus.value = '';
+      getLatestCodeMessage.value = '';
+      generateCodeStatus.value = '';
+      generateCodeMessage.value = '';
+      buildProjectStatus.value = '';
+      buildProjectMessage.value = '';
     }
     async function getLatestCodeThenGenerateAndBuildProject() {
-      clearStatusAndMessage()
-      tab.value = 'getLatestCode'
-      console.log('generateAndBuildProject')
-      createRegressionStore.selectedTestCases = []
-      await createRegressionStore.getAndAddSelectedTestCase(selectedTestCasesDetail.value)
-      console.log('selectedTestCases.value', selectedTestCases.value)
+      clearStatusAndMessage();
+      tab.value = 'getLatestCode';
+      console.log('generateAndBuildProject');
+      createRegressionStore.selectedTestCases = [];
+      await createRegressionStore.getAndAddSelectedTestCase(
+        selectedTestCasesDetail.value
+      );
+      console.log('selectedTestCases.value', selectedTestCases.value);
       const getLatestCodeResult: Promise<any> = globalStore.getLatestCode();
 
-      getLatestCodeResult.then((r) => {
-        console.log('r', r)
-        getLatestCodeStatus.value = 'Success'
-        getLatestCodeMessage.value = r.message
-        $q.notify({
-          type: 'positive',
-          message: 'Get Latest Code success !',
-        });
-        const generateDevCodeResult: Promise<any> = globalStore.generateDevCode(selectedTestCases.value)
-        generateDevCodeResult.then((g) => {
-          tab.value = 'generateCode'
-          generateCodeStatus.value = 'Success'
-          g.message.forEach((m: any) => {
-            console.log('m', m)
-            generateCodeMessage.value += `Test Case: ${m.testCase}\r\n\r\n`
-            generateCodeMessage.value += `${m.generatedCode}\r\n`
-            generateCodeMessage.value += '------------------\r\n'
-          });
+      getLatestCodeResult
+        .then((r) => {
+          console.log('r', r);
+          getLatestCodeStatus.value = 'Success';
+          getLatestCodeMessage.value = r.message;
           $q.notify({
             type: 'positive',
-            message: 'Generate Code Success !',
+            message: 'Get Latest Code success !',
           });
-          const buildResult: Promise<any> = globalStore.buildProject()
-          buildResult.then((b) => {
-            tab.value = 'buildProject'
-            buildProjectStatus.value = 'Success'
-            buildProjectMessage.value = b.buildMessage
-            console.log('b', b)
-            $q.notify({
-              type: 'positive',
-              message: 'Build Project Success !',
+          const generateDevCodeResult: Promise<any> =
+            globalStore.generateDevCode(selectedTestCases.value);
+          generateDevCodeResult
+            .then((g) => {
+              tab.value = 'generateCode';
+              generateCodeStatus.value = 'Success';
+              g.message.forEach((m: any) => {
+                console.log('m', m);
+                generateCodeMessage.value += `Test Case: ${m.testCase}\r\n\r\n`;
+                generateCodeMessage.value += `${m.generatedCode}\r\n`;
+                generateCodeMessage.value += '------------------\r\n';
+              });
+              $q.notify({
+                type: 'positive',
+                message: 'Generate Code Success !',
+              });
+              const buildResult: Promise<any> = globalStore.buildProject();
+              buildResult
+                .then((b) => {
+                  tab.value = 'buildProject';
+                  buildProjectStatus.value = 'Success';
+                  buildProjectMessage.value = b.buildMessage;
+                  console.log('b', b);
+                  $q.notify({
+                    type: 'positive',
+                    message: 'Build Project Success !',
+                  });
+                })
+                .catch((e) => {
+                  $q.notify({
+                    type: 'negative',
+                    message: 'Build Project Error',
+                  });
+                  buildProjectStatus.value = 'Error';
+                  buildProjectMessage.value = e.buildMessage;
+                });
+            })
+            .catch((e) => {
+              $q.notify({
+                type: 'negative',
+                message: 'Generate Code Error',
+              });
+              generateCodeStatus.value = 'Error';
+              generateCodeMessage.value = e;
             });
-          }).catch((e) => {
-            $q.notify({
-              type: 'negative',
-              message: 'Build Project Error',
-            });
-            buildProjectStatus.value = 'Error'
-            buildProjectMessage.value = e.buildMessage
-          })
-        }).catch((e) => {
+        })
+        .catch((e) => {
+          getLatestCodeStatus.value = 'Error';
+          getLatestCodeMessage.value = e;
           $q.notify({
             type: 'negative',
-            message: 'Generate Code Error',
+            message: 'Get Latest Code Error',
           });
-          generateCodeStatus.value = 'Error'
-          generateCodeMessage.value = e
-        })
-      }).catch((e) => {
-        getLatestCodeStatus.value = 'Error'
-        getLatestCodeMessage.value = e
-        $q.notify({
-          type: 'negative',
-          message: 'Get Latest Code Error',
         });
-      })
     }
     return {
       copy,
@@ -169,7 +204,7 @@ export default defineComponent({
       generateCodeMessage,
       buildProjectStatus,
       buildProjectMessage,
-    }
+    };
   },
 });
 </script>

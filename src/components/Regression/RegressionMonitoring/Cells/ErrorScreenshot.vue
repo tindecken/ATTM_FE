@@ -1,18 +1,14 @@
 <template>
   <div v-if="RegTest.LastRegressionRunRecord?.ErrorScreenshot">
-    <q-btn @click="showImage()" size="sm" outline>
-      View
-    </q-btn>
+    <q-btn @click="showImage()" size="sm" outline> View </q-btn>
   </div>
 </template>
 
 <script lang="ts">
-import {
-  defineComponent, PropType,
-} from 'vue';
+import { defineComponent, PropType } from 'vue';
 
-import { useRegMonitoringStore } from 'src/pinia/regMonitoring';
-import { RegressionTestInterface } from 'src/Models/RegressionTest';
+import { useRegMonitoringStore } from '../../../../pinia/regMonitoring';
+import { RegressionTestInterface } from '../../../../Models/RegressionTest';
 
 export default defineComponent({
   name: 'ErrorScreenshot',
@@ -23,13 +19,17 @@ export default defineComponent({
       default: () => ({}),
     },
   },
-  components: { },
+  components: {},
   setup(props) {
-    const regMonitoringStore = useRegMonitoringStore()
+    const regMonitoringStore = useRegMonitoringStore();
     async function showImage() {
-      const image = await regMonitoringStore.getScreenshot(props.RegTest.LastRegressionRunRecord?.ErrorScreenshot)
+      const image = await regMonitoringStore.getScreenshot(
+        props.RegTest.LastRegressionRunRecord?.ErrorScreenshot
+      );
       const contentType = 'image/png';
-      const byteCharacters = atob(image.substr(`data:${contentType};base64,`.length));
+      const byteCharacters = atob(
+        image.substr(`data:${contentType};base64,`.length)
+      );
       const byteArrays = [];
       for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
         const slice = byteCharacters.slice(offset, offset + 1024);
@@ -50,7 +50,7 @@ export default defineComponent({
     }
     return {
       showImage,
-    }
+    };
   },
 });
 </script>

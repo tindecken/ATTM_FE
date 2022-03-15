@@ -1,6 +1,6 @@
-import { defineStore } from 'pinia'
-import { UserInterface } from 'src/Models/User'
-import { api } from 'boot/axios'
+import { defineStore } from 'pinia';
+import { UserInterface } from '../Models/User';
+import { api } from '../boot/axios';
 
 const user: UserInterface = {
   Id: '',
@@ -10,7 +10,7 @@ const user: UserInterface = {
   Email: '',
   DidAutoLogout: false,
   Password: '',
-}
+};
 export const useUserStore = defineStore('user', {
   state: () => ({
     Id: user.Id,
@@ -36,7 +36,7 @@ export const useUserStore = defineStore('user', {
           headers: {
             'Content-Type': 'application/json',
           },
-        },
+        }
       );
       const responseData = await response.data;
       this.$patch({
@@ -45,10 +45,10 @@ export const useUserStore = defineStore('user', {
         Email: responseData.Email,
         Role: responseData.Role,
         Id: responseData.Id,
-      })
+      });
     },
     logout() {
-      this.$reset()
+      this.$reset();
     },
   },
-})
+});

@@ -14,30 +14,27 @@
       :readonly="readonly"
     >
       <template v-slot:prepend>
-          <q-icon v-if="isParamError" name="error">
-            <q-tooltip>
-              {{paramErrorMessage}}
-            </q-tooltip>
-          </q-icon>
-        </template>
+        <q-icon v-if="isParamError" name="error">
+          <q-tooltip>
+            {{ paramErrorMessage }}
+          </q-tooltip>
+        </q-icon>
+      </template>
     </q-input>
   </div>
 </template>
 
 <script lang="ts">
+import { computed, defineComponent, Ref, ref, PropType } from 'vue';
+import { TestStepInterface } from '../../../../Models/TestStep';
 import {
-  computed,
-  defineComponent,
-  Ref,
-  ref,
-  PropType,
-} from 'vue';
-import { TestStepInterface } from 'src/Models/TestStep';
-import { TestEnvInterface, TestEnvNodeInterface } from 'src/Models/TestEnv';
-import { useTestEnvironmentStore } from 'src/pinia/testEnvironmentStore';
-import { useGlobalStore } from 'src/pinia/globalStore';
-import ParameterMenu from '../Menu/ParameterMenu.vue'
-import { getValueType } from '../Utils/utils'
+  TestEnvInterface,
+  TestEnvNodeInterface,
+} from '../../../../Models/TestEnv';
+import { useTestEnvironmentStore } from '../../../../pinia/testEnvironmentStore';
+import { useGlobalStore } from '../../../../pinia/globalStore';
+import ParameterMenu from '../Menu/ParameterMenu.vue';
+import { getValueType } from '../Utils/utils';
 
 export default defineComponent({
   props: {
@@ -55,88 +52,103 @@ export default defineComponent({
     ParameterMenu,
   },
   setup(props, context) {
-    const globalStore = useGlobalStore()
-    const testEnvironmentStore = useTestEnvironmentStore()
-    const isParamError: Ref<boolean> = ref(false)
-    const paramErrorMessage = ref('')
+    const globalStore = useGlobalStore();
+    const testEnvironmentStore = useTestEnvironmentStore();
+    const isParamError: Ref<boolean> = ref(false);
+    const paramErrorMessage = ref('');
     const isDark = computed(() => globalStore.darkTheme);
     const readonly = computed(() => {
       const numberOfParam: number = props.TestStep.Params.length;
-      const testEnvPath = props.TestStep.Params[props.ParamIndex]?.TestNodePath
-      if (props.TestStep.IsDisabled) return true
+      const testEnvPath = props.TestStep.Params[props.ParamIndex]?.TestNodePath;
+      if (props.TestStep.IsDisabled) return true;
       if (testEnvPath && testEnvPath !== '') {
-        return true
+        return true;
       }
       if (props.ParamIndex >= numberOfParam) {
-        return true
+        return true;
       }
-      return false
-    })
+      return false;
+    });
 
     function setNoError() {
-      isParamError.value = false
-      paramErrorMessage.value = ''
+      isParamError.value = false;
+      paramErrorMessage.value = '';
     }
     function setError(message: string) {
-      isParamError.value = true
-      paramErrorMessage.value = message
+      isParamError.value = true;
+      paramErrorMessage.value = message;
     }
-    function getValueFromTestEnv(ts: TestStepInterface, prIndex: number): string {
-      let value = ''
-      const selectedTestEnv = testEnvironmentStore.selectedTestEnv as TestEnvInterface
-      const catEnv = ts.Params[prIndex].TestNodePath.split('/')[0]
-      const nodeEnv = ts.Params[prIndex].TestNodePath.split('/')[1]
+    function getValueFromTestEnv(
+      ts: TestStepInterface,
+      prIndex: number
+    ): string {
+      let value = '';
+      const selectedTestEnv =
+        testEnvironmentStore.selectedTestEnv as TestEnvInterface;
+      const catEnv = ts.Params[prIndex].TestNodePath.split('/')[0];
+      const nodeEnv = ts.Params[prIndex].TestNodePath.split('/')[1];
 
       if (selectedTestEnv) {
-        const cat = selectedTestEnv.Nodes.find((envNode: TestEnvNodeInterface) => envNode.Category === catEnv)
+        const cat = selectedTestEnv.Nodes.find(
+          (envNode: TestEnvNodeInterface) => envNode.Category === catEnv
+        );
         if (cat) {
-          const node = selectedTestEnv.Nodes.find((n: TestEnvNodeInterface) => n.Name === nodeEnv && n.Category === catEnv)
+          const node = selectedTestEnv.Nodes.find(
+            (n: TestEnvNodeInterface) =>
+              n.Name === nodeEnv && n.Category === catEnv
+          );
           if (node) {
-            value = node.Value
-            setNoError()
+            value = node.Value;
+            setNoError();
           } else {
-            setError(`There's no node: ${nodeEnv} in environment: ${selectedTestEnv.Name}`)
-            value = ts.Params[prIndex].Value
+            setError(
+              `There's no node: ${nodeEnv} in environment: ${selectedTestEnv.Name}`
+            );
+            value = ts.Params[prIndex].Value;
           }
         } else {
-          setError(`There's no category: ${catEnv} in environment: ${selectedTestEnv.Name}`)
-          value = ts.Params[prIndex].Value
+          setError(
+            `There's no category: ${catEnv} in environment: ${selectedTestEnv.Name}`
+          );
+          value = ts.Params[prIndex].Value;
         }
       } else {
-        setError('No Test Environment is selected, get last value')
-        value = ts.Params[prIndex].Value
+        setError('No Test Environment is selected, get last value');
+        value = ts.Params[prIndex].Value;
       }
 
-      return value
+      return value;
     }
     const prValue = computed(() => {
       const ts: TestStepInterface = props.TestStep;
-      const prIndex: number = props.ParamIndex
+      const prIndex: number = props.ParamIndex;
       if (ts.Params[prIndex]) {
         if (ts.Params[prIndex].TestNodePath !== '') {
-          return getValueFromTestEnv(ts, prIndex)
+          return getValueFromTestEnv(ts, prIndex);
         }
-        setNoError()
-        return ts.Params[prIndex].Value
-      } return ''
-    })
+        setNoError();
+        return ts.Params[prIndex].Value;
+      }
+      return '';
+    });
     // eslint-disable-next-line consistent-return
     const valueStyle = computed(() => {
-      if (props.TestStep.Params[props.ParamIndex]) return getValueType(props.TestStep.Params[props.ParamIndex])
-      return ''
-    })
+      if (props.TestStep.Params[props.ParamIndex])
+        return getValueType(props.TestStep.Params[props.ParamIndex]);
+      return '';
+    });
 
     function onChangeParam(newParamValue: string) {
-      console.log('onChangeParam', newParamValue)
-      context.emit('changeParam', newParamValue)
+      console.log('onChangeParam', newParamValue);
+      context.emit('changeParam', newParamValue);
     }
 
     function useTestEnv(testEnvNode: TestEnvNodeInterface) {
-      context.emit('useTestEnv', testEnvNode)
+      context.emit('useTestEnv', testEnvNode);
     }
 
     function unUseTestEnv() {
-      context.emit('unUseTestEnv', prValue.value)
+      context.emit('unUseTestEnv', prValue.value);
     }
 
     return {
@@ -150,7 +162,7 @@ export default defineComponent({
       paramErrorMessage,
       useTestEnv,
       unUseTestEnv,
-    }
+    };
   },
 });
 </script>

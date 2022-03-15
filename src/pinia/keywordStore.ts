@@ -1,10 +1,10 @@
-import { defineStore } from 'pinia'
-import { useUserStore } from 'src/pinia/userStore'
-import { FlatKeywordInterface } from 'src/Models/FlatKeyword';
-import { KeywordInterface } from 'src/Models/Keyword';
-import { KeywordCategoryInterface } from 'src/Models/KeywordCategory';
-import { api } from 'boot/axios'
-import { KeywordFeatureInterface } from 'src/Models/KeywordFeature';
+import { defineStore } from 'pinia';
+import { useUserStore } from '../pinia/userStore';
+import { FlatKeywordInterface } from '../Models/FlatKeyword';
+import { KeywordInterface } from '../Models/Keyword';
+import { KeywordCategoryInterface } from '../Models/KeywordCategory';
+import { api } from '../boot/axios';
+import { KeywordFeatureInterface } from '../Models/KeywordFeature';
 
 export const useKeywordStore = defineStore('keyword', {
   state: () => ({
@@ -12,26 +12,23 @@ export const useKeywordStore = defineStore('keyword', {
     selectedKeyword: {} as KeywordInterface,
     keywords: [] as FlatKeywordInterface[],
   }),
-  getters: {
-  },
+  getters: {},
   actions: {
     async getKeywords() {
-      const userStore = useUserStore()
-      const response = await api.get(
-        '/keywords/getkeywords',
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${userStore.Token}`,
-          },
+      const userStore = useUserStore();
+      const response = await api.get('/keywords/getkeywords', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userStore.Token}`,
         },
-      );
+      });
       const responseData = await response.data;
       console.log('responseData', responseData);
-      const keywordCategories: KeywordCategoryInterface[] = await responseData.data.Categories;
+      const keywordCategories: KeywordCategoryInterface[] = await responseData
+        .data.Categories;
       this.keywordCategories = keywordCategories;
       this.setKeywords(keywordCategories);
-      return keywordCategories
+      return keywordCategories;
     },
     setKeywords(keywordCategories: KeywordCategoryInterface[]) {
       const keywords: FlatKeywordInterface[] = [];
@@ -40,14 +37,18 @@ export const useKeywordStore = defineStore('keyword', {
           kwCategory.Features.forEach((kwFeature: KeywordFeatureInterface) => {
             if (kwFeature.Keywords) {
               kwFeature.Keywords.forEach((kw: KeywordInterface) => {
-                const flatKeyword: FlatKeywordInterface = { ...kw, Category: kwCategory.Name, Feature: kwFeature.Name }
+                const flatKeyword: FlatKeywordInterface = {
+                  ...kw,
+                  Category: kwCategory.Name,
+                  Feature: kwFeature.Name,
+                };
                 keywords.push(flatKeyword);
-              })
+              });
             }
-          })
+          });
         }
-      })
+      });
       this.keywords = keywords;
     },
   },
-})
+});

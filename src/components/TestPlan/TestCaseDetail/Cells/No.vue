@@ -13,19 +13,17 @@
   ></no-menu>
   <div>
     <q-tooltip>
-      {{TestStep.UUID}}
+      {{ TestStep.UUID }}
     </q-tooltip>
-    {{Index}}
+    {{ Index }}
   </div>
 </template>
 
 <script lang="ts">
-import {
-  defineComponent, PropType,
-} from 'vue';
+import { defineComponent, PropType } from 'vue';
 
-import { TestStepInterface } from 'src/Models/TestStep'
-import NoMenu from '../Menu/NoMenu.vue'
+import { TestStepInterface } from '../../../../Models/TestStep';
+import NoMenu from '../Menu/NoMenu.vue';
 
 export default defineComponent({
   name: 'No',
@@ -41,40 +39,49 @@ export default defineComponent({
       default: 0,
     },
   },
-  emits: ['insertDescription', 'enableRows', 'disableRows',
-    'copyTestSteps', 'cutTestSteps', 'deleteTestSteps', 'beforeShowDialog',
-    'pasteTestSteps', 'insertTestSteps', 'insertPasteTestSteps'],
+  emits: [
+    'insertDescription',
+    'enableRows',
+    'disableRows',
+    'copyTestSteps',
+    'cutTestSteps',
+    'deleteTestSteps',
+    'beforeShowDialog',
+    'pasteTestSteps',
+    'insertTestSteps',
+    'insertPasteTestSteps',
+  ],
   components: { NoMenu },
   setup(props, { emit }) {
     function enableRows() {
-      emit('enableRows')
+      emit('enableRows');
     }
     function disableRows() {
-      emit('disableRows')
+      emit('disableRows');
     }
     function insertDescription() {
-      emit('insertDescription', props.TestStep)
+      emit('insertDescription', props.TestStep);
     }
     function copyTestSteps() {
-      emit('copyTestSteps')
+      emit('copyTestSteps');
     }
     function cutTestSteps() {
-      emit('cutTestSteps')
+      emit('cutTestSteps');
     }
     function deleteTestSteps() {
-      emit('deleteTestSteps')
+      emit('deleteTestSteps');
     }
     function beforeShowDialog() {
-      emit('beforeShowDialog')
+      emit('beforeShowDialog');
     }
     function pasteTestSteps() {
-      emit('pasteTestSteps')
+      emit('pasteTestSteps');
     }
     function insertTestSteps() {
-      emit('insertTestSteps')
+      emit('insertTestSteps');
     }
     function insertPasteTestSteps() {
-      emit('insertPasteTestSteps')
+      emit('insertPasteTestSteps');
     }
     return {
       insertDescription,
@@ -87,7 +94,7 @@ export default defineComponent({
       beforeShowDialog,
       insertTestSteps,
       insertPasteTestSteps,
-    }
+    };
   },
 });
 </script>

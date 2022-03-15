@@ -11,9 +11,7 @@
     no-data-label="No histories found"
   >
     <template v-slot:body="props">
-      <q-tr
-        :props="props"
-        >
+      <q-tr :props="props">
         <q-td key="no" :props="props">
           {{ props.row.rowIndex }}
         </q-td>
@@ -24,13 +22,18 @@
           <q-tooltip v-if="props.row.UpdateTestEnvData.UpdateMessage !== ''">
             {{ props.row.UpdateTestEnvData.UpdateMessage }}
           </q-tooltip>
-          <div class="ellipsis">{{ props.row.UpdateTestEnvData.UpdateMessage }}</div>
+          <div class="ellipsis">
+            {{ props.row.UpdateTestEnvData.UpdateMessage }}
+          </div>
         </q-td>
         <q-td key="updateDate" :props="props">
           <q-tooltip v-if="props.row.UpdateTestEnvData.UpdateDate !== ''">
             {{ props.row.UpdateTestEnvData.UpdateDate }}
           </q-tooltip>
-          <UseTimeAgo v-slot="{ timeAgo }" :time="props.row.UpdateTestEnvData.UpdateDate">
+          <UseTimeAgo
+            v-slot="{ timeAgo }"
+            :time="props.row.UpdateTestEnvData.UpdateDate"
+          >
             {{ timeAgo }}
           </UseTimeAgo>
         </q-td>
@@ -51,20 +54,18 @@ export default {
 </script>
 
 <script setup lang="ts">
-import {
-  ref, Ref, onMounted, defineProps,
-} from 'vue';
-import { TestEnvHistoryInterface } from 'src/Models/TestEnvHistory';
-import { useQuasar } from 'quasar'
-import { UseTimeAgo } from '@vueuse/components'
-import { useTestEnvironmentStore } from 'src/pinia/testEnvironmentStore';
-import { TestEnvInterface } from 'src/Models/TestEnv';
+import { ref, Ref, onMounted, defineProps } from 'vue';
+import { TestEnvHistoryInterface } from '../../../../../Models/TestEnvHistory';
+import { useQuasar } from 'quasar';
+import { UseTimeAgo } from '@vueuse/components';
+import { useTestEnvironmentStore } from '../../../../../pinia/testEnvironmentStore';
+import { TestEnvInterface } from '../../../../../Models/TestEnv';
 
-const testEnvironmentStore = useTestEnvironmentStore()
-const $q = useQuasar()
+const testEnvironmentStore = useTestEnvironmentStore();
+const $q = useQuasar();
 const props = defineProps<{
-  TestEnv: TestEnvInterface
-}>()
+  TestEnv: TestEnvInterface;
+}>();
 const columns = [
   {
     name: 'no',
@@ -115,26 +116,33 @@ const columns = [
     style: 'max-width: 100px; width: 80px',
     headerStyle: 'max-width: 100px',
   },
-]
+];
 const initialPagination = {
   sortBy: 'startAt',
   descending: true,
   page: 1,
   rowsPerPage: 10,
   // rowsNumber: xx if getting data from a server
-}
-const filter = ref('')
-const testEnvHistories: Ref<TestEnvHistoryInterface[]> = ref([])
+};
+const filter = ref('');
+const testEnvHistories: Ref<TestEnvHistoryInterface[]> = ref([]);
 onMounted(async () => {
   try {
-    console.log('props.TestEnv.Id', props.TestEnv.Id)
-    testEnvHistories.value = await testEnvironmentStore.getTestEnvHistories(props.TestEnv.Id)
-    testEnvHistories.value = testEnvHistories.value.map((value: TestEnvHistoryInterface, i: number) => ({ ...value, rowIndex: i + 1 }))
+    console.log('props.TestEnv.Id', props.TestEnv.Id);
+    testEnvHistories.value = await testEnvironmentStore.getTestEnvHistories(
+      props.TestEnv.Id
+    );
+    testEnvHistories.value = testEnvHistories.value.map(
+      (value: TestEnvHistoryInterface, i: number) => ({
+        ...value,
+        rowIndex: i + 1,
+      })
+    );
   } catch (error: any) {
     $q.notify({
       type: 'negative',
       message: `${error}`,
     });
   }
-})
+});
 </script>

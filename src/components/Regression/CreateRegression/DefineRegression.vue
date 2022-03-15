@@ -4,7 +4,7 @@
       greedy
       ref="form"
       class="q-gutter-md"
-      style="max-width: 800px;"
+      style="max-width: 800px"
       @validation-success="isFormValid = true"
       @validation-error="isFormValid = false"
     >
@@ -21,7 +21,7 @@
               label="Regression Name *"
               lazy-rules
               :rules="[
-                val => (val && val.length > 0) || 'Provide regression name'
+                (val) => (val && val.length > 0) || 'Provide regression name',
               ]"
               class="q-mb-sm"
             />
@@ -36,14 +36,18 @@
               @blur="validateForm()"
               lazy-rules
               :rules="[
-                val => (val && val.length > 0) || 'Provide Release Name'
+                (val) => (val && val.length > 0) || 'Provide Release Name',
               ]"
             />
           </div>
           <div class="row q-mb-sm">
-            <q-input outlined dense v-model="build" label="Build Name"
-            :rules="[
-                val => val.length < 25 || 'Build Name maximum is 25 chars'
+            <q-input
+              outlined
+              dense
+              v-model="build"
+              label="Build Name"
+              :rules="[
+                (val) => val.length < 25 || 'Build Name maximum is 25 chars',
               ]"
             />
           </div>
@@ -57,12 +61,16 @@
               v-model="description"
               @blur="validateForm()"
               :rules="[
-                val => val.length < 500 || 'Description maximum is 500 chars'
+                (val) => val.length < 500 || 'Description maximum is 500 chars',
               ]"
             />
           </div>
           <div class="row q-mb-md">
-            <q-toggle v-model="isOfficial" label="Is this regression official?" @input="validateForm()"/>
+            <q-toggle
+              v-model="isOfficial"
+              label="Is this regression official?"
+              @input="validateForm()"
+            />
           </div>
         </div>
         <div class="col">
@@ -80,32 +88,25 @@
             />
           </div>
         </div>
-        </div>
+      </div>
     </q-form>
   </div>
 </template>
 
 <script lang="ts">
-import {
-  computed,
-  defineComponent,
-  onMounted,
-  reactive,
-  Ref,
-  ref,
-} from 'vue';
-import { date } from 'quasar'
-import { DefineRegressionInterface } from 'src/Models/DefineRegression';
-import { useCreateRegressionStore } from 'src/pinia/createRegressionStore';
-import { useUserStore } from '../../../pinia/userStore'
+import { computed, defineComponent, onMounted, reactive, Ref, ref } from 'vue';
+import { date } from 'quasar';
+import { DefineRegressionInterface } from '../../../Models/DefineRegression';
+import { useCreateRegressionStore } from '../../../pinia/createRegressionStore';
+import { useUserStore } from '../../../pinia/userStore';
 
 export default defineComponent({
   name: 'DefineRegression',
   components: {},
   setup(props, context) {
-    const userStore = useUserStore()
-    const createRegressionStore = useCreateRegressionStore()
-    const datePicker: Ref<any> = ref(null)
+    const userStore = useUserStore();
+    const createRegressionStore = useCreateRegressionStore();
+    const datePicker: Ref<any> = ref(null);
     const name = ref('');
     const release = ref('');
     const build = ref('');
@@ -113,9 +114,15 @@ export default defineComponent({
     const isOfficial = ref(false);
     const form: Ref<any> = ref(null);
     const isFormValid = ref(false);
-    const dateRange = reactive({ from: date.formatDate(Date.now(), 'YYYY/MM/DD'), to: date.formatDate(date.addToDate(Date.now(), { days: 7 }), 'YYYY/MM/DD') })
-    const currentUser = computed(() => userStore.Username)
-    let defineRegressionObject: DefineRegressionInterface
+    const dateRange = reactive({
+      from: date.formatDate(Date.now(), 'YYYY/MM/DD'),
+      to: date.formatDate(
+        date.addToDate(Date.now(), { days: 7 }),
+        'YYYY/MM/DD'
+      ),
+    });
+    const currentUser = computed(() => userStore.Username);
+    let defineRegressionObject: DefineRegressionInterface;
     function validateForm() {
       form.value.validate().then((success: any) => {
         if (success) {
@@ -130,35 +137,61 @@ export default defineComponent({
               EndDate: dateRange.to,
               CreateBy: currentUser.value,
               RegressionTestIds: [],
-            }
-            context.emit('validateForm', true)
-            createRegressionStore.defineRegression = defineRegressionObject
+            };
+            context.emit('validateForm', true);
+            createRegressionStore.defineRegression = defineRegressionObject;
           } else {
-            context.emit('validateForm', false)
+            context.emit('validateForm', false);
           }
-        } else context.emit('validateForm', false)
+        } else context.emit('validateForm', false);
       });
     }
 
     // eslint-disable-next-line no-return-assign
-    onMounted(() => createRegressionStore.defineRegression = null);
+    onMounted(() => (createRegressionStore.defineRegression = null));
 
     function rangeStart(startDate: any) {
-      dateRange.from = date.formatDate(date.buildDate({ year: startDate.year, month: startDate.month, date: startDate.day }, true), 'YYYY/MM/DD')
-      validateForm()
+      dateRange.from = date.formatDate(
+        date.buildDate(
+          { year: startDate.year, month: startDate.month, date: startDate.day },
+          true
+        ),
+        'YYYY/MM/DD'
+      );
+      validateForm();
     }
 
     function rangeEnd(endDate: any) {
-      console.log('endDate From', endDate.from)
-      console.log('endDate To', endDate.to)
+      console.log('endDate From', endDate.from);
+      console.log('endDate To', endDate.to);
       if (JSON.stringify(endDate.from) !== JSON.stringify(endDate.to)) {
-        dateRange.from = date.formatDate(date.buildDate({ year: endDate.from.year, month: endDate.from.month, date: endDate.from.day }, true), 'YYYY/MM/DD')
-        dateRange.to = date.formatDate(date.buildDate({ year: endDate.to.year, month: endDate.to.month, date: endDate.to.day }, true), 'YYYY/MM/DD')
-        console.log('dateRange.from', dateRange.from)
-        console.log('dateRange.to', dateRange.to)
-        validateForm()
+        dateRange.from = date.formatDate(
+          date.buildDate(
+            {
+              year: endDate.from.year,
+              month: endDate.from.month,
+              date: endDate.from.day,
+            },
+            true
+          ),
+          'YYYY/MM/DD'
+        );
+        dateRange.to = date.formatDate(
+          date.buildDate(
+            {
+              year: endDate.to.year,
+              month: endDate.to.month,
+              date: endDate.to.day,
+            },
+            true
+          ),
+          'YYYY/MM/DD'
+        );
+        console.log('dateRange.from', dateRange.from);
+        console.log('dateRange.to', dateRange.to);
+        validateForm();
       } else {
-        context.emit('validateForm', false)
+        context.emit('validateForm', false);
       }
     }
     return {

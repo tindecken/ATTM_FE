@@ -1,18 +1,14 @@
 <template>
   <div v-if="DevRunRecord.ErrorScreenshot">
-    <q-btn @click="showImage()" size="sm" outline>
-      View
-    </q-btn>
+    <q-btn @click="showImage()" size="sm" outline> View </q-btn>
   </div>
 </template>
 
 <script lang="ts">
-import {
-  defineComponent, PropType,
-} from 'vue';
+import { defineComponent, PropType } from 'vue';
 
-import { DevRunRecordInterface } from 'src/Models/DevRunRecord';
-import { useDevMonitoringStore } from 'src/pinia/devMonitoringStore';
+import { DevRunRecordInterface } from '../../../Models/DevRunRecord';
+import { useDevMonitoringStore } from '../../../pinia/devMonitoringStore';
 
 export default defineComponent({
   name: 'ErrorScreenshot',
@@ -23,13 +19,17 @@ export default defineComponent({
       default: () => ({}),
     },
   },
-  components: { },
+  components: {},
   setup(props) {
-    const devMonitoringStore = useDevMonitoringStore()
+    const devMonitoringStore = useDevMonitoringStore();
     async function showImage() {
-      const image = await devMonitoringStore.getScreenshot(props.DevRunRecord.ErrorScreenshot as string)
+      const image = await devMonitoringStore.getScreenshot(
+        props.DevRunRecord.ErrorScreenshot as string
+      );
       const contentType = 'image/png';
-      const byteCharacters = atob(image.substr(`data:${contentType};base64,`.length));
+      const byteCharacters = atob(
+        image.substr(`data:${contentType};base64,`.length)
+      );
       const byteArrays = [];
       for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
         const slice = byteCharacters.slice(offset, offset + 1024);
@@ -50,7 +50,7 @@ export default defineComponent({
     }
     return {
       showImage,
-    }
+    };
   },
 });
 </script>

@@ -3,25 +3,19 @@
     <q-layout
       class="q-pa-sm"
       :class="isDark ? 'bg-grey-9' : 'bg-grey-3'"
-      style="max-width: 1200px; min-height: 400px !important;"
+      style="max-width: 1200px; min-height: 400px !important"
     >
-      <q-img
-        :src="url"
-        spinner-color="white"
-        fit="fill"
-      />
+      <q-img :src="url" spinner-color="white" fit="fill" />
     </q-layout>
   </q-dialog>
 </template>
 
 <script lang="ts">
 import { useDialogPluginComponent } from 'quasar';
-import { DevRunRecordInterface } from 'src/Models/DevRunRecord';
-import {
-  defineComponent, computed, PropType,
-} from 'vue';
+import { DevRunRecordInterface } from '../../../Models/DevRunRecord';
+import { defineComponent, computed, PropType } from 'vue';
 
-import { useGlobalStore } from 'src/pinia/globalStore';
+import { useGlobalStore } from '../../../pinia/globalStore';
 
 export default defineComponent({
   name: 'DevScreenshotDialog',
@@ -34,7 +28,7 @@ export default defineComponent({
     url: {
       type: String,
       required: true,
-      default: () => (''),
+      default: () => '',
     },
   },
   emits: [
@@ -42,14 +36,13 @@ export default defineComponent({
     // component will emit through useDialogPluginComponent()
     ...useDialogPluginComponent.emits,
   ],
-  components: { },
+  components: {},
   setup() {
-    const globalStore = useGlobalStore()
-    const isDark = computed(() => globalStore.darkTheme)
+    const globalStore = useGlobalStore();
+    const isDark = computed(() => globalStore.darkTheme);
     // REQUIRED; must be called inside of setup()
-    const {
-      dialogRef, onDialogHide, onDialogOK, onDialogCancel,
-    } = useDialogPluginComponent()
+    const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
+      useDialogPluginComponent();
     return {
       isDark,
       // This is REQUIRED;
@@ -63,14 +56,14 @@ export default defineComponent({
       onOKClick() {
         // on OK, it is REQUIRED to
         // call onDialogOK (with optional payload)
-        onDialogOK()
+        onDialogOK();
         // or with payload: onDialogOK({ ... })
         // ...and it will also hide the dialog automatically
       },
 
       // we can passthrough onDialogCancel directly
       onCancelClick: onDialogCancel,
-    }
+    };
   },
 });
 </script>

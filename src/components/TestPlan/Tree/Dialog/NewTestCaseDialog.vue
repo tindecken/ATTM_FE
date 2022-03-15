@@ -1,13 +1,20 @@
 <template>
   <q-dialog ref="dialogRef" @hide="onDialogHide" persistent>
-    <q-layout view="hHh lpR fFf"
+    <q-layout
+      view="hHh lpR fFf"
       :class="isDark ? 'bg-grey-9' : 'bg-grey-3'"
       style="max-height: 400px; min-height: 100px !important; min-width: 400px"
       container
     >
       <q-header reveal bordered class="row justify-between bg-secondary">
         <div class="self-center text-subtitle1 q-pl-sm">New Test Case</div>
-        <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
+        <q-btn
+          class="self-center"
+          dense
+          flat
+          icon="close"
+          @click="onDialogHide"
+        >
           <q-tooltip>Close</q-tooltip>
         </q-btn>
       </q-header>
@@ -30,9 +37,10 @@
                 v-model="codeName"
                 @blur="validateForm()"
                 :rules="[
-                  val => !!val || '* Required',
-                  val => val.length < 15 || 'Maximum is 15 chars',
-                  val => isNaN(val.charAt(0)) || 'First char can not a number'
+                  (val) => !!val || '* Required',
+                  (val) => val.length < 15 || 'Maximum is 15 chars',
+                  (val) =>
+                    isNaN(val.charAt(0)) || 'First char can not a number',
                 ]"
                 lazy-rules
               />
@@ -45,8 +53,8 @@
                 v-model="name"
                 @blur="validateForm()"
                 :rules="[
-                  val => !!val || '* Required',
-                  val => val.length < 50 || 'Maximum is 50 chars'
+                  (val) => !!val || '* Required',
+                  (val) => val.length < 50 || 'Maximum is 50 chars',
                 ]"
                 lazy-rules
               />
@@ -61,7 +69,7 @@
                 v-model="workItem"
                 @blur="validateForm()"
                 :rules="[
-                  val => val.length < 50 || 'WorkItem maximum is 50 chars'
+                  (val) => val.length < 50 || 'WorkItem maximum is 50 chars',
                 ]"
               />
             </div>
@@ -73,7 +81,7 @@
                 v-model="type"
                 @blur="validateForm()"
                 :rules="[
-                  val => val.length < 50 || 'Type maximum is 50 chars'
+                  (val) => val.length < 50 || 'Type maximum is 50 chars',
                 ]"
               />
             </div>
@@ -84,7 +92,9 @@
                 dense
                 v-model="author"
                 @blur="validateForm()"
-                :rules="[val => val.length < 50 || 'Author maximum is 50 chars']"
+                :rules="[
+                  (val) => val.length < 50 || 'Author maximum is 50 chars',
+                ]"
                 :readonly="true"
               />
             </div>
@@ -97,9 +107,7 @@
                 dense
                 v-model="queue"
                 @blur="validateForm()"
-                :rules="[
-                  val => val.length < 50 || 'Maximum is 50 chars'
-                ]"
+                :rules="[(val) => val.length < 50 || 'Maximum is 50 chars']"
               />
             </div>
             <div class="col q-mr-sm">
@@ -109,9 +117,7 @@
                 dense
                 v-model="dontRunWithQueues"
                 @blur="validateForm()"
-                :rules="[
-                  val => val.length < 50 || 'Maximum is 50 chars'
-                ]"
+                :rules="[(val) => val.length < 50 || 'Maximum is 50 chars']"
               />
             </div>
           </div>
@@ -126,7 +132,8 @@
                 v-model="description"
                 @blur="validateForm()"
                 :rules="[
-                  val => val.length < 500 || 'Description maximum is 500 chars'
+                  (val) =>
+                    val.length < 500 || 'Description maximum is 500 chars',
                 ]"
               />
             </div>
@@ -156,14 +163,12 @@
 </template>
 
 <script lang="ts">
-import {
-  computed, defineComponent, ref, PropType,
-} from 'vue';
-import { TestCaseInterface } from 'src/Models/TestCase';
-import { TestGroupInterface } from 'src/Models/TestGroup';
-import { useGlobalStore } from 'src/pinia/globalStore';
-import { QForm, useDialogPluginComponent } from 'quasar'
-import { useUserStore } from 'src/pinia/userStore';
+import { computed, defineComponent, ref, PropType } from 'vue';
+import { TestCaseInterface } from '../../../../Models/TestCase';
+import { TestGroupInterface } from '../../../../Models/TestGroup';
+import { useGlobalStore } from '../../../../pinia/globalStore';
+import { QForm, useDialogPluginComponent } from 'quasar';
+import { useUserStore } from '../../../../pinia/userStore';
 
 export default defineComponent({
   name: 'NewTestCaseDialog',
@@ -180,11 +185,10 @@ export default defineComponent({
   ],
   components: {},
   setup(props) {
-    const globalStore = useGlobalStore()
+    const globalStore = useGlobalStore();
     const userStore = useUserStore();
-    const {
-      dialogRef, onDialogHide, onDialogOK, onDialogCancel,
-    } = useDialogPluginComponent()
+    const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
+      useDialogPluginComponent();
     const codeName = ref('');
     const name = ref('');
     const author = computed(() => userStore.Username);
@@ -198,7 +202,7 @@ export default defineComponent({
     const form = ref(QForm);
 
     function onOKClick() {
-      const { testGroup } = props
+      const { testGroup } = props;
       const newTestCase: TestCaseInterface = {
         CodeName: codeName.value,
         Id: '',
@@ -209,12 +213,15 @@ export default defineComponent({
         TestCaseType: type.value,
         Owner: author.value,
         Queue: queue.value,
-        DontRunWithQueues: dontRunWithQueues.value.trim() !== '' ? dontRunWithQueues.value.split(',').map((s: string) => s.trim()) : [],
+        DontRunWithQueues:
+          dontRunWithQueues.value.trim() !== ''
+            ? dontRunWithQueues.value.split(',').map((s: string) => s.trim())
+            : [],
         CategoryId: testGroup.CategoryId,
         TestSuiteId: testGroup.TestSuiteId,
         TestGroupId: testGroup.Id,
-      }
-      onDialogOK(newTestCase)
+      };
+      onDialogOK(newTestCase);
       // context.emit('ok', newTestCase)
     }
 

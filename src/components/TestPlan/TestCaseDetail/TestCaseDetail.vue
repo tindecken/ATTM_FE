@@ -210,22 +210,22 @@
 
 <script lang="ts">
 import { computed, defineComponent, Ref, ref } from 'vue';
-import { TestAUTInterface } from 'src/Models/TestAUT';
-import { TestCaseInterface } from 'src/Models/TestCase';
-import { TestStepInterface } from 'src/Models/TestStep';
-import { TestParamInterface } from 'src/Models/TestParam';
+import { TestAUTInterface } from '../../../Models/TestAUT';
+import { TestCaseInterface } from '../../../Models/TestCase';
+import { TestStepInterface } from '../../../Models/TestStep';
+import { TestParamInterface } from '../../../Models/TestParam';
 import _ from 'lodash';
 import uuid from 'uuid-random';
-import { TestEnvNodeInterface } from 'src/Models/TestEnv';
-import { FlatKeywordInterface } from 'src/Models/FlatKeyword';
+import { TestEnvNodeInterface } from '../../../Models/TestEnv';
+import { FlatKeywordInterface } from '../../../Models/FlatKeyword';
 import { useQuasar } from 'quasar';
-import { TestCaseHistoryInterface } from 'src/Models/TestCaseHistory';
-import { UpdateTestCaseDataInterface } from 'src/Models/Entities/UpdateTestCaseData';
-import { useUserStore } from 'src/pinia/userStore';
-import { useGlobalStore } from 'src/pinia/globalStore';
-import { useCategoryStore } from 'src/pinia/categoryStore';
-import { useTestCaseStore } from 'src/pinia/testCaseStore';
-import { useTestStepStore } from 'src/pinia/testStepStore';
+import { TestCaseHistoryInterface } from '../../../Models/TestCaseHistory';
+import { UpdateTestCaseDataInterface } from '../../../Models/Entities/UpdateTestCaseData';
+import { useUserStore } from '../../../pinia/userStore';
+import { useGlobalStore } from '../../../pinia/globalStore';
+import { useCategoryStore } from '../../../pinia/categoryStore';
+import { useTestCaseStore } from '../../../pinia/testCaseStore';
+import { useTestStepStore } from '../../../pinia/testStepStore';
 import TestAUT from './Cells/TestAUT.vue';
 import Keyword from './Cells/Keyword.vue';
 import Parameter from './Cells/Parameter.vue';
