@@ -68,7 +68,7 @@ import { computed, ref, defineProps } from 'vue';
 import { useDialogPluginComponent, useQuasar } from 'quasar';
 import { TestEnvInterface } from '../../../../Models/TestEnv';
 import { UpdateTestEnvDataInterface } from '../../../../Models/Entities/UpdateTestEnvData';
-import { api } from '../../../../axiosboot/axios';
+import { api } from '../../../../boot/axios';
 import { useGlobalStore } from '../../../../pinia/globalStore';
 import config from '../../../../config';
 import { TestEnvHistoryInterface } from '../../../../Models/TestEnvHistory';

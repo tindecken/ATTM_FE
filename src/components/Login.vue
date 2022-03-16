@@ -2,7 +2,7 @@
   <q-layout view="hHh LpR fFf">
     <q-page-container class="row justify-center">
       <div class="col-auto">
-        <div>{{ userStore.user }}</div>
+        <div>{{ userStore.Username }}</div>
         <q-form
           @submit="onSubmit"
           @reset="onReset"
