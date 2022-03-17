@@ -12,9 +12,6 @@
     @insertPasteTestSteps="insertPasteTestSteps()"
   ></no-menu>
   <div>
-    <q-tooltip>
-      {{ TestStep.UUID }}
-    </q-tooltip>
     {{ Index }}
   </div>
 </template>

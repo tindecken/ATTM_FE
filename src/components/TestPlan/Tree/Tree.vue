@@ -33,6 +33,7 @@
       <div class="row q-mt-md">
         <div class="col">
           <q-tree
+            dense
             :nodes="allCat"
             node-key="Id"
             :filter="filter"
@@ -60,7 +61,6 @@
                     @copy="onCopyTestCase(prop.node)"
                     @pasteTestCase="onPasteTestCase(prop.node)"
                     @run="onRun()"
-                    @runOn="onRunOn()"
                     @newCategory="onNewCategory(prop.node)"
                     @newTestSuite="onNewTestSuite(prop.node)"
                     @newTestGroup="onNewTestGroup(prop.node)"
@@ -147,16 +147,16 @@ export default defineComponent({
       if (currentNode == null) return;
       switch (currentNode.nodeType) {
         case 'Category':
-          globalStore.infoStatus.Info = `${currentNode.Id} - ${currentNode.Name}`;
+          globalStore.infoStatus.Info = `${currentNode.Name}`;
           break;
         case 'TestSuite':
-          globalStore.infoStatus.Info = `${currentNode.Id} - ${currentNode.CodeName}: ${currentNode.Name}`;
+          globalStore.infoStatus.Info = `${currentNode.CodeName}: ${currentNode.Name}`;
           break;
         case 'TestGroup':
-          globalStore.infoStatus.Info = `${currentNode.Id} - ${currentNode.CodeName}: ${currentNode.Name}`;
+          globalStore.infoStatus.Info = `${currentNode.CodeName}: ${currentNode.Name}`;
           break;
         case 'TestCase':
-          globalStore.infoStatus.Info = `${currentNode.Id} - ${currentNode.CodeName}: ${currentNode.Name}`;
+          globalStore.infoStatus.Info = `${currentNode.CodeName}: ${currentNode.Name}`;
           const { openedTCs } = testCaseStore;
           const found = openedTCs.some((el: any) => el.Id === currentNode.Id);
           if (found) {
@@ -199,12 +199,6 @@ export default defineComponent({
       } else {
         tree.value.expandAll();
       }
-    }
-    function onRunOn() {
-      $q.notify({
-        type: 'negative',
-        message: 'Not develop yet',
-      });
     }
 
     async function onCreateTestSuite(tsInfo: any) {
@@ -922,7 +916,6 @@ export default defineComponent({
       onViewProperties,
       onGenerateDevCode,
       onRun,
-      onRunOn,
       onEdit,
       onNewTestSuite,
       onNewTestGroup,

@@ -2,14 +2,7 @@
   <div>
     <div class="row">
       <div class="col">
-        <q-tabs
-          v-model="selectedTestCaseId"
-          dense
-          active-color="primary"
-          align="left"
-          inline-label
-          @input="onTabChanging()"
-        >
+        <q-tabs v-model="selectedTestCaseId" dense active-color="primary" align="left" inline-label @input="onTabChanging()">
           <q-tab
             no-caps
             v-for="testcase in openedTCs"
@@ -19,9 +12,7 @@
             @mouseover="showByIndex = testcase.Id"
             @mouseout="showByIndex = ''"
           >
-            <div class="q-mr-xs">
-              {{ testcase.CodeName }}: {{ testcase.Name }}
-            </div>
+            <div class="q-mr-xs">{{ testcase.CodeName }}: {{ testcase.Name }}</div>
             <q-btn
               dense
               flat
@@ -56,55 +47,36 @@
               :selected-rows-label="getSelectedString"
             >
               <template v-slot:top-left>
-                <q-input
-                  dense
-                  debounce="300"
-                  v-model="filterTable"
-                  placeholder="Filter"
-                  class="q-mr-sm"
-                >
+                <q-input dense debounce="300" v-model="filterTable" placeholder="Filter" class="q-mr-sm">
                   <template v-slot:append>
                     <q-icon name="search" />
                   </template>
                 </q-input>
-                <q-btn color="primary" outline class="q-mr-sm">
+                <q-btn color="primary" outline class="q-mr-sm" @click="runTestCase(tc)">
                   <q-icon left name="play_arrow"></q-icon>
                   <div>Run</div>
                 </q-btn>
-                <q-btn
-                  color="primary"
-                  outline
-                  @click="saveTestCase(selectedTestCaseId)"
-                >
+                <q-btn color="primary" outline @click="saveTestCase(selectedTestCaseId)">
                   <q-icon left name="save"></q-icon>
                   <div>Save</div>
                 </q-btn>
               </template>
               <template v-slot:header="props">
                 <q-tr :props="props">
-                  <q-th
-                    v-for="col in props.cols"
-                    :key="col.name"
-                    :props="props"
-                    class="text-bold text-primary"
-                  >
+                  <q-th v-for="col in props.cols" :key="col.name" :props="props" class="text-bold text-primary">
                     {{ col.label }}
                   </q-th>
                 </q-tr>
               </template>
               <template v-slot:body="props">
-                <q-tr
-                  v-show="props.row.Description"
-                  :props="props"
-                  class="tsDescription"
-                >
+                <q-tr v-show="props.row.Description" :props="props" class="tsDescription">
                   <q-td colspan="100%" style="padding: 0px">
                     <q-input
                       :model-value="props.row.Description"
                       dense
                       borderless
                       @update:model-value="
-                        updateDescription(tc, props.row, $event)
+                        updateDescription(tc, props.row, $event as string)
                       "
                       debounce="500"
                       style="font-style: oblique"
@@ -141,10 +113,7 @@
                     ></no>
                   </q-td>
                   <q-td key="testAUT" :props="props" class="q-c-input">
-                    <test-aut
-                      :TestStep="props.row"
-                      @changeTestAUT="changeTestAUT(tc, props.row, $event)"
-                    ></test-aut>
+                    <test-aut :TestStep="props.row" @changeTestAUT="changeTestAUT(tc, props.row, $event)"></test-aut>
                   </q-td>
                   <q-td key="keyword" :props="props" class="q-c-input">
                     <keyword
@@ -158,13 +127,9 @@
                     <parameter
                       :TestStep="props.row"
                       :ParamIndex="index - 1"
-                      @changeParam="
-                        changeParam(tc, props.row, index - 1, $event)
-                      "
+                      @changeParam="changeParam(tc, props.row, index - 1, $event)"
                       @useTestEnv="onUseTestEnv(tc, props.row, index - 1)"
-                      @unUseTestEnv="
-                        onUnUseTestEnv(tc, props.row, index - 1, $event)
-                      "
+                      @unUseTestEnv="onUnUseTestEnv(tc, props.row, index - 1, $event)"
                     >
                     </parameter>
                   </q-td>
@@ -172,13 +137,7 @@
               </template>
             </q-table>
             <q-separator class="q-mt-sm q-mb-sm" />
-            <q-btn
-              outline
-              color="primary"
-              label="New Step"
-              @click="addNewStep(selectedTestCaseId)"
-              icon="add"
-            ></q-btn>
+            <q-btn outline color="primary" label="New Step" @click="addNewStep(selectedTestCaseId)" icon="add"></q-btn>
             <!-- <div class="q-mt-md">
               Selected:
               <ul>
@@ -226,6 +185,7 @@ import { useGlobalStore } from '../../../pinia/globalStore';
 import { useCategoryStore } from '../../../pinia/categoryStore';
 import { useTestCaseStore } from '../../../pinia/testCaseStore';
 import { useTestStepStore } from '../../../pinia/testStepStore';
+import { useTestClientStore } from '../../../pinia/testClientStore';
 import TestAUT from './Cells/TestAUT.vue';
 import Keyword from './Cells/Keyword.vue';
 import Parameter from './Cells/Parameter.vue';
@@ -251,6 +211,7 @@ export default defineComponent({
     const categoryStore = useCategoryStore();
     const testCaseStore = useTestCaseStore();
     const testStepStore = useTestStepStore();
+    const testClientStore = useTestClientStore();
     const $q = useQuasar();
     const showByIndex = ref('');
     const selectedKeyword = ref('');
@@ -474,7 +435,7 @@ export default defineComponent({
         testCaseStore.setSelectedTestCaseId(val);
       },
     });
-
+    const selectedTestClient = computed(() => testClientStore.selectedTestClient);
     function disabledStyle(row: TestStepInterface) {
       if (row.IsDisabled) {
         if (isDark.value) return 'disabledDark';
@@ -482,16 +443,10 @@ export default defineComponent({
       }
       return '';
     }
-    const openedTCs: Ref<TestCaseInterface[]> = computed(
-      () => testCaseStore.openedTCs
-    );
-    const copiedTestSteps: Ref<TestStepInterface[]> = computed(
-      () => testStepStore.copiedTestSteps
-    );
+    const openedTCs: Ref<TestCaseInterface[]> = computed(() => testCaseStore.openedTCs);
+    const copiedTestSteps: Ref<TestStepInterface[]> = computed(() => testStepStore.copiedTestSteps);
     function saveTestCase(testCaseId: string) {
-      const currTestCase = openedTCs.value.find(
-        (tc: TestCaseInterface) => tc.Id === testCaseId
-      ) as TestCaseInterface;
+      const currTestCase = openedTCs.value.find((tc: TestCaseInterface) => tc.Id === testCaseId) as TestCaseInterface;
       $q.dialog({
         component: SaveTestCaseDialog,
         componentProps: {
@@ -540,93 +495,56 @@ export default defineComponent({
       } else {
         // eslint-disable-next-line no-plusplus
         for (let i = 0; i < originalTestCase.TestSteps.length; i++) {
-          if (
-            originalTestCase.TestSteps[i].UUID !== testcase.TestSteps[i].UUID
-          ) {
+          if (originalTestCase.TestSteps[i].UUID !== testcase.TestSteps[i].UUID) {
             isModified = true;
             break;
           }
-          if (
-            originalTestCase.TestSteps[i].TestAUTId !==
-            testcase.TestSteps[i].TestAUTId
-          ) {
+          if (originalTestCase.TestSteps[i].TestAUTId !== testcase.TestSteps[i].TestAUTId) {
             isModified = true;
             break;
           }
-          if (
-            originalTestCase.TestSteps[i].Keyword?.Name !==
-            testcase.TestSteps[i].Keyword?.Name
-          ) {
+          if (originalTestCase.TestSteps[i].Keyword?.Name !== testcase.TestSteps[i].Keyword?.Name) {
             isModified = true;
             break;
           }
-          if (
-            originalTestCase.TestSteps[i].Description !==
-            testcase.TestSteps[i].Description
-          ) {
+          if (originalTestCase.TestSteps[i].Description !== testcase.TestSteps[i].Description) {
             isModified = true;
             break;
           }
-          if (
-            originalTestCase.TestSteps[i].IsDisabled !==
-            testcase.TestSteps[i].IsDisabled
-          ) {
+          if (originalTestCase.TestSteps[i].IsDisabled !== testcase.TestSteps[i].IsDisabled) {
             isModified = true;
             break;
           }
-          if (
-            originalTestCase.TestSteps[i].IsComment !==
-            testcase.TestSteps[i].IsComment
-          ) {
+          if (originalTestCase.TestSteps[i].IsComment !== testcase.TestSteps[i].IsComment) {
             isModified = true;
             break;
           }
-          if (
-            originalTestCase.TestSteps[i].KWFeature !==
-            testcase.TestSteps[i].KWFeature
-          ) {
+          if (originalTestCase.TestSteps[i].KWFeature !== testcase.TestSteps[i].KWFeature) {
             isModified = true;
             break;
           }
-          if (
-            originalTestCase.TestSteps[i].KWCategory !==
-            testcase.TestSteps[i].KWCategory
-          ) {
+          if (originalTestCase.TestSteps[i].KWCategory !== testcase.TestSteps[i].KWCategory) {
             isModified = true;
             break;
           }
-          if (
-            originalTestCase.TestSteps[i].Params.length !==
-            testcase.TestSteps[i].Params.length
-          ) {
+          if (originalTestCase.TestSteps[i].Params.length !== testcase.TestSteps[i].Params.length) {
             isModified = true;
             break;
           }
           // eslint-disable-next-line no-plusplus
-          for (
-            let j = 0;
-            j < originalTestCase.TestSteps[i].Params.length;
-            j++
-          ) {
-            if (
-              originalTestCase.TestSteps[i].Params[j].Name !==
-              testcase.TestSteps[i].Params[j].Name
-            ) {
+          for (let j = 0; j < originalTestCase.TestSteps[i].Params.length; j++) {
+            if (originalTestCase.TestSteps[i].Params[j].Name !== testcase.TestSteps[i].Params[j].Name) {
               isModified = true;
               break;
             }
-            if (
-              originalTestCase.TestSteps[i].Params[j].TestNodePath !==
-              testcase.TestSteps[i].Params[j].TestNodePath
-            ) {
+            if (originalTestCase.TestSteps[i].Params[j].TestNodePath !== testcase.TestSteps[i].Params[j].TestNodePath) {
               isModified = true;
               break;
             }
             if (
               originalTestCase.TestSteps[i].Params[j].TestNodePath === '' &&
               testcase.TestSteps[i].Params[j].Value &&
-              originalTestCase.TestSteps[i].Params[j].Value !==
-                testcase.TestSteps[i].Params[j].Value
+              originalTestCase.TestSteps[i].Params[j].Value !== testcase.TestSteps[i].Params[j].Value
             ) {
               isModified = true;
               break;
@@ -662,11 +580,7 @@ export default defineComponent({
         testCaseStore.removeOpenedTC(testcase);
       }
     }
-    function changeKeyword(
-      testCase: TestCaseInterface,
-      testStep: TestStepInterface,
-      newKeyword: FlatKeywordInterface
-    ) {
+    function changeKeyword(testCase: TestCaseInterface, testStep: TestStepInterface, newKeyword: FlatKeywordInterface) {
       // find edited testStep
       const stepIndex: number = testCase.TestSteps.indexOf(testStep);
       const tempTC: TestCaseInterface = _.cloneDeep(testCase);
@@ -684,10 +598,7 @@ export default defineComponent({
       categoryStore.updateTestCase(tempTC);
     }
 
-    function editTestStep(
-      testCase: TestCaseInterface,
-      testStep: TestStepInterface
-    ) {
+    function editTestStep(testCase: TestCaseInterface, testStep: TestStepInterface) {
       console.log('editTestStep', testCase, testStep);
       $q.dialog({
         component: KeywordEditorDialog,
@@ -698,9 +609,7 @@ export default defineComponent({
       })
         .onOk((testStepUpdated: TestStepInterface) => {
           console.log('testStep updated', testStepUpdated);
-          const stepIndex = testCase.TestSteps.findIndex(
-            (ts: TestStepInterface) => ts.UUID === testStepUpdated.UUID
-          );
+          const stepIndex = testCase.TestSteps.findIndex((ts: TestStepInterface) => ts.UUID === testStepUpdated.UUID);
           if (stepIndex === -1) return;
           const tempTC = _.cloneDeep(testCase);
           tempTC.TestSteps[stepIndex] = testStepUpdated;
@@ -714,10 +623,7 @@ export default defineComponent({
           // TODO
         });
     }
-    function searchKeyword(
-      testCase: TestCaseInterface,
-      testStep: TestStepInterface
-    ) {
+    function searchKeyword(testCase: TestCaseInterface, testStep: TestStepInterface) {
       console.log('searchKeyword', testCase, testStep);
       $q.dialog({
         component: SearchKeywordDialog,
@@ -728,9 +634,7 @@ export default defineComponent({
       })
         .onOk((testStepUpdated: TestStepInterface) => {
           console.log('testStep updated', testStepUpdated);
-          const stepIndex = testCase.TestSteps.findIndex(
-            (ts: TestStepInterface) => ts.UUID === testStepUpdated.UUID
-          );
+          const stepIndex = testCase.TestSteps.findIndex((ts: TestStepInterface) => ts.UUID === testStepUpdated.UUID);
           if (stepIndex === -1) return;
           const tempTC = _.cloneDeep(testCase);
           tempTC.TestSteps[stepIndex].Params = [];
@@ -754,11 +658,7 @@ export default defineComponent({
         });
     }
 
-    function changeTestAUT(
-      testCase: TestCaseInterface,
-      testStep: TestStepInterface,
-      newTestAUT: TestAUTInterface
-    ) {
+    function changeTestAUT(testCase: TestCaseInterface, testStep: TestStepInterface, newTestAUT: TestAUTInterface) {
       // find edited testStep
       const stepIndex: number = testCase.TestSteps.indexOf(testStep);
       const tempTC: TestCaseInterface = _.cloneDeep(testCase);
@@ -767,12 +667,7 @@ export default defineComponent({
       categoryStore.updateTestCase(tempTC);
     }
 
-    function changeParam(
-      testCase: TestCaseInterface,
-      testStep: TestStepInterface,
-      paramIndex: number,
-      newValue: string
-    ) {
+    function changeParam(testCase: TestCaseInterface, testStep: TestStepInterface, paramIndex: number, newValue: string) {
       const stepIndex: number = testCase.TestSteps.indexOf(testStep);
       const tempTC: TestCaseInterface = _.cloneDeep(testCase);
       tempTC.TestSteps[stepIndex].Params[paramIndex].Value = newValue;
@@ -780,28 +675,16 @@ export default defineComponent({
       categoryStore.updateTestCase(tempTC);
     }
 
-    function updateTestEnvValue(
-      testCase: TestCaseInterface,
-      testStep: TestStepInterface,
-      paramIndex: number,
-      testEnvNode: TestEnvNodeInterface
-    ) {
+    function updateTestEnvValue(testCase: TestCaseInterface, testStep: TestStepInterface, paramIndex: number, testEnvNode: TestEnvNodeInterface) {
       const stepIndex: number = testCase.TestSteps.indexOf(testStep);
       const tempTC: TestCaseInterface = _.cloneDeep(testCase);
-      tempTC.TestSteps[stepIndex].Params[
-        paramIndex
-      ].TestNodePath = `${testEnvNode.Category}/${testEnvNode.Name}`;
+      tempTC.TestSteps[stepIndex].Params[paramIndex].TestNodePath = `${testEnvNode.Category}/${testEnvNode.Name}`;
       tempTC.TestSteps[stepIndex].Params[paramIndex].Value = testEnvNode.Value;
       testCaseStore.updateOpenedTCs(tempTC);
       categoryStore.updateTestCase(tempTC);
     }
 
-    function onUnUseTestEnv(
-      testCase: TestCaseInterface,
-      testStep: TestStepInterface,
-      paramIndex: number,
-      currentValue: string
-    ) {
+    function onUnUseTestEnv(testCase: TestCaseInterface, testStep: TestStepInterface, paramIndex: number, currentValue: string) {
       const stepIndex: number = testCase.TestSteps.indexOf(testStep);
       const tempTC: TestCaseInterface = _.cloneDeep(testCase);
       tempTC.TestSteps[stepIndex].Params[paramIndex].TestNodePath = '';
@@ -845,9 +728,7 @@ export default defineComponent({
     }
     function getRowIndexByUUID(currentTest: TestCaseInterface, uid: any) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      const index: number = currentTest.TestSteps.findIndex(
-        (step: TestStepInterface) => step.UUID === uid
-      );
+      const index: number = currentTest.TestSteps.findIndex((step: TestStepInterface) => step.UUID === uid);
       if (index === -1) return 0;
       return index;
     }
@@ -858,28 +739,19 @@ export default defineComponent({
         // There is a previous selection
         // Select contiguous block from previous selection to this one
         // But if clicked one already selected, remove any selected since then
-        const matched = selected.value.find(
-          (item: any) => item.UUID === row.UUID
-        );
+        const matched = selected.value.find((item: any) => item.UUID === row.UUID);
         if (matched) {
           // Had already selected this one --> do nothing
         } else {
           // New selection - add it and any between
           // find selected testcase
-          const currTestCase = openedTCs.value.find(
-            (tc: TestCaseInterface) => tc.Id === selectedTestCaseId.value
-          ) as TestCaseInterface;
+          const currTestCase = openedTCs.value.find((tc: TestCaseInterface) => tc.Id === selectedTestCaseId.value) as TestCaseInterface;
 
           // find previous selected teststep
-          const previousSelectedStep = currTestCase.TestSteps.find(
-            (step: TestStepInterface) => step.UUID === selected.value[0].UUID
-          ) as TestStepInterface;
+          const previousSelectedStep = currTestCase.TestSteps.find((step: TestStepInterface) => step.UUID === selected.value[0].UUID) as TestStepInterface;
 
           // get index for previousSelectedStep and currentSelectedStep
-          const previousIndex = getRowIndexByUUID(
-            currTestCase,
-            previousSelectedStep.UUID
-          );
+          const previousIndex = getRowIndexByUUID(currTestCase, previousSelectedStep.UUID);
           const currentIndex = getRowIndexByUUID(currTestCase, row.UUID);
 
           let first: number;
@@ -931,9 +803,7 @@ export default defineComponent({
     }
 
     function onDeleteTestSteps() {
-      const currTestCase = openedTCs.value.find(
-        (tc: TestCaseInterface) => tc.Id === selectedTestCaseId.value
-      ) as TestCaseInterface;
+      const currTestCase = openedTCs.value.find((tc: TestCaseInterface) => tc.Id === selectedTestCaseId.value) as TestCaseInterface;
       selected.value.forEach((selectedTestStep: TestStepInterface) => {
         currTestCase.TestSteps.forEach((testStep: TestStepInterface) => {
           if (testStep.UUID === selectedTestStep.UUID) {
@@ -948,9 +818,7 @@ export default defineComponent({
     }
 
     function onEnableRows() {
-      const currTestCase = openedTCs.value.find(
-        (tc: TestCaseInterface) => tc.Id === selectedTestCaseId.value
-      ) as TestCaseInterface;
+      const currTestCase = openedTCs.value.find((tc: TestCaseInterface) => tc.Id === selectedTestCaseId.value) as TestCaseInterface;
       selected.value.forEach((selectedRow: any) => {
         currTestCase.TestSteps.forEach((testStep: TestStepInterface) => {
           if (testStep.UUID === selectedRow.UUID) {
@@ -964,9 +832,7 @@ export default defineComponent({
     }
 
     function onDisableRows() {
-      const currTestCase = openedTCs.value.find(
-        (tc: TestCaseInterface) => tc.Id === selectedTestCaseId.value
-      ) as TestCaseInterface;
+      const currTestCase = openedTCs.value.find((tc: TestCaseInterface) => tc.Id === selectedTestCaseId.value) as TestCaseInterface;
       selected.value.forEach((selectedRow: any) => {
         currTestCase.TestSteps.forEach((testStep: TestStepInterface) => {
           if (testStep.UUID === selectedRow.UUID) {
@@ -980,9 +846,7 @@ export default defineComponent({
     }
 
     function onCopyTestSteps(testCase: TestCaseInterface) {
-      selected.value.sort(
-        (a, b) => testCase.TestSteps.indexOf(a) - testCase.TestSteps.indexOf(b)
-      );
+      selected.value.sort((a, b) => testCase.TestSteps.indexOf(a) - testCase.TestSteps.indexOf(b));
       if (selected.value.length > 0) {
         testStepStore.setCopiedTestSteps(selected.value);
       }
@@ -1062,10 +926,7 @@ export default defineComponent({
       categoryStore.updateTestCase(tempTC);
     }
 
-    function onInsertDescription(
-      testCase: TestCaseInterface,
-      testStep: TestStepInterface
-    ) {
+    function onInsertDescription(testCase: TestCaseInterface, testStep: TestStepInterface) {
       // open new AddDescriptionDialog dialog
       $q.dialog({
         component: AddDescriptionDialog,
@@ -1088,48 +949,30 @@ export default defineComponent({
         });
     }
 
-    function onBeforeShowDialog(
-      testCase: TestCaseInterface,
-      testStep: TestStepInterface
-    ) {
+    function onBeforeShowDialog(testCase: TestCaseInterface, testStep: TestStepInterface) {
       if (selected.value.length > 1) return;
-      if (
-        !selected.value.some(
-          (ts: TestStepInterface) => ts.UUID === testStep.UUID
-        )
-      ) {
+      if (!selected.value.some((ts: TestStepInterface) => ts.UUID === testStep.UUID)) {
         selected.value = [];
         selected.value.push(testStep);
       }
-      rightClickIndex.value = testCase.TestSteps.findIndex(
-        (ts: TestStepInterface) => ts.UUID === testStep.UUID
-      );
+      rightClickIndex.value = testCase.TestSteps.findIndex((ts: TestStepInterface) => ts.UUID === testStep.UUID);
       console.log('rightClickIndex', rightClickIndex);
     }
-    function updateDescription(
-      testCase: TestCaseInterface,
-      testStep: TestStepInterface,
-      newTSDescription: string
-    ) {
+    function updateDescription(testCase: TestCaseInterface, testStep: TestStepInterface, newTSDescription: string) {
       const stepIndex: number = testCase.TestSteps.indexOf(testStep);
       const tempTC: TestCaseInterface = _.cloneDeep(testCase);
       tempTC.TestSteps[stepIndex].Description = newTSDescription;
       testCaseStore.updateOpenedTCs(tempTC);
       categoryStore.updateTestCase(tempTC);
     }
-    function filterMethod(
-      rows: TestStepInterface[],
-      filter: string
-    ): TestStepInterface[] {
+    function filterMethod(rows: TestStepInterface[], filter: string): TestStepInterface[] {
       let filtered: TestStepInterface[] = [];
       console.log('rows', rows);
       console.log('filter', filter);
       filtered = rows.filter((row: TestStepInterface) => {
         if (
           !row.Keyword?.Name.toLowerCase().includes(filter.toLowerCase()) &&
-          !row.Params.some((pr: TestParamInterface) =>
-            pr.Value?.toLowerCase().includes(filter.toLowerCase())
-          )
+          !row.Params.some((pr: TestParamInterface) => pr.Value?.toLowerCase().includes(filter.toLowerCase()))
         )
           return false;
         return true;
@@ -1137,11 +980,7 @@ export default defineComponent({
       return filtered;
     }
 
-    function onUseTestEnv(
-      testCase: TestCaseInterface,
-      testStep: TestStepInterface,
-      index: number
-    ) {
+    function onUseTestEnv(testCase: TestCaseInterface, testStep: TestStepInterface, index: number) {
       // open new testEnv dialog
       $q.dialog({
         component: TestEnvironmentDialog,
@@ -1162,11 +1001,85 @@ export default defineComponent({
     }
 
     function getSelectedString() {
-      return selected.value.length === 0
-        ? ''
-        : `${selected.value.length} step${
-            selected.value.length > 1 ? 's' : ''
-          } selected.`;
+      return selected.value.length === 0 ? '' : `${selected.value.length} step${selected.value.length > 1 ? 's' : ''} selected.`;
+    }
+
+    async function runTestCase(testCase: TestCaseInterface) {
+      // check client is selected or not
+      if (selectedTestClient.value === undefined) {
+        $q.notify({
+          type: 'negative',
+          message: 'No test client is selected',
+        });
+        return;
+      }
+      // generate code
+      console.log('generate code');
+      try {
+      } catch (error) {}
+      const generateDevCodeResult: Promise<any> = globalStore.generateDevCode([testCase]);
+      generateDevCodeResult
+        .then(() => {
+          $q.notify({
+            type: 'positive',
+            message: 'Generate code successfully',
+          });
+          const buildResult: Promise<any> = globalStore.buildProject();
+          buildResult
+            .then(() => {
+              $q.notify({
+                type: 'positive',
+                message: 'Build project successfully',
+              });
+              const deployCodeResult: Promise<any> = globalStore.copydevcodetoclient(selectedTestClient.value);
+              deployCodeResult
+                .then(() => {
+                  $q.notify({
+                    type: 'positive',
+                    message: `Deploy Code to ${selectedTestClient.value.Name} successfully`,
+                  });
+                  const createDevQueueResult: Promise<any> = globalStore.createDevQueue({
+                    testcases: [testCase],
+                    testClient: selectedTestClient.value,
+                  });
+                  createDevQueueResult
+                    .then(() => {
+                      $q.notify({
+                        type: 'positive',
+                        message: 'Create Dev Queue successfully',
+                      });
+                    })
+                    .catch((error) => {
+                      $q.notify({
+                        type: 'negative',
+                        message: `Create Dev Queue failed: ${error}`,
+                      });
+                      return;
+                    });
+                })
+                .catch((error) => {
+                  $q.notify({
+                    type: 'negative',
+                    message: `Deploy Code failed: ${error}`,
+                  });
+                  return;
+                });
+            })
+            .catch((error) => {
+              $q.notify({
+                type: 'negative',
+                message: `Build project failed ${error}`,
+              });
+              return;
+            });
+        })
+        .catch((error) => {
+          $q.notify({
+            type: 'negative',
+            message: `Generate code failed ${error}`,
+          });
+          return;
+        });
     }
 
     return {
@@ -1210,45 +1123,46 @@ export default defineComponent({
       onInsertTestSteps,
       onInsertPasteTestSteps,
       searchKeyword,
+      runTestCase,
     };
   },
 });
 </script>
 
 <style scoped lang="scss">
-:deep .q-table-control {
+:deep(.q-table-control) {
   display: flex;
 }
-:deep input.q-field__native {
+:deep(input.q-field__native) {
   padding: 0px;
 }
-:deep tr.tsDescription label {
+:deep(tr.tsDescription label) {
   height: -webkit-fill-available;
 }
-:deep tr.tsDescription label .q-field__marginal {
+:deep(tr.tsDescription label .q-field__marginal) {
   height: -webkit-fill-available;
 }
-:deep tr.tsDescription label .q-field__control {
+:deep(tr.tsDescription label .q-field__control) {
   height: -webkit-fill-available;
 }
-:deep .q-tab {
+:deep(.q-tab) {
   padding-right: 2px;
   padding-left: 4px;
   padding-top: 0px;
   padding-bottom: 0px;
 }
-:deep .q-tab-panel {
+:deep(.q-tab-panel) {
   padding: 1px;
 }
 
-:deep td.q-c-input {
+:deep(td.q-c-input) {
   padding-right: 1px;
   padding-left: 1px;
   padding-top: 0px;
   padding-bottom: 0px;
 }
 
-:deep td.q-c-input .q-field__native {
+:deep(td.q-c-input .q-field__native) {
   padding-right: 0px;
   padding-left: 0px;
   padding-top: 1px;

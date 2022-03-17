@@ -4,6 +4,7 @@ import { InfoStatusDataInterface } from '../Models/Entities/InfoStatusData';
 import { TestAUTInterface } from '../Models/TestAUT';
 import { useUserStore } from '../pinia/userStore';
 import { TestClientInterface } from '../Models/TestClient';
+import { AxiosError } from 'axios';
 
 export const useGlobalStore = defineStore('global', {
   state: () => ({
@@ -146,9 +147,8 @@ export const useGlobalStore = defineStore('global', {
           }
         );
         const responseData = await response.data;
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return responseData;
-      } catch (error: any) {
+      } catch (error) {
         throw error.response.data;
       }
     },

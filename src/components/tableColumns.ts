@@ -1,12 +1,14 @@
-const clientColumns = [
+import { QTableColumn } from 'quasar';
+import { TestClientInterface } from '../Models/TestClient';
+
+const clientColumns: QTableColumn<TestClientInterface>[] = [
   {
     name: 'Id',
     required: false,
     label: 'Id',
     align: 'left',
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    field: (row: any) => row.Id,
-    format: (val: any) => `${val}`,
+    field: (row) => row.Id,
+    format: (val) => `${val}`,
     sortable: false,
   },
   {
@@ -15,7 +17,7 @@ const clientColumns = [
     label: 'Name',
     align: 'left',
     field: 'Name',
-    format: (val: any) => `${val}`,
+    format: (val) => `${val}`,
     sortable: true,
   },
   {
@@ -24,7 +26,7 @@ const clientColumns = [
     label: 'Description',
     align: 'left',
     field: 'Description',
-    format: (val: any) => `${val}`,
+    format: (val) => `${val}`,
     sortable: true,
   },
   {
@@ -33,7 +35,7 @@ const clientColumns = [
     label: 'IP Address',
     align: 'left',
     field: 'IPAddress',
-    format: (val: any) => `${val}`,
+    format: (val) => `${val}`,
     sortable: true,
   },
   {
@@ -42,7 +44,7 @@ const clientColumns = [
     label: 'Type',
     align: 'left',
     field: 'Type',
-    format: (val: any) => `${val}`,
+    format: (val) => `${val}`,
     sortable: true,
   },
   {
@@ -51,7 +53,7 @@ const clientColumns = [
     label: 'User',
     align: 'left',
     field: 'User',
-    format: (val: any) => `${val}`,
+    format: (val) => `${val}`,
     sortable: true,
   },
   {
@@ -60,7 +62,7 @@ const clientColumns = [
     label: 'Password',
     align: 'left',
     field: 'Password',
-    format: (val: any) => `${val}`,
+    format: (val) => `${val}`,
     sortable: true,
   },
   {
@@ -69,7 +71,7 @@ const clientColumns = [
     label: 'Regression Folder',
     align: 'left',
     field: 'RegressionFolder',
-    format: (val: any) => `${val}`,
+    format: (val) => `${val}`,
     sortable: true,
   },
   {
@@ -78,7 +80,7 @@ const clientColumns = [
     label: 'Develop Folder',
     align: 'left',
     field: 'DevelopFolder',
-    format: (val: any) => `${val}`,
+    format: (val) => `${val}`,
     sortable: true,
   },
   {
@@ -87,7 +89,7 @@ const clientColumns = [
     label: 'Runner Folder',
     align: 'left',
     field: 'RunnerFolder',
-    format: (val: any) => `${val}`,
+    format: (val) => `${val}`,
     sortable: true,
   },
   {
@@ -96,10 +98,10 @@ const clientColumns = [
     label: 'Status',
     align: 'left',
     field: 'Status',
-    format: (val: any) => `${val}`,
+    format: (val) => `${val}`,
     sortable: true,
   },
-]
+];
 const testEnvColumns = [
   {
     name: 'no',
@@ -117,7 +119,7 @@ const testEnvColumns = [
     label: 'Category',
     align: 'left',
     field: 'Category',
-    format: (val: any) => `${val}`,
+    format: (val) => `${val}`,
     sortable: true,
   },
   {
@@ -160,5 +162,5 @@ const testEnvColumns = [
     field: 'use',
     sortable: false,
   },
-]
-export { clientColumns, testEnvColumns }
+];
+export { clientColumns, testEnvColumns };
