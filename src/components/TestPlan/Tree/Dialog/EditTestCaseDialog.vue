@@ -7,28 +7,13 @@
       container
     >
       <q-header reveal bordered class="row justify-between bg-secondary">
-        <div class="self-center text-subtitle1 q-pl-sm">
-          Edit Test Case: {{ $props.TestCase.CodeName }}
-        </div>
-        <q-btn
-          class="self-center"
-          dense
-          flat
-          icon="close"
-          @click="onDialogHide"
-        >
+        <div class="self-center text-subtitle1 q-pl-sm">Edit Test Case: {{ $props.TestCase.CodeName }}</div>
+        <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
           <q-tooltip>Close</q-tooltip>
         </q-btn>
       </q-header>
       <q-page-container class="q-pa-sm">
-        <q-form
-          @submit="onOKClick"
-          greedy
-          @validation-success="isFormValid = true"
-          @validation-error="isFormValid = false"
-          ref="form"
-          class="q-mt-sm"
-        >
+        <q-form @submit="onOKClick" greedy @validation-success="isFormValid = true" @validation-error="isFormValid = false" ref="form" class="q-mt-sm">
           <div class="row">
             <div class="col-4 q-mr-sm">
               <q-input
@@ -38,15 +23,14 @@
                 autofocus
                 :model-value="editTestCase?.CodeName"
                 @update:model-value="
-                  (value) =>
+                  (value: string) =>
                     editTestCase ? (editTestCase.CodeName = value) : ''
                 "
                 @blur="validateForm()"
                 :rules="[
                   (val) => !!val || '* Required',
                   (val) => val.length < 15 || 'Maximum is 15 chars',
-                  (val) =>
-                    isNaN(val.charAt(0)) || 'First char can not a number',
+                  (val) => isNaN(val.charAt(0)) || 'First char can not a number',
                 ]"
                 lazy-rules
               />
@@ -57,14 +41,9 @@
                 outlined
                 dense
                 :model-value="editTestCase?.Name"
-                @update:model-value="
-                  (value) => (editTestCase ? (editTestCase.Name = value) : '')
-                "
+                @update:model-value="(value) => (editTestCase ? (editTestCase.Name = value) : '')"
                 @blur="validateForm()"
-                :rules="[
-                  (val) => !!val || '* Required',
-                  (val) => val.length < 50 || 'Maximum is 50 chars',
-                ]"
+                :rules="[(val) => !!val || '* Required', (val) => val.length < 50 || 'Maximum is 50 chars']"
                 lazy-rules
               />
             </div>
@@ -76,14 +55,9 @@
                 outlined
                 dense
                 :model-value="editTestCase?.WorkItem"
-                @update:model-value="
-                  (value) =>
-                    editTestCase ? (editTestCase.WorkItem = value) : ''
-                "
+                @update:model-value="(value) => (editTestCase ? (editTestCase.WorkItem = value) : '')"
                 @blur="validateForm()"
-                :rules="[
-                  (val) => val.length < 50 || 'WorkItem maximum is 50 chars',
-                ]"
+                :rules="[(val) => val.length < 50 || 'WorkItem maximum is 50 chars']"
               />
             </div>
             <div class="col-4 q-mr-sm">
@@ -92,14 +66,9 @@
                 outlined
                 dense
                 :model-value="editTestCase?.TestCaseType"
-                @update:model-value="
-                  (value) =>
-                    editTestCase ? (editTestCase.TestCaseType = value) : ''
-                "
+                @update:model-value="(value) => (editTestCase ? (editTestCase.TestCaseType = value) : '')"
                 @blur="validateForm()"
-                :rules="[
-                  (val) => val.length < 50 || 'Type maximum is 50 chars',
-                ]"
+                :rules="[(val) => val.length < 50 || 'Type maximum is 50 chars']"
               />
             </div>
             <div class="col">
@@ -109,9 +78,7 @@
                 dense
                 :model-value="editTestCase?.Owner"
                 @blur="validateForm()"
-                :rules="[
-                  (val) => val.length < 50 || 'Author maximum is 50 chars',
-                ]"
+                :rules="[(val) => val.length < 50 || 'Author maximum is 50 chars']"
                 :readonly="true"
               />
             </div>
@@ -123,9 +90,7 @@
                 outlined
                 dense
                 :model-value="editTestCase?.Queue"
-                @update:model-value="
-                  (value) => (editTestCase ? (editTestCase.Queue = value) : '')
-                "
+                @update:model-value="(value) => (editTestCase ? (editTestCase.Queue = value) : '')"
                 @blur="validateForm()"
                 :rules="[(val) => val.length < 50 || 'Maximum is 50 chars']"
               />
@@ -136,10 +101,7 @@
                 outlined
                 dense
                 :model-value="editTestCase?.DontRunWithQueues"
-                @update:model-value="
-                  (value) =>
-                    editTestCase ? (editTestCase.DontRunWithQueues = value) : ''
-                "
+                @update:model-value="(value) => (editTestCase ? (editTestCase.DontRunWithQueues = value) : '')"
                 @blur="validateForm()"
                 :rules="[(val) => val.length < 50 || 'Maximum is 50 chars']"
               />
@@ -154,34 +116,16 @@
                 type="textarea"
                 rows="3"
                 :model-value="editTestCase?.Description"
-                @update:model-value="
-                  (value) =>
-                    editTestCase ? (editTestCase.Description = value) : ''
-                "
+                @update:model-value="(value) => (editTestCase ? (editTestCase.Description = value) : '')"
                 @blur="validateForm()"
-                :rules="[
-                  (val) =>
-                    val.length < 500 || 'Description maximum is 500 chars',
-                ]"
+                :rules="[(val) => val.length < 500 || 'Description maximum is 500 chars']"
               />
             </div>
           </div>
           <div class="column items-end q-mt-md">
             <div class="col">
-              <q-btn
-                flat
-                label="Cancel"
-                @click="onCancelClick()"
-                v-close-popup
-                class="q-mr-sm"
-              />
-              <q-btn
-                outline
-                label="Update"
-                :disable="!isFormValid"
-                type="submit"
-                color="primary"
-              />
+              <q-btn flat label="Cancel" @click="onCancelClick()" v-close-popup class="q-mr-sm" />
+              <q-btn outline label="Update" :disable="!isFormValid" type="submit" color="primary" />
             </div>
           </div>
         </q-form>
@@ -211,8 +155,7 @@ export default defineComponent({
   components: {},
   setup(props) {
     const globalStore = useGlobalStore();
-    const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
-      useDialogPluginComponent();
+    const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent();
     const isDark = computed(() => globalStore.darkTheme);
     const isFormValid = ref(false);
     const form = ref(QForm);
@@ -222,10 +165,9 @@ export default defineComponent({
     });
     function onOKClick() {
       if (editTestCase.value) {
-        editTestCase.value.DontRunWithQueues =
-          editTestCase.value.DontRunWithQueues?.toString()
-            .split(',')
-            .map((item: string) => item.trim());
+        editTestCase.value.DontRunWithQueues = editTestCase.value.DontRunWithQueues?.toString()
+          .split(',')
+          .map((item: string) => item.trim());
       }
       const UpdateTestCaseData: UpdateTestCaseDataInterface = {
         UpdateMessage: '',

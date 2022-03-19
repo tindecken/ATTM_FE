@@ -184,7 +184,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { computed, defineComponent, Ref, ref } from 'vue';
+import { computed, Ref, ref } from 'vue';
 import { TestAUTInterface } from '../../../Models/TestAUT';
 import { TestCaseInterface } from '../../../Models/TestCase';
 import { TestStepInterface } from '../../../Models/TestStep';
@@ -212,6 +212,7 @@ import CloseTestCaseDialog from './Dialog/CloseTestCaseDialog.vue';
 import KeywordEditorDialog from './Dialog/KeywordEditorDialog.vue';
 import SearchKeywordDialog from './Dialog/SearchKeywordDialog.vue';
 import SaveTestCaseDialog from './Dialog/SaveTestCaseDialog.vue';
+import { testCaseColumns } from '../../../components/tableColumns';
 
 const globalStore = useGlobalStore();
 const userStore = useUserStore();
@@ -225,217 +226,8 @@ const selectedKeyword = ref('');
 const selected: Ref<any[]> = ref([]);
 const filterTable = ref('');
 const isDark = computed(() => globalStore.darkTheme);
-const columns = ref([
-  {
-    name: 'no',
-    required: true,
-    label: 'No',
-    align: 'left',
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    field: 'rowIndex',
-    sortable: false,
-    style: 'max-width: 40px',
-    headerStyle: 'max-width: 40px',
-  },
-  {
-    name: 'testAUT',
-    align: 'center',
-    label: 'TestAUT',
-    field: 'TestAUT',
-    sortable: false,
-    style: 'min-width: 80px; max-width: 100px',
-    headerStyle: 'min-width: 80px; max-width: 100px',
-  },
-  {
-    name: 'keyword',
-    label: 'Keyword',
-    field: 'Keyword',
-    sortable: false,
-    align: 'left',
-    style: 'min-width: 150px;',
-    headerStyle: 'min-width: 150px',
-  },
-  {
-    name: 'param1',
-    label: 'Param 1',
-    field: 'Param1',
-    sortable: false,
-    align: 'left',
-    style: 'min-width: 135px;',
-    headerStyle: 'min-width: 135px',
-  },
-  {
-    name: 'param2',
-    label: 'Param 2',
-    field: 'Param2',
-    sortable: false,
-    align: 'left',
-    style: 'min-width: 135px;',
-    headerStyle: 'min-width: 135px',
-  },
-  {
-    name: 'param3',
-    label: 'Param 3',
-    field: 'Param3',
-    sortable: false,
-    align: 'left',
-    style: 'min-width: 135px;',
-    headerStyle: 'min-width: 135px',
-  },
-  {
-    name: 'param4',
-    label: 'Param 4',
-    field: 'Param4',
-    sortable: false,
-    align: 'left',
-    style: 'min-width: 135px;',
-    headerStyle: 'min-width: 135px',
-  },
-  {
-    name: 'param5',
-    label: 'Param 5',
-    field: 'Param5',
-    sortable: false,
-    align: 'left',
-    style: 'min-width: 135px;',
-    headerStyle: 'min-width: 135px',
-  },
-  {
-    name: 'param6',
-    label: 'Param 6',
-    field: 'Param6',
-    sortable: false,
-    align: 'left',
-    style: 'min-width: 135px;',
-    headerStyle: 'min-width: 135px',
-  },
-  {
-    name: 'param7',
-    label: 'Param 7',
-    field: 'Param7',
-    sortable: false,
-    align: 'left',
-    style: 'min-width: 135px;',
-    headerStyle: 'min-width: 135px',
-  },
-  {
-    name: 'param8',
-    label: 'Param 8',
-    field: 'Param8',
-    sortable: false,
-    align: 'left',
-    style: 'min-width: 135px;',
-    headerStyle: 'min-width: 135px',
-  },
-  {
-    name: 'param9',
-    label: 'Param 9',
-    field: 'Param9',
-    sortable: false,
-    align: 'left',
-    style: 'min-width: 135px;',
-    headerStyle: 'min-width: 135px',
-  },
-  {
-    name: 'param10',
-    label: 'Param 10',
-    field: 'Param10',
-    sortable: false,
-    align: 'left',
-    style: 'min-width: 135px;',
-    headerStyle: 'min-width: 135px',
-  },
-  {
-    name: 'param11',
-    label: 'Param 11',
-    field: 'Param11',
-    sortable: false,
-    align: 'left',
-    style: 'min-width: 135px;',
-    headerStyle: 'min-width: 135px',
-  },
-  {
-    name: 'param12',
-    label: 'Param 12',
-    field: 'Param12',
-    sortable: false,
-    align: 'left',
-    style: 'min-width: 135px;',
-    headerStyle: 'min-width: 135px',
-  },
-  {
-    name: 'param13',
-    label: 'Param 13',
-    field: 'Param13',
-    sortable: false,
-    align: 'left',
-    style: 'min-width: 135px;',
-    headerStyle: 'min-width: 135px',
-  },
-  {
-    name: 'param14',
-    label: 'Param 14',
-    field: 'Param14',
-    sortable: false,
-    align: 'left',
-    style: 'min-width: 135px;',
-    headerStyle: 'min-width: 135px',
-  },
-  {
-    name: 'param15',
-    label: 'Param 15',
-    field: 'Param15',
-    sortable: false,
-    align: 'left',
-    style: 'min-width: 135px;',
-    headerStyle: 'min-width: 135px',
-  },
-  {
-    name: 'param16',
-    label: 'Param 16',
-    field: 'Param16',
-    sortable: false,
-    align: 'left',
-    style: 'min-width: 135px;',
-    headerStyle: 'min-width: 135px',
-  },
-  {
-    name: 'param17',
-    label: 'Param 17',
-    field: 'Param17',
-    sortable: false,
-    align: 'left',
-    style: 'min-width: 135px;',
-    headerStyle: 'min-width: 135px',
-  },
-  {
-    name: 'param18',
-    label: 'Param 18',
-    field: 'Param18',
-    sortable: false,
-    align: 'left',
-    style: 'min-width: 135px;',
-    headerStyle: 'min-width: 135px',
-  },
-  {
-    name: 'param19',
-    label: 'Param 19',
-    field: 'Param19',
-    sortable: false,
-    align: 'left',
-    style: 'min-width: 135px;',
-    headerStyle: 'min-width: 135px',
-  },
-  {
-    name: 'param20',
-    label: 'Param 20',
-    field: 'Param20',
-    sortable: false,
-    align: 'left',
-    style: 'min-width: 135px;',
-    headerStyle: 'min-width: 135px',
-  },
-]);
+const columns = ref(testCaseColumns);
+
 const rightClickIndex = ref(-1);
 const selectedTestCaseId: Ref<string> = computed({
   get: () => testCaseStore.selectedTestCaseId,

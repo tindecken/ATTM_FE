@@ -8,25 +8,12 @@
     >
       <q-header reveal bordered class="row justify-between bg-secondary">
         <div class="self-center text-subtitle1 q-pl-sm">New Test Group</div>
-        <q-btn
-          class="self-center"
-          dense
-          flat
-          icon="close"
-          @click="onDialogHide"
-        >
+        <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
           <q-tooltip>Close</q-tooltip>
         </q-btn>
       </q-header>
       <q-page-container class="q-pa-sm">
-        <q-form
-          @submit="onOKClick"
-          greedy
-          @validation-success="isFormValid = true"
-          @validation-error="isFormValid = false"
-          ref="form"
-          class="q-mt-sm"
-        >
+        <q-form @submit="onOKClick" greedy @validation-success="isFormValid = true" @validation-error="isFormValid = false" ref="form" class="q-mt-sm">
           <div class="row">
             <div class="col-4 q-mr-sm">
               <q-input
@@ -39,8 +26,7 @@
                 :rules="[
                   (val) => !!val || '* Required',
                   (val) => val.length < 15 || 'Maximum is 15 chars',
-                  (val) =>
-                    isNaN(val.charAt(0)) || 'First char can not a number',
+                  (val) => isNaN(val.charAt(0)) || 'First char can not a number',
                 ]"
                 lazy-rules
               />
@@ -52,10 +38,7 @@
                 dense
                 v-model="name"
                 @blur="validateForm()"
-                :rules="[
-                  (val) => !!val || '* Required',
-                  (val) => val.length < 50 || 'Maximum is 50 chars',
-                ]"
+                :rules="[(val) => !!val || '* Required', (val) => val.length < 50 || 'Maximum is 50 chars']"
                 lazy-rules
               />
             </div>
@@ -68,9 +51,7 @@
                 dense
                 v-model="workItem"
                 @blur="validateForm()"
-                :rules="[
-                  (val) => val.length < 50 || 'WorkItem maximum is 50 chars',
-                ]"
+                :rules="[(val) => val.length < 50 || 'WorkItem maximum is 50 chars']"
               />
             </div>
             <div class="col">
@@ -80,9 +61,7 @@
                 dense
                 v-model="author"
                 @blur="validateForm()"
-                :rules="[
-                  (val) => val.length < 50 || 'Author maximum is 50 chars',
-                ]"
+                :rules="[(val) => val.length < 50 || 'Author maximum is 50 chars']"
               />
             </div>
           </div>
@@ -96,29 +75,14 @@
                 rows="3"
                 v-model="description"
                 @blur="validateForm()"
-                :rules="[
-                  (val) =>
-                    val.length < 500 || 'Description maximum is 500 chars',
-                ]"
+                :rules="[(val) => val.length < 500 || 'Description maximum is 500 chars']"
               />
             </div>
           </div>
           <div class="column items-end q-mt-md">
             <div class="col">
-              <q-btn
-                flat
-                label="Cancel"
-                @click="onCancelClick()"
-                v-close-popup
-                class="q-mr-sm"
-              />
-              <q-btn
-                outline
-                label="Create"
-                :disable="!isFormValid"
-                type="submit"
-                color="primary"
-              />
+              <q-btn flat label="Cancel" @click="onCancelClick()" v-close-popup class="q-mr-sm" />
+              <q-btn outline label="Create" :disable="!isFormValid" type="submit" color="primary" />
             </div>
           </div>
         </q-form>
@@ -133,6 +97,7 @@ import { TestGroupInterface } from '../../../../Models/TestGroup';
 import { TestSuiteInterface } from '../../../../Models/TestSuite';
 import { useGlobalStore } from '../../../../pinia/globalStore';
 import { QForm, useDialogPluginComponent } from 'quasar';
+import { useUserStore } from '../../../../pinia/userStore';
 
 export default defineComponent({
   name: 'NewTestGroupDialog',
@@ -150,11 +115,11 @@ export default defineComponent({
   components: {},
   setup(props) {
     const globalStore = useGlobalStore();
-    const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
-      useDialogPluginComponent();
+    const userStore = useUserStore();
+    const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent();
     const codeName = ref('');
     const name = ref('');
-    const author = ref('');
+    const author = computed(() => userStore.Username);
     const description = ref('');
     const workItem = ref('');
     const isDark = computed(() => globalStore.darkTheme);
@@ -168,6 +133,7 @@ export default defineComponent({
         Id: '',
         CodeName: codeName.value.trim(),
         Name: name.value.trim(),
+        Owner: author.value.trim(),
         TestCaseIds: [],
         Description: description.value.trim(),
         WorkItem: workItem.value.trim(),

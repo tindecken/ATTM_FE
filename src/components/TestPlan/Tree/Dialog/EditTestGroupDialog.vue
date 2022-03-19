@@ -7,7 +7,7 @@
       container
     >
       <q-header reveal bordered class="row justify-between bg-secondary">
-        <div class="self-center text-subtitle1 q-pl-sm">New Test Suite</div>
+        <div class="self-center text-subtitle1 q-pl-sm">Edit Test Group: {{ $props.TestGroup.Name }}</div>
         <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
           <q-tooltip>Close</q-tooltip>
         </q-btn>
@@ -21,7 +21,11 @@
                 outlined
                 dense
                 autofocus
-                v-model="codeName"
+                :model-value="editTestGroup?.CodeName"
+                @update:model-value="
+                  (value: string) =>
+                    editTestGroup ? (editTestGroup.CodeName = value) : ''
+                "
                 @blur="validateForm()"
                 :rules="[
                   (val) => !!val || '* Required',
@@ -36,7 +40,11 @@
                 label="Name"
                 outlined
                 dense
-                v-model="name"
+                :model-value="editTestGroup?.Name"
+                @update:model-value="
+                  (value: string) =>
+                    editTestGroup ? (editTestGroup.Name = value) : ''
+                "
                 @blur="validateForm()"
                 :rules="[(val) => !!val || '* Required', (val) => val.length < 50 || 'Maximum is 50 chars']"
                 lazy-rules
@@ -49,7 +57,11 @@
                 label="WorkItem"
                 outlined
                 dense
-                v-model="workItem"
+                :model-value="editTestGroup?.WorkItem"
+                @update:model-value="
+                  (value: string) =>
+                    editTestGroup ? (editTestGroup.WorkItem = value) : ''
+                "
                 @blur="validateForm()"
                 :rules="[(val) => val.length < 50 || 'WorkItem maximum is 50 chars']"
               />
@@ -59,10 +71,13 @@
                 label="Author"
                 outlined
                 dense
-                v-model="author"
+                :model-value="editTestGroup?.Owner"
+                @update:model-value="
+                  (value: string) =>
+                    editTestGroup ? (editTestGroup.Owner = value) : ''
+                "
                 @blur="validateForm()"
                 :rules="[(val) => val.length < 50 || 'Author maximum is 50 chars']"
-                :readonly="true"
               />
             </div>
           </div>
@@ -74,7 +89,11 @@
                 dense
                 type="textarea"
                 rows="3"
-                v-model="description"
+                :model-value="editTestGroup?.Description"
+                @update:model-value="
+                  (value: string) =>
+                    editTestGroup ? (editTestGroup.Description = value) : ''
+                "
                 @blur="validateForm()"
                 :rules="[(val) => val.length < 500 || 'Description maximum is 500 chars']"
               />
@@ -82,8 +101,8 @@
           </div>
           <div class="column items-end q-mt-md">
             <div class="col">
-              <q-btn flat label="Cancel" @click="onCancelClick()" v-close-popup class="q-mr-sm" />
-              <q-btn outline label="Create" :disable="!isFormValid" type="submit" color="primary" />
+              <q-btn flat label="Cancel" @click="onDialogCancel()" v-close-popup class="q-mr-sm" />
+              <q-btn outline label="Update" :disable="!isFormValid" type="submit" color="primary" />
             </div>
           </div>
         </q-form>
@@ -92,75 +111,34 @@
   </q-dialog>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, ref, PropType } from 'vue';
-import { CategoryInterface } from '../../../../Models/Category';
-import { TestSuiteInterface } from '../../../../Models/TestSuite';
+<script setup lang="ts">
+import { computed, ref, PropType, onMounted, Ref } from 'vue';
+import _ from 'lodash';
 import { useGlobalStore } from '../../../../pinia/globalStore';
 import { QForm, useDialogPluginComponent } from 'quasar';
-import { useUserStore } from '../../../../pinia/userStore';
+import { TestGroupInterface } from '../../../../Models/TestGroup';
 
-export default defineComponent({
-  name: 'NewTestSuiteDialog',
-  props: {
-    Category: {
-      type: Object as PropType<CategoryInterface>,
-      required: true,
-    },
-  },
-  components: {},
-  emits: [
-    // REQUIRED; need to specify some events that your
-    // component will emit through useDialogPluginComponent()
-    ...useDialogPluginComponent.emits,
-  ],
-  setup(props) {
-    const globalStore = useGlobalStore();
-    const userStore = useUserStore();
-    const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent();
-    const codeName = ref('');
-    const name = ref('');
-    const author = computed(() => userStore.Username);
-    const description = ref('');
-    const workItem = ref('');
-    const isDark = computed(() => globalStore.darkTheme);
-    const isFormValid = ref(false);
-    const form = ref(QForm);
-
-    function onOKClick() {
-      const { Category } = props;
-      const newTestSuite: TestSuiteInterface = {
-        Id: '',
-        CodeName: codeName.value.trim(),
-        Name: name.value.trim(),
-        TestGroupIds: [],
-        Description: description.value.trim(),
-        WorkItem: workItem.value.trim(),
-        CategoryId: Category.Id,
-        Owner: author.value.trim(),
-        children: [],
-      };
-      onDialogOK(newTestSuite);
-    }
-
-    function validateForm() {
-      if (form.value !== null) form.value.validate(false);
-    }
-    return {
-      dialogRef,
-      codeName,
-      name,
-      onDialogHide,
-      onOKClick,
-      isDark,
-      author,
-      description,
-      workItem,
-      isFormValid,
-      validateForm,
-      form,
-      onCancelClick: onDialogCancel,
-    };
-  },
+const props = defineProps({
+  TestGroup: { type: Object as PropType<TestGroupInterface>, required: true },
 });
+
+const emits = defineEmits([...useDialogPluginComponent.emits]);
+
+const globalStore = useGlobalStore();
+const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent();
+const isDark = computed(() => globalStore.darkTheme);
+const isFormValid = ref(false);
+const form = ref(QForm);
+const editTestGroup: Ref<TestGroupInterface | null> = ref(null);
+onMounted(() => {
+  editTestGroup.value = _.cloneDeep(props.TestGroup);
+  console.log('testGroup', editTestGroup.value);
+});
+function onOKClick() {
+  onDialogOK(editTestGroup.value);
+}
+
+function validateForm() {
+  if (form.value !== null) form.value.validate(false);
+}
 </script>

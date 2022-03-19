@@ -2,31 +2,14 @@
   <div class="q-pa-xs">
     <div class="row">
       <div class="col-8 q-mr-sm">
-        <q-input
-          ref="filterInput"
-          v-model="filter"
-          label="Filter"
-          dense
-          outlined
-        >
+        <q-input ref="filterInput" v-model="filter" label="Filter" dense outlined>
           <template v-slot:append>
-            <q-icon
-              v-if="filter !== ''"
-              name="clear"
-              class="cursor-pointer"
-              @click="resetFilter"
-            />
+            <q-icon v-if="filter !== ''" name="clear" class="cursor-pointer" @click="resetFilter" />
           </template>
         </q-input>
       </div>
       <div class="col self-center">
-        <q-btn
-          outline
-          color="primary"
-          @click="toggleTree()"
-          v-if="allCat.length > 0"
-          >Toggle</q-btn
-        >
+        <q-btn outline color="primary" @click="toggleTree()" v-if="allCat.length > 0">Toggle</q-btn>
       </div>
     </div>
     <q-scroll-area style="height: 85vh; max-width: 600px">
@@ -50,10 +33,7 @@
             <template v-slot:default-header="prop">
               <div class="row items-center">
                 <div style="display: inherit">
-                  <q-icon
-                    :name="prop.node.icon || 'share'"
-                    class="q-mr-sm self-center"
-                  />
+                  <q-icon :name="prop.node.icon || 'share'" class="q-mr-sm self-center" />
                   <div>{{ prop.node.label }}</div>
                   <tree-context-menu
                     :node="prop.node"
@@ -75,11 +55,7 @@
               </div>
             </template>
           </q-tree>
-          <q-btn
-            v-if="allCat.length === 0"
-            label="Create Category"
-            @click="createCategory()"
-          ></q-btn>
+          <q-btn v-if="allCat.length === 0" label="Create Category" @click="createCategory()"></q-btn>
         </div>
       </div>
     </q-scroll-area>
@@ -115,8 +91,11 @@ import DeleteTestSuiteDialog from './Dialog/DeleteTestSuiteDialog.vue';
 import DeleteCategoryDialog from './Dialog/DeleteCategoryDialog.vue';
 import NewCategoryDialog from './Dialog/NewCategoryDialog.vue';
 import EditTestCaseDialog from './Dialog/EditTestCaseDialog.vue';
+import EditCategoryDialog from './Dialog/EditCategoryDialog.vue';
 import TestCasePropertiesDialog from './Dialog/TestCaseProperties/TestCasePropertiesDialog.vue';
 import ViewGenerateCodeDialog from './Dialog/ViewGenerateCodeDialog.vue';
+import EditTestSuiteDialog from './Dialog/EditTestSuiteDialog.vue';
+import EditTestGroupDialog from './Dialog/EditTestGroupDialog.vue';
 
 export default defineComponent({
   name: 'Tree',
@@ -160,9 +139,7 @@ export default defineComponent({
           const { openedTCs } = testCaseStore;
           const found = openedTCs.some((el: any) => el.Id === currentNode.Id);
           if (found) {
-            const testcase = openedTCs.find(
-              (el: any) => el.Id === currentNode.Id
-            ) as TestCaseInterface;
+            const testcase = openedTCs.find((el: any) => el.Id === currentNode.Id) as TestCaseInterface;
             testCaseStore.setOpenedTCs(testcase);
           } else {
             await testCaseStore.getTestCaseById(currentNode.Id);
@@ -172,9 +149,7 @@ export default defineComponent({
           break;
       }
     }
-    const selectedTestClient = computed(
-      () => testClientStore.selectedTestClient
-    );
+    const selectedTestClient = computed(() => testClientStore.selectedTestClient);
     onMounted(async () => {
       try {
         // get category
@@ -257,6 +232,48 @@ export default defineComponent({
         $q.notify({
           type: 'positive',
           message: `Updated test case: ${editTestCase.Name} !`,
+        });
+      } catch (error: any) {
+        $q.notify({
+          type: 'negative',
+          message: `${error}`,
+        });
+      }
+    }
+    async function onEditCategory(editedCategory: CategoryInterface) {
+      try {
+        // const editTestCase = await testCaseStore.editTestCase(editedTestCase);
+        $q.notify({
+          type: 'positive',
+          message: `Updated category: ${editedCategory.Name} !`,
+        });
+      } catch (error: any) {
+        $q.notify({
+          type: 'negative',
+          message: `${error}`,
+        });
+      }
+    }
+    async function onEditTestSuite(editedTestSuite: TestSuiteInterface) {
+      try {
+        // const editTestCase = await testCaseStore.editTestCase(editedTestCase);
+        $q.notify({
+          type: 'positive',
+          message: `Updated test suite: ${editedTestSuite.Name} !`,
+        });
+      } catch (error: any) {
+        $q.notify({
+          type: 'negative',
+          message: `${error}`,
+        });
+      }
+    }
+    async function onEditTestGroup(editedTestGroup: TestGroupInterface) {
+      try {
+        // const editTestCase = await testCaseStore.editTestCase(editedTestCase);
+        $q.notify({
+          type: 'positive',
+          message: `Updated test group: ${editedTestGroup.Name} !`,
         });
       } catch (error: any) {
         $q.notify({
@@ -410,13 +427,7 @@ export default defineComponent({
           // TODO
         });
     }
-    function onEdit(
-      node:
-        | CategoryInterface
-        | TestSuiteInterface
-        | TestGroupInterface
-        | TestCaseInterface
-    ) {
+    function onEdit(node: CategoryInterface | TestSuiteInterface | TestGroupInterface | TestCaseInterface) {
       switch (node.nodeType) {
         case 'TestCase':
           $q.dialog({
@@ -438,13 +449,62 @@ export default defineComponent({
             });
           break;
         case 'TestGroup':
-          // TODO
+          $q.dialog({
+            component: EditTestGroupDialog,
+            componentProps: {
+              TestGroup: node,
+            },
+          })
+            .onOk((editedTestGroup: TestSuiteInterface) => {
+              // TODO: handle ok
+              console.log('editedTestGroup', editedTestGroup);
+              void onEditTestGroup(editedTestGroup);
+            })
+            .onCancel(() => {
+              // TODO
+            })
+            .onDismiss(() => {
+              // TODO
+            });
+          break;
           break;
         case 'TestSuite':
-          // TODO
+          $q.dialog({
+            component: EditTestSuiteDialog,
+            componentProps: {
+              TestSuite: node as TestSuiteInterface,
+            },
+          })
+            .onOk((editedTestSuite: TestSuiteInterface) => {
+              // TODO: handle ok
+              console.log('editedTestSuite', editedTestSuite);
+              void onEditTestSuite(editedTestSuite);
+            })
+            .onCancel(() => {
+              // TODO
+            })
+            .onDismiss(() => {
+              // TODO
+            });
           break;
         case 'Category':
-          // TODO
+          $q.dialog({
+            component: EditCategoryDialog,
+            componentProps: {
+              Category: node,
+            },
+          })
+            .onOk((editedCategory: CategoryInterface) => {
+              // TODO: handle ok
+              console.log('editedCategory', editedCategory);
+              void onEditCategory(editedCategory);
+            })
+            .onCancel(() => {
+              // TODO
+            })
+            .onDismiss(() => {
+              // TODO
+            });
           break;
         default:
           break;
@@ -453,12 +513,8 @@ export default defineComponent({
 
     async function onGenerateDevCode(tickedNodes: any[]) {
       try {
-        const testcases = tickedNodes.filter(
-          (n: any) => n.nodeType === 'TestCase'
-        ) as TestCaseInterface[];
-        const numberOfTestCase = tickedNodes.filter(
-          (n: TestCaseInterface) => n.nodeType === 'TestCase'
-        ).length;
+        const testcases = tickedNodes.filter((n: any) => n.nodeType === 'TestCase') as TestCaseInterface[];
+        const numberOfTestCase = tickedNodes.filter((n: TestCaseInterface) => n.nodeType === 'TestCase').length;
         if (numberOfTestCase === 0) {
           $q.notify({
             type: 'negative',
@@ -466,8 +522,7 @@ export default defineComponent({
           });
           return null;
         }
-        const generateDevCodeResult: Promise<any> =
-          await globalStore.generateDevCode(testcases);
+        const generateDevCodeResult: Promise<any> = await globalStore.generateDevCode(testcases);
         $q.notify({
           type: 'positive',
           message: 'Generate code success.',
@@ -484,28 +539,19 @@ export default defineComponent({
 
     async function copyCodeToClient() {
       try {
-        const checkping = await testClientStore.ping(
-          selectedTestClient.value?.IPAddress as string
-        );
+        const checkping = await testClientStore.ping(selectedTestClient.value?.IPAddress as string);
         if (checkping.data !== 'success') {
           $q.notify({
             type: 'negative',
-            message: `Ping to ${
-              selectedTestClient.value?.IPAddress as string
-            } failed, can't deploy code to this client !`,
+            message: `Ping to ${selectedTestClient.value?.IPAddress as string} failed, can't deploy code to this client !`,
             timeout: 10000,
           });
           return null;
         }
-        const copyCodeToClientResult: Promise<any> =
-          await globalStore.copydevcodetoclient(
-            selectedTestClient.value as TestClientInterface
-          );
+        const copyCodeToClientResult: Promise<any> = await globalStore.copydevcodetoclient(selectedTestClient.value as TestClientInterface);
         $q.notify({
           type: 'positive',
-          message: `Copy code to client ${
-            selectedTestClient.value?.Name as string
-          } success.`,
+          message: `Copy code to client ${selectedTestClient.value?.Name as string} success.`,
         });
         return copyCodeToClientResult;
       } catch (error: any) {
@@ -538,9 +584,7 @@ export default defineComponent({
     }
 
     async function createDevQueue(tickedNodes: any[]) {
-      const testcases = tickedNodes.filter(
-        (n: any) => n.nodeType === 'TestCase'
-      ) as TestCaseInterface[];
+      const testcases = tickedNodes.filter((n: any) => n.nodeType === 'TestCase') as TestCaseInterface[];
       try {
         const createDevQueueResult: any = await globalStore.createDevQueue({
           testcases,
@@ -561,14 +605,9 @@ export default defineComponent({
 
     async function checkRunner() {
       try {
-        const checkRunnerResult = await globalStore.checkautorunner(
-          selectedTestClient.value as TestClientInterface
-        );
+        const checkRunnerResult = await globalStore.checkautorunner(selectedTestClient.value as TestClientInterface);
         console.log('checkRunnerResult', checkRunnerResult);
-        if (
-          checkRunnerResult.result === 'success' &&
-          checkRunnerResult.message.includes('Runner is running')
-        ) {
+        if (checkRunnerResult.result === 'success' && checkRunnerResult.message.includes('Runner is running')) {
           $q.notify({
             type: 'positive',
             message: `${checkRunnerResult.message}`,
@@ -613,15 +652,11 @@ export default defineComponent({
     function onDeleteNodes(node: any) {
       const tickedNodes = tree.value.getTickedNodes();
       // Get actual ticked nodes, this is a Quasar issue, after delete node in tree, it return undefined nodes
-      const actualTickedNodes = tickedNodes.filter(
-        (n: any) => n !== undefined && n !== null
-      );
+      const actualTickedNodes = tickedNodes.filter((n: any) => n !== undefined && n !== null);
       console.log('tickedNodes', tickedNodes);
       console.log('actualTickedNodes', actualTickedNodes);
       if (actualTickedNodes.length !== 0) {
-        const testCases = actualTickedNodes.filter(
-          (n: any) => n && n.nodeType === 'TestCase'
-        ) as TestCaseInterface[];
+        const testCases = actualTickedNodes.filter((n: any) => n && n.nodeType === 'TestCase') as TestCaseInterface[];
         if (testCases.length !== 0) {
           $q.dialog({
             component: DeleteTestCaseDialog,
@@ -631,9 +666,7 @@ export default defineComponent({
           })
             .onOk(async () => {
               try {
-                const deleteResult = await testGroupStore.deleteTestCase(
-                  testCases
-                );
+                const deleteResult = await testGroupStore.deleteTestCase(testCases);
                 $q.notify({
                   type: 'positive',
                   message: `Deleted ${deleteResult.length} test case(s) `,
@@ -667,9 +700,7 @@ export default defineComponent({
             })
               .onOk(async () => {
                 try {
-                  const deleteResult = await categoryStore.deleteCategory(
-                    category
-                  );
+                  const deleteResult = await categoryStore.deleteCategory(category);
                   console.log('deleteResult', deleteResult);
                   $q.notify({
                     type: 'positive',
@@ -690,8 +721,7 @@ export default defineComponent({
               });
             break;
           case 'TestSuite':
-            const testSuite: TestSuiteInterface =
-              currentNode as TestSuiteInterface;
+            const testSuite: TestSuiteInterface = currentNode as TestSuiteInterface;
             $q.dialog({
               component: DeleteTestSuiteDialog,
               componentProps: {
@@ -700,9 +730,7 @@ export default defineComponent({
             })
               .onOk(async () => {
                 try {
-                  const deleteResult = await categoryStore.deleteTestSuite(
-                    testSuite
-                  );
+                  const deleteResult = await categoryStore.deleteTestSuite(testSuite);
                   console.log('deleteResult', deleteResult);
                   $q.notify({
                     type: 'positive',
@@ -723,8 +751,7 @@ export default defineComponent({
               });
             break;
           case 'TestGroup':
-            const testGroup: TestGroupInterface =
-              currentNode as TestGroupInterface;
+            const testGroup: TestGroupInterface = currentNode as TestGroupInterface;
             $q.dialog({
               component: DeleteTestGroupDialog,
               componentProps: {
@@ -733,9 +760,7 @@ export default defineComponent({
             })
               .onOk(async () => {
                 try {
-                  const deleteResult = await testSuiteStore.deleteTestGroup(
-                    testGroup
-                  );
+                  const deleteResult = await testSuiteStore.deleteTestGroup(testGroup);
                   console.log('deleteResult', deleteResult);
                   $q.notify({
                     type: 'positive',
@@ -756,8 +781,7 @@ export default defineComponent({
               });
             break;
           case 'TestCase':
-            const testCase: TestCaseInterface =
-              currentNode as TestCaseInterface;
+            const testCase: TestCaseInterface = currentNode as TestCaseInterface;
             $q.dialog({
               component: DeleteTestCaseDialog,
               componentProps: {
@@ -766,9 +790,7 @@ export default defineComponent({
             })
               .onOk(async () => {
                 try {
-                  const deleteResult = await testGroupStore.deleteTestCase([
-                    testCase,
-                  ]);
+                  const deleteResult = await testGroupStore.deleteTestCase([testCase]);
                   $q.notify({
                     type: 'positive',
                     message: `Deleted ${deleteResult.length} test case(s) `,
@@ -889,9 +911,7 @@ export default defineComponent({
       tempTC.TestSuiteId = testGroup.TestSuiteId;
       tempTC.CategoryId = testGroup.CategoryId;
       try {
-        const createTestCaseResponse = await testGroupStore.createTestCase(
-          tempTC
-        );
+        const createTestCaseResponse = await testGroupStore.createTestCase(tempTC);
         console.log('createTestCaseResponse', createTestCaseResponse);
       } catch (err: any) {
         $q.notify({
@@ -930,6 +950,7 @@ export default defineComponent({
       onViewGenerateCode,
       onCopyTestCase,
       onPasteTestCase,
+      onEditCategory,
     };
   },
 });
