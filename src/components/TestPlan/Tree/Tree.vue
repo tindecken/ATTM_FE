@@ -236,13 +236,14 @@ export default defineComponent({
       } catch (error: any) {
         $q.notify({
           type: 'negative',
-          message: `${error}`,
+          message: `${error.message}`,
         });
       }
     }
     async function onEditCategory(editedCategory: CategoryInterface) {
       try {
-        // const editTestCase = await testCaseStore.editTestCase(editedTestCase);
+        const editCategory = await categoryStore.editCategory(editedCategory);
+        console.log('editCategory', editCategory);
         $q.notify({
           type: 'positive',
           message: `Updated category: ${editedCategory.Name} !`,
@@ -250,7 +251,7 @@ export default defineComponent({
       } catch (error: any) {
         $q.notify({
           type: 'negative',
-          message: `${error}`,
+          message: `${error.message}`,
         });
       }
     }

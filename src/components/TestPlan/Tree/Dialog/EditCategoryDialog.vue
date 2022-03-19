@@ -103,7 +103,7 @@ onMounted(() => {
   editCategory.value = _.cloneDeep(props.Category);
 });
 function onOKClick() {
-  onDialogOK(editCategory);
+  onDialogOK(editCategory.value);
 }
 
 function validateForm() {
