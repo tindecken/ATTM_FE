@@ -202,7 +202,6 @@ export const useCategoryStore = defineStore('category', {
     },
     async editCategory(category: CategoryInterface) {
       const userStore = useUserStore();
-      const categoryStore = useCategoryStore();
       try {
         // Update in database
         const response = await api.post('/categories/updatecategory', category, {
@@ -211,19 +210,35 @@ export const useCategoryStore = defineStore('category', {
             Authorization: `Bearer ${userStore.Token}`,
           },
         });
-        const responseTestCase = (await response.data.data) as CategoryInterface;
-        console.log('responseTestCase', responseTestCase);
-        let cat = _.cloneDeep(responseTestCase);
+        const responseCategory = (await response.data.data) as CategoryInterface;
+        let cat = _.cloneDeep(responseCategory);
         cat = paintCategory(cat);
-        console.log('cat', cat);
         const catIndex = this.Categories.findIndex((c: CategoryInterface) => c.Id === cat.Id);
         console.log('catIndex', catIndex);
         cat.children = this.Categories[catIndex].children;
         this.Categories[catIndex] = cat;
-        return responseTestCase;
+        return responseCategory;
       } catch (error: any) {
         throw error.response.data;
       }
+    },
+    editTestSuite(testSuite: TestSuiteInterface) {
+      const catIndex = this.Categories.findIndex((cat: CategoryInterface) => cat.Id === testSuite.CategoryId);
+      const tempCat = _.cloneDeep(this.Categories[catIndex]);
+      const tsIndex = tempCat.children.findIndex((ts: TestSuiteInterface) => ts.Id === testSuite.Id);
+      testSuite = paintTestSuite(testSuite);
+      testSuite.children = tempCat.children[tsIndex].children;
+      this.Categories[catIndex].children[tsIndex] = testSuite;
+    },
+    editTestGroup(testGroup: TestGroupInterface) {
+      const catIndex = this.Categories.findIndex((cat: CategoryInterface) => cat.Id === testGroup.CategoryId);
+      const tempCat = _.cloneDeep(this.Categories[catIndex]);
+      const tsIndex = tempCat.children.findIndex((ts: TestSuiteInterface) => ts.Id === testGroup.TestSuiteId);
+      const tgIndex = tempCat.children[tsIndex].children.findIndex((tg: TestGroupInterface) => tg.Id === testGroup.Id);
+      testGroup = paintTestGroup(testGroup);
+      const tg = _.cloneDeep(tempCat.children[tsIndex].children[tgIndex]);
+      testGroup.children = tg.children;
+      this.Categories[catIndex].children[tsIndex].children[tgIndex] = testGroup;
     },
   },
 });

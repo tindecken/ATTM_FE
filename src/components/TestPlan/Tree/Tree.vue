@@ -257,7 +257,7 @@ export default defineComponent({
     }
     async function onEditTestSuite(editedTestSuite: TestSuiteInterface) {
       try {
-        // const editTestCase = await testCaseStore.editTestCase(editedTestCase);
+        const editTestSuite = await testSuiteStore.editTestSuite(editedTestSuite);
         $q.notify({
           type: 'positive',
           message: `Updated test suite: ${editedTestSuite.Name} !`,
@@ -265,13 +265,13 @@ export default defineComponent({
       } catch (error: any) {
         $q.notify({
           type: 'negative',
-          message: `${error}`,
+          message: `${error.message}`,
         });
       }
     }
     async function onEditTestGroup(editedTestGroup: TestGroupInterface) {
       try {
-        // const editTestCase = await testCaseStore.editTestCase(editedTestCase);
+        const editTestGroup = await testGroupStore.editTestGroup(editedTestGroup);
         $q.notify({
           type: 'positive',
           message: `Updated test group: ${editedTestGroup.Name} !`,
@@ -279,7 +279,7 @@ export default defineComponent({
       } catch (error: any) {
         $q.notify({
           type: 'negative',
-          message: `${error}`,
+          message: `${error.message}`,
         });
       }
     }
@@ -456,7 +456,7 @@ export default defineComponent({
               TestGroup: node,
             },
           })
-            .onOk((editedTestGroup: TestSuiteInterface) => {
+            .onOk((editedTestGroup: TestGroupInterface) => {
               // TODO: handle ok
               console.log('editedTestGroup', editedTestGroup);
               void onEditTestGroup(editedTestGroup);

@@ -17,16 +17,12 @@ export const useTestSuiteStore = defineStore('testsuite', {
       const categoryStore = useCategoryStore();
       try {
         // create in database
-        const response = await api.post(
-          `/testsuites/${newTestGroup.TestSuiteId}/testgroups`,
-          newTestGroup,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${userStore.Token}`,
-            },
-          }
-        );
+        const response = await api.post(`/testsuites/${newTestGroup.TestSuiteId}/testgroups`, newTestGroup, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userStore.Token}`,
+          },
+        });
         const responseTestGroup = (await response.data) as TestGroupInterface;
         // commit to category module
         categoryStore.createTestGroup(responseTestGroup);
@@ -40,22 +36,36 @@ export const useTestSuiteStore = defineStore('testsuite', {
       const testCaseStore = useTestCaseStore();
       const categoryStore = useCategoryStore();
       try {
-        const response = await api.post(
-          `/testsuites/${testGroup.TestSuiteId}/testgroups/delete`,
-          [testGroup.Id],
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${userStore.Token}`,
-            },
-          }
-        );
+        const response = await api.post(`/testsuites/${testGroup.TestSuiteId}/testgroups/delete`, [testGroup.Id], {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userStore.Token}`,
+          },
+        });
         categoryStore.deleteTestGroup(testGroup);
         testCaseStore.removeOpenedTCbyTCIds(testGroup.TestCaseIds as string[]);
         return response;
       } catch (error: any) {
         console.log('error.response.data', error.response.data.error);
         throw error.response.data.error;
+      }
+    },
+    async editTestSuite(testSuite: TestSuiteInterface) {
+      const userStore = useUserStore();
+      const categoryStore = useCategoryStore();
+      try {
+        const response = await api.post('/testsuites/updatetestsuite', testSuite, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userStore.Token}`,
+          },
+        });
+        const responseTestSuite = (await response.data.data) as TestSuiteInterface;
+        console.log('responseTestSuite', responseTestSuite);
+        categoryStore.editTestSuite(responseTestSuite);
+        return responseTestSuite;
+      } catch (error: any) {
+        throw error.response.data;
       }
     },
   },

@@ -213,6 +213,7 @@ import KeywordEditorDialog from './Dialog/KeywordEditorDialog.vue';
 import SearchKeywordDialog from './Dialog/SearchKeywordDialog.vue';
 import SaveTestCaseDialog from './Dialog/SaveTestCaseDialog.vue';
 import { testCaseColumns } from '../../../components/tableColumns';
+import ViewGenerateCodeDialog from '../Tree/Dialog/ViewGenerateCodeDialog.vue';
 
 const globalStore = useGlobalStore();
 const userStore = useUserStore();
@@ -222,7 +223,6 @@ const testStepStore = useTestStepStore();
 const testClientStore = useTestClientStore();
 const $q = useQuasar();
 const showByIndex = ref('');
-const selectedKeyword = ref('');
 const selected: Ref<any[]> = ref([]);
 const filterTable = ref('');
 const isDark = computed(() => globalStore.darkTheme);
@@ -885,7 +885,21 @@ async function getLastResult(testCase: TestCaseInterface) {
   // TODO: get last result
 }
 async function viewGenerateCode(testCase: TestCaseInterface) {
-  // TODO: view generate code
+  $q.dialog({
+    component: ViewGenerateCodeDialog,
+    componentProps: {
+      TestCase: testCase,
+    },
+  })
+    .onOk(() => {
+      // TODO
+    })
+    .onCancel(() => {
+      // TODO
+    })
+    .onDismiss(() => {
+      // TODO
+    });
 }
 </script>
 

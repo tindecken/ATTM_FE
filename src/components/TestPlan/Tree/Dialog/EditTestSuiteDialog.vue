@@ -132,7 +132,6 @@ const form = ref(QForm);
 const editTestSuite: Ref<TestSuiteInterface | null> = ref(null);
 onMounted(() => {
   editTestSuite.value = _.cloneDeep(props.TestSuite);
-  console.log('editTestSuite', editTestSuite.value);
 });
 function onOKClick() {
   onDialogOK(editTestSuite.value);

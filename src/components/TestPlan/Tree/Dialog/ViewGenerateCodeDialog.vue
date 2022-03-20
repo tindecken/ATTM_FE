@@ -11,29 +11,16 @@
           View Generate Code for test case: {{ props.TestCase.CodeName }} -
           {{ props.TestCase.Name }}
         </div>
-        <q-btn
-          class="self-center"
-          dense
-          flat
-          icon="close"
-          @click="onDialogHide"
-        >
+        <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
           <q-tooltip>Close</q-tooltip>
         </q-btn>
       </q-header>
       <q-page-container>
         <div class="row">
-          <q-btn
-            outline
-            icon="content_copy"
-            primary
-            @click="copy(code)"
-            class="q-mt-sm q-ml-md q-mb-sm"
-            >Copy</q-btn
-          >
+          <q-btn outline icon="content_copy" primary @click="copy(code)" class="q-mt-sm q-ml-md q-mb-sm">Copy</q-btn>
         </div>
         <div class="row">
-          <q-markdown :src="code" class="q-pl-md"> </q-markdown>
+          <q-markdown :src="code" class="q-pl-md"></q-markdown>
         </div>
       </q-page-container>
     </q-layout>
@@ -65,9 +52,7 @@ const $q = useQuasar();
 const { dialogRef, onDialogHide } = useDialogPluginComponent();
 const code = ref('');
 onBeforeMount(async () => {
-  const generateDevCodeResult = await globalStore.generateDevCode([
-    props.TestCase,
-  ]);
+  const generateDevCodeResult = await globalStore.generateDevCode([props.TestCase]);
   if (generateDevCodeResult.result === 'success') {
     code.value = generateDevCodeResult.message[0].generatedCode.trim();
     code.value = `\`\`\`js\n${code.value}\n\`\`\``;
