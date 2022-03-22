@@ -1,100 +1,40 @@
 <template>
   <q-list>
-    <q-item
-      clickable
-      v-ripple
-      class="cursor-pointer"
-      router-link
-      to="/testplan"
-    >
+    <q-item clickable v-ripple class="cursor-pointer" router-link to="/testplan">
       <q-item-section avatar>
-        <q-avatar
-          rounded
-          color="primary"
-          text-color="white"
-          icon="swap_horiz"
-        />
+        <q-avatar rounded color="primary" text-color="white" icon="bug_report" />
       </q-item-section>
       <q-item-section>Test Plan</q-item-section>
     </q-item>
-    <q-item
-      clickable
-      v-ripple
-      class="cursor-pointer"
-      router-link
-      to="/devmonitoring"
-    >
+    <q-item clickable v-ripple class="cursor-pointer" router-link to="/devmonitoring">
       <q-item-section avatar>
-        <q-avatar
-          rounded
-          color="primary"
-          text-color="white"
-          icon="swap_horiz"
-        />
+        <q-avatar rounded color="primary" text-color="white" icon="webhook" />
       </q-item-section>
       <q-item-section>Dev Monitoring</q-item-section>
     </q-item>
     <q-separator />
-    <q-item
-      clickable
-      v-ripple
-      class="cursor-pointer"
-      router-link
-      to="/regression"
-    >
+    <q-item clickable v-ripple class="cursor-pointer" router-link to="/regression">
       <q-item-section avatar>
-        <q-avatar
-          rounded
-          color="primary"
-          text-color="white"
-          icon="swap_horiz"
-        />
+        <q-avatar rounded color="primary" text-color="white" icon="analytics" />
       </q-item-section>
       <q-item-section>Regression</q-item-section>
     </q-item>
-    <q-item
-      clickable
-      v-ripple
-      class="cursor-pointer"
-      router-link
-      to="/createregression"
-    >
+    <q-item clickable v-ripple class="cursor-pointer" router-link to="/createregression">
       <q-item-section avatar>
-        <q-avatar
-          rounded
-          color="primary"
-          text-color="white"
-          icon="swap_horiz"
-        />
+        <q-avatar rounded color="primary" text-color="white" icon="tour" />
       </q-item-section>
       <q-item-section>Create Regression</q-item-section>
     </q-item>
     <q-separator />
-    <q-item
-      clickable
-      v-ripple
-      class="cursor-pointer"
-      router-link
-      to="/settings"
-    >
+    <q-item clickable v-ripple class="cursor-pointer" router-link to="/settings">
       <q-item-section avatar>
-        <q-avatar
-          rounded
-          color="primary"
-          text-color="white"
-          icon="swap_horiz"
-        />
+        <q-avatar rounded color="primary" text-color="white" icon="settings" />
       </q-item-section>
       <q-item-section>Settings</q-item-section>
     </q-item>
     <q-item clickable v-ripple @click="switchTheme()" class="cursor-pointer">
       <q-item-section avatar>
-        <q-avatar
-          rounded
-          color="primary"
-          text-color="white"
-          icon="swap_horiz"
-        />
+        <q-avatar rounded color="primary" text-color="white" icon="dark_mode" />
       </q-item-section>
       <q-item-section>Switch Theme</q-item-section>
     </q-item>

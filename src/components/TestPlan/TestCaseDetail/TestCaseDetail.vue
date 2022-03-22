@@ -52,21 +52,17 @@
                     <q-icon name="search" />
                   </template>
                 </q-input>
-                <q-btn color="primary" outline class="q-mr-sm" @click="viewGenerateCode(tc)">
-                  <q-icon left name="code"></q-icon>
-                  <div>View Generate Code</div>
+                <q-btn color="primary" flat icon="code" class="q-mr-sm" @click="viewGenerateCode(tc)">
+                  <q-tooltip>View generate code</q-tooltip>
                 </q-btn>
-                <q-btn color="primary" outline class="q-mr-sm" @click="runTestCase(tc)">
-                  <q-icon left name="play_arrow"></q-icon>
-                  <div>Run</div>
+                <q-btn color="primary" flat icon="cached" class="q-mr-sm" @click="getLastResult(tc)">
+                  <q-tooltip>Get latest result</q-tooltip>
                 </q-btn>
-                <q-btn color="primary" outline class="q-mr-sm" @click="getLastResult(tc)">
-                  <q-icon left name="cached"></q-icon>
-                  <div>Get Last Result</div>
+                <q-btn color="primary" flat icon="play_arrow" class="q-mr-sm" @click="runTestCase(tc)">
+                  <q-tooltip>Run</q-tooltip>
                 </q-btn>
-                <q-btn color="primary" outline @click="saveTestCase(selectedTestCaseId)">
-                  <q-icon left name="save"></q-icon>
-                  <div>Save</div>
+                <q-btn color="primary" flat icon="save" class="q-mr-sm" @click="saveTestCase(selectedTestCaseId)">
+                  <q-tooltip>Save</q-tooltip>
                 </q-btn>
               </template>
               <template v-slot:header="props">
