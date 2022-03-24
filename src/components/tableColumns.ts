@@ -1,9 +1,19 @@
 import { QTableColumn } from 'quasar';
 import { TestClientInterface } from '../Models/TestClient';
 
-const clientColumns: QTableColumn<TestClientInterface>[] = [
+const clientColumns: QTableColumn<TestClientInterface & { checkDeploy: unknown; delete: unknown; rowIndex: number }>[] = [
   {
-    name: 'Id',
+    name: 'no',
+    required: true,
+    label: 'No',
+    align: 'left',
+    field: 'rowIndex',
+    sortable: true,
+    style: 'max-width: 40px',
+    headerStyle: 'max-width: 40px',
+  },
+  {
+    name: 'id',
     required: false,
     label: 'Id',
     align: 'left',
@@ -12,7 +22,7 @@ const clientColumns: QTableColumn<TestClientInterface>[] = [
     sortable: false,
   },
   {
-    name: 'Name',
+    name: 'name',
     required: false,
     label: 'Name',
     align: 'left',
@@ -21,7 +31,7 @@ const clientColumns: QTableColumn<TestClientInterface>[] = [
     sortable: true,
   },
   {
-    name: 'Description',
+    name: 'description',
     required: false,
     label: 'Description',
     align: 'left',
@@ -30,7 +40,7 @@ const clientColumns: QTableColumn<TestClientInterface>[] = [
     sortable: true,
   },
   {
-    name: 'IPAddress',
+    name: 'ipAddress',
     required: true,
     label: 'IP Address',
     align: 'left',
@@ -39,7 +49,7 @@ const clientColumns: QTableColumn<TestClientInterface>[] = [
     sortable: true,
   },
   {
-    name: 'Type',
+    name: 'type',
     required: false,
     label: 'Type',
     align: 'left',
@@ -48,7 +58,7 @@ const clientColumns: QTableColumn<TestClientInterface>[] = [
     sortable: true,
   },
   {
-    name: 'User',
+    name: 'user',
     required: false,
     label: 'User',
     align: 'left',
@@ -57,7 +67,7 @@ const clientColumns: QTableColumn<TestClientInterface>[] = [
     sortable: true,
   },
   {
-    name: 'Password',
+    name: 'password',
     required: false,
     label: 'Password',
     align: 'left',
@@ -66,7 +76,7 @@ const clientColumns: QTableColumn<TestClientInterface>[] = [
     sortable: true,
   },
   {
-    name: 'RegressionFolder',
+    name: 'regressionFolder',
     required: false,
     label: 'Regression Folder',
     align: 'left',
@@ -75,7 +85,7 @@ const clientColumns: QTableColumn<TestClientInterface>[] = [
     sortable: true,
   },
   {
-    name: 'DevelopFolder',
+    name: 'developFolder',
     required: false,
     label: 'Develop Folder',
     align: 'left',
@@ -84,7 +94,7 @@ const clientColumns: QTableColumn<TestClientInterface>[] = [
     sortable: true,
   },
   {
-    name: 'RunnerFolder',
+    name: 'runnerFolder',
     required: false,
     label: 'Runner Folder',
     align: 'left',
@@ -100,6 +110,20 @@ const clientColumns: QTableColumn<TestClientInterface>[] = [
     field: 'Status',
     format: (val) => `${val}`,
     sortable: true,
+  },
+  {
+    name: 'delete',
+    align: 'left',
+    label: 'Delete',
+    field: 'delete',
+    sortable: false,
+  },
+  {
+    name: 'checkDeploy',
+    align: 'left',
+    label: 'Check Deploy',
+    field: 'checkDeploy',
+    sortable: false,
   },
 ];
 const testEnvColumns = [
