@@ -1,5 +1,6 @@
+import { AxiosError } from 'axios';
 import { defineStore } from 'pinia';
-import { api } from '../boot/axios';
+import axios, { api } from '../boot/axios';
 import { TestClientInterface } from '../Models/TestClient';
 import { useUserStore } from './userStore';
 
@@ -30,6 +31,26 @@ export const useTestClientStore = defineStore('testClient', {
       });
       const result = await response.data;
       return result;
+    },
+    async saveTestClients(testClients: TestClientInterface[]) {
+      try {
+        const userStore = useUserStore();
+        const response = await api.post('/testclients/save', testClients, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userStore.Token}`,
+          },
+        });
+        const responseData = await response.data;
+        return responseData;
+      } catch (error) {
+        if (error.isAxiosError) {
+          const e: AxiosError = error;
+          throw e.response.data.error;
+        } else {
+          throw error;
+        }
+      }
     },
   },
 });

@@ -9,8 +9,8 @@ const clientColumns: QTableColumn<TestClientInterface & { checkDeploy: unknown; 
     align: 'left',
     field: 'rowIndex',
     sortable: true,
-    style: 'max-width: 40px',
-    headerStyle: 'max-width: 40px',
+    style: 'max-width: 30px; text-align: center;',
+    headerStyle: 'max-width: 30px',
   },
   {
     name: 'id',
@@ -30,15 +30,7 @@ const clientColumns: QTableColumn<TestClientInterface & { checkDeploy: unknown; 
     format: (val) => `${val}`,
     sortable: true,
   },
-  {
-    name: 'description',
-    required: false,
-    label: 'Description',
-    align: 'left',
-    field: 'Description',
-    format: (val) => `${val}`,
-    sortable: true,
-  },
+
   {
     name: 'ipAddress',
     required: true,
@@ -112,6 +104,15 @@ const clientColumns: QTableColumn<TestClientInterface & { checkDeploy: unknown; 
     sortable: true,
   },
   {
+    name: 'description',
+    required: false,
+    label: 'Description',
+    align: 'left',
+    field: 'Description',
+    format: (val) => `${val}`,
+    sortable: true,
+  },
+  {
     name: 'delete',
     align: 'left',
     label: 'Delete',
@@ -134,8 +135,8 @@ const testEnvColumns = [
     align: 'left',
     field: 'rowIndex',
     sortable: true,
-    style: 'max-width: 40px',
-    headerStyle: 'max-width: 40px',
+    style: 'max-width: 30px; text-align: center;',
+    headerStyle: 'max-width: 30px',
   },
   {
     name: 'category',

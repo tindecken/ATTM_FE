@@ -341,3 +341,15 @@ async function discard() {
     }));
 }
 </script>
+
+<style scoped lang="scss">
+:deep(td.q-td) {
+  padding: 0px 2px !important;
+}
+:deep(input.q-field__native) {
+  padding: 0px;
+}
+:deep(th.text-left) {
+  padding-left: 8px !important;
+}
+</style>
