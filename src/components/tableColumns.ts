@@ -4,7 +4,7 @@ import { TestClientInterface } from '../Models/TestClient';
 const clientColumns: QTableColumn<TestClientInterface & { checkDeploy: unknown; delete: unknown; rowIndex: number }>[] = [
   {
     name: 'no',
-    required: true,
+    required: false,
     label: 'No',
     align: 'left',
     field: 'rowIndex',

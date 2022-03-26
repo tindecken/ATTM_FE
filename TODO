@@ -33,10 +33,10 @@ Todo:
   ✔ after create new testcase --> @done(22-03-09 07:15)
   ✔ add mockdata for multiple category, multiple t-est suite, multiple test groups, allow generate code from multiple categories @done(22-03-09 07:15)
   ✔ generate code for multiple category @done(22-03-09 07:15)
-  ☐ treeview - paint the category --> testsuite --> testgroup
-  ☐ treewiew - paint the category --> testsuite --> testgroup --> testcase
-  ☐ treeview - reformat, using slot for it
-  ☐ treeview - testcase without step should highlight to know it.
+  ✔ treeview - paint the category --> testsuite --> testgroup @done(22-03-26 21:02)
+  ✔ treewiew - paint the category --> testsuite --> testgroup --> testcase @done(22-03-26 21:02)
+  ✔ treeview - reformat, using slot for it @done(22-03-26 21:02)
+  ✔ treeview - testcase without step should highlight to know it. @done(22-03-26 21:02)
   ✔ treeview - scroll https://i.imgur.com/gQCMT4z.png @done(21-02-28 20:59)
   ✔ rewrite create new testcase api, that will include category, testsuite, testgroup in it @done(21-04-24 15:55)
   ✔ treeview - do not show testcase with attribute isDeleted: true @done(21-04-24 15:55)
