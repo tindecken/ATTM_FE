@@ -86,19 +86,8 @@
             @keyup.enter="testCaseFilterFunc()"
             @keyup.esc="clearFilter()"
           />
-          <q-btn
-            outline
-            color="primary"
-            label="Filter"
-            style="min-width: 100px"
-            @click="testCaseFilterFunc()"
-          />
-          <q-btn
-            outline
-            color="secondary"
-            label="Clear Filter"
-            @click="clearFilter()"
-          />
+          <q-btn outline color="primary" label="Filter" style="min-width: 100px" @click="testCaseFilterFunc()" />
+          <q-btn outline color="secondary" label="Clear Filter" @click="clearFilter()" />
         </div>
       </div>
     </div>
@@ -120,45 +109,25 @@
             <q-badge outline color="primary" floating>{{ allCount }}</q-badge>
           </q-tab>
           <q-tab class="text-negative" name="failed" label="Failed">
-            <q-badge outline color="negative" floating>{{
-              failedCount
-            }}</q-badge>
+            <q-badge outline color="negative" floating>{{ failedCount }}</q-badge>
           </q-tab>
           <q-tab class="text-positive" name="passed" label="Passed">
-            <q-badge outline color="positive" floating>{{
-              passedCount
-            }}</q-badge>
+            <q-badge outline color="positive" floating>{{ passedCount }}</q-badge>
           </q-tab>
           <q-tab class="text-info" name="inQueue" label="In Queue">
             <q-badge outline color="info" floating>{{ inQueueCount }}</q-badge>
           </q-tab>
           <q-tab class="text-secondary" name="running" label="Running">
-            <q-badge outline color="secondary" floating>{{
-              runningCount
-            }}</q-badge>
+            <q-badge outline color="secondary" floating>{{ runningCount }}</q-badge>
           </q-tab>
-          <q-tab
-            class="text-negative"
-            name="analyseFailed"
-            label="Analyse Failed"
-          >
-            <q-badge outline color="negative" floating>{{
-              analyseFailedCount
-            }}</q-badge>
+          <q-tab class="text-negative" name="analyseFailed" label="Analyse Failed">
+            <q-badge outline color="negative" floating>{{ analyseFailedCount }}</q-badge>
           </q-tab>
-          <q-tab
-            class="text-positive"
-            name="analysePassed"
-            label="Analyse Passed"
-          >
-            <q-badge outline color="positive" floating>{{
-              analysePassedCount
-            }}</q-badge>
+          <q-tab class="text-positive" name="analysePassed" label="Analyse Passed">
+            <q-badge outline color="positive" floating>{{ analysePassedCount }}</q-badge>
           </q-tab>
           <q-tab class="text-info" name="inCompatible" label="InCompatible">
-            <q-badge outline color="info" floating>{{
-              inCompatibleCount
-            }}</q-badge>
+            <q-badge outline color="info" floating>{{ inCompatibleCount }}</q-badge>
           </q-tab>
         </q-tabs>
         <q-tab-panels v-model="selectedTab" animated keep-alive>
@@ -179,21 +148,14 @@
 </template>
 
 <script lang="ts">
-import {
-  computed,
-  defineComponent,
-  onBeforeMount,
-  ref,
-  Ref,
-  onMounted,
-} from 'vue';
+import { computed, defineComponent, onBeforeMount, ref, Ref, onMounted } from 'vue';
 import { useQuasar } from 'quasar';
 import { useTitle } from '@vueuse/core';
 import { useRegressionStore } from '../../../pinia/regressionStore';
 import { RegressionInterface } from '../../../Models/Regression';
 import { RegressionTestInterface } from '../../../Models/RegressionTest';
 import { useRegMonitoringStore } from '../../../pinia/regMonitoring';
-import AnalyseFailedTable from '../../../components/Regression/RegressionMonitoring/DataTables/AnalyseFailedTable.vue';
+import AnalyseFailedTable from './DataTables/AnalyseFailedTable.vue';
 
 export default defineComponent({
   name: 'Regression',
@@ -201,67 +163,45 @@ export default defineComponent({
     AnalyseFailedTable,
   },
   setup() {
-    useTitle('Regression');
+    useTitle('Regression Monitoring');
     const regressionStore = useRegressionStore();
     const regMonitoringStore = useRegMonitoringStore();
     const $q = useQuasar();
     const regressions = computed(() => regressionStore.regressions);
-    const selectedRegression = computed(
-      () => regressionStore.selectedRegression
-    );
-    const categorySelections = computed(
-      () => regMonitoringStore.categorySelections
-    );
-    const testSuiteSelections = computed(
-      () => regMonitoringStore.testSuiteSelections
-    );
-    const testGroupSelections = computed(
-      () => regMonitoringStore.testGroupSelections
-    );
-    const testClientSelections = computed(
-      () => regMonitoringStore.testClientSelections
-    );
+    const selectedRegression = computed(() => regressionStore.selectedRegression);
+    const categorySelections = computed(() => regMonitoringStore.categorySelections);
+    const testSuiteSelections = computed(() => regMonitoringStore.testSuiteSelections);
+    const testGroupSelections = computed(() => regMonitoringStore.testGroupSelections);
+    const testClientSelections = computed(() => regMonitoringStore.testClientSelections);
     const regTests = computed(() => regMonitoringStore.regTests);
     const allCount = computed(() => regMonitoringStore.regTests?.length);
     const failedCount = computed(() => {
       const all = regMonitoringStore.regTests;
-      return all.filter((r: RegressionTestInterface) => r.Status === 'Failed')
-        .length;
+      return all.filter((r: RegressionTestInterface) => r.Status === 'Failed').length;
     });
     const passedCount = computed(() => {
       const all = regMonitoringStore.regTests;
-      return all.filter((r: RegressionTestInterface) => r.Status === 'Passed')
-        .length;
+      return all.filter((r: RegressionTestInterface) => r.Status === 'Passed').length;
     });
     const inQueueCount = computed(() => {
       const all = regMonitoringStore.regTests;
-      return all.filter((r: RegressionTestInterface) => r.Status === 'InQueue')
-        .length;
+      return all.filter((r: RegressionTestInterface) => r.Status === 'InQueue').length;
     });
     const runningCount = computed(() => {
       const all = regMonitoringStore.regTests;
-      return all.filter(
-        (r: RegressionTestInterface) =>
-          r.Status === 'Running' || r.Status === 'Inconclusive'
-      ).length;
+      return all.filter((r: RegressionTestInterface) => r.Status === 'Running' || r.Status === 'Inconclusive').length;
     });
     const analyseFailedCount = computed(() => {
       const all = regMonitoringStore.regTests;
-      return all.filter(
-        (r: RegressionTestInterface) => r.Status === 'AnalyseFailed'
-      ).length;
+      return all.filter((r: RegressionTestInterface) => r.Status === 'AnalyseFailed').length;
     });
     const analysePassedCount = computed(() => {
       const all = regMonitoringStore.regTests;
-      return all.filter(
-        (r: RegressionTestInterface) => r.Status === 'AnalysePassed'
-      ).length;
+      return all.filter((r: RegressionTestInterface) => r.Status === 'AnalysePassed').length;
     });
     const inCompatibleCount = computed(() => {
       const all = regMonitoringStore.regTests;
-      return all.filter(
-        (r: RegressionTestInterface) => r.Status === 'InCompatible'
-      ).length;
+      return all.filter((r: RegressionTestInterface) => r.Status === 'InCompatible').length;
     });
     const filteredRegressions: Ref<RegressionInterface[]> = ref([]);
     const selectedTab = ref('all');
@@ -274,9 +214,7 @@ export default defineComponent({
       try {
         await regressionStore.getRegressions();
         if (selectedRegression.value) {
-          await regMonitoringStore.getRegressionDetail(
-            selectedRegression.value.Id
-          );
+          await regMonitoringStore.getRegressionDetail(selectedRegression.value.Id);
         }
       } catch (error: any) {
         $q.notify({
@@ -295,10 +233,7 @@ export default defineComponent({
     function filterRegressionFn(val: string, update: any) {
       update(() => {
         const needle = val.toLowerCase();
-        filteredRegressions.value = regressions.value.filter(
-          (reg: RegressionInterface) =>
-            reg.Name.toLowerCase().indexOf(needle) > -1
-        );
+        filteredRegressions.value = regressions.value.filter((reg: RegressionInterface) => reg.Name.toLowerCase().indexOf(needle) > -1);
       });
     }
     function onCategoryValueChange(event: any) {
@@ -320,9 +255,7 @@ export default defineComponent({
     async function clearFilter() {
       testCaseFilterText.value = '';
       if (selectedRegression.value) {
-        await regMonitoringStore.getRegressionDetail(
-          selectedRegression.value.Id
-        );
+        await regMonitoringStore.getRegressionDetail(selectedRegression.value.Id);
       }
     }
     function testCaseFilterFunc() {
@@ -331,16 +264,11 @@ export default defineComponent({
       if (testCaseFilterText.value === '') {
         void clearFilter();
       } else {
-        const filteredRegTests: RegressionTestInterface[] =
-          regTests.value.filter(
-            (rt: RegressionTestInterface) =>
-              rt.TestCaseCodeName.toLowerCase().includes(
-                testCaseFilterText.value.toLowerCase().trim()
-              ) ||
-              rt.TestCaseName.toLowerCase().includes(
-                testCaseFilterText.value.toLowerCase().trim()
-              )
-          );
+        const filteredRegTests: RegressionTestInterface[] = regTests.value.filter(
+          (rt: RegressionTestInterface) =>
+            rt.TestCaseCodeName.toLowerCase().includes(testCaseFilterText.value.toLowerCase().trim()) ||
+            rt.TestCaseName.toLowerCase().includes(testCaseFilterText.value.toLowerCase().trim())
+        );
         if (filteredRegTests.length > 0) {
           regMonitoringStore.regTests = filteredRegTests;
         } else {

@@ -32,9 +32,7 @@ export const useRegressionStore = defineStore('regression', {
         throw error;
       }
     },
-    async addCommentForRegressionTests(
-      addCommentData: AddCommentDataInterface
-    ) {
+    async addCommentForRegressionTests(addCommentData: AddCommentDataInterface) {
       const userStore = useUserStore();
       // eslint-disable-next-line no-useless-catch
       try {
@@ -48,42 +46,30 @@ export const useRegressionStore = defineStore('regression', {
         throw error;
       }
     },
-    async setRegressionQueue(
-      setRegressionQueuData: SetRegressionQueueDataInterface
-    ) {
+    async setRegressionQueue(setRegressionQueuData: SetRegressionQueueDataInterface) {
       const userStore = useUserStore();
       // eslint-disable-next-line no-useless-catch
       try {
-        return await api.post(
-          '/regressiontests/setRegressionQueue',
-          setRegressionQueuData,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${userStore.Token}`,
-            },
-          }
-        );
+        return await api.post('/regressiontests/setRegressionQueue', setRegressionQueuData, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userStore.Token}`,
+          },
+        });
       } catch (error: any) {
         throw error;
       }
     },
-    async setRegressionAnalyseStatus(
-      setRegressionAnalyseStatusData: SetRegressionAnalyseStatusDataInterface
-    ) {
+    async setRegressionAnalyseStatus(setRegressionAnalyseStatusData: SetRegressionAnalyseStatusDataInterface) {
       const userStore = useUserStore();
       // eslint-disable-next-line no-useless-catch
       try {
-        return await api.post(
-          '/regressiontests/setRegressionAnalyseStatus',
-          setRegressionAnalyseStatusData,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${userStore.Token}`,
-            },
-          }
-        );
+        return await api.post('/regressiontests/setRegressionAnalyseStatus', setRegressionAnalyseStatusData, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userStore.Token}`,
+          },
+        });
       } catch (error: any) {
         throw error;
       }
