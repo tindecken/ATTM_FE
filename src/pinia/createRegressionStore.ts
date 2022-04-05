@@ -46,9 +46,7 @@ export const useCreateRegressionStore = defineStore('createRegression', {
         throw error;
       }
     },
-    async getAndAddSelectedTestCase(
-      selectedTestCasesDetail: TestCaseDetailInterface[]
-    ) {
+    async getAndAddSelectedTestCase(selectedTestCasesDetail: TestCaseDetailInterface[]) {
       const userStore = useUserStore();
       const promises: any = [];
       selectedTestCasesDetail.forEach((tc: TestCaseDetailInterface) => {
@@ -83,18 +81,12 @@ export const useCreateRegressionStore = defineStore('createRegression', {
       try {
         const { regressionId } = payload;
         const { selectedTestCasesDetailIds } = payload;
-        console.log('regressionId', regressionId);
-        console.log('selectedTestCasesDetailIds', selectedTestCasesDetailIds);
-        return await api.post(
-          `/regressions/${regressionId}/createregressiontests`,
-          selectedTestCasesDetailIds,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${userStore.Token}`,
-            },
-          }
-        );
+        return await api.post(`/regressions/${regressionId}/createregressiontests`, selectedTestCasesDetailIds, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userStore.Token}`,
+          },
+        });
       } catch (error: any) {
         throw error;
       }

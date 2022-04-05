@@ -36,9 +36,6 @@
           <q-td key="name" :props="props" @click="globalStore.infoStatus.Info = props.row.Name">
             {{ props.row.Name }}
           </q-td>
-          <q-td key="release" :props="props" @click="globalStore.infoStatus.Info = props.row.Release">
-            {{ props.row.Release }}
-          </q-td>
           <q-td key="build" :props="props" @click="globalStore.infoStatus.Info = props.row.Build">
             {{ props.row.Build }}
           </q-td>
@@ -64,7 +61,9 @@
             {{ props.row.RegressionTestIds.length }}
           </q-td>
           <q-td key="edit" :props="props">
-            <q-btn size="sm" color="secondary" outline>Edit</q-btn>
+            <q-btn size="sm" color="secondary" class="q-mr-sm" outline @click="editRegression(props.row)">Edit</q-btn>
+            <q-btn size="sm" color="secondary" class="q-mr-sm" outline @click="deployRegression(props.row)">Deploy</q-btn>
+            <q-btn size="sm" color="negative" outline @click="deleteRegression(props.row)">Delete</q-btn>
           </q-td>
         </q-tr>
       </template>
@@ -87,6 +86,7 @@ import { useTitle } from '@vueuse/core';
 import { useRegressionStore } from '../../../pinia/regressionStore';
 import { useGlobalStore } from '../../../pinia/globalStore';
 import { RegressionInterface } from '../../../Models/Regression';
+import EditRegressionDialog from './Dialogs/EditRegressionDialog.vue';
 
 const regressionStore = useRegressionStore();
 const globalStore = useGlobalStore();
@@ -128,10 +128,32 @@ function toggleShowOfficial() {
     rowIndex: i + 1,
   }));
 }
+function editRegression(regression: RegressionInterface) {
+  $q.dialog({
+    component: EditRegressionDialog,
+    componentProps: {
+      Regression: regression,
+    },
+  })
+    .onOk(async (updatedRegression: RegressionInterface) => {
+      // TODO
+    })
+    .onCancel(() => {
+      console.log('Cancel');
+    })
+    .onDismiss(() => {
+      console.log('Called on OK or Cancel');
+    });
+}
+function deployRegression(regression: RegressionInterface) {
+  // TODO
+}
+function deleteRegression(regression: RegressionInterface) {
+  // TODO
+}
 const visibleColumns = ref([
   'no',
   'name',
-  'release',
   'build',
   'description',
   'isOfficial',

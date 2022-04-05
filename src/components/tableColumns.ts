@@ -429,15 +429,6 @@ const regressionColumns = [
     headerStyle: 'min-width: 80px; max-width: 100px',
   },
   {
-    name: 'release',
-    align: 'left',
-    label: 'Release',
-    field: 'Release',
-    sortable: true,
-    style: 'min-width: 80px; max-width: 100px',
-    headerStyle: 'min-width: 80px; max-width: 100px',
-  },
-  {
     name: 'build',
     align: 'left',
     label: 'Build',

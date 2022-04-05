@@ -16,13 +16,7 @@
       separator="cell"
     >
       <template v-slot:top-right>
-        <q-input
-          borderless
-          dense
-          debounce="300"
-          v-model="filter"
-          placeholder="Search"
-        >
+        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
@@ -190,28 +184,11 @@ export default defineComponent({
       rowsPerPage: 50,
     };
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const testCases: Ref<TestCaseDetailInterface[]> = computed(
-      () => createRegressionStore.allTestCasesDetail
-    );
+    const testCases: Ref<TestCaseDetailInterface[]> = computed(() => createRegressionStore.allTestCasesDetail);
     const selected: Ref<TestCaseDetailInterface[]> = ref([]);
-    const visibleColumns = ref([
-      'FullName',
-      'Category',
-      'TestSuite',
-      'TestGroup',
-      'Owner',
-      'Type',
-      'IsPrimary',
-      'Queue',
-      'CreatedDate',
-      'LastModifiedDate',
-    ]);
+    const visibleColumns = ref(['FullName', 'Category', 'TestSuite', 'TestGroup', 'Owner', 'Type', 'IsPrimary', 'Queue', 'CreatedDate', 'LastModifiedDate']);
     function getSelectedString() {
-      return selected.value.length === 0
-        ? ''
-        : `${selected.value.length} record${
-            selected.value.length > 1 ? 's' : ''
-          } selected of ${testCases.value.length}`;
+      return selected.value.length === 0 ? '' : `${selected.value.length} record${selected.value.length > 1 ? 's' : ''} selected of ${testCases.value.length}`;
     }
     watch(
       () => selected.value,

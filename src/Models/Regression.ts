@@ -1,7 +1,6 @@
 export interface RegressionInterface {
   Id: string;
   Name: string;
-  Release: string;
   Build: string;
   IsOfficial: boolean;
   IsDeleted: boolean;
