@@ -3,7 +3,7 @@
     <q-layout
       view="hHh lpR fFf"
       :class="isDark ? 'bg-grey-9' : 'bg-grey-3'"
-      style="max-height: 750px; min-height: 100px !important; min-width: 400px"
+      style="max-height: 800px; min-height: 100px !important; min-width: 350px; max-width: 350px"
       container
     >
       <q-header reveal bordered class="row justify-between bg-secondary">
@@ -15,7 +15,7 @@
       <q-page-container class="q-pa-sm">
         <q-form @submit="onOKClick" greedy @validation-success="isFormValid = true" @validation-error="isFormValid = false" ref="form" class="q-mt-sm">
           <div class="row">
-            <div class="col-4 q-mr-sm">
+            <div class="col">
               <q-input
                 label="Name"
                 outlined
@@ -31,6 +31,8 @@
                 lazy-rules
               />
             </div>
+          </div>
+          <div class="row">
             <div class="col">
               <q-input
                 label="Build"
@@ -64,7 +66,8 @@
               />
             </div>
           </div>
-          <div class="row q-mt-sm">
+          <div class="row justify-center">
+            Start Date - End Date
             <q-date v-model="dateRange" range today-btn />
           </div>
           <div class="row q-mt-sm">
@@ -128,7 +131,9 @@ onMounted(() => {
   console.log('editRegression', editRegression.value);
 });
 function onOKClick() {
-  // TODO
+  editRegression.value.StartDate = dateRange.value.from;
+  editRegression.value.EndDate = dateRange.value.to;
+  onDialogOK(editRegression.value);
 }
 
 function validateForm() {

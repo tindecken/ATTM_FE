@@ -87,6 +87,7 @@ import { useRegressionStore } from '../../../pinia/regressionStore';
 import { useGlobalStore } from '../../../pinia/globalStore';
 import { RegressionInterface } from '../../../Models/Regression';
 import EditRegressionDialog from './Dialogs/EditRegressionDialog.vue';
+import DeployDialog from './Dialogs/DeployDialog.vue';
 
 const regressionStore = useRegressionStore();
 const globalStore = useGlobalStore();
@@ -136,7 +137,7 @@ function editRegression(regression: RegressionInterface) {
     },
   })
     .onOk(async (updatedRegression: RegressionInterface) => {
-      // TODO
+      console.log('updatedRegression', updatedRegression);
     })
     .onCancel(() => {
       console.log('Cancel');
@@ -146,7 +147,21 @@ function editRegression(regression: RegressionInterface) {
     });
 }
 function deployRegression(regression: RegressionInterface) {
-  // TODO
+  $q.dialog({
+    component: DeployDialog,
+    componentProps: {
+      Regression: regression,
+    },
+  })
+    .onOk(async (updatedRegression: RegressionInterface) => {
+      console.log('updatedRegression', updatedRegression);
+    })
+    .onCancel(() => {
+      console.log('Cancel');
+    })
+    .onDismiss(() => {
+      console.log('Called on OK or Cancel');
+    });
 }
 function deleteRegression(regression: RegressionInterface) {
   // TODO
