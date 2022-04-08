@@ -3,6 +3,7 @@ import { useUserStore } from '../pinia/userStore';
 import { api } from '../boot/axios';
 import { RegressionFilterCriteriaDataInterface } from '../Models/Entities/RegressionFilterCriteriaData';
 import { RegressionTestInterface } from '../Models/RegressionTest';
+import { AxiosError } from 'axios';
 
 export const useRegMonitoringStore = defineStore('regMonitoring', {
   state: () => ({
@@ -16,80 +17,45 @@ export const useRegMonitoringStore = defineStore('regMonitoring', {
   }),
   getters: {
     failedRegTests(state) {
-      return state.regTests.filter(
-        (test: RegressionTestInterface) => test.Status === 'Failed'
-      );
+      return state.regTests.filter((test: RegressionTestInterface) => test.Status === 'Failed');
     },
     passedRegTests(state) {
-      return state.regTests.filter(
-        (test: RegressionTestInterface) => test.Status === 'Passed'
-      );
+      return state.regTests.filter((test: RegressionTestInterface) => test.Status === 'Passed');
     },
     inQueueRegTests(state) {
-      return state.regTests.filter(
-        (test: RegressionTestInterface) => test.Status === 'InQueue'
-      );
+      return state.regTests.filter((test: RegressionTestInterface) => test.Status === 'InQueue');
     },
     runningRegTests(state) {
-      return state.regTests.filter(
-        (test: RegressionTestInterface) =>
-          test.Status === 'Running' || test.Status === 'Inconclusive'
-      );
+      return state.regTests.filter((test: RegressionTestInterface) => test.Status === 'Running' || test.Status === 'Inconclusive');
     },
     analyseFailedRegTests(state) {
-      return state.regTests.filter(
-        (test: RegressionTestInterface) => test.Status === 'AnalyseFailed'
-      );
+      return state.regTests.filter((test: RegressionTestInterface) => test.Status === 'AnalyseFailed');
     },
     analysePassedRegTests(state) {
-      return state.regTests.filter(
-        (test: RegressionTestInterface) => test.Status === 'AnalysePassed'
-      );
+      return state.regTests.filter((test: RegressionTestInterface) => test.Status === 'AnalysePassed');
     },
     inCompatibleRegTests(state) {
-      return state.regTests.filter(
-        (test: RegressionTestInterface) => test.Status === 'InCompatible'
-      );
-    },
-    selectedRegTest(state) {
-      return state.selectedRegTest;
-    },
-    categorySelections(state) {
-      return state.categorySelections;
-    },
-    testSuiteSelections(state) {
-      return state.testSuiteSelections;
-    },
-    testGroupSelections(state) {
-      return state.testGroupSelections;
-    },
-    testClientSelections(state) {
-      return state.testClientSelections;
-    },
-    regressionFilterCriteria(state) {
-      return state.regressionFilterCriteria;
+      return state.regTests.filter((test: RegressionTestInterface) => test.Status === 'InCompatible');
     },
   },
   actions: {
     async getRegressionDetail(regressionId: string) {
       try {
         const userStore = useUserStore();
-        const response = await api.get(
-          `/regressions/${regressionId}/getdetail`,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${userStore.Token}`,
-            },
-          }
-        );
+        const response = await api.get(`/regressions/${regressionId}/getdetail`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userStore.Token}`,
+          },
+        });
         const responseData = await response.data;
-        const regressionTests =
-          (await responseData.data) as RegressionTestInterface[];
+        const regressionTests = (await responseData.data) as RegressionTestInterface[];
+        console.log('regressionTests', regressionTests);
         this.regTests = regressionTests;
         const categories = regressionTests
           .map((regTest: RegressionTestInterface) => regTest.CategoryName)
           .filter((value, index, self) => self.indexOf(value) === index);
+        console.log('categories', categories);
         this.categorySelections = categories;
         const testSuites = regressionTests
           .map((regTest: RegressionTestInterface) => regTest.TestSuiteFullName)
@@ -101,13 +67,16 @@ export const useRegMonitoringStore = defineStore('regMonitoring', {
         this.testGroupSelections = testGroups;
         const testClients = regressionTests
           .map((regTest: RegressionTestInterface) => regTest.ClientName)
-          .filter(
-            (value, index, self) =>
-              self.indexOf(value) === index && value !== ''
-          );
+          .filter((value, index, self) => self.indexOf(value) === index && value !== '');
         this.testClientSelections = testClients;
       } catch (error: any) {
-        throw error.response.data;
+        if (error.isAxiosError) {
+          const e: AxiosError = error;
+          throw e.response.data;
+        } else {
+          console.log('a', error);
+          throw error;
+        }
       }
     },
     async getScreenshot(screenshotId: string) {

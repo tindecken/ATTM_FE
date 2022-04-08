@@ -4,13 +4,14 @@
       <div>
         <q-select
           dense
-          v-model="selectedRegression"
+          :model-value="selectedRegression"
           :options="filteredRegressions"
           option-label="Name"
           label="Regression"
           outlined
           @update:model-value="onChangeRegression($event)"
           @filter="filterRegressionFn"
+          input-debounce="0"
           use-input
           fill-input
           hide-selected
@@ -131,7 +132,9 @@
           </q-tab>
         </q-tabs>
         <q-tab-panels v-model="selectedTab" animated keep-alive>
-          <q-tab-panel name="all"> </q-tab-panel>
+          <q-tab-panel name="all">
+            <all-table filterTestCase=""></all-table>
+          </q-tab-panel>
           <q-tab-panel name="failed"> </q-tab-panel>
           <q-tab-panel name="passed"> </q-tab-panel>
           <q-tab-panel name="inQueue"> </q-tab-panel>
@@ -147,8 +150,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, onBeforeMount, ref, Ref, onMounted } from 'vue';
+<script setup lang="ts">
+import { computed, onBeforeMount, ref, Ref, onMounted } from 'vue';
 import { useQuasar } from 'quasar';
 import { useTitle } from '@vueuse/core';
 import { useRegressionStore } from '../../../pinia/regressionStore';
@@ -156,163 +159,100 @@ import { RegressionInterface } from '../../../Models/Regression';
 import { RegressionTestInterface } from '../../../Models/RegressionTest';
 import { useRegMonitoringStore } from '../../../pinia/regMonitoring';
 import AnalyseFailedTable from './DataTables/AnalyseFailedTable.vue';
+import AllTable from './DataTables/AllTable.vue';
 
-export default defineComponent({
-  name: 'Regression',
-  components: {
-    AnalyseFailedTable,
-  },
-  setup() {
-    useTitle('Regression Monitoring');
-    const regressionStore = useRegressionStore();
-    const regMonitoringStore = useRegMonitoringStore();
-    const $q = useQuasar();
-    const regressions = computed(() => regressionStore.regressions);
-    const selectedRegression = computed(() => regressionStore.selectedRegression);
-    const categorySelections = computed(() => regMonitoringStore.categorySelections);
-    const testSuiteSelections = computed(() => regMonitoringStore.testSuiteSelections);
-    const testGroupSelections = computed(() => regMonitoringStore.testGroupSelections);
-    const testClientSelections = computed(() => regMonitoringStore.testClientSelections);
-    const regTests = computed(() => regMonitoringStore.regTests);
-    const allCount = computed(() => regMonitoringStore.regTests?.length);
-    const failedCount = computed(() => {
-      const all = regMonitoringStore.regTests;
-      return all.filter((r: RegressionTestInterface) => r.Status === 'Failed').length;
-    });
-    const passedCount = computed(() => {
-      const all = regMonitoringStore.regTests;
-      return all.filter((r: RegressionTestInterface) => r.Status === 'Passed').length;
-    });
-    const inQueueCount = computed(() => {
-      const all = regMonitoringStore.regTests;
-      return all.filter((r: RegressionTestInterface) => r.Status === 'InQueue').length;
-    });
-    const runningCount = computed(() => {
-      const all = regMonitoringStore.regTests;
-      return all.filter((r: RegressionTestInterface) => r.Status === 'Running' || r.Status === 'Inconclusive').length;
-    });
-    const analyseFailedCount = computed(() => {
-      const all = regMonitoringStore.regTests;
-      return all.filter((r: RegressionTestInterface) => r.Status === 'AnalyseFailed').length;
-    });
-    const analysePassedCount = computed(() => {
-      const all = regMonitoringStore.regTests;
-      return all.filter((r: RegressionTestInterface) => r.Status === 'AnalysePassed').length;
-    });
-    const inCompatibleCount = computed(() => {
-      const all = regMonitoringStore.regTests;
-      return all.filter((r: RegressionTestInterface) => r.Status === 'InCompatible').length;
-    });
-    const filteredRegressions: Ref<RegressionInterface[]> = ref([]);
-    const selectedTab = ref('all');
-    const selectedCategory = ref('');
-    const selectedTestSuite = ref('');
-    const selectedTestGroup = ref('');
-    const selectedTestClient = ref('');
-    const testCaseFilterText = ref('');
-    onBeforeMount(async () => {
-      try {
-        await regressionStore.getRegressions();
-        if (selectedRegression.value) {
-          await regMonitoringStore.getRegressionDetail(selectedRegression.value.Id);
-        }
-      } catch (error: any) {
-        $q.notify({
-          type: 'negative',
-          message: `${error}`,
-        });
-      }
-    });
-    onMounted(() => {
-      filteredRegressions.value = regressions.value;
-    });
-    async function onChangeRegression(regression: RegressionInterface) {
-      regressionStore.selectedRegression = regression;
-      await regMonitoringStore.getRegressionDetail(regression.Id);
+useTitle('Regression Monitoring');
+const regressionStore = useRegressionStore();
+const regMonitoringStore = useRegMonitoringStore();
+const $q = useQuasar();
+const regressions = computed(() => regressionStore.regressions);
+const selectedRegression = computed(() => regressionStore.selectedRegression);
+const regTests = computed(() => regMonitoringStore.regTests);
+const allCount = computed(() => regMonitoringStore.regTests?.length);
+const failedCount = computed(() => {
+  const all = regMonitoringStore.regTests;
+  return all.filter((r: RegressionTestInterface) => r.Status === 'Failed').length;
+});
+const passedCount = computed(() => {
+  const all = regMonitoringStore.regTests;
+  return all.filter((r: RegressionTestInterface) => r.Status === 'Passed').length;
+});
+const inQueueCount = computed(() => {
+  const all = regMonitoringStore.regTests;
+  return all.filter((r: RegressionTestInterface) => r.Status === 'InQueue').length;
+});
+const runningCount = computed(() => {
+  const all = regMonitoringStore.regTests;
+  return all.filter((r: RegressionTestInterface) => r.Status === 'Running' || r.Status === 'Inconclusive').length;
+});
+const analyseFailedCount = computed(() => {
+  const all = regMonitoringStore.regTests;
+  return all.filter((r: RegressionTestInterface) => r.Status === 'AnalyseFailed').length;
+});
+const analysePassedCount = computed(() => {
+  const all = regMonitoringStore.regTests;
+  return all.filter((r: RegressionTestInterface) => r.Status === 'AnalysePassed').length;
+});
+const inCompatibleCount = computed(() => {
+  const all = regMonitoringStore.regTests;
+  return all.filter((r: RegressionTestInterface) => r.Status === 'InCompatible').length;
+});
+const filteredRegressions: Ref<RegressionInterface[]> = ref([]);
+const selectedTab = ref('all');
+const testCaseFilterText = ref('');
+onBeforeMount(async () => {
+  try {
+    await regressionStore.getRegressions();
+    if (selectedRegression.value) {
+      await regMonitoringStore.getRegressionDetail(selectedRegression.value.Id);
     }
-    function filterRegressionFn(val: string, update: any) {
-      update(() => {
-        const needle = val.toLowerCase();
-        filteredRegressions.value = regressions.value.filter((reg: RegressionInterface) => reg.Name.toLowerCase().indexOf(needle) > -1);
+  } catch (error: any) {
+    $q.notify({
+      type: 'negative',
+      message: `${error}`,
+    });
+  }
+});
+onMounted(() => {
+  filteredRegressions.value = regressions.value;
+});
+async function onChangeRegression(regression: RegressionInterface) {
+  regressionStore.selectedRegression = regression;
+  await regMonitoringStore.getRegressionDetail(regression.Id);
+}
+function filterRegressionFn(val: string, update: any) {
+  update(() => {
+    const needle = val.toLowerCase();
+    filteredRegressions.value = regressions.value.filter((reg: RegressionInterface) => reg.Name.toLowerCase().indexOf(needle) > -1);
+  });
+}
+async function clearFilter() {
+  testCaseFilterText.value = '';
+  if (selectedRegression.value) {
+    await regMonitoringStore.getRegressionDetail(selectedRegression.value.Id);
+  }
+}
+function testCaseFilterFunc() {
+  // TODO
+  console.log('testCaseFilterFunc');
+  if (testCaseFilterText.value === '') {
+    void clearFilter();
+  } else {
+    const filteredRegTests: RegressionTestInterface[] = regTests.value.filter(
+      (rt: RegressionTestInterface) =>
+        rt.TestCaseCodeName.toLowerCase().includes(testCaseFilterText.value.toLowerCase().trim()) ||
+        rt.TestCaseName.toLowerCase().includes(testCaseFilterText.value.toLowerCase().trim())
+    );
+    if (filteredRegTests.length > 0) {
+      regMonitoringStore.regTests = filteredRegTests;
+    } else {
+      $q.notify({
+        type: 'info',
+        message: 'Not found',
       });
     }
-    function onCategoryValueChange(event: any) {
-      // TODO
-      console.log('onCategoryValueChange', event);
-    }
-    function onTestSuiteValueChange(event: any) {
-      // TODO
-      console.log('onTestGroupValueChange', event);
-    }
-    function onTestGroupValueChange(event: any) {
-      // TODO
-      console.log('onTestGroupValueChange', event);
-    }
-    function onTestClientValueChange(event: any) {
-      // TODO
-      console.log('onTestClientValueChange', event);
-    }
-    async function clearFilter() {
-      testCaseFilterText.value = '';
-      if (selectedRegression.value) {
-        await regMonitoringStore.getRegressionDetail(selectedRegression.value.Id);
-      }
-    }
-    function testCaseFilterFunc() {
-      // TODO
-      console.log('testCaseFilterFunc');
-      if (testCaseFilterText.value === '') {
-        void clearFilter();
-      } else {
-        const filteredRegTests: RegressionTestInterface[] = regTests.value.filter(
-          (rt: RegressionTestInterface) =>
-            rt.TestCaseCodeName.toLowerCase().includes(testCaseFilterText.value.toLowerCase().trim()) ||
-            rt.TestCaseName.toLowerCase().includes(testCaseFilterText.value.toLowerCase().trim())
-        );
-        if (filteredRegTests.length > 0) {
-          regMonitoringStore.regTests = filteredRegTests;
-        } else {
-          $q.notify({
-            type: 'info',
-            message: 'Not found',
-          });
-        }
-      }
-    }
-    return {
-      selectedTestClient,
-      onTestClientValueChange,
-      testClientSelections,
-      regTests,
-      clearFilter,
-      testCaseFilterFunc,
-      testCaseFilterText,
-      allCount,
-      passedCount,
-      failedCount,
-      inQueueCount,
-      runningCount,
-      analyseFailedCount,
-      analysePassedCount,
-      inCompatibleCount,
-      selectedTab,
-      filteredRegressions,
-      filterRegressionFn,
-      selectedRegression,
-      regressions,
-      onChangeRegression,
-      selectedCategory,
-      selectedTestSuite,
-      selectedTestGroup,
-      categorySelections,
-      testSuiteSelections,
-      testGroupSelections,
-      onCategoryValueChange,
-      onTestSuiteValueChange,
-      onTestGroupValueChange,
-    };
-  },
-});
+  }
+}
 </script>
 
 <style scoped lang="scss">

@@ -10,6 +10,8 @@ import { useGlobalStore } from './pinia/globalStore';
 import { useSettingStore } from './pinia/settingStore';
 import { useTestCaseStore } from './pinia/testCaseStore';
 import { useTestEnvironmentStore } from './pinia/testEnvironmentStore';
+import { useRegMonitoringStore } from './pinia/regMonitoring';
+import { useRegressionStore } from './pinia/regressionStore';
 
 export default defineComponent({
   name: 'App',
@@ -20,6 +22,8 @@ export default defineComponent({
     const settingStore = useSettingStore();
     const testCaseStore = useTestCaseStore();
     const testEnvironmentStore = useTestEnvironmentStore();
+    const regMonitoringStore = useRegMonitoringStore();
+    const regressionStore = useRegressionStore();
     userStore.$subscribe(() => {
       localStorage.setItem(
         'user',
@@ -77,6 +81,28 @@ export default defineComponent({
         })
       );
     });
+    regMonitoringStore.$subscribe(() => {
+      localStorage.setItem(
+        'regMonitoring',
+        JSON.stringify({
+          regTests: regMonitoringStore.regTests,
+          selectedRegTest: regMonitoringStore.selectedRegTest,
+          testSuiteSelections: regMonitoringStore.testSuiteSelections,
+          testGroupSelections: regMonitoringStore.testGroupSelections,
+          testClientSelections: regMonitoringStore.testClientSelections,
+          regressionFilterCriteria: regMonitoringStore.regressionFilterCriteria,
+        })
+      );
+    });
+    regressionStore.$subscribe(() => {
+      localStorage.setItem(
+        'regression',
+        JSON.stringify({
+          regressions: regressionStore.regressions,
+          selectedRegression: regressionStore.selectedRegression,
+        })
+      );
+    });
 
     onBeforeMount(() => {
       const user = localStorage.getItem('user');
@@ -106,6 +132,21 @@ export default defineComponent({
       if (testEnvironment) {
         testEnvironmentStore.testEnvs = JSON.parse(testEnvironment).testEnvs;
         testEnvironmentStore.selectedTestEnv = JSON.parse(testEnvironment).selectedTestEnv;
+      }
+      const regMonitoring = localStorage.getItem('regMonitoring');
+      if (regMonitoring) {
+        regMonitoringStore.regTests = JSON.parse(regMonitoring).regTests;
+        regMonitoringStore.selectedRegTest = JSON.parse(regMonitoring).selectedRegTest;
+        regMonitoringStore.categorySelections = JSON.parse(regMonitoring).categorySelections;
+        regMonitoringStore.testSuiteSelections = JSON.parse(regMonitoring).testSuiteSelections;
+        regMonitoringStore.testGroupSelections = JSON.parse(regMonitoring).testGroupSelections;
+        regMonitoringStore.testClientSelections = JSON.parse(regMonitoring).testClientSelections;
+        regMonitoringStore.regressionFilterCriteria = JSON.parse(regMonitoring).regressionFilterCriteria;
+      }
+      const regression = localStorage.getItem('regression');
+      if (regression) {
+        regressionStore.regressions = JSON.parse(regression).regressions;
+        regressionStore.selectedRegression = JSON.parse(regression).selectedRegression;
       }
     });
   },

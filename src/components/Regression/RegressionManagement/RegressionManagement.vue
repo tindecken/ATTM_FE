@@ -163,8 +163,12 @@ function editRegression(regression: RegressionInterface) {
         .then(() => {
           $q.notify({
             type: 'positive',
-            message: 'Update regression success !',
+            message: 'Update regression success!',
           });
+          // update selectedRegression if any
+          if (regressionStore.selectedRegression?.Id === updatedRegression.Id) {
+            regressionStore.selectedRegression = updatedRegression;
+          }
           getRegressions();
         })
         .catch((error) => {
