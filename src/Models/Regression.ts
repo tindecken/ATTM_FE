@@ -6,8 +6,9 @@ export interface RegressionInterface {
   IsDeleted: boolean;
   CreatedDate: Date;
   Description: string;
-  CreateBy: string;
+  CreatedBy: string;
   LastUpdatedBy?: string;
+  LastUpdatedDate?: Date;
   StartDate: Date;
   EndDate: Date;
   RegressionTestIds: string[];

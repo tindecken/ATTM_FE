@@ -86,7 +86,7 @@ export default defineComponent({
               IsOfficial: isOfficial.value,
               StartDate: dateRange.value.from,
               EndDate: dateRange.value.to,
-              CreateBy: currentUser.value,
+              CreatedBy: currentUser.value,
               RegressionTestIds: [],
             };
             context.emit('validateForm', true);

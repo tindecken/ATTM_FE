@@ -5,6 +5,8 @@ import { RegressionInterface } from '../Models/Regression';
 import { AddCommentDataInterface } from '../Models/Entities/AddCommentData';
 import { SetRegressionQueueDataInterface } from '../Models/Entities/SetRegressionQueueData';
 import { SetRegressionAnalyseStatusDataInterface } from '../Models/Entities/SetRegressionAnalyseStatusData';
+import { AxiosError } from 'axios';
+import { DeleteRegressionDataInterface } from '../Models/Entities/DeleteRegressionData';
 
 export const useRegressionStore = defineStore('regression', {
   state: () => ({
@@ -23,7 +25,8 @@ export const useRegressionStore = defineStore('regression', {
             Authorization: `Bearer ${userStore.Token}`,
           },
         });
-        const regressions: RegressionInterface[] = await response.data;
+        const data = await response.data;
+        const regressions: RegressionInterface[] = await data.data;
         this.regressions = regressions;
         if (regressions.length > 0 && this.selectedRegression === undefined) {
           this.selectedRegression = regressions[regressions.length - 1];
@@ -72,6 +75,50 @@ export const useRegressionStore = defineStore('regression', {
         });
       } catch (error: any) {
         throw error;
+      }
+    },
+    async deleteRegression(deleteRegressionData: DeleteRegressionDataInterface) {
+      try {
+        const userStore = useUserStore();
+        const response = await api.delete('/regressions', {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userStore.Token}`,
+          },
+          data: deleteRegressionData,
+        });
+        const responseData = await response.data;
+        return responseData;
+      } catch (error) {
+        if (error.isAxiosError) {
+          const e: AxiosError = error;
+          throw e.response.data;
+        } else {
+          throw error;
+        }
+      }
+    },
+    async updateRegression(updateRegression: RegressionInterface) {
+      try {
+        const userStore = useUserStore();
+        const response = await api.post('/regressions/update', updateRegression, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userStore.Token}`,
+          },
+        });
+        const responseData = await response.data;
+        return responseData;
+      } catch (error) {
+        console.log('e', error);
+        if (error.isAxiosError) {
+          console.log('b');
+          const e: AxiosError = error;
+          console.log('e', e.response);
+          throw e.response.data;
+        } else {
+          throw error;
+        }
       }
     },
   },

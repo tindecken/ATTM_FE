@@ -39,23 +39,35 @@
           <q-td key="build" :props="props" @click="globalStore.infoStatus.Info = props.row.Build">
             {{ props.row.Build }}
           </q-td>
-          <q-td key="description" :props="props" style="white-space: normal" @click="globalStore.infoStatus.Info = props.row.Description">
+          <q-td key="description" :props="props" class="ellipsis" @click="globalStore.infoStatus.Info = props.row.Description">
             {{ props.row.Description }}
           </q-td>
           <q-td key="isOfficial" :props="props">
             {{ props.row.IsOfficial }}
-          </q-td>
-          <q-td key="createdDate" :props="props">
-            {{ date.formatDate(props.row.CreatedDate, 'YYYY/MM/DD - HH:mm') }}
-          </q-td>
-          <q-td key="lastUpdatedBy" :props="props">
-            {{ props.row.LastUpdatedBy }}
           </q-td>
           <q-td key="startDate" :props="props">
             {{ date.formatDate(props.row.StartDate, 'YYYY/MM/DD') }}
           </q-td>
           <q-td key="endDate" :props="props">
             {{ date.formatDate(props.row.EndDate, 'YYYY/MM/DD') }}
+          </q-td>
+          <q-td key="createdDate" :props="props">
+            <UseTimeAgo v-slot="{ timeAgo }" :time="props.row.CreatedDate">
+              {{ timeAgo }}
+            </UseTimeAgo>
+          </q-td>
+          <q-td key="createdBy" :props="props">
+            {{ props.row.CreatedBy }}
+          </q-td>
+          <q-td key="lastUpdatedDate" :props="props">
+            <div v-if="date.formatDate(props.row.LastUpdatedDate, 'YYYY') !== '1'">
+              <UseTimeAgo v-slot="{ timeAgo }" :time="props.row.LastUpdatedDate">
+                {{ timeAgo }}
+              </UseTimeAgo>
+            </div>
+          </q-td>
+          <q-td key="lastUpdatedBy" :props="props">
+            {{ props.row.LastUpdatedBy }}
           </q-td>
           <q-td key="totalTestCase" :props="props">
             {{ props.row.RegressionTestIds.length }}
@@ -86,8 +98,11 @@ import { useTitle } from '@vueuse/core';
 import { useRegressionStore } from '../../../pinia/regressionStore';
 import { useGlobalStore } from '../../../pinia/globalStore';
 import { RegressionInterface } from '../../../Models/Regression';
+import { UseTimeAgo } from '@vueuse/components';
 import EditRegressionDialog from './Dialogs/EditRegressionDialog.vue';
 import DeployDialog from './Dialogs/DeployDialog.vue';
+import DeleteRegressionDialog from './Dialogs/DeleteRegressionDialog.vue';
+import { DeleteRegressionDataInterface } from '../../../Models/Entities/DeleteRegressionData';
 
 const regressionStore = useRegressionStore();
 const globalStore = useGlobalStore();
@@ -99,24 +114,29 @@ const initialPagination = {
 const isShowUnOfficial = ref(true);
 const regressions: Ref<RegressionInterface[]> = ref([]);
 useTitle('Regression Management');
-onBeforeMount(async () => {
-  try {
-    await regressionStore.getRegressions();
-    regressions.value = regressionStore.regressions;
-    if (!isShowUnOfficial.value) {
-      regressions.value = regressions.value.filter((regression) => regression.IsOfficial === true);
-    }
-    regressions.value = regressions.value.map((rg: RegressionInterface, i: number) => ({
-      ...rg,
-      rowIndex: i + 1,
-    }));
-  } catch (error) {
-    $q.notify({
-      type: 'negative',
-      message: `${error}`,
-    });
-  }
+onBeforeMount(() => {
+  getRegressions();
 });
+async function getRegressions() {
+  regressionStore
+    .getRegressions()
+    .then(() => {
+      regressions.value = regressionStore.regressions;
+      if (!isShowUnOfficial.value) {
+        regressions.value = regressions.value.filter((regression) => regression.IsOfficial === true);
+      }
+      regressions.value = regressions.value.map((rg: RegressionInterface, i: number) => ({
+        ...rg,
+        rowIndex: i + 1,
+      }));
+    })
+    .catch((error) => {
+      $q.notify({
+        type: 'negative',
+        message: `${error}`,
+      });
+    });
+}
 function toggleShowOfficial() {
   isShowUnOfficial.value = !isShowUnOfficial.value;
   if (!isShowUnOfficial.value) {
@@ -138,6 +158,22 @@ function editRegression(regression: RegressionInterface) {
   })
     .onOk(async (updatedRegression: RegressionInterface) => {
       console.log('updatedRegression', updatedRegression);
+      regressionStore
+        .updateRegression(updatedRegression)
+        .then(() => {
+          $q.notify({
+            type: 'positive',
+            message: 'Update regression success !',
+          });
+          getRegressions();
+        })
+        .catch((error) => {
+          console.log('error', error);
+          $q.notify({
+            type: 'negative',
+            message: `${error.message}`,
+          });
+        });
     })
     .onCancel(() => {
       console.log('Cancel');
@@ -164,7 +200,35 @@ function deployRegression(regression: RegressionInterface) {
     });
 }
 function deleteRegression(regression: RegressionInterface) {
-  // TODO
+  $q.dialog({
+    component: DeleteRegressionDialog,
+    componentProps: {
+      Regression: regression,
+    },
+  })
+    .onOk(async (deleteRegData: DeleteRegressionDataInterface) => {
+      regressionStore
+        .deleteRegression(deleteRegData)
+        .then(() => {
+          getRegressions();
+          $q.notify({
+            type: 'positive',
+            message: 'Delete Regression successfully !',
+          });
+        })
+        .catch((error) => {
+          $q.notify({
+            type: 'negative',
+            message: `${error}`,
+          });
+        });
+    })
+    .onCancel(() => {
+      console.log('Cancel');
+    })
+    .onDismiss(() => {
+      console.log('Called on OK or Cancel');
+    });
 }
 const visibleColumns = ref([
   'no',
@@ -172,10 +236,12 @@ const visibleColumns = ref([
   'build',
   'description',
   'isOfficial',
-  'createdDate',
-  'lastUpdatedBy',
   'startDate',
   'endDate',
+  'createdDate',
+  'createdBy',
+  'lastUpdatedDate',
+  'lastUpdatedBy',
   'totalTestCase',
   'edit',
 ]);

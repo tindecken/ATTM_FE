@@ -133,6 +133,7 @@ onMounted(() => {
 function onOKClick() {
   editRegression.value.StartDate = dateRange.value.from;
   editRegression.value.EndDate = dateRange.value.to;
+  editRegression.value.LastUpdatedBy = userStore.Username;
   onDialogOK(editRegression.value);
 }
 

@@ -3,7 +3,7 @@
     <q-layout
       view="hHh lpR fFf"
       :class="isDark ? 'bg-grey-9' : 'bg-grey-3'"
-      style="max-height: 800px; min-height: 100px !important; min-width: 750px"
+      style="max-height: 300px; min-height: 100px !important; min-width: 750px"
       container
     >
       <q-header reveal bordered class="row justify-between bg-secondary">
@@ -27,6 +27,7 @@
           no-data-label="No test client"
           :pagination="initialPagination"
           separator="cell"
+          class="q-mt-sm"
         >
           <template v-slot:top>
             <q-input dense debounce="300" v-model="filter" placeholder="Search" class="q-mr-md">
@@ -35,48 +36,26 @@
               </template>
             </q-input>
           </template>
-          <template v-slot:body="props">
-            <q-tr :props="props">
-              <q-td key="no" :props="props"> {{ props.row.rowIndex }}</q-td>
-              <q-td key="name" :props="props" @click="globalStore.infoStatus.Info = props.row.Name">
-                <q-input v-model="props.row.Name" dense borderless> </q-input>
-              </q-td>
-              <q-td key="ipAddress" :props="props" @click="globalStore.infoStatus.Info = props.row.IPAddress">
-                <q-input v-model="props.row.IPAddress" dense borderless> </q-input>
-              </q-td>
-              <q-td key="type" :props="props" @click="globalStore.infoStatus.Info = props.row.Type">
-                <q-input v-model="props.row.Type" dense borderless> </q-input>
-              </q-td>
-              <q-td key="user" :props="props" @click="globalStore.infoStatus.Info = props.row.User">
-                <q-input v-model="props.row.User" dense borderless> </q-input>
-              </q-td>
-              <q-td key="password" :props="props" @click="globalStore.infoStatus.Info = props.row.Password">
-                <q-input type="password" v-model="props.row.Password" dense borderless> </q-input>
-              </q-td>
-              <q-td key="regressionFolder" :props="props" @click="globalStore.infoStatus.Info = props.row.RegressionFolder">
-                <q-input v-model="props.row.RegressionFolder" dense borderless> </q-input>
-              </q-td>
-              <q-td key="developFolder" :props="props" @click="globalStore.infoStatus.Info = props.row.DevelopFolder">
-                <q-input v-model="props.row.DevelopFolder" dense borderless> </q-input>
-              </q-td>
-              <q-td key="runnerFolder" :props="props" @click="globalStore.infoStatus.Info = props.row.RunnerFolder">
-                <q-input v-model="props.row.RunnerFolder" dense borderless> </q-input>
-              </q-td>
-              <q-td key="description" :props="props" style="white-space: normal" @click="globalStore.infoStatus.Info = props.row.Description">
-                <q-input v-model="props.row.Description" dense borderless> </q-input>
-              </q-td>
-              <q-td key="delete" :props="props">
-                <q-btn color="negative" size="sm" outline @click="deleteClient(props.row)">Delete</q-btn>
-              </q-td>
-              <q-td key="checkDeploy" :props="props">
-                <q-btn color="secondary" size="sm" outline @click="checkDeploy(props.row)">Check</q-btn>
-              </q-td>
-            </q-tr>
-          </template>
         </q-table>
-        <q-btn outline color="primary" label="Build - Deploy - Configure Runner"></q-btn>
-        <q-btn outline color="primary" label="Deploy - Configure Runner"></q-btn>
-        <q-btn outline color="primary" label="Configure Runner"></q-btn>
+        <div class="q-mt-sm">
+          <q-btn outline color="primary" label="Build - Deploy - Configure Runner" class="q-mr-sm" @click="build_deploy_configure()">
+            <q-tooltip style="white-space: pre">
+              Get latest code <br />
+              Build Project <br />
+              Copy build to test client<br />
+              Update configuration file for test client
+            </q-tooltip>
+          </q-btn>
+          <q-btn outline color="primary" label="Deploy - Configure Runner" class="q-mr-sm" @click="deploy_configure()">
+            <q-tooltip style="white-space: pre">
+              Copy build to test client<br />
+              Update configuration file for test client
+            </q-tooltip>
+          </q-btn>
+          <q-btn outline color="primary" label="Configure Runner" @click="configure()">
+            <q-tooltip style="white-space: pre">Update configuration file for test client </q-tooltip>
+          </q-btn>
+        </div>
       </q-page-container>
     </q-layout>
   </q-dialog>
@@ -105,7 +84,7 @@ const isDark = computed(() => globalStore.darkTheme);
 const filter = ref('');
 const $q = useQuasar();
 const initialPagination = {
-  rowsPerPage: 50,
+  rowsPerPage: 15,
 };
 const testClients: Ref<TestClientInterface[]> = ref(testClientStore?.testClients);
 const selectedClients: Ref<TestClientInterface[]> = ref([]);
@@ -138,74 +117,14 @@ function getSelectedString() {
     ? ''
     : `${selectedClients.value.length} record${selectedClients.value.length > 1 ? 's' : ''} selected of ${testClients.value.length}`;
 }
-function deleteClient(client: TestClientInterface) {
-  _.remove(testClients.value, (te: TestClientInterface) => te.Id === client.Id);
-  if (testClients.value.length > 0) {
-    testClients.value = testClients.value.map((tc: TestClientInterface, i: number) => ({
-      ...tc,
-      rowIndex: i + 1,
-    }));
-  }
-}
-function checkDeploy(client: TestClientInterface) {
+async function build_deploy_configure() {
   // TODO
-  console.log('client', client);
 }
-function add() {
+async function deploy_configure() {
   // TODO
-  testClients.value.push({
-    Id: uid(),
-    Name: '',
-    Description: '',
-    IPAddress: '',
-    Type: '',
-    User: '',
-    Password: '',
-    RegressionFolder: '',
-    DevelopFolder: '',
-    RunnerFolder: '',
-    Status: '',
-  });
-  testClients.value = testClients.value.map((tc: TestClientInterface, i: number) => ({
-    ...tc,
-    rowIndex: i + 1,
-  }));
 }
-async function discard() {
-  await testClientStore.getTestClients();
-  testClients.value = testClientStore.testClients;
-  testClients.value = testClients.value.map((tc: TestClientInterface, i: number) => ({
-    ...tc,
-    rowIndex: i + 1,
-  }));
-}
-async function save() {
-  let valid = true;
-  testClients.value.forEach((client: TestClientInterface & { rowIndex: number }) => {
-    if (client.Name == '') {
-      $q.notify({
-        type: 'negative',
-        message: `Row ${client.rowIndex}: Client Name is required.`,
-      });
-      valid = false;
-      return;
-    }
-  });
-  if (!valid) return;
-  testClientStore
-    .saveTestClients(testClients.value)
-    .then((res) => {
-      $q.notify({
-        type: 'positive',
-        message: `${res.message}`,
-      });
-    })
-    .catch((err) => {
-      $q.notify({
-        type: 'negative',
-        message: `${err}`,
-      });
-    });
+async function configure() {
+  // TODO
 }
 </script>
 

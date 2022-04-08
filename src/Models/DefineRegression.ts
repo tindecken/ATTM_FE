@@ -5,6 +5,6 @@ export interface DefineRegressionInterface {
   IsOfficial: boolean;
   StartDate?: string;
   EndDate?: string;
-  CreateBy: string;
+  CreatedBy: string;
   RegressionTestIds: [];
 }
