@@ -143,8 +143,8 @@ async function fnSelectedNode(target: string) {
       }
       testCaseStore
         .GetLastRegressionResult(currentNode.Id)
-        .then((res) => {
-          if (res.data) categoryStore.setLastRegressionResultForTestCase(currentNode, res.data as LastRegressionResultInterface);
+        .then((resp) => {
+          if (resp.data) categoryStore.setLastRegressionResultForTestCase(currentNode, resp.data as LastRegressionResultInterface);
         })
         .catch((error) => {
           console.log('error', error);
