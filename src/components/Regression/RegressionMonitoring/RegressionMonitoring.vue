@@ -160,6 +160,7 @@ import { RegressionTestInterface } from '../../../Models/RegressionTest';
 import { useRegMonitoringStore } from '../../../pinia/regMonitoring';
 import AnalyseFailedTable from './DataTables/AnalyseFailedTable.vue';
 import AllTable from './DataTables/AllTable.vue';
+import { FindRegressionTestDataInterface } from '../../../Models/Entities/FindRegressionTestData';
 
 useTitle('Regression Monitoring');
 const regressionStore = useRegressionStore();
@@ -235,22 +236,20 @@ async function clearFilter() {
 function testCaseFilterFunc() {
   // TODO
   console.log('testCaseFilterFunc');
-  if (testCaseFilterText.value === '') {
+  if (testCaseFilterText.value === '' || testCaseFilterText.value === null) {
     void clearFilter();
   } else {
-    const filteredRegTests: RegressionTestInterface[] = regTests.value.filter(
-      (rt: RegressionTestInterface) =>
-        rt.TestCaseCodeName.toLowerCase().includes(testCaseFilterText.value.toLowerCase().trim()) ||
-        rt.TestCaseName.toLowerCase().includes(testCaseFilterText.value.toLowerCase().trim())
-    );
-    if (filteredRegTests.length > 0) {
-      regMonitoringStore.regTests = filteredRegTests;
-    } else {
+    const payload: FindRegressionTestDataInterface = {
+      RegressionId: selectedRegression.value.Id,
+      Name: testCaseFilterText.value,
+    };
+    regMonitoringStore.findRegressionTest(payload).catch((error) => {
+      console.log('error', error);
       $q.notify({
-        type: 'info',
-        message: 'Not found',
+        type: 'negative',
+        message: error.message ? error.message : error.error,
       });
-    }
+    });
   }
 }
 </script>

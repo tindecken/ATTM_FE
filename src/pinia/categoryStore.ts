@@ -8,6 +8,8 @@ import { TestSuiteInterface } from '../Models/TestSuite';
 import { TestCaseInterface } from '../Models/TestCase';
 import { TestGroupInterface } from '../Models/TestGroup';
 import { useTestCaseStore } from './testCaseStore';
+import { LastRegressionResultInterface } from '../Models/Entities/LastRegressionResult';
+import { Status } from '../Models/Entities/EnumStatus';
 
 export const useCategoryStore = defineStore('category', {
   state: () => ({
@@ -199,6 +201,34 @@ export const useCategoryStore = defineStore('category', {
         tempCat.children[tsIndex].children[tgIndex].children.splice(tcIndex, 1);
         this.Categories[catIndex] = tempCat;
       });
+    },
+    setLastRegressionResultForTestCase(testCase: TestCaseInterface, lastRegressionResult: LastRegressionResultInterface) {
+      // TODO
+      console.log('testCase', testCase);
+      console.log('lastRegressionResult', lastRegressionResult);
+      const catIndex = this.Categories.findIndex((cat: CategoryInterface) => cat.Id === testCase.CategoryId);
+      const tempCat = _.cloneDeep(this.Categories[catIndex]);
+      // find tsIndex
+      const tsIndex = tempCat.TestSuiteIds.findIndex((tsId: string) => tsId === testCase.TestSuiteId);
+      // find tgIndex
+      const tgIndex = tempCat.children[tsIndex].TestGroupIds.findIndex((tgId: string) => tgId === testCase.TestGroupId);
+      const tcIndex = tempCat.children[tsIndex].children[tgIndex].children.findIndex((t: TestCaseInterface) => t.Id === testCase.Id);
+      switch (lastRegressionResult.Status) {
+        case Status.Passed:
+        case Status.AnalysePassed:
+          testCase.iconColor = 'positive';
+          break;
+        case Status.Failed:
+        case Status.AnalyseFailed:
+          testCase.iconColor = 'negative';
+          break;
+        case Status.Running:
+          testCase.iconColor = 'warning';
+          break;
+      }
+      testCase.iconTooltip = lastRegressionResult;
+      tempCat.children[tsIndex].children[tgIndex].children[tcIndex] = testCase;
+      this.Categories[catIndex] = tempCat;
     },
     async editCategory(category: CategoryInterface) {
       const userStore = useUserStore();

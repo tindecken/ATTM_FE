@@ -4,6 +4,7 @@ import { api } from '../boot/axios';
 import { RegressionFilterCriteriaDataInterface } from '../Models/Entities/RegressionFilterCriteriaData';
 import { RegressionTestInterface } from '../Models/RegressionTest';
 import { AxiosError } from 'axios';
+import { FindRegressionTestDataInterface } from '../Models/Entities/FindRegressionTestData';
 
 export const useRegMonitoringStore = defineStore('regMonitoring', {
   state: () => ({
@@ -92,6 +93,28 @@ export const useRegMonitoringStore = defineStore('regMonitoring', {
         return responseData.data;
       } catch (error: any) {
         throw error.response.data;
+      }
+    },
+    async findRegressionTest(payload: FindRegressionTestDataInterface) {
+      const userStore = useUserStore();
+      try {
+        const response = await api.post('/regressions/findregressiontest', payload, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userStore.Token}`,
+          },
+        });
+        const responseData = await response.data;
+        const regressionTests = (await responseData.data) as RegressionTestInterface[];
+        console.log('regressionTests', regressionTests);
+        this.regTests = regressionTests;
+      } catch (error) {
+        if (error.isAxiosError) {
+          const e: AxiosError = error;
+          throw e.response.data;
+        } else {
+          throw error;
+        }
       }
     },
   },

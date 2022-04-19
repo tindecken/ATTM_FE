@@ -63,10 +63,4 @@ function paintTestCase(testCase: TestCaseInterface): TestCaseInterface {
   return { ...testCase };
 }
 
-export {
-  paintCategories,
-  paintTestSuite,
-  paintTestGroup,
-  paintTestCase,
-  paintCategory,
-};
+export { paintCategories, paintTestSuite, paintTestGroup, paintTestCase, paintCategory };
