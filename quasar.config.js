@@ -27,7 +27,7 @@ module.exports = configure(function (ctx) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: ['i18n', 'axios', 'pinia'],
+    boot: ['axios', 'pinia'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
     css: ['app.scss'],
@@ -63,9 +63,7 @@ module.exports = configure(function (ctx) {
       // publicPath: '/',
       // analyze: true,
       env: {
-        API_URL: ctx.dev
-          ? 'http://localhost:5000/api'
-          : 'https://116.102.133.128:5000/api',
+        API_URL: ctx.dev ? 'http://localhost:5000/api' : 'https://116.102.133.128:5000/api',
       },
       // rawDefine: {}
       // ignorePublicFolder: true,
@@ -75,15 +73,6 @@ module.exports = configure(function (ctx) {
 
       // extendViteConf (viteConf) {},
       // viteVuePluginOptions: {},
-
-      vitePlugins: [
-        [
-          '@intlify/vite-plugin-vue-i18n',
-          {
-            /* options */
-          },
-        ],
-      ],
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
