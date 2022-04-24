@@ -5,6 +5,7 @@ import { KeywordInterface } from '../Models/Keyword';
 import { KeywordCategoryInterface } from '../Models/KeywordCategory';
 import { api } from '../boot/axios';
 import { KeywordFeatureInterface } from '../Models/KeywordFeature';
+import { AxiosError } from 'axios';
 
 export const useKeywordStore = defineStore('keyword', {
   state: () => ({
@@ -15,20 +16,31 @@ export const useKeywordStore = defineStore('keyword', {
   getters: {},
   actions: {
     async getKeywords() {
-      const userStore = useUserStore();
-      const response = await api.get('/keywords/getkeywords', {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${userStore.Token}`,
-        },
-      });
-      const responseData = await response.data;
-      console.log('responseData', responseData);
-      const keywordCategories: KeywordCategoryInterface[] = await responseData
-        .data.Categories;
-      this.keywordCategories = keywordCategories;
-      this.setKeywords(keywordCategories);
-      return keywordCategories;
+      try {
+        const userStore = useUserStore();
+        const response = await api.get('/keywords/getkeywords', {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userStore.Token}`,
+          },
+        });
+        const responseData = await response.data;
+        console.log('responseData', responseData);
+        const keywordCategories: KeywordCategoryInterface[] = await responseData.data.Categories;
+        this.keywordCategories = keywordCategories;
+        this.setKeywords(keywordCategories);
+        return keywordCategories;
+      } catch (error) {
+        console.log('e', error);
+        if (error.isAxiosError) {
+          console.log('b');
+          const e: AxiosError = error;
+          console.log('e', e.response);
+          throw e.response.data;
+        } else {
+          throw error;
+        }
+      }
     },
     setKeywords(keywordCategories: KeywordCategoryInterface[]) {
       const keywords: FlatKeywordInterface[] = [];
