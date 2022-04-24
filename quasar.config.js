@@ -64,6 +64,7 @@ module.exports = configure(function (ctx) {
       // analyze: true,
       env: {
         API_URL: ctx.dev ? 'http://localhost:5000/api' : 'http://tindecken.duckdns.org:5000/api',
+        SocketServer: ctx.dev ? 'http://localhost:5000/monitoring' : 'http://tindecken.duckdns.org:5000/monitoring',
       },
       // rawDefine: {}
       // ignorePublicFolder: true,
