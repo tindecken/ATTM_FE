@@ -18,6 +18,8 @@ const api = axios.create({
   baseURL: apiConfig.baseURL,
 });
 
+const controller = new AbortController();
+
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
 
@@ -30,4 +32,4 @@ export default boot(({ app }) => {
   //       so you can easily perform requests against your app's API
 });
 
-export { axios, api };
+export { axios, api, controller };

@@ -3,18 +3,12 @@
     <q-layout
       view="hHh lpR fFf"
       :class="isDark ? 'bg-grey-9' : 'bg-grey-3'"
-      style="max-height: 900px; min-height: 100px !important; min-width: 800px"
+      style="max-height: 900px; min-height: 100px !important; min-width: 1000px"
       container
     >
       <q-header reveal bordered class="row justify-between bg-secondary">
         <div class="self-center text-subtitle1 q-pl-sm">Search Keyword</div>
-        <q-btn
-          class="self-center"
-          dense
-          flat
-          icon="close"
-          @click="onDialogHide"
-        >
+        <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
           <q-tooltip>Close</q-tooltip>
         </q-btn>
       </q-header>
@@ -78,43 +72,23 @@
               >
                 <template v-slot:top>
                   <div class="col-2 q-table__title">Keywords</div>
-                  <q-toggle
-                    v-model="keywordVisibleColumns"
-                    val="owner"
-                    label="Owner"
-                  />
-                  <q-toggle
-                    v-model="keywordVisibleColumns"
-                    val="createdDate"
-                    label="CreatedDate"
-                  />
+                  <q-toggle v-model="keywordVisibleColumns" val="owner" label="Owner" />
+                  <q-toggle v-model="keywordVisibleColumns" val="createdDate" label="CreatedDate" />
                 </template>
                 <template v-slot:body="props">
-                  <q-tr
-                    :props="props"
-                    @click="onSelectKeyword(props.row)"
-                    class="cursor-pointer"
-                  >
+                  <q-tr :props="props" @click="onSelectKeyword(props.row)" class="cursor-pointer">
                     <q-td key="no" :props="props">
                       {{ props.row.rowIndex }}
                     </q-td>
                     <q-td key="name" :props="props">
                       <q-tooltip>
-                        <div class="text-body2">
-                          Category: {{ props.row.Category }}
-                        </div>
-                        <div class="text-body2">
-                          Feature: {{ props.row.Feature }}
-                        </div>
+                        <div class="text-body2">Category: {{ props.row.Category }}</div>
+                        <div class="text-body2">Feature: {{ props.row.Feature }}</div>
                       </q-tooltip>
                       {{ props.row.Name }}
                     </q-td>
-                    <q-td
-                      key="description"
-                      :props="props"
-                      style="white-space: normal"
-                    >
-                      <div>{{ props.row.Description }}</div>
+                    <q-td key="description" :props="props" style="white-space: normal">
+                      <span style="white-space: pre">{{ props.row.Description }}</span>
                     </q-td>
                     <q-td key="owner" :props="props">
                       {{ props.row.Owner }}
@@ -126,9 +100,7 @@
                       {{ props.row.CreatedDate }}
                     </q-td>
                     <q-td key="use" :props="props">
-                      <q-btn size="sm" outline @click="useKeyword(props.row)"
-                        >Use</q-btn
-                      >
+                      <q-btn size="sm" outline @click="useKeyword(props.row)">Use</q-btn>
                     </q-td>
                   </q-tr>
                 </template>
@@ -137,11 +109,7 @@
           </div>
         </div>
       </q-page-container>
-      <q-footer
-        bordered
-        class="bg-secondary text-white"
-        style="height: 24px; width: -webkit-fill-available"
-      >
+      <q-footer bordered class="bg-secondary text-white" style="height: 24px; width: -webkit-fill-available">
         <div class="row justify-between items-center">
           <div @click="copy(footerInfoLeft)" class="q-pl-sm">
             {{ footerInfoLeft }}
@@ -153,14 +121,7 @@
   </q-dialog>
 </template>
 <script lang="ts">
-import {
-  defineComponent,
-  ref,
-  PropType,
-  Ref,
-  onBeforeMount,
-  computed,
-} from 'vue';
+import { defineComponent, ref, PropType, Ref, onBeforeMount, computed } from 'vue';
 import _ from 'lodash';
 import { QSelect, useDialogPluginComponent, useQuasar } from 'quasar';
 import { TestStepInterface } from '../../../../Models/TestStep';
@@ -193,26 +154,19 @@ export default defineComponent({
   setup(props) {
     const globalStore = useGlobalStore();
     const keywordStore = useKeywordStore();
-    const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
-      useDialogPluginComponent();
+    const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent();
     const { copy } = useClipboard();
     const $q = useQuasar();
     const footerInfoLeft = ref('');
-    const keywordCategories = computed(
-      () => keywordStore.keywordCategories as KeywordCategoryInterface[]
-    );
-    const keywords = computed(
-      () => keywordStore.keywords as KeywordInterface[]
-    );
+    const keywordCategories = computed(() => keywordStore.keywordCategories as KeywordCategoryInterface[]);
+    const keywords = computed(() => keywordStore.keywords as KeywordInterface[]);
     const footerInfoRight = computed(() => `${keywords.value.length} keywords`);
     const filteredKeywordCategories: Ref<KeywordCategoryInterface[]> = ref([]);
     const keywordFeatures: Ref<KeywordFeatureInterface[]> = ref([]);
     const filteredKeywordFeatures: Ref<KeywordFeatureInterface[]> = ref([]);
     const filteredKeywords: Ref<KeywordInterface[]> = ref([]);
-    const selectedKeywordCategory: Ref<KeywordCategoryInterface | null> =
-      ref(null);
-    const selectedKeywordFeature: Ref<KeywordFeatureInterface | null> =
-      ref(null);
+    const selectedKeywordCategory: Ref<KeywordCategoryInterface | null> = ref(null);
+    const selectedKeywordFeature: Ref<KeywordFeatureInterface | null> = ref(null);
     const selectedKeyword: Ref<KeywordInterface | null> = ref(null);
     const selected = ref([]);
     const kwFilter = ref('');
@@ -284,15 +238,7 @@ export default defineComponent({
         sortable: false,
       },
     ];
-    const keywordVisibleColumns: Ref<string[]> = ref([
-      'no',
-      'name',
-      'description',
-      'owner',
-      'updatedMessage',
-      'createdDate',
-      'use',
-    ]);
+    const keywordVisibleColumns: Ref<string[]> = ref(['no', 'name', 'description', 'owner', 'updatedMessage', 'createdDate', 'use']);
 
     onBeforeMount(async () => {
       try {
@@ -305,22 +251,16 @@ export default defineComponent({
         });
       }
       // get all keywordFeatures
-      keywordCategories.value.forEach(
-        (kwCategory: KeywordCategoryInterface) => {
-          if (kwCategory.Features) {
-            kwCategory.Features.forEach(
-              (kwFeature: KeywordFeatureInterface) => {
-                keywordFeatures.value.push(kwFeature);
-              }
-            );
-          }
+      keywordCategories.value.forEach((kwCategory: KeywordCategoryInterface) => {
+        if (kwCategory.Features) {
+          kwCategory.Features.forEach((kwFeature: KeywordFeatureInterface) => {
+            keywordFeatures.value.push(kwFeature);
+          });
         }
-      );
+      });
       // set filteredKeyword and add number
       filteredKeywords.value = keywords.value;
-      filteredKeywords.value = filteredKeywords.value.map(
-        (kw: KeywordInterface, i: number) => ({ ...kw, rowIndex: i + 1 })
-      );
+      filteredKeywords.value = filteredKeywords.value.map((kw: KeywordInterface, i: number) => ({ ...kw, rowIndex: i + 1 }));
     });
 
     function filterCategory(val: string, update: any) {
@@ -332,8 +272,7 @@ export default defineComponent({
             } else {
               const needle = val.toLowerCase();
               filteredKeywordCategories.value = keywordCategories.value.filter(
-                (kwCategory: KeywordCategoryInterface) =>
-                  kwCategory.Name.toLowerCase().indexOf(needle) > -1
+                (kwCategory: KeywordCategoryInterface) => kwCategory.Name.toLowerCase().indexOf(needle) > -1
               );
             }
           },
@@ -351,9 +290,7 @@ export default defineComponent({
       }, 100);
     }
 
-    function onFeatureChange(
-      newKeywordFeature: KeywordFeatureInterface | null
-    ) {
+    function onFeatureChange(newKeywordFeature: KeywordFeatureInterface | null) {
       filteredKeywords.value = [];
       if (selectedKeywordCategory.value == null) {
         // No category is selected
@@ -361,33 +298,24 @@ export default defineComponent({
           filteredKeywords.value = keywords.value;
         } else {
           // Load all keywords base on Feature
-          keywordCategories.value.forEach(
-            (kwCategory: KeywordCategoryInterface) => {
-              if (kwCategory.Features) {
-                kwCategory.Features.forEach(
-                  (kwFeature: KeywordFeatureInterface) => {
-                    if (kwFeature.Name === newKeywordFeature.Name) {
-                      if (kwFeature.Keywords) {
-                        kwFeature.Keywords.forEach(
-                          (kwKeyword: KeywordInterface) => {
-                            filteredKeywords.value.push(kwKeyword);
-                          }
-                        );
-                      }
-                    }
+          keywordCategories.value.forEach((kwCategory: KeywordCategoryInterface) => {
+            if (kwCategory.Features) {
+              kwCategory.Features.forEach((kwFeature: KeywordFeatureInterface) => {
+                if (kwFeature.Name === newKeywordFeature.Name) {
+                  if (kwFeature.Keywords) {
+                    kwFeature.Keywords.forEach((kwKeyword: KeywordInterface) => {
+                      filteredKeywords.value.push(kwKeyword);
+                    });
                   }
-                );
-              }
+                }
+              });
             }
-          );
+          });
         }
       } else if (newKeywordFeature == null) {
         // No Feature is selected
         // Load all keyword that contains category
-        const kwCategory = keywordCategories.value.find(
-          (kwCat: KeywordCategoryInterface) =>
-            kwCat.Name === selectedKeywordCategory.value?.Name
-        );
+        const kwCategory = keywordCategories.value.find((kwCat: KeywordCategoryInterface) => kwCat.Name === selectedKeywordCategory.value?.Name);
         if (kwCategory !== undefined && kwCategory.Features) {
           kwCategory.Features.forEach((kwFeature: KeywordFeatureInterface) => {
             if (kwFeature.Keywords) {
@@ -400,10 +328,7 @@ export default defineComponent({
       } else {
         // Load all keyword that contains both category and feature
         // filteredKeywords.value = keywords.value
-        const kwCategory = keywordCategories.value.find(
-          (kwCat: KeywordCategoryInterface) =>
-            kwCat.Name === selectedKeywordCategory.value?.Name
-        );
+        const kwCategory = keywordCategories.value.find((kwCat: KeywordCategoryInterface) => kwCat.Name === selectedKeywordCategory.value?.Name);
         if (kwCategory !== undefined && kwCategory.Features) {
           kwCategory.Features.forEach((kwFeature: KeywordFeatureInterface) => {
             if (kwFeature.Name === newKeywordFeature?.Name) {
@@ -416,14 +341,10 @@ export default defineComponent({
           });
         }
       }
-      filteredKeywords.value = filteredKeywords.value.map(
-        (kw: KeywordInterface, i: number) => ({ ...kw, rowIndex: i + 1 })
-      );
+      filteredKeywords.value = filteredKeywords.value.map((kw: KeywordInterface, i: number) => ({ ...kw, rowIndex: i + 1 }));
     }
 
-    function onCategoryChange(
-      newKeywordCategory: KeywordCategoryInterface | null
-    ) {
+    function onCategoryChange(newKeywordCategory: KeywordCategoryInterface | null) {
       if (newKeywordCategory === null) {
         // will display all features
         filteredKeywordFeatures.value = keywordFeatures.value;
@@ -445,8 +366,7 @@ export default defineComponent({
               const needle = val.toLowerCase();
               // eslint-disable-next-line max-len
               filteredKeywordFeatures.value = keywordFeatures.value.filter(
-                (kwFeature: KeywordFeatureInterface) =>
-                  kwFeature.Name.toLowerCase().indexOf(needle) > -1
+                (kwFeature: KeywordFeatureInterface) => kwFeature.Name.toLowerCase().indexOf(needle) > -1
               );
             }
           },

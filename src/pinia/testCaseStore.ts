@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { useUserStore } from '../pinia/userStore';
-import { api } from '../boot/axios';
+import { api, controller } from '../boot/axios';
 import _ from 'lodash';
 import uuid from 'uuid-random';
 import { TestCaseInterface } from '../Models/TestCase';
@@ -237,6 +237,7 @@ export const useTestCaseStore = defineStore('testcase', {
     },
     async GetLastRegressionResult(testCaseId: string) {
       try {
+        if (controller) controller.abort();
         const userStore = useUserStore();
         const response = await api.get(`testcases/getlastregressionresult/${testCaseId}`, {
           headers: {

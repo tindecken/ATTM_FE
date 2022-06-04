@@ -6,6 +6,8 @@ import { RegressionTestInterface } from '../Models/RegressionTest';
 import { AxiosError } from 'axios';
 import { FindRegressionTestDataInterface } from '../Models/Entities/FindRegressionTestData';
 
+let abortController: AbortController;
+
 export const useRegMonitoringStore = defineStore('regMonitoring', {
   state: () => ({
     regTests: [] as RegressionTestInterface[],
@@ -41,9 +43,12 @@ export const useRegMonitoringStore = defineStore('regMonitoring', {
   },
   actions: {
     async getRegressionDetail(regressionId: string) {
+      if (abortController) abortController.abort();
       try {
+        abortController = new AbortController();
         const userStore = useUserStore();
         const response = await api.get(`/regressions/${regressionId}/getdetail`, {
+          signal: abortController.signal,
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${userStore.Token}`,
@@ -73,7 +78,8 @@ export const useRegMonitoringStore = defineStore('regMonitoring', {
       } catch (error: any) {
         if (error.isAxiosError) {
           const e: AxiosError = error;
-          throw e.response.data;
+          if (e.code === 'ERR_CANCELED') return;
+          else throw e.response.data;
         } else {
           console.log('a', error);
           throw error;
