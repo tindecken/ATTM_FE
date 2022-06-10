@@ -51,9 +51,7 @@
             :model-value="props.row.Description"
             dense
             borderless
-            @update:model-value="
-                        updateDescription(props.row, $event as string)
-                      "
+            @update:model-value="updateDescription(props.row, $event as string)"
             debounce="500"
             style="font-style: oblique"
             class="items-center"
