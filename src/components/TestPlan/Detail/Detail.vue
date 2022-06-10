@@ -23,6 +23,7 @@
               }"
               @click.stop="closeTab(testcase)"
             ></q-btn>
+            <q-space />
             <q-separator vertical></q-separator>
           </q-tab>
         </q-tabs>
@@ -57,7 +58,7 @@ import { TestParamInterface } from '../../../Models/TestParam';
 import _ from 'lodash';
 import uuid from 'uuid-random';
 import { TestEnvNodeInterface } from '../../../Models/TestEnv';
-import { FlatKeywordInterface } from '../../../Models/FlatKeyword';
+
 import { useQuasar } from 'quasar';
 import { TestCaseHistoryInterface } from '../../../Models/TestCaseHistory';
 import { UpdateTestCaseDataInterface } from '../../../Models/Entities/UpdateTestCaseData';
@@ -70,7 +71,7 @@ import { useTestClientStore } from '../../../pinia/testClientStore';
 
 import TestEnvironmentDialog from './Dialog/TestEnvironmentDialog.vue';
 import CloseTestCaseDialog from './Dialog/CloseTestCaseDialog.vue';
-import KeywordEditorDialog from './Dialog/KeywordEditorDialog.vue';
+
 import SearchKeywordDialog from './Dialog/SearchKeywordDialog.vue';
 import SaveTestCaseDialog from './Dialog/SaveTestCaseDialog.vue';
 import TestCase from './TestCase.vue';
@@ -239,49 +240,6 @@ const saveTestCase = (testCaseId: string) =>
       });
   });
 
-function changeKeyword(testCase: TestCaseInterface, testStep: TestStepInterface, newKeyword: FlatKeywordInterface) {
-  // find edited testStep
-  const stepIndex: number = testCase.TestSteps.indexOf(testStep);
-  const tempTC: TestCaseInterface = _.cloneDeep(testCase);
-  tempTC.TestSteps[stepIndex].Params = [];
-  tempTC.TestSteps[stepIndex].Keyword = newKeyword;
-  tempTC.TestSteps[stepIndex].KWFeature = newKeyword.Feature;
-  tempTC.TestSteps[stepIndex].KWCategory = newKeyword.Category;
-  // add default Params to testCase based on number of params of Keyword
-  newKeyword.Params.forEach((pr: TestParamInterface) => {
-    const prClone = _.cloneDeep(pr);
-    prClone.TestNodePath = '';
-    tempTC.TestSteps[stepIndex].Params.push(prClone);
-  });
-  testCaseStore.updateOpenedTCs(tempTC);
-  categoryStore.updateTestCase(tempTC);
-}
-
-function editTestStep(testCase: TestCaseInterface, testStep: TestStepInterface) {
-  console.log('editTestStep', testCase, testStep);
-  $q.dialog({
-    component: KeywordEditorDialog,
-    componentProps: {
-      TestCase: testCase,
-      TestStep: testStep,
-    },
-  })
-    .onOk((testStepUpdated: TestStepInterface) => {
-      console.log('testStep updated', testStepUpdated);
-      const stepIndex = testCase.TestSteps.findIndex((ts: TestStepInterface) => ts.UUID === testStepUpdated.UUID);
-      if (stepIndex === -1) return;
-      const tempTC = _.cloneDeep(testCase);
-      tempTC.TestSteps[stepIndex] = testStepUpdated;
-      testCaseStore.updateOpenedTCs(tempTC);
-      categoryStore.updateTestCase(tempTC);
-    })
-    .onCancel(() => {
-      // TODO
-    })
-    .onDismiss(() => {
-      // TODO
-    });
-}
 function searchKeyword(testCase: TestCaseInterface, testStep: TestStepInterface) {
   console.log('searchKeyword', testCase, testStep);
   $q.dialog({
@@ -360,102 +318,6 @@ function onTabChanging() {
   });
 }
 
-function onDeleteTestSteps() {
-  const currTestCase = openedTCs.value.find((tc: TestCaseInterface) => tc.Id === selectedTestCaseId.value) as TestCaseInterface;
-  selected.value.forEach((selectedTestStep: TestStepInterface) => {
-    currTestCase.TestSteps.forEach((testStep: TestStepInterface) => {
-      if (testStep.UUID === selectedTestStep.UUID) {
-        testCaseStore.deleteStep({
-          testCaseId: selectedTestCaseId.value,
-          stepUUID: selectedTestStep.UUID,
-        });
-      }
-    });
-  });
-  selected.value = [];
-}
-
-function onCopyTestSteps(testCase: TestCaseInterface) {
-  selected.value.sort((a, b) => testCase.TestSteps.indexOf(a) - testCase.TestSteps.indexOf(b));
-  if (selected.value.length > 0) {
-    testStepStore.setCopiedTestSteps(selected.value);
-  }
-}
-function onCutTestSteps(testCase: TestCaseInterface) {
-  onCopyTestSteps(testCase);
-  onDeleteTestSteps();
-}
-
-function onInsertTestSteps(testCase: TestCaseInterface, number: number) {
-  const tempTC: TestCaseInterface = _.cloneDeep(testCase);
-  let lastTestAUTId = '';
-  if (tempTC.TestSteps.length > 0) {
-    // incase there's no testSteps
-    lastTestAUTId = tempTC.TestSteps[rightClickIndex.value].TestAUTId;
-  }
-  // eslint-disable-next-line no-plusplus
-  for (let index = 0; index < number; index++) {
-    tempTC.TestSteps.splice(rightClickIndex.value, 0, {
-      UUID: uuid(),
-      TestAUTId: lastTestAUTId,
-      Description: '',
-      Params: [],
-      IsDisabled: false,
-      IsComment: false,
-      KWFeature: '',
-      KWCategory: '',
-    });
-  }
-  testCaseStore.updateOpenedTCs(tempTC);
-  categoryStore.updateTestCase(tempTC);
-}
-
-function onPasteTestSteps(testCase: TestCaseInterface) {
-  if (copiedTestSteps.value.length === 0) return;
-  const tempTC: TestCaseInterface = _.cloneDeep(testCase);
-  copiedTestSteps.value.forEach((copyTS: TestStepInterface) => {
-    console.log('before', rightClickIndex.value);
-    tempTC.TestSteps[rightClickIndex.value] = copyTS;
-    rightClickIndex.value += 1;
-    console.log('after', rightClickIndex.value);
-  });
-  testCaseStore.updateOpenedTCs(tempTC);
-  categoryStore.updateTestCase(tempTC);
-}
-
-function onInsertPasteTestSteps(testCase: TestCaseInterface) {
-  const tempTC: TestCaseInterface = _.cloneDeep(testCase);
-  if (copiedTestSteps.value.length === 0) return;
-  // insert blank test step
-  let lastTestAUTId = '';
-  if (tempTC.TestSteps.length > 0) {
-    // incase there's no testSteps
-    lastTestAUTId = tempTC.TestSteps[rightClickIndex.value].TestAUTId;
-  }
-  // eslint-disable-next-line no-plusplus
-  for (let index = 0; index < copiedTestSteps.value.length; index++) {
-    tempTC.TestSteps.splice(rightClickIndex.value, 0, {
-      UUID: uuid(),
-      TestAUTId: lastTestAUTId,
-      Description: '',
-      Params: [],
-      IsDisabled: false,
-      IsComment: false,
-      KWFeature: '',
-      KWCategory: '',
-    });
-  }
-  // paste copiedTestSteps
-  copiedTestSteps.value.forEach((copyTS: TestStepInterface) => {
-    console.log('before', rightClickIndex.value);
-    tempTC.TestSteps[rightClickIndex.value] = copyTS;
-    rightClickIndex.value += 1;
-    console.log('after', rightClickIndex.value);
-  });
-  testCaseStore.updateOpenedTCs(tempTC);
-  categoryStore.updateTestCase(tempTC);
-}
-
 function updateDescription(testCase: TestCaseInterface, testStep: TestStepInterface, newTSDescription: string) {
   const stepIndex: number = testCase.TestSteps.indexOf(testStep);
   const tempTC: TestCaseInterface = _.cloneDeep(testCase);
@@ -502,3 +364,14 @@ function getSelectedString() {
   return selected.value.length === 0 ? '' : `${selected.value.length} step${selected.value.length > 1 ? 's' : ''} selected.`;
 }
 </script>
+<style scoped lang="scss">
+:deep(.q-tab) {
+  padding-right: 0px;
+  padding-left: 8px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+:deep(.q-tab-panel) {
+  padding: 1px;
+}
+</style>

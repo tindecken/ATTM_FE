@@ -79,13 +79,13 @@
             @insertDescription="onInsertDescription($event)"
             @enableRows="onEnableRows()"
             @disableRows="onDisableRows()"
-            @copyTestSteps="onCopyTestSteps(tc)"
-            @cutTestSteps="onCutTestSteps(tc)"
-            @pasteTestSteps="onPasteTestSteps(tc)"
+            @copyTestSteps="onCopyTestSteps()"
+            @cutTestSteps="onCutTestSteps()"
+            @pasteTestSteps="onPasteTestSteps()"
             @deleteTestSteps="onDeleteTestSteps()"
             @beforeShowDialog="onBeforeShowDialog(props.row)"
-            @insertTestSteps="onInsertTestSteps(tc, 1)"
-            @insertPasteTestSteps="onInsertPasteTestSteps(tc)"
+            @insertTestSteps="onInsertTestSteps(1)"
+            @insertPasteTestSteps="onInsertPasteTestSteps()"
           ></no>
         </q-td>
         <q-td key="testAUT" :props="props" class="q-c-input">
@@ -94,8 +94,8 @@
         <q-td key="keyword" :props="props" class="q-c-input">
           <keyword
             :TestStep="props.row"
-            @changeKeyword="changeKeyword(tc, props.row, $event)"
-            @editTestStep="editTestStep(tc, props.row)"
+            @changeKeyword="changeKeyword(props.row, $event)"
+            @editTestStep="editTestStep(props.row)"
             @searchKeyword="searchKeyword(tc, props.row)"
           />
         </q-td>
@@ -130,12 +130,14 @@ import { useQuasar } from 'quasar';
 import TestAUT from './Cells/TestAUT.vue';
 import Keyword from './Cells/Keyword.vue';
 import Parameter from './Cells/Parameter.vue';
+import { FlatKeywordInterface } from '../../../Models/FlatKeyword';
 import No from './Cells/No.vue';
 import { TestCaseInterface } from '../../../Models/TestCase';
 import { useGlobalStore } from '../../../pinia/globalStore';
 import { TestStepInterface } from '../../../Models/TestStep';
 import { testCaseColumns } from '../../../components/tableColumns';
 import uuid from 'uuid-random';
+import _ from 'lodash';
 import { useRefHistory } from '@vueuse/core';
 import ViewGenerateCodeDialog from '../Tree/Dialog/ViewGenerateCodeDialog.vue';
 import { useTestClientStore } from '../../../pinia/testClientStore';
@@ -145,6 +147,9 @@ import { useUserStore } from '../../../pinia/userStore';
 import { TestCaseHistoryInterface } from '../../../Models/TestCaseHistory';
 import { useTestCaseStore } from '../../../pinia/testCaseStore';
 import AddDescriptionDialog from './Dialog/AddDescriptionDialog.vue';
+import { useTestStepStore } from '../../../pinia/testStepStore';
+import { TestParamInterface } from '../../../Models/TestParam';
+import KeywordEditorDialog from './Dialog/KeywordEditorDialog.vue';
 
 const props = defineProps<{
   TestCaseProp: TestCaseInterface;
@@ -159,8 +164,10 @@ const columns = ref(testCaseColumns);
 const testClientStore = useTestClientStore();
 const userStore = useUserStore();
 const testCaseStore = useTestCaseStore();
+const testStepStore = useTestStepStore();
 const selectedTestClient = computed(() => testClientStore.selectedTestClient);
 const selectedTestSteps: Ref<TestStepInterface[]> = ref([]);
+const copiedTestSteps: Ref<TestStepInterface[]> = computed(() => testStepStore.copiedTestSteps);
 const rightClickIndex = ref(-1);
 
 function disabledStyle(row: TestStepInterface) {
@@ -480,6 +487,126 @@ function onInsertDescription(testStep: TestStepInterface) {
       // TODO
     });
 }
+
+function onCopyTestSteps() {
+  selectedTestSteps.value.sort((a, b) => TestCase.value.TestSteps.indexOf(a) - TestCase.value.TestSteps.indexOf(b));
+  if (selectedTestSteps.value.length > 0) {
+    testStepStore.setCopiedTestSteps(selectedTestSteps.value);
+  }
+}
+
+function onDeleteTestSteps() {
+  selectedTestSteps.value.forEach((selectedTestStep: TestStepInterface) => {
+    TestCase.value.TestSteps.forEach((testStep: TestStepInterface) => {
+      if (testStep.UUID === selectedTestStep.UUID) {
+        const index: number = TestCase.value.TestSteps.indexOf(testStep);
+        TestCase.value.TestSteps.splice(index, 1);
+      }
+    });
+  });
+  selectedTestSteps.value = [];
+}
+
+function onCutTestSteps() {
+  onCopyTestSteps();
+  onDeleteTestSteps();
+}
+
+function onPasteTestSteps() {
+  if (copiedTestSteps.value.length === 0) return;
+  copiedTestSteps.value.forEach((copyTS: TestStepInterface) => {
+    console.log('before', rightClickIndex.value);
+    TestCase.value.TestSteps[rightClickIndex.value] = copyTS;
+    rightClickIndex.value += 1;
+    console.log('after', rightClickIndex.value);
+  });
+}
+
+function onInsertTestSteps(number: number) {
+  let lastTestAUTId = '';
+  if (TestCase.value.TestSteps.length > 0) {
+    // incase there's no testSteps
+    lastTestAUTId = TestCase.value.TestSteps[rightClickIndex.value].TestAUTId;
+  }
+  // eslint-disable-next-line no-plusplus
+  for (let index = 0; index < number; index++) {
+    TestCase.value.TestSteps.splice(rightClickIndex.value, 0, {
+      UUID: uuid(),
+      TestAUTId: lastTestAUTId,
+      Description: '',
+      Params: [],
+      IsDisabled: false,
+      IsComment: false,
+      KWFeature: '',
+      KWCategory: '',
+    });
+  }
+}
+
+function onInsertPasteTestSteps() {
+  if (copiedTestSteps.value.length === 0) return;
+  // insert blank test step
+  let lastTestAUTId = '';
+  if (TestCase.value.TestSteps.length > 0) {
+    // incase there's no testSteps
+    lastTestAUTId = TestCase.value.TestSteps[rightClickIndex.value].TestAUTId;
+  }
+  for (let index = 0; index < copiedTestSteps.value.length; index++) {
+    TestCase.value.TestSteps.splice(rightClickIndex.value, 0, {
+      UUID: uuid(),
+      TestAUTId: lastTestAUTId,
+      Description: '',
+      Params: [],
+      IsDisabled: false,
+      IsComment: false,
+      KWFeature: '',
+      KWCategory: '',
+    });
+  }
+  // paste copiedTestSteps
+  copiedTestSteps.value.forEach((copyTS: TestStepInterface) => {
+    TestCase.value.TestSteps[rightClickIndex.value] = copyTS;
+    rightClickIndex.value += 1;
+  });
+}
+
+function changeKeyword(testStep: TestStepInterface, newKeyword: FlatKeywordInterface) {
+  // find edited testStep
+  const stepIndex: number = TestCase.value.TestSteps.indexOf(testStep);
+  TestCase.value.TestSteps[stepIndex].Params = [];
+  TestCase.value.TestSteps[stepIndex].Keyword = newKeyword;
+  TestCase.value.TestSteps[stepIndex].KWFeature = newKeyword.Feature;
+  TestCase.value.TestSteps[stepIndex].KWCategory = newKeyword.Category;
+  // add default Params to testCase based on number of params of Keyword
+  newKeyword.Params.forEach((pr: TestParamInterface) => {
+    const prClone = _.cloneDeep(pr);
+    prClone.TestNodePath = '';
+    TestCase.value.TestSteps[stepIndex].Params.push(prClone);
+  });
+}
+
+function editTestStep(testStep: TestStepInterface) {
+  console.log('editTestStep', TestCase.value, testStep);
+  $q.dialog({
+    component: KeywordEditorDialog,
+    componentProps: {
+      TestCase: TestCase.value,
+      TestStep: testStep,
+    },
+  })
+    .onOk((testStepUpdated: TestStepInterface) => {
+      console.log('testStep updated', testStepUpdated);
+      const stepIndex = TestCase.value.TestSteps.findIndex((ts: TestStepInterface) => ts.UUID === testStepUpdated.UUID);
+      if (stepIndex === -1) return;
+      TestCase.value.TestSteps[stepIndex] = testStepUpdated;
+    })
+    .onCancel(() => {
+      // TODO
+    })
+    .onDismiss(() => {
+      // TODO
+    });
+}
 </script>
 <style scoped lang="scss">
 :deep(.q-table-control) {
@@ -496,15 +623,6 @@ function onInsertDescription(testStep: TestStepInterface) {
 }
 :deep(tr.tsDescription label .q-field__control) {
   height: -webkit-fill-available;
-}
-:deep(.q-tab) {
-  padding-right: 2px;
-  padding-left: 4px;
-  padding-top: 0px;
-  padding-bottom: 0px;
-}
-:deep(.q-tab-panel) {
-  padding: 1px;
 }
 
 :deep(td.q-c-input) {

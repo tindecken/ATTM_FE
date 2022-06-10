@@ -8,25 +8,12 @@
     >
       <q-header reveal bordered class="row justify-between bg-secondary">
         <div class="self-center text-subtitle1 q-pl-sm">Add Description</div>
-        <q-btn
-          class="self-center"
-          dense
-          flat
-          icon="close"
-          @click="onDialogHide"
-        >
+        <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
           <q-tooltip>Close</q-tooltip>
         </q-btn>
       </q-header>
       <q-page-container>
-        <q-form
-          @submit="onOKClick"
-          greedy
-          @validation-success="isFormValid = true"
-          @validation-error="isFormValid = false"
-          ref="formRef"
-          class="q-pa-sm"
-        >
+        <q-form @submit="onOKClick" greedy @validation-success="isFormValid = true" @validation-error="isFormValid = false" ref="formRef" class="q-pa-sm">
           <div class="row">
             <div class="col">
               <q-input
@@ -36,10 +23,7 @@
                 dense
                 v-model="description"
                 @blur="validateForm()"
-                :rules="[
-                  (val) => !!val || '* Required',
-                  (val) => val.length < 100 || 'Maximum is 100 chars',
-                ]"
+                :rules="[(val) => !!val || '* Required', (val) => val.length < 100 || 'Maximum is 100 chars']"
                 lazy-rules
                 @mouseup.enter="onOKClick()"
               />
@@ -47,12 +31,7 @@
           </div>
           <div class="column items-end q-mt-md">
             <div class="col">
-              <q-btn
-                flat
-                label="Cancel"
-                @click="onCancelClick()"
-                class="q-mr-sm"
-              />
+              <q-btn flat label="Cancel" @click="onCancelClick()" class="q-mr-sm" />
               <q-btn outline label="Create" type="submit" color="primary" />
             </div>
           </div>
@@ -84,8 +63,7 @@ export default defineComponent({
   components: {},
   setup() {
     const globalStore = useGlobalStore();
-    const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
-      useDialogPluginComponent();
+    const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent();
     const description = ref('');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const isDark = computed(() => globalStore.darkTheme);
