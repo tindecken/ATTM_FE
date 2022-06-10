@@ -51,43 +51,22 @@ export default {
 
 <script setup lang="ts">
 import { computed, Ref, ref } from 'vue';
-import { TestAUTInterface } from '../../../Models/TestAUT';
 import { TestCaseInterface } from '../../../Models/TestCase';
-import { TestStepInterface } from '../../../Models/TestStep';
-import { TestParamInterface } from '../../../Models/TestParam';
 import _ from 'lodash';
-import uuid from 'uuid-random';
-import { TestEnvNodeInterface } from '../../../Models/TestEnv';
-
 import { useQuasar } from 'quasar';
 import { TestCaseHistoryInterface } from '../../../Models/TestCaseHistory';
 import { UpdateTestCaseDataInterface } from '../../../Models/Entities/UpdateTestCaseData';
 import { useUserStore } from '../../../pinia/userStore';
-import { useGlobalStore } from '../../../pinia/globalStore';
-import { useCategoryStore } from '../../../pinia/categoryStore';
 import { useTestCaseStore } from '../../../pinia/testCaseStore';
-import { useTestStepStore } from '../../../pinia/testStepStore';
-import { useTestClientStore } from '../../../pinia/testClientStore';
-
-import TestEnvironmentDialog from './Dialog/TestEnvironmentDialog.vue';
 import CloseTestCaseDialog from './Dialog/CloseTestCaseDialog.vue';
-
-import SearchKeywordDialog from './Dialog/SearchKeywordDialog.vue';
 import SaveTestCaseDialog from './Dialog/SaveTestCaseDialog.vue';
 import TestCase from './TestCase.vue';
 import { testCaseColumns } from '../../../components/tableColumns';
 
-const globalStore = useGlobalStore();
 const userStore = useUserStore();
-const categoryStore = useCategoryStore();
 const testCaseStore = useTestCaseStore();
-const testStepStore = useTestStepStore();
-const testClientStore = useTestClientStore();
 const $q = useQuasar();
 const showByIndex = ref('');
-const selected: Ref<any[]> = ref([]);
-const filterTable = ref('');
-const isDark = computed(() => globalStore.darkTheme);
 const columns = ref(testCaseColumns);
 
 const selectedTestCaseId: Ref<string> = computed({
@@ -96,10 +75,8 @@ const selectedTestCaseId: Ref<string> = computed({
     testCaseStore.setSelectedTestCaseId(val);
   },
 });
-const selectedTestClient = computed(() => testClientStore.selectedTestClient);
 
 const openedTCs: Ref<TestCaseInterface[]> = computed(() => testCaseStore.openedTCs);
-const copiedTestSteps: Ref<TestStepInterface[]> = computed(() => testStepStore.copiedTestSteps);
 
 async function closeTab(testcase: TestCaseInterface) {
   // check if testcase is modified or not
@@ -240,128 +217,12 @@ const saveTestCase = (testCaseId: string) =>
       });
   });
 
-function searchKeyword(testCase: TestCaseInterface, testStep: TestStepInterface) {
-  console.log('searchKeyword', testCase, testStep);
-  $q.dialog({
-    component: SearchKeywordDialog,
-    componentProps: {
-      TestCase: testCase,
-      TestStep: testStep,
-    },
-  })
-    .onOk((testStepUpdated: TestStepInterface) => {
-      console.log('testStep updated', testStepUpdated);
-      const stepIndex = testCase.TestSteps.findIndex((ts: TestStepInterface) => ts.UUID === testStepUpdated.UUID);
-      if (stepIndex === -1) return;
-      const tempTC = _.cloneDeep(testCase);
-      tempTC.TestSteps[stepIndex].Params = [];
-      tempTC.TestSteps[stepIndex].Keyword = testStepUpdated.Keyword;
-      tempTC.TestSteps[stepIndex].KWFeature = testStepUpdated.KWFeature;
-      tempTC.TestSteps[stepIndex].KWCategory = testStepUpdated.KWCategory;
-      // add default Params to testCase based on number of params of Keyword
-      testStepUpdated.Params.forEach((pr: TestParamInterface) => {
-        const prClone = _.cloneDeep(pr);
-        prClone.TestNodePath = '';
-        tempTC.TestSteps[stepIndex].Params.push(prClone);
-      });
-      testCaseStore.updateOpenedTCs(tempTC);
-      categoryStore.updateTestCase(tempTC);
-    })
-    .onCancel(() => {
-      // TODO
-    })
-    .onDismiss(() => {
-      // TODO
-    });
-}
-
-function changeTestAUT(testCase: TestCaseInterface, testStep: TestStepInterface, newTestAUT: TestAUTInterface) {
-  // find edited testStep
-  const stepIndex: number = testCase.TestSteps.indexOf(testStep);
-  const tempTC: TestCaseInterface = _.cloneDeep(testCase);
-  tempTC.TestSteps[stepIndex].TestAUTId = newTestAUT.Id;
-  testCaseStore.updateOpenedTCs(tempTC);
-  categoryStore.updateTestCase(tempTC);
-}
-
-function changeParam(testCase: TestCaseInterface, testStep: TestStepInterface, paramIndex: number, newValue: string) {
-  const stepIndex: number = testCase.TestSteps.indexOf(testStep);
-  const tempTC: TestCaseInterface = _.cloneDeep(testCase);
-  tempTC.TestSteps[stepIndex].Params[paramIndex].Value = newValue;
-  testCaseStore.updateOpenedTCs(tempTC);
-  categoryStore.updateTestCase(tempTC);
-}
-
-function updateTestEnvValue(testCase: TestCaseInterface, testStep: TestStepInterface, paramIndex: number, testEnvNode: TestEnvNodeInterface) {
-  const stepIndex: number = testCase.TestSteps.indexOf(testStep);
-  const tempTC: TestCaseInterface = _.cloneDeep(testCase);
-  tempTC.TestSteps[stepIndex].Params[paramIndex].TestNodePath = `${testEnvNode.Category}/${testEnvNode.Name}`;
-  tempTC.TestSteps[stepIndex].Params[paramIndex].Value = testEnvNode.Value;
-  testCaseStore.updateOpenedTCs(tempTC);
-  categoryStore.updateTestCase(tempTC);
-}
-
-function onUnUseTestEnv(testCase: TestCaseInterface, testStep: TestStepInterface, paramIndex: number, currentValue: string) {
-  const stepIndex: number = testCase.TestSteps.indexOf(testStep);
-  const tempTC: TestCaseInterface = _.cloneDeep(testCase);
-  tempTC.TestSteps[stepIndex].Params[paramIndex].TestNodePath = '';
-  tempTC.TestSteps[stepIndex].Params[paramIndex].Value = currentValue;
-  testCaseStore.updateOpenedTCs(tempTC);
-  categoryStore.updateTestCase(tempTC);
-}
-
 function onTabChanging() {
   columns.value.forEach((col: any, index: number) => {
     if (index >= 3) {
       columns.value[index].label = `Param ${index - 2}`;
     }
   });
-}
-
-function updateDescription(testCase: TestCaseInterface, testStep: TestStepInterface, newTSDescription: string) {
-  const stepIndex: number = testCase.TestSteps.indexOf(testStep);
-  const tempTC: TestCaseInterface = _.cloneDeep(testCase);
-  tempTC.TestSteps[stepIndex].Description = newTSDescription;
-  testCaseStore.updateOpenedTCs(tempTC);
-  categoryStore.updateTestCase(tempTC);
-}
-function filterMethod(rows: TestStepInterface[], filter: string): TestStepInterface[] {
-  let filtered: TestStepInterface[] = [];
-  console.log('rows', rows);
-  console.log('filter', filter);
-  filtered = rows.filter((row: TestStepInterface) => {
-    if (
-      !row.Keyword?.Name.toLowerCase().includes(filter.toLowerCase()) &&
-      !row.Params.some((pr: TestParamInterface) => pr.Value?.toLowerCase().includes(filter.toLowerCase()))
-    )
-      return false;
-    return true;
-  });
-  return filtered;
-}
-
-function onUseTestEnv(testCase: TestCaseInterface, testStep: TestStepInterface, index: number) {
-  // open new testEnv dialog
-  $q.dialog({
-    component: TestEnvironmentDialog,
-  })
-    .onOk((node: TestEnvNodeInterface) => {
-      // TODO: handle ok
-      console.log('node', node);
-      if (node) {
-        updateTestEnvValue(testCase, testStep, index, node);
-      }
-    })
-    .onCancel(() => {
-      // TODO
-    })
-    .onDismiss(() => {
-      // TODO
-    });
-}
-
-function getSelectedString() {
-  return selected.value.length === 0 ? '' : `${selected.value.length} step${selected.value.length > 1 ? 's' : ''} selected.`;
 }
 </script>
 <style scoped lang="scss">

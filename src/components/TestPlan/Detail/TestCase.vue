@@ -52,7 +52,7 @@
             dense
             borderless
             @update:model-value="
-                        updateDescription(tc, props.row, $event as string)
+                        updateDescription(props.row, $event as string)
                       "
             debounce="500"
             style="font-style: oblique"
@@ -89,23 +89,23 @@
           ></no>
         </q-td>
         <q-td key="testAUT" :props="props" class="q-c-input">
-          <test-a-u-t :TestStep="props.row" @changeTestAUT="changeTestAUT(tc, props.row, $event)"></test-a-u-t>
+          <test-a-u-t :TestStep="props.row" @changeTestAUT="changeTestAUT(props.row, $event)"></test-a-u-t>
         </q-td>
         <q-td key="keyword" :props="props" class="q-c-input">
           <keyword
             :TestStep="props.row"
             @changeKeyword="changeKeyword(props.row, $event)"
             @editTestStep="editTestStep(props.row)"
-            @searchKeyword="searchKeyword(tc, props.row)"
+            @searchKeyword="searchKeyword(props.row)"
           />
         </q-td>
         <q-td v-for="index in 20" :key="index" class="q-c-input">
           <parameter
             :TestStep="props.row"
             :ParamIndex="index - 1"
-            @changeParam="changeParam(tc, props.row, index - 1, $event)"
-            @useTestEnv="onUseTestEnv(tc, props.row, index - 1)"
-            @unUseTestEnv="onUnUseTestEnv(tc, props.row, index - 1, $event)"
+            @changeParam="changeParam(props.row, index - 1, $event)"
+            @useTestEnv="onUseTestEnv(props.row, index - 1)"
+            @unUseTestEnv="onUnUseTestEnv(props.row, index - 1, $event)"
           >
           </parameter>
         </q-td>
@@ -143,6 +143,7 @@ import ViewGenerateCodeDialog from '../Tree/Dialog/ViewGenerateCodeDialog.vue';
 import { useTestClientStore } from '../../../pinia/testClientStore';
 import { UpdateTestCaseDataInterface } from '../../../Models/Entities/UpdateTestCaseData';
 import SaveTestCaseDialog from './Dialog/SaveTestCaseDialog.vue';
+import TestEnvironmentDialog from './Dialog/TestEnvironmentDialog.vue';
 import { useUserStore } from '../../../pinia/userStore';
 import { TestCaseHistoryInterface } from '../../../Models/TestCaseHistory';
 import { useTestCaseStore } from '../../../pinia/testCaseStore';
@@ -150,12 +151,16 @@ import AddDescriptionDialog from './Dialog/AddDescriptionDialog.vue';
 import { useTestStepStore } from '../../../pinia/testStepStore';
 import { TestParamInterface } from '../../../Models/TestParam';
 import KeywordEditorDialog from './Dialog/KeywordEditorDialog.vue';
+import SearchKeywordDialog from './Dialog/SearchKeywordDialog.vue';
+import { TestEnvNodeInterface } from '../../../Models/TestEnv';
+import { TestAUTInterface } from '../../../Models/TestAUT';
 
 const props = defineProps<{
   TestCaseProp: TestCaseInterface;
 }>();
 
 const TestCase = ref(props.TestCaseProp);
+const filterTable = ref('');
 const { undo, redo, canUndo, canRedo } = useRefHistory(TestCase, { deep: true });
 const globalStore = useGlobalStore();
 const $q = useQuasar();
@@ -606,6 +611,95 @@ function editTestStep(testStep: TestStepInterface) {
     .onDismiss(() => {
       // TODO
     });
+}
+
+function searchKeyword(testStep: TestStepInterface) {
+  $q.dialog({
+    component: SearchKeywordDialog,
+    componentProps: {
+      TestCase: TestCase.value,
+      TestStep: testStep,
+    },
+  })
+    .onOk((testStepUpdated: TestStepInterface) => {
+      console.log('testStep updated', testStepUpdated);
+      const stepIndex = TestCase.value.TestSteps.findIndex((ts: TestStepInterface) => ts.UUID === testStepUpdated.UUID);
+      if (stepIndex === -1) return;
+      TestCase.value.TestSteps[stepIndex].Params = [];
+      TestCase.value.TestSteps[stepIndex].Keyword = testStepUpdated.Keyword;
+      TestCase.value.TestSteps[stepIndex].KWFeature = testStepUpdated.KWFeature;
+      TestCase.value.TestSteps[stepIndex].KWCategory = testStepUpdated.KWCategory;
+      // add default Params to testCase based on number of params of Keyword
+      testStepUpdated.Params.forEach((pr: TestParamInterface) => {
+        const prClone = _.cloneDeep(pr);
+        prClone.TestNodePath = '';
+        TestCase.value.TestSteps[stepIndex].Params.push(prClone);
+      });
+    })
+    .onCancel(() => {
+      // TODO
+    })
+    .onDismiss(() => {
+      // TODO
+    });
+}
+function changeParam(testStep: TestStepInterface, paramIndex: number, newValue: string) {
+  const stepIndex: number = TestCase.value.TestSteps.indexOf(testStep);
+  TestCase.value.TestSteps[stepIndex].Params[paramIndex].Value = newValue;
+}
+function updateTestEnvValue(testStep: TestStepInterface, paramIndex: number, testEnvNode: TestEnvNodeInterface) {
+  const stepIndex: number = TestCase.value.TestSteps.indexOf(testStep);
+  TestCase.value.TestSteps[stepIndex].Params[paramIndex].TestNodePath = `${testEnvNode.Category}/${testEnvNode.Name}`;
+  TestCase.value.TestSteps[stepIndex].Params[paramIndex].Value = testEnvNode.Value;
+}
+function onUseTestEnv(testStep: TestStepInterface, index: number) {
+  // open new testEnv dialog
+  $q.dialog({
+    component: TestEnvironmentDialog,
+  })
+    .onOk((node: TestEnvNodeInterface) => {
+      // TODO: handle ok
+      if (node) {
+        updateTestEnvValue(testStep, index, node);
+      }
+    })
+    .onCancel(() => {
+      // TODO
+    })
+    .onDismiss(() => {
+      // TODO
+    });
+}
+function onUnUseTestEnv(testStep: TestStepInterface, paramIndex: number, currentValue: string) {
+  const stepIndex: number = TestCase.value.TestSteps.indexOf(testStep);
+  TestCase.value.TestSteps[stepIndex].Params[paramIndex].TestNodePath = '';
+  TestCase.value.TestSteps[stepIndex].Params[paramIndex].Value = currentValue;
+}
+
+function changeTestAUT(testStep: TestStepInterface, newTestAUT: TestAUTInterface) {
+  // find edited testStep
+  const stepIndex: number = TestCase.value.TestSteps.indexOf(testStep);
+  TestCase.value.TestSteps[stepIndex].TestAUTId = newTestAUT.Id;
+}
+
+function updateDescription(testStep: TestStepInterface, newTSDescription: string) {
+  const stepIndex: number = TestCase.value.TestSteps.indexOf(testStep);
+  TestCase.value.TestSteps[stepIndex].Description = newTSDescription;
+}
+function filterMethod(rows: TestStepInterface[], filter: string): TestStepInterface[] {
+  let filtered: TestStepInterface[] = [];
+  filtered = rows.filter((row: TestStepInterface) => {
+    if (
+      !row.Keyword?.Name.toLowerCase().includes(filter.toLowerCase()) &&
+      !row.Params.some((pr: TestParamInterface) => pr.Value?.toLowerCase().includes(filter.toLowerCase()))
+    )
+      return false;
+    return true;
+  });
+  return filtered;
+}
+function getSelectedString() {
+  return selectedTestSteps.value.length === 0 ? '' : `${selectedTestSteps.value.length} step${selectedTestSteps.value.length > 1 ? 's' : ''} selected.`;
 }
 </script>
 <style scoped lang="scss">
