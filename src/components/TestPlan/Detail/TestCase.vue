@@ -84,15 +84,43 @@
             @beforeShowDialog="onBeforeShowDialog(props.row)"
             @insertTestSteps="onInsertTestSteps(1)"
             @insertPasteTestSteps="onInsertPasteTestSteps()"
+            @editTestStep="editTestStep(props.row)"
+            @searchKeyword="searchKeyword(props.row)"
           ></no>
         </q-td>
         <q-td key="testAUT" :props="props" class="q-c-input">
-          <test-a-u-t :TestStep="props.row" @changeTestAUT="changeTestAUT(props.row, $event)"></test-a-u-t>
+          <test-a-u-t
+            :TestStep="props.row"
+            @changeTestAUT="changeTestAUT(props.row, $event)"
+            @insertDescription="onInsertDescription($event)"
+            @enableRows="onEnableRows()"
+            @disableRows="onDisableRows()"
+            @copyTestSteps="onCopyTestSteps()"
+            @cutTestSteps="onCutTestSteps()"
+            @pasteTestSteps="onPasteTestSteps()"
+            @deleteTestSteps="onDeleteTestSteps()"
+            @beforeShowDialog="onBeforeShowDialog(props.row)"
+            @insertTestSteps="onInsertTestSteps(1)"
+            @insertPasteTestSteps="onInsertPasteTestSteps()"
+            @editTestStep="editTestStep(props.row)"
+            @searchKeyword="searchKeyword(props.row)"
+          >
+          </test-a-u-t>
         </q-td>
         <q-td key="keyword" :props="props" class="q-c-input">
           <keyword
             :TestStep="props.row"
             @changeKeyword="changeKeyword(props.row, $event)"
+            @insertDescription="onInsertDescription($event)"
+            @enableRows="onEnableRows()"
+            @disableRows="onDisableRows()"
+            @copyTestSteps="onCopyTestSteps()"
+            @cutTestSteps="onCutTestSteps()"
+            @pasteTestSteps="onPasteTestSteps()"
+            @deleteTestSteps="onDeleteTestSteps()"
+            @beforeShowDialog="onBeforeShowDialog(props.row)"
+            @insertTestSteps="onInsertTestSteps(1)"
+            @insertPasteTestSteps="onInsertPasteTestSteps()"
             @editTestStep="editTestStep(props.row)"
             @searchKeyword="searchKeyword(props.row)"
           />
@@ -104,6 +132,18 @@
             @changeParam="changeParam(props.row, index - 1, $event)"
             @useTestEnv="onUseTestEnv(props.row, index - 1)"
             @unUseTestEnv="onUnUseTestEnv(props.row, index - 1, $event)"
+            @insertDescription="onInsertDescription($event)"
+            @enableRows="onEnableRows()"
+            @disableRows="onDisableRows()"
+            @copyTestSteps="onCopyTestSteps()"
+            @cutTestSteps="onCutTestSteps()"
+            @pasteTestSteps="onPasteTestSteps()"
+            @deleteTestSteps="onDeleteTestSteps()"
+            @beforeShowDialog="onBeforeShowDialog(props.row)"
+            @insertTestSteps="onInsertTestSteps(1)"
+            @insertPasteTestSteps="onInsertPasteTestSteps()"
+            @editTestStep="editTestStep(props.row)"
+            @searchKeyword="searchKeyword(props.row)"
           >
           </parameter>
         </q-td>
@@ -473,6 +513,7 @@ function onEnableRows() {
 
 function onInsertDescription(testStep: TestStepInterface) {
   // open new AddDescriptionDialog dialog
+  console.log('testStep', testStep);
   $q.dialog({
     component: AddDescriptionDialog,
   })
@@ -647,16 +688,23 @@ function changeParam(testStep: TestStepInterface, paramIndex: number, newValue: 
 }
 function updateTestEnvValue(testStep: TestStepInterface, paramIndex: number, testEnvNode: TestEnvNodeInterface) {
   const stepIndex: number = TestCase.value.TestSteps.indexOf(testStep);
+  if (paramIndex >= TestCase.value.TestSteps[stepIndex].Params.length) {
+    $q.notify({
+      message: "Can't set to invalid param",
+      color: 'ongoing',
+    });
+    return;
+  }
   TestCase.value.TestSteps[stepIndex].Params[paramIndex].TestNodePath = `${testEnvNode.Category}/${testEnvNode.Name}`;
   TestCase.value.TestSteps[stepIndex].Params[paramIndex].Value = testEnvNode.Value;
 }
 function onUseTestEnv(testStep: TestStepInterface, index: number) {
-  // open new testEnv dialog
+  console.log('testStep', testStep);
+  console.log('index', index);
   $q.dialog({
     component: TestEnvironmentDialog,
   })
     .onOk((node: TestEnvNodeInterface) => {
-      // TODO: handle ok
       if (node) {
         updateTestEnvValue(testStep, index, node);
       }
@@ -670,6 +718,7 @@ function onUseTestEnv(testStep: TestStepInterface, index: number) {
 }
 function onUnUseTestEnv(testStep: TestStepInterface, paramIndex: number, currentValue: string) {
   const stepIndex: number = TestCase.value.TestSteps.indexOf(testStep);
+  if (paramIndex >= TestCase.value.TestSteps[stepIndex].Params.length) return;
   TestCase.value.TestSteps[stepIndex].Params[paramIndex].TestNodePath = '';
   TestCase.value.TestSteps[stepIndex].Params[paramIndex].Value = currentValue;
 }
@@ -783,5 +832,21 @@ function getSelectedString() {
     /* height of all previous header rows */
     top: 48px;
   }
+}
+:deep(.testBed) {
+  background-color: $teal-2;
+  background-clip: content-box;
+}
+:deep(.testBuffer) {
+  background-color: $green-2;
+  background-clip: content-box;
+}
+:deep(.testBedDark) {
+  background-color: $teal-10;
+  background-clip: content-box;
+}
+:deep(.testBufferDark) {
+  background-color: $green-10;
+  background-clip: content-box;
 }
 </style>

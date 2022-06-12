@@ -1,15 +1,27 @@
 <template>
   <div>
-    <keyword-menu
-      @editTestStep="editTestStep()"
-      @searchKeyword="searchKeyword()"
-    ></keyword-menu>
+    <base-menu
+      @enableRows="emit('enableRows')"
+      @disableRows="emit('disableRows')"
+      @insertDescription="emit('insertDescription', TestStep)"
+      @copyTestSteps="emit('copyTestSteps')"
+      @cutTestSteps="emit('cutTestSteps')"
+      @pasteTestSteps="emit('pasteTestSteps')"
+      @deleteTestSteps="emit('deleteTestSteps')"
+      @before-show="emit('beforeShowDialog')"
+      @insertTestSteps="emit('insertTestSteps')"
+      @insertPasteTestSteps="emit('insertPasteTestSteps')"
+      @editTestStep="emit('editTestStep')"
+      @searchKeyword="emit('searchKeyword')"
+    >
+      <template #default> </template>
+    </base-menu>
     <q-select
       dense
       :model-value="TestStep.Keyword"
       :options="filteredKeywords"
       option-label="Name"
-      @update:model-value="onChangeKeyword($event)"
+      @update:model-value="emit('changeKeyword', $event)"
       @filter="filterKeywordFn"
       input-debounce="0"
       use-input
@@ -21,65 +33,49 @@
   </div>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, onMounted, ref, Ref, PropType } from 'vue';
+<script setup lang="ts">
+import { computed, onMounted, ref, Ref } from 'vue';
 
 import { KeywordInterface } from '../../../../Models/Keyword';
 import { FlatKeywordInterface } from '../../../../Models/FlatKeyword';
 import { useKeywordStore } from '../../../../pinia/keywordStore';
 import { TestStepInterface } from '../../../../Models/TestStep';
-import KeywordMenu from '../Menu/KeywordMenu.vue';
+import BaseMenu from '../Menu/BaseMenu.vue';
 
-export default defineComponent({
-  name: 'Keyword',
-  props: {
-    TestStep: {
-      type: Object as PropType<TestStepInterface>,
-      required: true,
-      default: () => ({}),
-    },
-  },
-  components: { KeywordMenu },
-  setup(props, context) {
-    const keywordStore = useKeywordStore();
-    const filteredKeywords: Ref<FlatKeywordInterface[]> = ref([]);
-    const keywords: Ref<FlatKeywordInterface[]> = computed(
-      () => keywordStore.keywords as FlatKeywordInterface[]
-    );
-    onMounted(() => {
-      filteredKeywords.value = keywords.value;
-    });
-    const readonly = computed(() => {
-      if (props.TestStep.IsDisabled) return true;
-      return false;
-    });
-    function filterKeywordFn(val: string, update: any) {
-      update(() => {
-        const needle = val.toLowerCase();
-        filteredKeywords.value = keywords.value.filter(
-          (kw: KeywordInterface) => kw.Name.toLowerCase().indexOf(needle) > -1
-        );
-      });
-    }
+const props = defineProps<{
+  TestStep: TestStepInterface;
+}>();
 
-    function onChangeKeyword(newKeyword: FlatKeywordInterface) {
-      context.emit('changeKeyword', newKeyword);
-    }
-    function editTestStep() {
-      context.emit('editTestStep');
-    }
-    function searchKeyword() {
-      context.emit('searchKeyword');
-    }
-    return {
-      filterKeywordFn,
-      filteredKeywords,
-      keywords,
-      onChangeKeyword,
-      editTestStep,
-      readonly,
-      searchKeyword,
-    };
-  },
+const emit = defineEmits<{
+  (e: 'changeKeyword', newKeyword: FlatKeywordInterface): void;
+  (e: 'insertDescription', TestStep: TestStepInterface): void;
+  (e: 'enableRows'): void;
+  (e: 'disableRows'): void;
+  (e: 'copyTestSteps'): void;
+  (e: 'cutTestSteps'): void;
+  (e: 'deleteTestSteps'): void;
+  (e: 'beforeShowDialog'): void;
+  (e: 'pasteTestSteps'): void;
+  (e: 'insertTestSteps'): void;
+  (e: 'insertPasteTestSteps'): void;
+  (e: 'editTestStep'): void;
+  (e: 'searchKeyword'): void;
+}>();
+
+const keywordStore = useKeywordStore();
+const filteredKeywords: Ref<FlatKeywordInterface[]> = ref([]);
+const keywords: Ref<FlatKeywordInterface[]> = computed(() => keywordStore.keywords as FlatKeywordInterface[]);
+onMounted(() => {
+  filteredKeywords.value = keywords.value;
 });
+const readonly = computed(() => {
+  if (props.TestStep.IsDisabled) return true;
+  return false;
+});
+function filterKeywordFn(val: string, update: any) {
+  update(() => {
+    const needle = val.toLowerCase();
+    filteredKeywords.value = keywords.value.filter((kw: KeywordInterface) => kw.Name.toLowerCase().indexOf(needle) > -1);
+  });
+}
 </script>

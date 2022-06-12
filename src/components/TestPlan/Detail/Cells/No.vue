@@ -1,99 +1,48 @@
 <template>
-  <no-menu
-    @enableRows="enableRows()"
-    @disableRows="disableRows()"
-    @insertDescription="insertDescription()"
-    @copyTestSteps="copyTestSteps()"
-    @cutTestSteps="cutTestSteps()"
-    @pasteTestSteps="pasteTestSteps()"
-    @deleteTestSteps="deleteTestSteps()"
-    @before-show="beforeShowDialog"
-    @insertTestSteps="insertTestSteps()"
-    @insertPasteTestSteps="insertPasteTestSteps()"
-  ></no-menu>
+  <base-menu
+    @enableRows="emit('enableRows')"
+    @disableRows="emit('disableRows')"
+    @insertDescription="emit('insertDescription', TestStep)"
+    @copyTestSteps="emit('copyTestSteps')"
+    @cutTestSteps="emit('cutTestSteps')"
+    @pasteTestSteps="emit('pasteTestSteps')"
+    @deleteTestSteps="emit('deleteTestSteps')"
+    @before-show="emit('beforeShowDialog')"
+    @insertTestSteps="emit('insertTestSteps')"
+    @insertPasteTestSteps="emit('insertPasteTestSteps')"
+    @editTestStep="emit('editTestStep')"
+    @searchKeyword="emit('searchKeyword')"
+  >
+    <template #default> </template>
+  </base-menu>
   <div>
     {{ Index }}
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from 'vue';
-
+<script setup lang="ts">
+import BaseMenu from '../Menu/BaseMenu.vue';
 import { TestStepInterface } from '../../../../Models/TestStep';
-import NoMenu from '../Menu/NoMenu.vue';
 
-export default defineComponent({
-  name: 'No',
-  props: {
-    TestStep: {
-      type: Object as PropType<TestStepInterface>,
-      required: true,
-      default: () => ({}),
-    },
-    Index: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
-  },
-  emits: [
-    'insertDescription',
-    'enableRows',
-    'disableRows',
-    'copyTestSteps',
-    'cutTestSteps',
-    'deleteTestSteps',
-    'beforeShowDialog',
-    'pasteTestSteps',
-    'insertTestSteps',
-    'insertPasteTestSteps',
-  ],
-  components: { NoMenu },
-  setup(props, { emit }) {
-    function enableRows() {
-      emit('enableRows');
-    }
-    function disableRows() {
-      emit('disableRows');
-    }
-    function insertDescription() {
-      emit('insertDescription', props.TestStep);
-    }
-    function copyTestSteps() {
-      emit('copyTestSteps');
-    }
-    function cutTestSteps() {
-      emit('cutTestSteps');
-    }
-    function deleteTestSteps() {
-      emit('deleteTestSteps');
-    }
-    function beforeShowDialog() {
-      emit('beforeShowDialog');
-    }
-    function pasteTestSteps() {
-      emit('pasteTestSteps');
-    }
-    function insertTestSteps() {
-      emit('insertTestSteps');
-    }
-    function insertPasteTestSteps() {
-      emit('insertPasteTestSteps');
-    }
-    return {
-      insertDescription,
-      enableRows,
-      disableRows,
-      copyTestSteps,
-      cutTestSteps,
-      pasteTestSteps,
-      deleteTestSteps,
-      beforeShowDialog,
-      insertTestSteps,
-      insertPasteTestSteps,
-    };
-  },
-});
+const props = defineProps<{
+  TestStep: TestStepInterface;
+  Index: number;
+}>();
+
+const emit = defineEmits<{
+  (e: 'insertDescription', TestStep: TestStepInterface): void;
+  (e: 'enableRows'): void;
+  (e: 'disableRows'): void;
+  (e: 'copyTestSteps'): void;
+  (e: 'cutTestSteps'): void;
+  (e: 'deleteTestSteps'): void;
+  (e: 'beforeShowDialog'): void;
+  (e: 'pasteTestSteps'): void;
+  (e: 'insertTestSteps'): void;
+  (e: 'insertPasteTestSteps'): void;
+  (e: 'editTestStep'): void;
+  (e: 'searchKeyword'): void;
+}>();
 </script>
 
 <style scoped lang="scss">
