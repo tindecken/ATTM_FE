@@ -19,10 +19,10 @@
           {{ props.row.UpdateTestCaseData.UpdateType }}
         </q-td>
         <q-td key="updateMessage" :props="props">
-          <q-tooltip v-if="props.row.UpdateTestCaseData.UpdateMessage !== ''">
+          <q-tooltip v-if="props.row.UpdateTestCaseData.UpdateMessage !== ''" style="white-space: pre-wrap">
             {{ props.row.UpdateTestCaseData.UpdateMessage }}
           </q-tooltip>
-          <div class="ellipsis">
+          <div class="ellipsis" style="white-space: pre-wrap">
             {{ props.row.UpdateTestCaseData.UpdateMessage }}
           </div>
         </q-td>
@@ -30,126 +30,166 @@
           <q-tooltip v-if="props.row.UpdateTestCaseData.UpdateDate !== ''">
             {{ props.row.UpdateTestCaseData.UpdateDate }}
           </q-tooltip>
-          <UseTimeAgo
-            v-slot="{ timeAgo }"
-            :time="props.row.UpdateTestCaseData.UpdateDate"
-          >
+          <UseTimeAgo v-slot="{ timeAgo }" :time="props.row.UpdateTestCaseData.UpdateDate">
             {{ timeAgo }}
           </UseTimeAgo>
         </q-td>
         <q-td key="updateBy" :props="props">
           {{ props.row.UpdateTestCaseData.UpdateBy }}
         </q-td>
+        <q-td key="restore" :props="props">
+          <q-btn size="sm" outline @click="restore(props.row)" v-if="!isRestoreDisabled(props.row)">Restore</q-btn>
+        </q-td>
       </q-tr>
     </template>
   </q-table>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { TestCaseInterface } from '../../../../../Models/TestCase';
 import { TestCaseHistoryInterface } from '../../../../../Models/TestCaseHistory';
-import { defineComponent, onMounted, PropType, ref, Ref } from 'vue';
+import { onMounted, ref, Ref } from 'vue';
 import { useTestCaseStore } from '../../../../../pinia/testCaseStore';
 import { UseTimeAgo } from '@vueuse/components';
 import { useQuasar } from 'quasar';
+import RestoreTestCaseDialog from './UpdateHistory/RestoreTestCaseDialog.vue';
+import { RestoreTestCaseDataInterface } from '../../../../../Models/Entities/RestoreTestCaseData';
+import { useUserStore } from '../../../../../pinia/userStore';
 
-export default defineComponent({
-  name: 'UpdateHistory',
-  props: {
-    TestCase: {
-      type: Object as PropType<TestCaseInterface>,
-      required: true,
-    },
+const props = defineProps<{
+  TestCase: TestCaseInterface;
+}>();
+
+const userStore = useUserStore();
+const testCaseStore = useTestCaseStore();
+const $q = useQuasar();
+const columns = [
+  {
+    name: 'no',
+    required: true,
+    label: 'No',
+    align: 'left',
+    field: 'rowIndex',
+    sortable: true,
+    style: 'max-width: 40px; width: 40px',
+    headerStyle: 'max-width: 40px',
   },
-  components: { UseTimeAgo },
-  setup(props) {
-    const testCaseStore = useTestCaseStore();
-    const $q = useQuasar();
-    const columns = [
-      {
-        name: 'no',
-        required: true,
-        label: 'No',
-        align: 'left',
-        field: 'rowIndex',
-        sortable: true,
-        style: 'max-width: 40px; width: 40px',
-        headerStyle: 'max-width: 40px',
-      },
-      {
-        name: 'updateType',
-        required: true,
-        label: 'Type',
-        align: 'left',
-        field: 'Type',
-        sortable: true,
-        style: 'max-width: 140px; width: 140px',
-        headerStyle: 'max-width: 140px',
-        classes: 'ellipsis',
-      },
-      {
-        name: 'updateMessage',
-        align: 'left',
-        label: 'Message',
-        field: 'Message',
-        sortable: true,
-        style: 'max-width: 100px',
-        headerStyle: 'max-width: 100px',
-        classes: 'ellipsis',
-      },
-      {
-        name: 'updateDate',
-        align: 'left',
-        label: 'Date',
-        field: 'Date',
-        style: 'max-width: 100px; width: 80px',
-        headerStyle: 'max-width: 100px',
-        sortable: true,
-      },
-      {
-        name: 'updateBy',
-        align: 'left',
-        label: 'Update By',
-        field: 'By',
-        sortable: false,
-        style: 'max-width: 100px; width: 80px',
-        headerStyle: 'max-width: 100px',
-      },
-    ];
-    const initialPagination = {
-      sortBy: 'startAt',
-      descending: true,
-      page: 1,
-      rowsPerPage: 50,
-      // rowsNumber: xx if getting data from a server
-    };
-    const filter = ref('');
-    const testUpdateHistories: Ref<TestCaseHistoryInterface[]> = ref([]);
-    onMounted(async () => {
+  {
+    name: 'updateType',
+    required: true,
+    label: 'Type',
+    align: 'left',
+    field: 'Type',
+    sortable: true,
+    style: 'max-width: 140px; width: 140px',
+    headerStyle: 'max-width: 140px',
+    classes: 'ellipsis',
+  },
+  {
+    name: 'updateMessage',
+    align: 'left',
+    label: 'Message',
+    field: 'Message',
+    sortable: true,
+    style: 'max-width: 300px',
+    headerStyle: 'max-width: 300px',
+    classes: 'ellipsis',
+  },
+  {
+    name: 'updateDate',
+    align: 'left',
+    label: 'Date',
+    field: 'Date',
+    style: 'max-width: 100px; width: 80px',
+    headerStyle: 'max-width: 100px',
+    sortable: true,
+  },
+  {
+    name: 'updateBy',
+    align: 'left',
+    label: 'Update By',
+    field: 'By',
+    sortable: false,
+    style: 'max-width: 100px; width: 80px',
+    headerStyle: 'max-width: 100px',
+  },
+  {
+    name: 'restore',
+    align: 'left',
+    label: '',
+    field: 'restore',
+    sortable: false,
+    style: 'max-width: 80x; width: 80px',
+    headerStyle: 'max-width: 80px',
+  },
+];
+const initialPagination = {
+  sortBy: 'startAt',
+  descending: true,
+  page: 1,
+  rowsPerPage: 50,
+  // rowsNumber: xx if getting data from a server
+};
+const filter = ref('');
+const testUpdateHistories: Ref<TestCaseHistoryInterface[]> = ref([]);
+function isRestoreDisabled(TestCaseHistory: TestCaseHistoryInterface) {
+  if (TestCaseHistory) {
+    const index = testUpdateHistories.value.findIndex((testHistory: TestCaseHistoryInterface) => testHistory.Id === TestCaseHistory.Id);
+    if (index == 0) {
+      return true;
+    }
+  }
+  return false;
+}
+onMounted(async () => {
+  try {
+    testUpdateHistories.value = await testCaseStore.getUpateHistories(props.TestCase.Id);
+    testUpdateHistories.value = testUpdateHistories.value.map((value: TestCaseHistoryInterface, i: number) => ({
+      ...value,
+      rowIndex: i + 1,
+    }));
+  } catch (error: any) {
+    $q.notify({
+      type: 'negative',
+      message: `${error}`,
+    });
+  }
+});
+function restore(testCaseHistory: TestCaseHistoryInterface) {
+  $q.dialog({
+    component: RestoreTestCaseDialog,
+    componentProps: {},
+  })
+    .onOk(async (restoreMessage: string) => {
       try {
-        testUpdateHistories.value = await testCaseStore.getUpateHistories(
-          props.TestCase.Id
-        );
-        testUpdateHistories.value = testUpdateHistories.value.map(
-          (value: TestCaseHistoryInterface, i: number) => ({
-            ...value,
-            rowIndex: i + 1,
-          })
-        );
+        const restoreTestCaseData: RestoreTestCaseDataInterface = {
+          Id: testCaseHistory.Id,
+          RestoreMessage: restoreMessage,
+          RestoreBy: userStore.Username,
+        };
+        const result = await testCaseStore.restoreTestCase(restoreTestCaseData);
+        $q.notify({
+          type: 'positive',
+          message: result.message,
+        });
+        // Refresh the test case history
+        testUpdateHistories.value = await testCaseStore.getUpateHistories(props.TestCase.Id);
+        testUpdateHistories.value = testUpdateHistories.value.map((value: TestCaseHistoryInterface, i: number) => ({
+          ...value,
+          rowIndex: i + 1,
+        }));
       } catch (error: any) {
         $q.notify({
-          type: 'negative',
-          message: `${error}`,
+          type: 'warning',
+          message: error.error,
         });
       }
+    })
+    .onCancel(() => {
+      console.log('Cancel');
+    })
+    .onDismiss(() => {
+      console.log('Called on OK or Cancel');
     });
-
-    return {
-      columns,
-      testUpdateHistories,
-      filter,
-      initialPagination,
-    };
-  },
-});
+}
 </script>

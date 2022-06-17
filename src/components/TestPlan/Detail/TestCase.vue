@@ -363,6 +363,7 @@ function saveTestCase() {
         const testCaseHistory: TestCaseHistoryInterface = {
           TestCase: TestCase.value,
           UpdateTestCaseData: updateTestCaseData,
+          Id: '',
         };
         const result = await testCaseStore.saveTestCase(testCaseHistory);
         $q.notify({

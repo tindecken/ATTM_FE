@@ -11,6 +11,7 @@ import { CategoryInterface } from '../Models/Category';
 import { TestCaseHistoryInterface } from '../Models/TestCaseHistory';
 import { useCategoryStore } from './categoryStore';
 import { AxiosError } from 'axios';
+import { RestoreTestCaseDataInterface } from '../Models/Entities/RestoreTestCaseData';
 
 export const useTestCaseStore = defineStore('testcase', {
   state: () => ({
@@ -250,6 +251,29 @@ export const useTestCaseStore = defineStore('testcase', {
       } catch (error) {
         if (error.isAxiosError) {
           const e: AxiosError = error;
+          throw e.response.data;
+        } else {
+          throw error;
+        }
+      }
+    },
+    async restoreTestCase(restoreTestCaseData: RestoreTestCaseDataInterface) {
+      try {
+        const userStore = useUserStore();
+        const response = await api.post('/testcases/restoretestcase', restoreTestCaseData, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userStore.Token}`,
+          },
+        });
+        const responseData = await response.data;
+        return responseData;
+      } catch (error) {
+        console.log('e', error);
+        if (error.isAxiosError) {
+          console.log('b');
+          const e: AxiosError = error;
+          console.log('e', e.response);
           throw e.response.data;
         } else {
           throw error;

@@ -3,20 +3,12 @@
     <q-layout
       view="hHh lpR fFf"
       :class="isDark ? 'bg-grey-9' : 'bg-grey-3'"
-      style="max-height: 900px; min-height: 200px !important; min-width: 600px"
+      style="max-height: 900px; min-height: 200px !important; min-width: 900px"
       container
     >
       <q-header reveal bordered class="row justify-between bg-secondary">
-        <div class="self-center text-subtitle1 q-pl-sm">
-          {{ TestCase.CodeName }}: {{ TestCase.Name }}
-        </div>
-        <q-btn
-          class="self-center"
-          dense
-          flat
-          icon="close"
-          @click="onDialogHide"
-        >
+        <div class="self-center text-subtitle1 q-pl-sm">{{ TestCase.CodeName }}: {{ TestCase.Name }}</div>
+        <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
           <q-tooltip>Close</q-tooltip>
         </q-btn>
       </q-header>
@@ -26,13 +18,7 @@
           <q-tab name="historyUpdate" label="Update Histories" />
           <q-tab name="regressionHistory" label="Regression Histories" />
         </q-tabs>
-        <q-tab-panels
-          v-model="tab"
-          animated
-          vertical
-          transition-prev="jump-down"
-          transition-next="jump-down"
-        >
+        <q-tab-panels v-model="tab" animated vertical transition-prev="jump-down" transition-next="jump-down">
           <q-tab-panel name="properties">
             <properties :TestCase="TestCase"></properties>
           </q-tab-panel>
@@ -44,15 +30,9 @@
           </q-tab-panel>
         </q-tab-panels>
       </q-page-container>
-      <q-footer
-        bordered
-        class="bg-secondary text-white"
-        style="height: 24px; width: -webkit-fill-available"
-      >
+      <q-footer bordered class="bg-secondary text-white" style="height: 24px; width: -webkit-fill-available">
         <div class="row inline justify-between items-center">
-          <span @click="copy(footerInfo)" class="q-pl-sm">{{
-            footerInfo
-          }}</span>
+          <span @click="copy(footerInfo)" class="q-pl-sm">{{ footerInfo }}</span>
         </div>
       </q-footer>
     </q-layout>
@@ -85,8 +65,7 @@ export default defineComponent({
   components: { Properties, RegressionHistory, UpdateHistory },
   setup(props) {
     const globalStore = useGlobalStore();
-    const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
-      useDialogPluginComponent();
+    const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent();
     const { copy } = useClipboard();
     const isDark = computed(() => globalStore.darkTheme);
     const footerInfo = ref('');

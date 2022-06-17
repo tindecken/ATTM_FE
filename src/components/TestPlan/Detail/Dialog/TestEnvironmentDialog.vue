@@ -1,5 +1,5 @@
 <template>
-  <q-dialog ref="dialogRef" @hide="onDialogHide" persistent>
+  <q-dialog ref="dialogRef" @hide="onDialogCancel" persistent>
     <q-layout
       view="hHh lpR fFf"
       :class="isDark ? 'bg-grey-9' : 'bg-grey-3'"
@@ -7,10 +7,8 @@
       container
     >
       <q-header reveal bordered class="row justify-between bg-secondary">
-        <div class="self-center text-subtitle1 q-pl-sm">
-          Select Test Environment
-        </div>
-        <q-btn dense flat icon="close" @click="onDialogHide">
+        <div class="self-center text-subtitle1 q-pl-sm">Select Test Environment</div>
+        <q-btn dense flat icon="close" @click="onDialogCancel">
           <q-tooltip>Close</q-tooltip>
         </q-btn>
       </q-header>
@@ -54,36 +52,19 @@
                   <q-td key="no" :props="props">
                     {{ props.row.rowIndex }}
                   </q-td>
-                  <q-td
-                    key="category"
-                    :props="props"
-                    @click="footerInfo = props.row.Category"
-                  >
+                  <q-td key="category" :props="props" @click="footerInfo = props.row.Category">
                     {{ props.row.Category }}
                   </q-td>
-                  <q-td
-                    key="name"
-                    :props="props"
-                    style="white-space: normal"
-                    @click="footerInfo = props.row.Name"
-                  >
+                  <q-td key="name" :props="props" style="white-space: normal" @click="footerInfo = props.row.Name">
                     <div>{{ props.row.Name }}</div>
                   </q-td>
-                  <q-td
-                    key="value"
-                    :props="props"
-                    @click="footerInfo = props.row.Value"
-                  >
+                  <q-td key="value" :props="props" @click="footerInfo = props.row.Value">
                     <q-tooltip v-if="props.row.Value !== ''">
                       {{ props.row.Value }}
                     </q-tooltip>
                     {{ props.row.Value }}
                   </q-td>
-                  <q-td
-                    key="description"
-                    :props="props"
-                    @click="footerInfo = props.row.Description"
-                  >
+                  <q-td key="description" :props="props" @click="footerInfo = props.row.Description">
                     <q-tooltip v-if="props.row.Description !== ''">
                       {{ props.row.Description }}
                     </q-tooltip>
@@ -98,145 +79,83 @@
           </div>
         </div>
       </q-page-container>
-      <q-footer
-        bordered
-        class="bg-secondary text-white"
-        style="height: 24px; width: -webkit-fill-available"
-      >
+      <q-footer bordered class="bg-secondary text-white" style="height: 24px; width: -webkit-fill-available">
         <div class="row inline justify-between items-center">
-          <span @click="copy(footerInfo)" class="q-pl-sm">{{
-            footerInfo
-          }}</span>
+          <span @click="copy(footerInfo)" class="q-pl-sm">{{ footerInfo }}</span>
         </div>
       </q-footer>
     </q-layout>
   </q-dialog>
 </template>
-<script lang="ts">
-import {
-  computed,
-  defineComponent,
-  nextTick,
-  onBeforeMount,
-  Ref,
-  ref,
-} from 'vue';
-import {
-  TestEnvInterface,
-  TestEnvNodeInterface,
-} from '../../../../Models/TestEnv';
+<script setup lang="ts">
+import { computed, nextTick, onBeforeMount, Ref, ref } from 'vue';
+import { TestEnvInterface, TestEnvNodeInterface } from '../../../../Models/TestEnv';
 import { useClipboard } from '@vueuse/core';
 import { useTestEnvironmentStore } from '../../../../pinia/testEnvironmentStore';
 import { useQuasar, useDialogPluginComponent } from 'quasar';
 import { testEnvColumns } from '../../../../components/tableColumns';
 import { useGlobalStore } from '../../../../pinia/globalStore';
 
-export default defineComponent({
-  name: 'TestEnvironmentDialog',
-  props: {},
-  emits: [
-    // REQUIRED; need to specify some events that your
-    // component will emit through useDialogPluginComponent()
-    ...useDialogPluginComponent.emits,
-  ],
-  components: {},
-  setup() {
-    const globalStore = useGlobalStore();
-    const testEnvironmentStore = useTestEnvironmentStore();
-    const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
-      useDialogPluginComponent();
-    const $q = useQuasar();
-    const { copy } = useClipboard();
-    const footerInfo = ref('');
-    const isReadonly: Ref<boolean> = ref(false);
-    const visibleColumns: Ref<string[]> = ref([
-      'no',
-      'category',
-      'name',
-      'value',
-      'description',
-      'use',
-    ]);
-    const initialPagination = {
-      sortBy: 'startAt',
-      descending: true,
-      rowsPerPage: 50,
-      // page: 2,
-      // rowsNumber: xx if getting data from a server
-    };
-    const testEnvFilter = ref('');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const isDark = computed(() => globalStore.darkTheme);
-    const selectedTestEnv = ref<TestEnvInterface>(
-      testEnvironmentStore.selectedTestEnv as TestEnvInterface
-    );
-    const testEnvs = testEnvironmentStore.testEnvs as TestEnvInterface[];
-    onBeforeMount(async () => {
-      try {
-        await testEnvironmentStore.getTestEnvironments();
-      } catch (error: any) {
-        $q.notify({
-          type: 'negative',
-          message: `${error}`,
-        });
-      }
-      void (await nextTick());
-      if (selectedTestEnv.value) {
-        selectedTestEnv.value.Nodes = selectedTestEnv.value?.Nodes.map(
-          (envNode: TestEnvNodeInterface, i: number) => ({
-            ...envNode,
-            rowIndex: i + 1,
-          })
-        );
-      }
+const globalStore = useGlobalStore();
+const testEnvironmentStore = useTestEnvironmentStore();
+const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent();
+const $q = useQuasar();
+const { copy } = useClipboard();
+const footerInfo = ref('');
+const isReadonly: Ref<boolean> = ref(false);
+const visibleColumns: Ref<string[]> = ref(['no', 'category', 'name', 'value', 'description', 'use']);
+const initialPagination = {
+  sortBy: 'startAt',
+  descending: true,
+  rowsPerPage: 50,
+  // page: 2,
+  // rowsNumber: xx if getting data from a server
+};
+const testEnvFilter = ref('');
+// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+const isDark = computed(() => globalStore.darkTheme);
+const selectedTestEnv = ref<TestEnvInterface>(testEnvironmentStore.selectedTestEnv as TestEnvInterface);
+const testEnvs = testEnvironmentStore.testEnvs as TestEnvInterface[];
+onBeforeMount(async () => {
+  try {
+    await testEnvironmentStore.getTestEnvironments();
+  } catch (error: any) {
+    $q.notify({
+      type: 'negative',
+      message: `${error}`,
     });
-
-    function onTestEnvChange(newTestEnv: TestEnvInterface) {
-      testEnvironmentStore.selectedTestEnv = newTestEnv;
-      selectedTestEnv.value = newTestEnv;
-      selectedTestEnv.value.Nodes = selectedTestEnv.value?.Nodes.map(
-        (envNode: TestEnvNodeInterface, i: number) => ({
-          ...envNode,
-          rowIndex: i + 1,
-        })
-      );
-    }
-
-    // other methods that we used in our vue html template;
-    // these are part of our example (so not required)
-    function onOKClick() {
-      // on OK, it is REQUIRED to
-      // call onDialogOK (with optional payload)
-      onDialogOK();
-      // or with payload: onDialogOK({ ... })
-      // ...and it will also hide the dialog automatically
-    }
-
-    function use(testEnvNode: TestEnvNodeInterface) {
-      onDialogOK(testEnvNode);
-    }
-
-    return {
-      testEnvs,
-      onOKClick,
-      onDialogHide,
-      testEnvColumns,
-      onTestEnvChange,
-      testEnvFilter,
-      selectedTestEnv,
-      dialogRef,
-      isDark,
-      isReadonly,
-      use,
-      // we can passthrough onDialogCancel directly
-      onCancelClick: onDialogCancel,
-      footerInfo,
-      copy,
-      initialPagination,
-      visibleColumns,
-    };
-  },
+  }
+  void (await nextTick());
+  if (selectedTestEnv.value) {
+    selectedTestEnv.value.Nodes = selectedTestEnv.value?.Nodes.map((envNode: TestEnvNodeInterface, i: number) => ({
+      ...envNode,
+      rowIndex: i + 1,
+    }));
+  }
 });
+
+function onTestEnvChange(newTestEnv: TestEnvInterface) {
+  testEnvironmentStore.selectedTestEnv = newTestEnv;
+  selectedTestEnv.value = newTestEnv;
+  selectedTestEnv.value.Nodes = selectedTestEnv.value?.Nodes.map((envNode: TestEnvNodeInterface, i: number) => ({
+    ...envNode,
+    rowIndex: i + 1,
+  }));
+}
+
+// other methods that we used in our vue html template;
+// these are part of our example (so not required)
+function onOKClick() {
+  // on OK, it is REQUIRED to
+  // call onDialogOK (with optional payload)
+  onDialogOK();
+  // or with payload: onDialogOK({ ... })
+  // ...and it will also hide the dialog automatically
+}
+
+function use(testEnvNode: TestEnvNodeInterface) {
+  onDialogOK(testEnvNode);
+}
 </script>
 <style scoped lang="scss">
 :deep(.q-c-input) {
