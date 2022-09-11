@@ -235,7 +235,6 @@ async function clearFilter() {
 }
 function testCaseFilterFunc() {
   // TODO
-  console.log('testCaseFilterFunc');
   if (testCaseFilterText.value === '' || testCaseFilterText.value === null) {
     void clearFilter();
   } else {

@@ -1,5 +1,6 @@
 <template>
   <parameter-menu
+    :TestStep="TestStep"
     @useTestEnv="emit('useTestEnv')"
     @unUseTestEnv="emit('unUseTestEnv')"
     @enableRows="emit('enableRows')"
@@ -18,7 +19,7 @@
   </parameter-menu>
   <q-input :class="valueStyle" :debounce="300" :model-value="prValue" dense borderless @update:model-value="emit('changeParam', $event)" :readonly="readonly">
     <template v-slot:prepend>
-      <q-icon v-if="isParamError" name="error">
+      <q-icon v-if="isParamError" name="error_outline">
         <q-tooltip>
           {{ paramErrorMessage }}
         </q-tooltip>

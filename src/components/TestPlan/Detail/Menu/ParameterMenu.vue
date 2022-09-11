@@ -31,7 +31,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent } from 'vue';
 import BaseMenu from '../Menu/BaseMenu.vue';
 import { TestStepInterface } from '../../../../Models/TestStep';
 

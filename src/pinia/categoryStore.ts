@@ -179,7 +179,6 @@ export const useCategoryStore = defineStore('category', {
       // find tgIndex
       const tgIndex = tempCat.children[tsIndex].TestGroupIds.findIndex((tgId: string) => tgId === testCase.TestGroupId);
       testCase = paintTestCase(testCase);
-      console.log('testCase', testCase);
       if (!tempCat.children[tsIndex].children[tgIndex].children) {
         // to make sure TestGroup has children property
         tempCat.children[tsIndex].children[tgIndex].children = [];
@@ -204,8 +203,6 @@ export const useCategoryStore = defineStore('category', {
     },
     setLastRegressionResultForTestCase(testCase: TestCaseInterface, lastRegressionResult: LastRegressionResultInterface) {
       // TODO
-      console.log('testCase', testCase);
-      console.log('lastRegressionResult', lastRegressionResult);
       const catIndex = this.Categories.findIndex((cat: CategoryInterface) => cat.Id === testCase.CategoryId);
       const tempCat = _.cloneDeep(this.Categories[catIndex]);
       // find tsIndex

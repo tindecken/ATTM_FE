@@ -5,11 +5,9 @@
 </template>
 
 <script lang="ts">
-import {
-  defineComponent, PropType,
-} from 'vue';
+import { defineComponent, PropType } from 'vue';
 
-import { TestCaseInterface } from 'src/Models/TestCase'
+import { TestCaseInterface } from '../../../../../Models/TestCase';
 
 export default defineComponent({
   name: 'Properties',
@@ -19,10 +17,9 @@ export default defineComponent({
       required: true,
     },
   },
-  components: { },
+  components: {},
   setup() {
-    return {
-    }
+    return {};
   },
 });
 </script>

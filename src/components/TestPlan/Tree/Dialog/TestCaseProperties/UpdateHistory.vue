@@ -37,6 +37,12 @@
         <q-td key="updateBy" :props="props">
           {{ props.row.UpdateTestCaseData.UpdateBy }}
         </q-td>
+        <q-td key="view" :props="props">
+          <q-btn size="sm" outline @click="view(props.row)">View Test</q-btn>
+        </q-td>
+        <q-td key="compare" :props="props">
+          <q-btn size="sm" outline @click="compare(props.row)" label="Compare" :color="firstCompareTestHistory?.Id === props.row?.Id ? 'primary' : ''" />
+        </q-td>
         <q-td key="restore" :props="props">
           <q-btn size="sm" outline @click="restore(props.row)" v-if="!isRestoreDisabled(props.row)">Restore</q-btn>
         </q-td>
@@ -55,6 +61,8 @@ import { useQuasar } from 'quasar';
 import RestoreTestCaseDialog from './UpdateHistory/RestoreTestCaseDialog.vue';
 import { RestoreTestCaseDataInterface } from '../../../../../Models/Entities/RestoreTestCaseData';
 import { useUserStore } from '../../../../../pinia/userStore';
+import ViewTestCaseDialog from './UpdateHistory/ViewTestCaseDialog.vue';
+import CompareTestCaseDialog from './UpdateHistory/CompareTestCaseDialog.vue';
 
 const props = defineProps<{
   TestCase: TestCaseInterface;
@@ -114,6 +122,24 @@ const columns = [
     headerStyle: 'max-width: 100px',
   },
   {
+    name: 'view',
+    align: 'left',
+    label: '',
+    field: 'view',
+    sortable: false,
+    style: 'max-width: 80x; width: 80px',
+    headerStyle: 'max-width: 80px',
+  },
+  {
+    name: 'compare',
+    align: 'left',
+    label: '',
+    field: 'compare',
+    sortable: false,
+    style: 'max-width: 80x; width: 80px',
+    headerStyle: 'max-width: 80px',
+  },
+  {
     name: 'restore',
     align: 'left',
     label: '',
@@ -132,6 +158,8 @@ const initialPagination = {
 };
 const filter = ref('');
 const testUpdateHistories: Ref<TestCaseHistoryInterface[]> = ref([]);
+const firstCompareTestHistory = ref<TestCaseHistoryInterface | null>(null);
+const secondCompareTestHistory = ref<TestCaseHistoryInterface | null>(null);
 function isRestoreDisabled(TestCaseHistory: TestCaseHistoryInterface) {
   if (TestCaseHistory) {
     const index = testUpdateHistories.value.findIndex((testHistory: TestCaseHistoryInterface) => testHistory.Id === TestCaseHistory.Id);
@@ -191,5 +219,75 @@ function restore(testCaseHistory: TestCaseHistoryInterface) {
     .onDismiss(() => {
       console.log('Called on OK or Cancel');
     });
+}
+function view(testCaseHistory: TestCaseHistoryInterface) {
+  $q.dialog({
+    component: ViewTestCaseDialog,
+    componentProps: {
+      TestCaseHistory: testCaseHistory,
+    },
+  })
+    .onOk(async (restoreMessage: string) => {
+      try {
+        const restoreTestCaseData: RestoreTestCaseDataInterface = {
+          Id: testCaseHistory.Id,
+          RestoreMessage: restoreMessage,
+          RestoreBy: userStore.Username,
+        };
+        const result = await testCaseStore.restoreTestCase(restoreTestCaseData);
+        $q.notify({
+          type: 'positive',
+          message: result.message,
+        });
+        // Refresh the test case history
+        testUpdateHistories.value = await testCaseStore.getUpateHistories(props.TestCase.Id);
+        testUpdateHistories.value = testUpdateHistories.value.map((value: TestCaseHistoryInterface, i: number) => ({
+          ...value,
+          rowIndex: i + 1,
+        }));
+      } catch (error: any) {
+        $q.notify({
+          type: 'warning',
+          message: error.error,
+        });
+      }
+    })
+    .onCancel(() => {
+      console.log('Cancel');
+    })
+    .onDismiss(() => {
+      console.log('Called on OK or Cancel');
+    });
+}
+function compare(testCaseHistory: TestCaseHistoryInterface) {
+  if (firstCompareTestHistory.value === null) {
+    firstCompareTestHistory.value = testCaseHistory;
+  } else {
+    if (testCaseHistory.Id === firstCompareTestHistory.value.Id) {
+      firstCompareTestHistory.value = null;
+      return;
+    }
+
+    secondCompareTestHistory.value = testCaseHistory;
+    $q.dialog({
+      component: CompareTestCaseDialog,
+      componentProps: {
+        FirstCompareTestCaseHistory: firstCompareTestHistory.value,
+        SecondCompareTestCaseHistory: secondCompareTestHistory.value,
+      },
+    })
+      .onOk(() => {
+        firstCompareTestHistory.value = null;
+        secondCompareTestHistory.value = null;
+      })
+      .onCancel(() => {
+        firstCompareTestHistory.value = null;
+        secondCompareTestHistory.value = null;
+      })
+      .onDismiss(() => {
+        firstCompareTestHistory.value = null;
+        secondCompareTestHistory.value = null;
+      });
+  }
 }
 </script>

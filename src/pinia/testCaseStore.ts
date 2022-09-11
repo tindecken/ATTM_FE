@@ -137,7 +137,6 @@ export const useTestCaseStore = defineStore('testcase', {
     },
     removeOpenedTCbyTestSuite(testSuite: TestSuiteInterface) {
       const testCaseIds = this.openedTCs.filter((tc: TestCaseInterface) => tc.TestSuiteId === testSuite.Id).map((tc: TestCaseInterface) => tc.Id);
-      console.log('testCaseIds', testCaseIds);
       testCaseIds.forEach((tcId: string) => {
         const index = this.openedTCs.findIndex((el: TestCaseInterface) => el.Id === tcId);
         if (index !== -1) {
@@ -157,7 +156,6 @@ export const useTestCaseStore = defineStore('testcase', {
     },
     removeOpenedTCbyCategory(category: CategoryInterface) {
       const testCaseIds = this.openedTCs.filter((tc: TestCaseInterface) => tc.CategoryId === category.Id).map((tc: TestCaseInterface) => tc.Id);
-      console.log('testCaseIds', testCaseIds);
       testCaseIds.forEach((tcId: string) => {
         const index = this.openedTCs.findIndex((el: TestCaseInterface) => el.Id === tcId);
         if (index !== -1) {

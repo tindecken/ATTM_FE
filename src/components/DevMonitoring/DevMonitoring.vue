@@ -23,13 +23,7 @@
       <template v-slot:top-left>
         <div>
           <span class="text-h5">Monitoring</span>
-          <q-input
-            borderless
-            dense
-            debounce="300"
-            v-model="filterTable"
-            placeholder="Filter"
-          >
+          <q-input borderless dense debounce="300" v-model="filterTable" placeholder="Filter">
             <template v-slot:append>
               <q-icon name="search" />
             </template>
@@ -53,21 +47,14 @@
       </template>
       <template v-slot:header="props">
         <q-tr :props="props">
-          <q-th
-            v-for="col in props.cols"
-            :key="col.name"
-            :props="props"
-            class="text-bold text-primary"
-          >
+          <q-th v-for="col in props.cols" :key="col.name" :props="props" class="text-bold text-primary">
             {{ col.label }}
           </q-th>
         </q-tr>
       </template>
       <template v-slot:body="props">
         <q-tr :props="props" :class="styleStatus(props.row.Status)">
-          <q-td key="testCaseFullName" :props="props" class="q-c-input">
-            {{ props.row.TestCaseCodeName }}: {{ props.row.TestCaseName }}
-          </q-td>
+          <q-td key="testCaseFullName" :props="props" class="q-c-input"> {{ props.row.TestCaseCodeName }}: {{ props.row.TestCaseName }} </q-td>
           <q-td key="category" :props="props" class="q-c-input">
             {{ props.row.Category }}
           </q-td>
@@ -83,15 +70,7 @@
                 {{ props.row.Description }}
               </div>
               <div class="col-1" v-if="props.row.Description">
-                <q-btn
-                  flat
-                  round
-                  icon="content_copy"
-                  size="xs"
-                  primary
-                  @click="copy(props.row.Description)"
-                  class="order-last"
-                ></q-btn>
+                <q-btn flat round icon="content_copy" size="xs" primary @click="copy(props.row.Description)" class="order-last"></q-btn>
               </div>
             </div>
           </q-td>
@@ -106,11 +85,8 @@
           </q-td>
           <q-td key="errorMessage" :props="props" class="q-c-input">
             <div class="row no-wrap">
-              <div
-                class="col-11 ellipsis"
-                @click="showErrorMessageDialog(props.row)"
-              >
-                <q-tooltip :delay="300" max-width="1200px">
+              <div class="col-11 ellipsis" @click="showErrorMessageDialog(props.row)">
+                <q-tooltip :delay="300" max-width="1200px ">
                   <div style="white-space: pre-wrap; font-size: medium">
                     {{ props.row.ErrorMessage }}
                   </div>
@@ -118,15 +94,7 @@
                 {{ props.row.ErrorMessage }}
               </div>
               <div class="col-1" v-if="props.row.ErrorMessage">
-                <q-btn
-                  flat
-                  round
-                  icon="content_copy"
-                  size="xs"
-                  primary
-                  @click="copy(props.row.ErrorMessage)"
-                  class="order-last"
-                ></q-btn>
+                <q-btn flat round icon="content_copy" size="xs" primary @click="copy(props.row.ErrorMessage)" class="order-last"></q-btn>
               </div>
             </div>
           </q-td>
@@ -136,15 +104,7 @@
                 <dev-log :DevRunRecord="props.row" class="ellipsis"></dev-log>
               </div>
               <div class="col-1">
-                <q-btn
-                  flat
-                  round
-                  icon="content_copy"
-                  size="xs"
-                  primary
-                  @click="copy(props.row.Log)"
-                  class="order-last"
-                ></q-btn>
+                <q-btn flat round icon="content_copy" size="xs" primary @click="copy(props.row.Log)" class="order-last"></q-btn>
               </div>
             </div>
           </q-td>
@@ -382,9 +342,7 @@ export default defineComponent({
     ]);
     const isDark = computed(() => globalStore.darkTheme);
     const selected: Ref<any[]> = ref([]);
-    const devRunRecords: Ref<DevRunRecordInterface[]> = computed(
-      () => devMonitoringStore.devRunRecords
-    );
+    const devRunRecords: Ref<DevRunRecordInterface[]> = computed(() => devMonitoringStore.devRunRecords);
     const initialPagination = {
       sortBy: 'startAt',
       descending: true,
@@ -420,11 +378,7 @@ export default defineComponent({
       }
     }
     function getSelectedString() {
-      return selected.value.length === 0
-        ? ''
-        : `${selected.value.length} step${
-            selected.value.length > 1 ? 's' : ''
-          } selected.`;
+      return selected.value.length === 0 ? '' : `${selected.value.length} step${selected.value.length > 1 ? 's' : ''} selected.`;
     }
     function showErrorMessageDialog(devRunRecord: DevRunRecordInterface) {
       $q.dialog({

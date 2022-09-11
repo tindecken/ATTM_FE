@@ -3,20 +3,12 @@
     <q-layout
       view="hHh lpR fFf"
       :class="isDark ? 'bg-grey-9' : 'bg-grey-3'"
-      style="max-height: 170px; min-height: 100px !important; min-width: 400px"
+      style="max-height: 170px; min-height: 100px !important; min-width: 600px"
       container
     >
       <q-header reveal bordered class="row justify-between bg-secondary">
-        <div class="self-center text-subtitle1 q-pl-sm">
-          Save Test Case: {{ props.TestCase.CodeName }}
-        </div>
-        <q-btn
-          class="self-center"
-          dense
-          flat
-          icon="close"
-          @click="onDialogHide"
-        >
+        <div class="self-center text-subtitle1 q-pl-sm">Save Test Case: {{ props.TestCase.CodeName }}</div>
+        <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
           <q-tooltip>Close</q-tooltip>
         </q-btn>
       </q-header>
@@ -36,22 +28,8 @@
           </div>
           <div class="row q-mt-sm">
             <q-space />
-            <q-btn
-              outline
-              label="Cancel"
-              color="secondary"
-              class="q-mr-sm"
-              style="width: 100px"
-              @click="onDialogHide"
-            />
-            <q-btn
-              outline
-              label="Save"
-              color="secondary"
-              class="q-mr-sm"
-              style="width: 100px"
-              type="submit"
-            />
+            <q-btn outline label="Cancel" color="secondary" class="q-mr-sm" style="width: 100px" @click="onDialogHide" />
+            <q-btn outline label="Save" color="secondary" class="q-mr-sm" style="width: 100px" type="submit" />
           </div>
         </q-form>
       </q-page-container>

@@ -1,23 +1,19 @@
 <template>
   <q-dialog ref="dialogRef" @hide="onDialogHide" persistent>
-    <q-layout
-      class="q-pa-sm"
-      :class="isDark ? 'bg-grey-9' : 'bg-grey-3'"
-      style="max-height: 400px; min-height: 100px !important"
-    >
-      <div class="row q-mb-sm">
-        <span class="text-h6">Save Test Case?</span>
-      </div>
-      <div class="row q-mb-sm justify-end">
-        <q-btn outline label="Save" @click="save()"></q-btn>
-        <q-btn
-          outline
-          label="Discard"
-          @click="discard()"
-          class="q-ml-sm"
-        ></q-btn>
-        <q-btn outline label="Cancel" @click="cancel()" class="q-ml-sm"></q-btn>
-      </div>
+    <q-layout view="hHh lpR fFf" :class="isDark ? 'bg-grey-9' : 'bg-grey-3'" style="max-height: 100px; min-height: 50px !important; min-width: 400px" container>
+      <q-header reveal bordered class="row justify-between bg-secondary">
+        <div class="self-center text-subtitle1 q-pl-sm">Save Test Case?</div>
+        <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
+          <q-tooltip>Close</q-tooltip>
+        </q-btn>
+      </q-header>
+      <q-page-container>
+        <div class="row q-mt-sm q-mr-sm justify-end items-end">
+          <q-btn outline label="Save" @click="save()"></q-btn>
+          <q-btn outline label="Discard" @click="discard()" class="q-ml-sm"></q-btn>
+          <q-btn outline label="Cancel" @click="cancel()" class="q-ml-sm"></q-btn>
+        </div>
+      </q-page-container>
     </q-layout>
   </q-dialog>
 </template>
@@ -38,8 +34,7 @@ export default defineComponent({
   components: {},
   setup(props, context) {
     const globalStore = useGlobalStore();
-    const { dialogRef, onDialogHide, onDialogCancel } =
-      useDialogPluginComponent();
+    const { dialogRef, onDialogHide, onDialogCancel } = useDialogPluginComponent();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const isDark = computed(() => globalStore.darkTheme);
 

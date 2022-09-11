@@ -37,16 +37,12 @@ export const useGlobalStore = defineStore('global', {
     async copydevcodetoclient(testClient: TestClientInterface) {
       const userStore = useUserStore();
       try {
-        const response = await api.post(
-          '/testproject/copycodetoclient/dev',
-          testClient,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${userStore.Token}`,
-            },
-          }
-        );
+        const response = await api.post('/testproject/copycodetoclient/dev', testClient, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userStore.Token}`,
+          },
+        });
         const responseData = await response.data;
         return responseData;
       } catch (error: any) {
@@ -56,16 +52,12 @@ export const useGlobalStore = defineStore('global', {
     async checkautorunner(testClient: TestClientInterface) {
       const userStore = useUserStore();
       try {
-        const response = await api.post(
-          '/testproject/checkrunner/Runner',
-          testClient,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${userStore.Token}`,
-            },
-          }
-        );
+        const response = await api.post('/testproject/checkrunner/Runner', testClient, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userStore.Token}`,
+          },
+        });
         const responseData = await response.data;
         return responseData;
       } catch (error: any) {
@@ -75,16 +67,12 @@ export const useGlobalStore = defineStore('global', {
     async copyregcodetoclient(testClient: TestClientInterface) {
       const userStore = useUserStore();
       try {
-        const response = await api.post(
-          '/testproject/copycodetoclient/reg',
-          testClient,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${userStore.Token}`,
-            },
-          }
-        );
+        const response = await api.post('/testproject/copycodetoclient/reg', testClient, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userStore.Token}`,
+          },
+        });
         const responseData = await response.data;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return responseData;
@@ -98,16 +86,12 @@ export const useGlobalStore = defineStore('global', {
       const newValue = payload.regressionName as string;
       // eslint-disable-next-line no-useless-catch
       try {
-        const response = await api.post(
-          `/testproject/updatereleaseforclient/${newValue}`,
-          testClient,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${userStore.Token}`,
-            },
-          }
-        );
+        const response = await api.post(`/testproject/updatereleaseforclient/${newValue}`, testClient, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userStore.Token}`,
+          },
+        });
         console.log('response', response);
         const responseData = await response.data;
         return responseData;
@@ -136,16 +120,12 @@ export const useGlobalStore = defineStore('global', {
     async generateDevCode(testcases: any) {
       const userStore = useUserStore();
       try {
-        const response = await api.post(
-          '/testproject/generateDevCode',
-          testcases,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${userStore.Token}`,
-            },
-          }
-        );
+        const response = await api.post('/testproject/generateDevCode', testcases, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userStore.Token}`,
+          },
+        });
         const responseData = await response.data;
         return responseData;
       } catch (error) {
@@ -154,18 +134,13 @@ export const useGlobalStore = defineStore('global', {
     },
     async generateRegCode(testcasesDetail: any) {
       const userStore = useUserStore();
-      console.log('testcasesDetail', testcasesDetail);
       try {
-        const response = await api.post(
-          '/testproject/generateRegCode',
-          testcasesDetail,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${userStore.Token}`,
-            },
-          }
-        );
+        const response = await api.post('/testproject/generateRegCode', testcasesDetail, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userStore.Token}`,
+          },
+        });
         const responseData = await response.data;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return responseData;
@@ -177,16 +152,12 @@ export const useGlobalStore = defineStore('global', {
       const userStore = useUserStore();
       console.log('payload', payload);
       try {
-        const response = await api.post(
-          '/testproject/createdevqueue',
-          payload,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${userStore.Token}`,
-            },
-          }
-        );
+        const response = await api.post('/testproject/createdevqueue', payload, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userStore.Token}`,
+          },
+        });
         const responseData = await response.data;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return responseData;

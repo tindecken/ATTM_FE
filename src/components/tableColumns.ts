@@ -194,8 +194,7 @@ const testCaseColumns = [
     name: 'no',
     required: true,
     label: 'No',
-    align: 'left',
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    align: 'center',
     field: 'rowIndex',
     sortable: false,
     style: 'max-width: 40px',
@@ -203,7 +202,7 @@ const testCaseColumns = [
   },
   {
     name: 'testAUT',
-    align: 'center',
+    align: 'left',
     label: 'TestAUT',
     field: 'TestAUT',
     sortable: false,

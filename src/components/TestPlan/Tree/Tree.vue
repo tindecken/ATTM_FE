@@ -698,7 +698,6 @@ function onDeleteNodes(node: any) {
     }
   } else {
     const currentNode = tree.value.getNodeByKey(node.Id);
-    console.log('currentNode', currentNode);
     switch (currentNode.nodeType) {
       case 'Category':
         const category = currentNode as CategoryInterface;
@@ -826,7 +825,6 @@ function onDeleteNodes(node: any) {
 }
 function onViewProperties(node: any) {
   const currentNode = tree.value.getNodeByKey(node.Id);
-  console.log('currentNode', currentNode);
   switch (currentNode.nodeType) {
     case 'Category':
       break;
@@ -906,7 +904,6 @@ async function onPasteTestCase(node: any) {
     });
     return;
   }
-  console.log('testCaseStore.copiedTC', testCaseStore.copiedTC);
   if (testCaseStore.copiedTC === undefined) {
     $q.notify({
       type: 'warning',

@@ -25,7 +25,6 @@ export const useKeywordStore = defineStore('keyword', {
           },
         });
         const responseData = await response.data;
-        console.log('responseData', responseData);
         const keywordCategories: KeywordCategoryInterface[] = await responseData.data.Categories;
         this.keywordCategories = keywordCategories;
         this.setKeywords(keywordCategories);

@@ -84,7 +84,6 @@ async function closeTab(testcase: TestCaseInterface) {
   // get testcase from database then verify with current one
   const originalTestCase = await testCaseStore.getTestCaseById(testcase.Id);
   console.log('originalTestCase', originalTestCase.TestSteps);
-  console.log('testCase', testcase.TestSteps);
   if (originalTestCase.TestSteps.length !== testcase.TestSteps.length) {
     isModified = true;
   } else {

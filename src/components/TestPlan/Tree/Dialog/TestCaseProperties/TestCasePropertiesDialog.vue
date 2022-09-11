@@ -1,5 +1,5 @@
 <template>
-  <q-dialog ref="dialogRef" @hide="onDialogHide" persistent>
+  <q-dialog ref="dialogRef" @hide="onDialogHide">
     <q-layout
       view="hHh lpR fFf"
       :class="isDark ? 'bg-grey-9' : 'bg-grey-3'"
@@ -71,10 +71,7 @@ export default defineComponent({
     const footerInfo = ref('');
     const isFormValid = ref(false);
     const form = ref(QForm);
-    const tab = ref('properties');
-    onMounted(() => {
-      console.log('Props.TestCase', props.TestCase);
-    });
+    const tab = ref('historyUpdate');
     function onOKClick() {
       onDialogOK();
     }
