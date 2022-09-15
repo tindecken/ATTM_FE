@@ -128,7 +128,7 @@ const globalStore = useGlobalStore();
 const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent();
 const isDark = computed(() => globalStore.darkTheme);
 const isFormValid = ref(false);
-const form = ref(QForm);
+const form = ref() as Ref<QForm>;
 const editTestGroup: Ref<TestGroupInterface | null> = ref(null);
 onMounted(() => {
   editTestGroup.value = _.cloneDeep(props.TestGroup);

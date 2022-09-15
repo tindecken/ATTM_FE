@@ -8,25 +8,12 @@
     >
       <q-header reveal bordered class="row justify-between bg-secondary">
         <div class="self-center text-subtitle1 q-pl-sm">New Test Case</div>
-        <q-btn
-          class="self-center"
-          dense
-          flat
-          icon="close"
-          @click="onDialogHide"
-        >
+        <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
           <q-tooltip>Close</q-tooltip>
         </q-btn>
       </q-header>
       <q-page-container class="q-pa-sm">
-        <q-form
-          @submit="onOKClick"
-          greedy
-          @validation-success="isFormValid = true"
-          @validation-error="isFormValid = false"
-          ref="form"
-          class="q-mt-sm"
-        >
+        <q-form @submit="onOKClick" greedy @validation-success="isFormValid = true" @validation-error="isFormValid = false" ref="form" class="q-mt-sm">
           <div class="row">
             <div class="col-4 q-mr-sm">
               <q-input
@@ -39,8 +26,7 @@
                 :rules="[
                   (val) => !!val || '* Required',
                   (val) => val.length < 15 || 'Maximum is 15 chars',
-                  (val) =>
-                    isNaN(val.charAt(0)) || 'First char can not a number',
+                  (val) => isNaN(val.charAt(0)) || 'First char can not a number',
                 ]"
                 lazy-rules
               />
@@ -52,10 +38,7 @@
                 dense
                 v-model="name"
                 @blur="validateForm()"
-                :rules="[
-                  (val) => !!val || '* Required',
-                  (val) => val.length < 50 || 'Maximum is 50 chars',
-                ]"
+                :rules="[(val) => !!val || '* Required', (val) => val.length < 50 || 'Maximum is 50 chars']"
                 lazy-rules
               />
             </div>
@@ -68,22 +51,11 @@
                 dense
                 v-model="workItem"
                 @blur="validateForm()"
-                :rules="[
-                  (val) => val.length < 50 || 'WorkItem maximum is 50 chars',
-                ]"
+                :rules="[(val) => val.length < 50 || 'WorkItem maximum is 50 chars']"
               />
             </div>
             <div class="col-4 q-mr-sm">
-              <q-input
-                label="Type"
-                outlined
-                dense
-                v-model="type"
-                @blur="validateForm()"
-                :rules="[
-                  (val) => val.length < 50 || 'Type maximum is 50 chars',
-                ]"
-              />
+              <q-input label="Type" outlined dense v-model="type" @blur="validateForm()" :rules="[(val) => val.length < 50 || 'Type maximum is 50 chars']" />
             </div>
             <div class="col">
               <q-input
@@ -92,23 +64,14 @@
                 dense
                 v-model="author"
                 @blur="validateForm()"
-                :rules="[
-                  (val) => val.length < 50 || 'Author maximum is 50 chars',
-                ]"
+                :rules="[(val) => val.length < 50 || 'Author maximum is 50 chars']"
                 :readonly="true"
               />
             </div>
           </div>
           <div class="row q-mt-sm">
             <div class="col-4 q-mr-sm">
-              <q-input
-                label="Queue"
-                outlined
-                dense
-                v-model="queue"
-                @blur="validateForm()"
-                :rules="[(val) => val.length < 50 || 'Maximum is 50 chars']"
-              />
+              <q-input label="Queue" outlined dense v-model="queue" @blur="validateForm()" :rules="[(val) => val.length < 50 || 'Maximum is 50 chars']" />
             </div>
             <div class="col q-mr-sm">
               <q-input
@@ -131,29 +94,14 @@
                 rows="3"
                 v-model="description"
                 @blur="validateForm()"
-                :rules="[
-                  (val) =>
-                    val.length < 500 || 'Description maximum is 500 chars',
-                ]"
+                :rules="[(val) => val.length < 500 || 'Description maximum is 500 chars']"
               />
             </div>
           </div>
           <div class="column items-end q-mt-md">
             <div class="col">
-              <q-btn
-                flat
-                label="Cancel"
-                @click="onCancelClick()"
-                v-close-popup
-                class="q-mr-sm"
-              />
-              <q-btn
-                outline
-                label="Create"
-                :disable="!isFormValid"
-                type="submit"
-                color="primary"
-              />
+              <q-btn flat label="Cancel" @click="onCancelClick()" v-close-popup class="q-mr-sm" />
+              <q-btn outline label="Create" :disable="!isFormValid" type="submit" color="primary" />
             </div>
           </div>
         </q-form>
@@ -163,7 +111,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, PropType } from 'vue';
+import { computed, defineComponent, ref, PropType, Ref } from 'vue';
 import { TestCaseInterface } from '../../../../Models/TestCase';
 import { TestGroupInterface } from '../../../../Models/TestGroup';
 import { useGlobalStore } from '../../../../pinia/globalStore';
@@ -187,8 +135,7 @@ export default defineComponent({
   setup(props) {
     const globalStore = useGlobalStore();
     const userStore = useUserStore();
-    const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
-      useDialogPluginComponent();
+    const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent();
     const codeName = ref('');
     const name = ref('');
     const author = computed(() => userStore.Username);
@@ -199,7 +146,7 @@ export default defineComponent({
     const dontRunWithQueues = ref('');
     const isDark = computed(() => globalStore.darkTheme);
     const isFormValid = ref(false);
-    const form = ref(QForm);
+    const form = ref() as Ref<QForm>;
 
     function onOKClick() {
       const { testGroup } = props;
@@ -213,10 +160,7 @@ export default defineComponent({
         TestCaseType: type.value,
         Owner: author.value,
         Queue: queue.value,
-        DontRunWithQueues:
-          dontRunWithQueues.value.trim() !== ''
-            ? dontRunWithQueues.value.split(',').map((s: string) => s.trim())
-            : [],
+        DontRunWithQueues: dontRunWithQueues.value.trim() !== '' ? dontRunWithQueues.value.split(',').map((s: string) => s.trim()) : [],
         CategoryId: testGroup.CategoryId,
         TestSuiteId: testGroup.TestSuiteId,
         TestGroupId: testGroup.Id,

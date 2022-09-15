@@ -40,7 +40,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, PropType, onMounted } from 'vue';
+import { computed, defineComponent, ref, PropType, Ref } from 'vue';
 import { TestCaseInterface } from '../../../../../Models/TestCase';
 import { useGlobalStore } from '../../../../../pinia/globalStore';
 import { useClipboard } from '@vueuse/core';
@@ -70,7 +70,7 @@ export default defineComponent({
     const isDark = computed(() => globalStore.darkTheme);
     const footerInfo = ref('');
     const isFormValid = ref(false);
-    const form = ref(QForm);
+    const form = ref() as Ref<QForm>;
     const tab = ref('historyUpdate');
     function onOKClick() {
       onDialogOK();

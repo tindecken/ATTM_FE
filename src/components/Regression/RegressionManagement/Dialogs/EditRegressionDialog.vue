@@ -116,7 +116,7 @@ const userStore = useUserStore();
 const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent();
 const isDark = computed(() => globalStore.darkTheme);
 const isFormValid = ref(false);
-const form = ref(QForm);
+const form = ref() as Ref<QForm>;
 const editRegression: Ref<RegressionInterface | null> = ref(null);
 const dateRange = ref({
   from: null,

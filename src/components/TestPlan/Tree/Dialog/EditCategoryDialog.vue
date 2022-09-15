@@ -97,7 +97,7 @@ const globalStore = useGlobalStore();
 const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent();
 const isDark = computed(() => globalStore.darkTheme);
 const isFormValid = ref(false);
-const form = ref(QForm);
+const form = ref() as Ref<QForm>;
 const editCategory: Ref<CategoryInterface | null> = ref(null);
 onMounted(() => {
   editCategory.value = _.cloneDeep(props.Category);

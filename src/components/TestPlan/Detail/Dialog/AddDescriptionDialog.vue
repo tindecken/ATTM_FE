@@ -42,7 +42,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, PropType } from 'vue';
+import { computed, defineComponent, ref, PropType, Ref } from 'vue';
 import { useGlobalStore } from '../../../../pinia/globalStore';
 import { QForm, useDialogPluginComponent } from 'quasar';
 import { TestStepInterface } from '../../../../Models/TestStep';
@@ -68,7 +68,7 @@ export default defineComponent({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const isDark = computed(() => globalStore.darkTheme);
     const isFormValid = ref(false);
-    const formRef = ref(QForm);
+    const formRef = ref() as Ref<QForm>;
 
     function onOKClick() {
       onDialogOK(description.value);

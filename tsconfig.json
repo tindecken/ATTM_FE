@@ -1,6 +1,8 @@
 {
   "extends": "@quasar/app-vite/tsconfig-preset",
+  "vueCompilerOptions": { "experimentalDisableTemplateSupport": true },
   "compilerOptions": {
+    "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
       "src/*": ["src/*"],

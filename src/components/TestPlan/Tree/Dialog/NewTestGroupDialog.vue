@@ -92,7 +92,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, PropType } from 'vue';
+import { computed, defineComponent, ref, PropType, Ref } from 'vue';
 import { TestGroupInterface } from '../../../../Models/TestGroup';
 import { TestSuiteInterface } from '../../../../Models/TestSuite';
 import { useGlobalStore } from '../../../../pinia/globalStore';
@@ -124,7 +124,7 @@ export default defineComponent({
     const workItem = ref('');
     const isDark = computed(() => globalStore.darkTheme);
     const isFormValid = ref(false);
-    const form = ref(QForm);
+    const form = ref() as Ref<QForm>;
     // following method is REQUIRED
     // (don't change its name --> "show")
     function onOKClick() {

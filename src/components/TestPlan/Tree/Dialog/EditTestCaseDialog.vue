@@ -158,7 +158,7 @@ export default defineComponent({
     const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent();
     const isDark = computed(() => globalStore.darkTheme);
     const isFormValid = ref(false);
-    const form = ref(QForm);
+    const form = ref() as Ref<QForm>;
     const editTestCase: Ref<TestCaseInterface | null> = ref(null);
     onMounted(() => {
       editTestCase.value = _.cloneDeep(props.TestCase);

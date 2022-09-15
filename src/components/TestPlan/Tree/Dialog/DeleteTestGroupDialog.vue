@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, PropType } from 'vue';
+import { computed, defineComponent, ref, PropType, Ref } from 'vue';
 import { TestGroupInterface } from '../../../../Models/TestGroup';
 import { useGlobalStore } from '../../../../pinia/globalStore';
 import { QForm, useDialogPluginComponent } from 'quasar';
@@ -54,7 +54,7 @@ export default defineComponent({
     const globalStore = useGlobalStore();
     const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent();
     const isDark = computed(() => globalStore.darkTheme);
-    const form = ref(QForm);
+    const form = ref() as Ref<QForm>;
 
     function onDeleteClick() {
       onDialogOK();

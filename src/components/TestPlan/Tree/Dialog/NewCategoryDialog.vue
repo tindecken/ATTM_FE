@@ -8,25 +8,12 @@
     >
       <q-header reveal bordered class="row justify-between bg-secondary">
         <div class="self-center text-subtitle1 q-pl-sm">New Category</div>
-        <q-btn
-          class="self-center"
-          dense
-          flat
-          icon="close"
-          @click="onDialogHide"
-        >
+        <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
           <q-tooltip>Close</q-tooltip>
         </q-btn>
       </q-header>
       <q-page-container class="q-pa-sm">
-        <q-form
-          @submit="onOKClick"
-          greedy
-          @validation-success="isFormValid = true"
-          @validation-error="isFormValid = false"
-          ref="form"
-          class="q-mt-sm"
-        >
+        <q-form @submit="onOKClick" greedy @validation-success="isFormValid = true" @validation-error="isFormValid = false" ref="form" class="q-mt-sm">
           <div class="row">
             <div class="col-8 q-mr-sm">
               <q-input
@@ -39,8 +26,7 @@
                 :rules="[
                   (val) => !!val || '* Required',
                   (val) => val.length < 15 || 'Maximum is 15 chars',
-                  (val) =>
-                    isNaN(val.charAt(0)) || 'First char can not a number',
+                  (val) => isNaN(val.charAt(0)) || 'First char can not a number',
                 ]"
                 lazy-rules
               />
@@ -52,9 +38,7 @@
                 dense
                 v-model="workItem"
                 @blur="validateForm()"
-                :rules="[
-                  (val) => val.length < 50 || 'WorkItem maximum is 50 chars',
-                ]"
+                :rules="[(val) => val.length < 50 || 'WorkItem maximum is 50 chars']"
               />
             </div>
           </div>
@@ -68,29 +52,14 @@
                 rows="3"
                 v-model="description"
                 @blur="validateForm()"
-                :rules="[
-                  (val) =>
-                    val.length < 500 || 'Description maximum is 500 chars',
-                ]"
+                :rules="[(val) => val.length < 500 || 'Description maximum is 500 chars']"
               />
             </div>
           </div>
           <div class="column items-end q-mt-md">
             <div class="col">
-              <q-btn
-                flat
-                label="Cancel"
-                @click="onCancelClick()"
-                v-close-popup
-                class="q-mr-sm"
-              />
-              <q-btn
-                outline
-                label="Create"
-                :disable="!isFormValid"
-                type="submit"
-                color="primary"
-              />
+              <q-btn flat label="Cancel" @click="onCancelClick()" v-close-popup class="q-mr-sm" />
+              <q-btn outline label="Create" :disable="!isFormValid" type="submit" color="primary" />
             </div>
           </div>
         </q-form>
@@ -100,7 +69,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref, Ref } from 'vue';
 import { CategoryInterface } from '../../../../Models/Category';
 import { useGlobalStore } from '../../../../pinia/globalStore';
 import { QForm, useDialogPluginComponent } from 'quasar';
@@ -116,8 +85,7 @@ export default defineComponent({
   ],
   setup() {
     const globalStore = useGlobalStore();
-    const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
-      useDialogPluginComponent();
+    const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent();
     const codeName = ref('');
     const name = ref('');
     const author = ref('');
@@ -126,7 +94,7 @@ export default defineComponent({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const isDark = computed(() => globalStore.darkTheme);
     const isFormValid = ref(false);
-    const form = ref(QForm);
+    const form = ref() as Ref<QForm>;
 
     function onOKClick() {
       const newCategory: CategoryInterface = {
