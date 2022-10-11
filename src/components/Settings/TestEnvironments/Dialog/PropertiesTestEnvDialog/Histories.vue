@@ -19,7 +19,7 @@
           {{ props.row.UpdateTestEnvData.UpdateType }}
         </q-td>
         <q-td key="updateMessage" :props="props">
-          <q-tooltip v-if="props.row.UpdateTestEnvData.UpdateMessage !== ''">
+          <q-tooltip v-if="props.row.UpdateTestEnvData.UpdateMessage !== ''" style="font-size: small">
             {{ props.row.UpdateTestEnvData.UpdateMessage }}
           </q-tooltip>
           <div class="ellipsis">
@@ -27,13 +27,10 @@
           </div>
         </q-td>
         <q-td key="updateDate" :props="props">
-          <q-tooltip v-if="props.row.UpdateTestEnvData.UpdateDate !== ''">
+          <q-tooltip v-if="props.row.UpdateTestEnvData.UpdateDate !== ''" style="font-size: small">
             {{ props.row.UpdateTestEnvData.UpdateDate }}
           </q-tooltip>
-          <UseTimeAgo
-            v-slot="{ timeAgo }"
-            :time="props.row.UpdateTestEnvData.UpdateDate"
-          >
+          <UseTimeAgo v-slot="{ timeAgo }" :time="props.row.UpdateTestEnvData.UpdateDate">
             {{ timeAgo }}
           </UseTimeAgo>
         </q-td>
@@ -129,15 +126,11 @@ const testEnvHistories: Ref<TestEnvHistoryInterface[]> = ref([]);
 onMounted(async () => {
   try {
     console.log('props.TestEnv.Id', props.TestEnv.Id);
-    testEnvHistories.value = await testEnvironmentStore.getTestEnvHistories(
-      props.TestEnv.Id
-    );
-    testEnvHistories.value = testEnvHistories.value.map(
-      (value: TestEnvHistoryInterface, i: number) => ({
-        ...value,
-        rowIndex: i + 1,
-      })
-    );
+    testEnvHistories.value = await testEnvironmentStore.getTestEnvHistories(props.TestEnv.Id);
+    testEnvHistories.value = testEnvHistories.value.map((value: TestEnvHistoryInterface, i: number) => ({
+      ...value,
+      rowIndex: i + 1,
+    }));
   } catch (error: any) {
     $q.notify({
       type: 'negative',

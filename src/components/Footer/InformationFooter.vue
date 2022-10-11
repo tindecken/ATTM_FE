@@ -1,10 +1,8 @@
 <template>
   <div>
-    <span @click="copy(infoStatus.Info)" class="q-pr-sm q-pl-sm">{{
-      infoStatus.Info
-    }}</span>
-    <q-tooltip v-if="infoStatus.Data">
-      <div style="font-size: small">
+    <span @click="copy(infoStatus.Info)" class="q-pr-sm q-pl-sm">{{ infoStatus.Info }}</span>
+    <q-tooltip v-if="infoStatus.Data" style="white-space: pre; font-size: small">
+      <div>
         {{ infoStatus.Data }}
       </div>
     </q-tooltip>
@@ -23,9 +21,7 @@ export default defineComponent({
   setup() {
     const globalStore = useGlobalStore();
     const { copy } = useClipboard();
-    const infoStatus = computed(
-      () => globalStore.infoStatus as InfoStatusDataInterface
-    );
+    const infoStatus = computed(() => globalStore.infoStatus as InfoStatusDataInterface);
     return {
       infoStatus,
       copy,

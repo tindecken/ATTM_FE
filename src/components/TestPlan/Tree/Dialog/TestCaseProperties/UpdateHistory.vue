@@ -19,10 +19,10 @@
           {{ props.row.UpdateTestCaseData.UpdateType }}
         </q-td>
         <q-td key="updateMessage" :props="props">
-          <q-tooltip v-if="props.row.UpdateTestCaseData.UpdateMessage !== ''" style="white-space: pre-wrap">
+          <q-tooltip v-if="props.row.UpdateTestCaseData.UpdateMessage !== ''" style="white-space: pre-wrap; font-size: small">
             {{ props.row.UpdateTestCaseData.UpdateMessage }}
           </q-tooltip>
-          <div class="ellipsis" style="white-space: pre-wrap">
+          <div class="ellipsis" style="white-space: pre-wrap; font-size: small">
             {{ props.row.UpdateTestCaseData.UpdateMessage }}
           </div>
         </q-td>

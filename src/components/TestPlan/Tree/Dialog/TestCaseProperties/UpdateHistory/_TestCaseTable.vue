@@ -68,11 +68,11 @@
             >
               <template v-slot:prepend>
                 <q-icon v-if="ParamErrorMessage(props.row, index) !== ''" name="error_outline" size="xs">
-                  <q-tooltip style="font-size: 13px"> {{ ParamErrorMessage(props.row, index) }} </q-tooltip>
+                  <q-tooltip style="font-size: small"> {{ ParamErrorMessage(props.row, index) }} </q-tooltip>
                 </q-icon>
               </template>
               <q-tooltip
-                style="font-size: 13px"
+                style="font-size: small"
                 v-if="
                   props.row.Params[index - 1]?.TestNodePath && props.row.Params[index - 1].TestNodePath !== '' && ParamErrorMessage(props.row, index) === ''
                 "

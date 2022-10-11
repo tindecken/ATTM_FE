@@ -9,7 +9,7 @@
       <q-header reveal bordered class="row justify-between bg-secondary">
         <div class="self-center text-subtitle1 q-pl-sm">Select Test Environment</div>
         <q-btn dense flat icon="close" @click="onDialogCancel">
-          <q-tooltip>Close</q-tooltip>
+          <q-tooltip style="font-size: small">Close</q-tooltip>
         </q-btn>
       </q-header>
       <q-page-container>
@@ -59,13 +59,13 @@
                     <div>{{ props.row.Name }}</div>
                   </q-td>
                   <q-td key="value" :props="props" @click="footerInfo = props.row.Value">
-                    <q-tooltip v-if="props.row.Value !== ''">
+                    <q-tooltip v-if="props.row.Value !== ''" style="font-size: small">
                       {{ props.row.Value }}
                     </q-tooltip>
                     {{ props.row.Value }}
                   </q-td>
                   <q-td key="description" :props="props" @click="footerInfo = props.row.Description">
-                    <q-tooltip v-if="props.row.Description !== ''">
+                    <q-tooltip v-if="props.row.Description !== ''" style="font-size: small">
                       {{ props.row.Description }}
                     </q-tooltip>
                     {{ props.row.Description }}

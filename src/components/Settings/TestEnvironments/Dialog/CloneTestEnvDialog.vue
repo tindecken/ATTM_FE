@@ -7,17 +7,9 @@
       container
     >
       <q-header reveal bordered class="row justify-between bg-secondary">
-        <div class="self-center text-subtitle1 q-pl-sm">
-          Clone Environment: {{ props.TestEnv.Name }}
-        </div>
-        <q-btn
-          class="self-center"
-          dense
-          flat
-          icon="close"
-          @click="onDialogHide"
-        >
-          <q-tooltip>Close</q-tooltip>
+        <div class="self-center text-subtitle1 q-pl-sm">Clone Environment: {{ props.TestEnv.Name }}</div>
+        <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
+          <q-tooltip style="font-size: small">Close</q-tooltip>
         </q-btn>
       </q-header>
       <q-page-container>
@@ -29,10 +21,7 @@
               v-model="testEnvName"
               label="Name"
               class="col-12 q-mb-sm"
-              :rules="[
-                (val) => !!val || 'Field is required',
-                (val) => val.length <= 50 || 'Maximum 50 characters',
-              ]"
+              :rules="[(val) => !!val || 'Field is required', (val) => val.length <= 50 || 'Maximum 50 characters']"
             />
             <q-input
               type="textarea"
@@ -47,22 +36,8 @@
           </div>
           <div class="row q-mt-sm">
             <q-space />
-            <q-btn
-              outline
-              label="Cancel"
-              color="secondary"
-              class="q-mr-sm"
-              style="width: 100px"
-              @click="onDialogHide"
-            />
-            <q-btn
-              outline
-              label="Clone"
-              color="secondary"
-              class="q-mr-sm"
-              style="width: 100px"
-              type="submit"
-            />
+            <q-btn outline label="Cancel" color="secondary" class="q-mr-sm" style="width: 100px" @click="onDialogHide" />
+            <q-btn outline label="Clone" color="secondary" class="q-mr-sm" style="width: 100px" type="submit" />
           </div>
         </q-form>
       </q-page-container>

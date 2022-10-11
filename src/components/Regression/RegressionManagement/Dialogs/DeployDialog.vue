@@ -9,7 +9,7 @@
       <q-header reveal bordered class="row justify-between bg-secondary">
         <div class="self-center text-subtitle1 q-pl-sm">Select test clients to deploy</div>
         <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
-          <q-tooltip>Close</q-tooltip>
+          <q-tooltip style="font-size: small">Close</q-tooltip>
         </q-btn>
       </q-header>
       <q-page-container class="q-pa-sm">
@@ -39,7 +39,7 @@
         </q-table>
         <div class="q-mt-sm">
           <q-btn outline color="primary" label="Build - Deploy - Configure Runner" class="q-mr-sm" @click="build_deploy_configure()">
-            <q-tooltip style="white-space: pre; font-size: 13px" class="bg-amber-1 text-black">
+            <q-tooltip style="white-space: pre; font-size: small" class="bg-amber-1 text-black">
               Get latest code <br />
               Build Project <br />
               Copy build to test client<br />
@@ -47,13 +47,13 @@
             </q-tooltip>
           </q-btn>
           <q-btn outline color="primary" label="Deploy - Configure Runner" class="q-mr-sm" @click="deploy_configure()">
-            <q-tooltip style="white-space: pre; font-size: 13px" class="bg-amber-1 text-black">
+            <q-tooltip style="white-space: pre; font-size: small" class="bg-amber-1 text-black">
               Copy build to test client<br />
               Update configuration file for test client
             </q-tooltip>
           </q-btn>
           <q-btn outline color="primary" label="Configure Runner" @click="configure()">
-            <q-tooltip style="white-space: pre; font-size: 13px" class="bg-amber-1 text-black">Update configuration file for test client </q-tooltip>
+            <q-tooltip style="white-space: pre; font-size: small" class="bg-amber-1 text-black">Update configuration file for test client </q-tooltip>
           </q-btn>
         </div>
       </q-page-container>

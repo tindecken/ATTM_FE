@@ -12,7 +12,7 @@
           {{ props.TestCase.Name }}
         </div>
         <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
-          <q-tooltip>Close</q-tooltip>
+          <q-tooltip style="font-size: small">Close</q-tooltip>
         </q-btn>
       </q-header>
       <q-page-container>

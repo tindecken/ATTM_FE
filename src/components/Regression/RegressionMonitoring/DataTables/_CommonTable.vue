@@ -21,13 +21,7 @@
   >
     <template v-slot:top-left>
       <div>
-        <q-input
-          borderless
-          dense
-          debounce="300"
-          v-model="filterTable"
-          placeholder="Filter"
-        >
+        <q-input borderless dense debounce="300" v-model="filterTable" placeholder="Filter">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
@@ -52,12 +46,7 @@
     </template>
     <template v-slot:header="props">
       <q-tr :props="props">
-        <q-th
-          v-for="col in props.cols"
-          :key="col.name"
-          :props="props"
-          class="text-bold text-primary"
-        >
+        <q-th v-for="col in props.cols" :key="col.name" :props="props" class="text-bold text-primary">
           {{ col.label }}
         </q-th>
       </q-tr>
@@ -73,9 +62,7 @@
         <reg-menu @update="onUpdate()"></reg-menu>
         <q-td key="testCaseFullName" :props="props" class="q-c-input">
           <div class="row no-wrap justify-between items-center">
-            <div class="ellipsis">
-              {{ props.row.TestCaseCodeName }}: {{ props.row.TestCaseName }}
-            </div>
+            <div class="ellipsis">{{ props.row.TestCaseCodeName }}: {{ props.row.TestCaseName }}</div>
             <div>
               <q-btn
                 flat
@@ -83,11 +70,7 @@
                 icon="content_copy"
                 size="xs"
                 primary
-                @click="
-                  copy(
-                    `${props.row.TestCaseCodeName}: ${props.row.TestCaseName}`
-                  )
-                "
+                @click="copy(`${props.row.TestCaseCodeName}: ${props.row.TestCaseName}`)"
                 class="order-last"
               ></q-btn>
             </div>
@@ -117,15 +100,7 @@
               {{ props.row.Description }}
             </div>
             <div v-if="props.row.Description">
-              <q-btn
-                flat
-                round
-                icon="content_copy"
-                size="xs"
-                primary
-                @click="copy(props.row.Description)"
-                class="order-last"
-              ></q-btn>
+              <q-btn flat round icon="content_copy" size="xs" primary @click="copy(props.row.Description)" class="order-last"></q-btn>
             </div>
           </div>
         </q-td>
@@ -139,22 +114,14 @@
           <div class="row no-wrap items-center justify-between">
             <div class="ellipsis" @click="showErrorMessageDialog(props.row)">
               <q-tooltip :delay="300" max-width="1200px">
-                <div style="white-space: pre-wrap; font-size: medium">
+                <div style="white-space: pre-wrap; font-size: small">
                   {{ props.row.LastRegressionRunRecord?.ErrorMessage }}
                 </div>
               </q-tooltip>
               {{ props.row.LastRegressionRunRecord?.ErrorMessage }}
             </div>
             <div v-if="props.row.LastRegressionRunRecord?.ErrorMessage">
-              <q-btn
-                flat
-                round
-                icon="content_copy"
-                size="xs"
-                primary
-                @click="copy(props.row.LastRegressionRunRecord?.ErrorMessage)"
-                class="order-last"
-              ></q-btn>
+              <q-btn flat round icon="content_copy" size="xs" primary @click="copy(props.row.LastRegressionRunRecord?.ErrorMessage)" class="order-last"></q-btn>
             </div>
           </div>
         </q-td>
@@ -164,15 +131,7 @@
               <reg-log :RegressionTest="props.row" class="ellipsis"></reg-log>
             </div>
             <div v-if="props.row.LastRegressionRunRecord?.Log">
-              <q-btn
-                flat
-                round
-                icon="content_copy"
-                size="xs"
-                primary
-                @click="copy(props.row.LastRegressionRunRecord.Log)"
-                class="order-last"
-              ></q-btn>
+              <q-btn flat round icon="content_copy" size="xs" primary @click="copy(props.row.LastRegressionRunRecord.Log)" class="order-last"></q-btn>
             </div>
           </div>
         </q-td>
@@ -180,38 +139,22 @@
           <error-screenshot :RegTest="props.row"></error-screenshot>
         </q-td>
         <q-td key="startAt" :props="props" class="q-c-input">
-          <UseTimeAgo
-            v-slot="{ timeAgo }"
-            :time="props.row.LastRegressionRunRecord?.StartAt"
-          >
+          <UseTimeAgo v-slot="{ timeAgo }" :time="props.row.LastRegressionRunRecord?.StartAt">
             {{ timeAgo }}
           </UseTimeAgo>
           <q-tooltip :delay="300" max-width="1200px">
-            <div style="white-space: pre-wrap; font-size: medium">
-              {{
-                date.formatDate(
-                  props.row.LastRegressionRunRecord?.StartAt,
-                  'YYYY-MM-DD HH:mm:ss Z'
-                )
-              }}
+            <div style="white-space: pre-wrap; font-size: small">
+              {{ date.formatDate(props.row.LastRegressionRunRecord?.StartAt, 'YYYY-MM-DD HH:mm:ss Z') }}
             </div>
           </q-tooltip>
         </q-td>
         <q-td key="endAt" :props="props" class="q-c-input">
-          <UseTimeAgo
-            v-slot="{ timeAgo }"
-            :time="props.row.LastRegressionRunRecord?.EndAt"
-          >
+          <UseTimeAgo v-slot="{ timeAgo }" :time="props.row.LastRegressionRunRecord?.EndAt">
             {{ timeAgo }}
           </UseTimeAgo>
           <q-tooltip :delay="300" max-width="1200px">
-            <div style="white-space: pre-wrap; font-size: medium">
-              {{
-                date.formatDate(
-                  props.row.LastRegressionRunRecord?.EndAt,
-                  'YYYY-MM-DD HH:mm:ss Z'
-                )
-              }}
+            <div style="white-space: pre-wrap; font-size: small">
+              {{ date.formatDate(props.row.LastRegressionRunRecord?.EndAt, 'YYYY-MM-DD HH:mm:ss Z') }}
             </div>
           </q-tooltip>
         </q-td>
@@ -237,22 +180,14 @@
           <div class="row no-wrap items-center justify-between">
             <div class="ellipsis">
               <q-tooltip :delay="300" max-width="1200px">
-                <div style="white-space: pre-wrap; font-size: medium">
+                <div style="white-space: pre-wrap; font-size: small">
                   {{ props.row.Comments }}
                 </div>
               </q-tooltip>
               {{ props.row.Comments }}
             </div>
             <div v-if="props.row.Comments">
-              <q-btn
-                flat
-                round
-                icon="content_copy"
-                size="xs"
-                primary
-                @click="copy(props.row.Comments)"
-                class="order-last"
-              ></q-btn>
+              <q-btn flat round icon="content_copy" size="xs" primary @click="copy(props.row.Comments)" class="order-last"></q-btn>
             </div>
           </div>
         </q-td>
@@ -308,9 +243,7 @@ const isDark = computed(() => globalStore.darkTheme);
 const selected: Ref<RegressionTestInterface[]> = ref([]);
 const columns = allColumns;
 const { copy } = useClipboard();
-const regTests: Ref<RegressionTestInterface[]> = computed(
-  () => props.testCases
-);
+const regTests: Ref<RegressionTestInterface[]> = computed(() => props.testCases);
 const initialPagination = {
   sortBy: 'startAt',
   descending: true,
@@ -342,11 +275,7 @@ function showErrorMessageDialog(regTest: RegressionTestInterface) {
   console.log('regTest', regTest);
 }
 function getSelectedString() {
-  return selected.value.length === 0
-    ? ''
-    : `${selected.value.length} regresion test${
-        selected.value.length > 1 ? 's' : ''
-      } selected.`;
+  return selected.value.length === 0 ? '' : `${selected.value.length} regresion test${selected.value.length > 1 ? 's' : ''} selected.`;
 }
 function toggleSelectedRow(row: any) {
   if (selected.value.length > 0) {
@@ -390,17 +319,13 @@ function onUpdate() {
     .onOk(async () => {
       // TODO: handle ok
       const { selectedRegression } = regressionStore;
-      await regMonitoringStore.getRegressionDetail(
-        selectedRegression?.Id as string
-      );
+      await regMonitoringStore.getRegressionDetail(selectedRegression?.Id as string);
       console.log('OK');
     })
     .onCancel(async () => {
       // TODO
       const { selectedRegression } = regressionStore;
-      await regMonitoringStore.getRegressionDetail(
-        selectedRegression?.Id as string
-      );
+      await regMonitoringStore.getRegressionDetail(selectedRegression?.Id as string);
     })
     .onDismiss(() => {
       console.log('Dismiss');

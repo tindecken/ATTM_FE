@@ -20,7 +20,7 @@
   <q-input :class="valueStyle" :debounce="300" :model-value="prValue" dense borderless @update:model-value="emit('changeParam', $event)" :readonly="readonly">
     <template v-slot:prepend>
       <q-icon v-if="isParamError" name="error_outline">
-        <q-tooltip>
+        <q-tooltip style="white-space: pre; font-size: small">
           {{ paramErrorMessage }}
         </q-tooltip>
       </q-icon>

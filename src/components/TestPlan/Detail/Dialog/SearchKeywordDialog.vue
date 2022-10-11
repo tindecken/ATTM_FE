@@ -9,7 +9,7 @@
       <q-header reveal bordered class="row justify-between bg-secondary">
         <div class="self-center text-subtitle1 q-pl-sm">Search Keyword</div>
         <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
-          <q-tooltip>Close</q-tooltip>
+          <q-tooltip style="font-size: small">Close</q-tooltip>
         </q-btn>
       </q-header>
       <q-page-container>
@@ -81,7 +81,7 @@
                       {{ props.row.rowIndex }}
                     </q-td>
                     <q-td key="name" :props="props">
-                      <q-tooltip>
+                      <q-tooltip style="font-size: small">
                         <div class="text-body2">Category: {{ props.row.Category }}</div>
                         <div class="text-body2">Feature: {{ props.row.Feature }}</div>
                       </q-tooltip>

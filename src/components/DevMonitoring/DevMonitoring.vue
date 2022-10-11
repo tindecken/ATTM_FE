@@ -87,7 +87,7 @@
             <div class="row no-wrap">
               <div class="col-11 ellipsis" @click="showErrorMessageDialog(props.row)">
                 <q-tooltip :delay="300" max-width="1200px ">
-                  <div style="white-space: pre-wrap; font-size: medium">
+                  <div style="white-space: pre-wrap; font-size: small">
                     {{ props.row.ErrorMessage }}
                   </div>
                 </q-tooltip>

@@ -23,16 +23,16 @@
         </template>
       </q-input>
       <q-btn color="primary" flat icon="code" class="q-mr-sm" @click="viewGenerateCode(TestCase)">
-        <q-tooltip>View generate code</q-tooltip>
+        <q-tooltip style="font-size: small">View generate code</q-tooltip>
       </q-btn>
       <q-btn color="primary" flat icon="cached" class="q-mr-sm" @click="getLastResult(TestCase)">
-        <q-tooltip>Get latest result</q-tooltip>
+        <q-tooltip style="font-size: small">Get latest result</q-tooltip>
       </q-btn>
       <q-btn color="primary" flat icon="play_arrow" class="q-mr-sm" @click="runTestCase(TestCase)">
-        <q-tooltip>Run</q-tooltip>
+        <q-tooltip style="font-size: small">Run</q-tooltip>
       </q-btn>
       <q-btn color="primary" flat icon="save" class="q-mr-sm" @click="saveTestCase()">
-        <q-tooltip>Save</q-tooltip>
+        <q-tooltip style="font-size: small">Save</q-tooltip>
       </q-btn>
       <q-btn color="primary" flat icon="undo" class="q-mr-sm" :disable="!canUndo" @click="undo()"> </q-btn>
       <q-btn color="primary" flat icon="redo" class="q-mr-sm" :disable="!canRedo" @click="redo()"> </q-btn>
@@ -247,6 +247,8 @@ function addNewStep() {
     IsComment: false,
     KWFeature: '',
     KWCategory: '',
+    Log: '',
+    Status: 'NotRun',
   });
 }
 

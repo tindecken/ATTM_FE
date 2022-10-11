@@ -7,48 +7,19 @@
       container
     >
       <q-header reveal bordered class="row justify-between bg-secondary">
-        <div class="self-center text-subtitle1 q-pl-sm">
-          Save Test Environment: {{ props.TestEnv.Name }}
-        </div>
-        <q-btn
-          class="self-center"
-          dense
-          flat
-          icon="close"
-          @click="onDialogHide"
-        >
-          <q-tooltip>Close</q-tooltip>
+        <div class="self-center text-subtitle1 q-pl-sm">Save Test Environment: {{ props.TestEnv.Name }}</div>
+        <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
+          <q-tooltip style="font-size: small">Close</q-tooltip>
         </q-btn>
       </q-header>
       <q-page-container>
         <div class="row q-pa-sm">
-          <q-input
-            dense
-            outlined
-            v-model="saveMessage"
-            label="Save message"
-            class="col-12 q-mb-sm"
-            :rules="[(val) => !!val || 'Field is required']"
-          />
+          <q-input dense outlined v-model="saveMessage" label="Save message" class="col-12 q-mb-sm" :rules="[(val) => !!val || 'Field is required']" />
         </div>
         <div class="row q-mt-sm">
           <q-space />
-          <q-btn
-            outline
-            label="Cancel"
-            color="secondary"
-            class="q-mr-sm"
-            style="width: 100px"
-            @click="onDialogHide"
-          />
-          <q-btn
-            outline
-            label="Save"
-            color="secondary"
-            class="q-mr-sm"
-            style="width: 100px"
-            @click="save()"
-          />
+          <q-btn outline label="Cancel" color="secondary" class="q-mr-sm" style="width: 100px" @click="onDialogHide" />
+          <q-btn outline label="Save" color="secondary" class="q-mr-sm" style="width: 100px" @click="save()" />
         </div>
       </q-page-container>
     </q-layout>

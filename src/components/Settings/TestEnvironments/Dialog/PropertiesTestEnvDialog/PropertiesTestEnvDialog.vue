@@ -7,17 +7,9 @@
       container
     >
       <q-header reveal bordered class="row justify-between bg-secondary">
-        <div class="self-center text-subtitle1 q-pl-sm">
-          Environment: {{ props.TestEnv.Name }}
-        </div>
-        <q-btn
-          class="self-center"
-          dense
-          flat
-          icon="close"
-          @click="onDialogHide"
-        >
-          <q-tooltip>Close</q-tooltip>
+        <div class="self-center text-subtitle1 q-pl-sm">Environment: {{ props.TestEnv.Name }}</div>
+        <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
+          <q-tooltip style="font-size: small">Close</q-tooltip>
         </q-btn>
       </q-header>
       <q-page-container>
@@ -25,19 +17,9 @@
           <q-tab name="properties" label="Properties" />
           <q-tab name="histories" label="Histories" />
         </q-tabs>
-        <q-tab-panels
-          v-model="tab"
-          animated
-          vertical
-          transition-prev="jump-down"
-          transition-next="jump-down"
-        >
+        <q-tab-panels v-model="tab" animated vertical transition-prev="jump-down" transition-next="jump-down">
           <q-tab-panel name="properties">
-            <properties
-              :TestEnv="props.TestEnv"
-              @submit="onSubmitProperties($event)"
-              @cancel="onCancelProperties()"
-            ></properties>
+            <properties :TestEnv="props.TestEnv" @submit="onSubmitProperties($event)" @cancel="onCancelProperties()"></properties>
           </q-tab-panel>
           <q-tab-panel name="histories">
             <histories :TestEnv="props.TestEnv"></histories>

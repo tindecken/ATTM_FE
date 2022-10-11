@@ -8,50 +8,22 @@
     >
       <q-header reveal bordered class="row justify-between bg-secondary">
         <div class="self-center text-subtitle1 q-pl-sm">Delete test suite</div>
-        <q-btn
-          class="self-center"
-          dense
-          flat
-          icon="close"
-          @click="onDialogHide"
-        >
-          <q-tooltip>Close</q-tooltip>
+        <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
+          <q-tooltip style="font-size: small">Close</q-tooltip>
         </q-btn>
       </q-header>
       <q-page-container class="q-pa-sm">
         <div class="row q-mb-sm">
-          <span
-            class="text-subtitle1"
-            v-if="
-              testSuite &&
-              testSuite.TestGroupIds &&
-              testSuite.TestGroupIds.length > 0
-            "
-            >Are you sure to delete test suite: {{ testSuite.CodeName }} -
-            {{ testSuite.Name }}, and its
-            {{ testSuite.TestGroupIds?.length }} test group(s)?</span
+          <span class="text-subtitle1" v-if="testSuite && testSuite.TestGroupIds && testSuite.TestGroupIds.length > 0"
+            >Are you sure to delete test suite: {{ testSuite.CodeName }} - {{ testSuite.Name }}, and its {{ testSuite.TestGroupIds?.length }} test
+            group(s)?</span
           >
-          <span class="text-subtitle1" v-else
-            >Are you sure to delete test suite: {{ testSuite.CodeName }} -
-            {{ testSuite.Name }}?</span
-          >
+          <span class="text-subtitle1" v-else>Are you sure to delete test suite: {{ testSuite.CodeName }} - {{ testSuite.Name }}?</span>
         </div>
         <div class="column items-end q-mt-md">
           <div class="col">
-            <q-btn
-              flat
-              label="Cancel"
-              @click="onCancelClick()"
-              v-close-popup
-              class="q-mr-sm"
-            />
-            <q-btn
-              outline
-              label="Delete"
-              type="submit"
-              color="negative"
-              @click="onDeleteClick()"
-            />
+            <q-btn flat label="Cancel" @click="onCancelClick()" v-close-popup class="q-mr-sm" />
+            <q-btn outline label="Delete" type="submit" color="negative" @click="onDeleteClick()" />
           </div>
         </div>
       </q-page-container>
@@ -81,8 +53,7 @@ export default defineComponent({
   components: {},
   setup() {
     const globalStore = useGlobalStore();
-    const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
-      useDialogPluginComponent();
+    const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent();
     const isDark = computed(() => globalStore.darkTheme);
     const form = ref(null);
 
