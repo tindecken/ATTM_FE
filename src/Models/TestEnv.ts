@@ -5,14 +5,14 @@ interface TestEnvNodeInterface {
   Description?: string;
 }
 interface TestEnvInterface {
-    Id: string;
-    Name: string;
-    Description?: string;
-    Nodes: TestEnvNodeInterface[]
-    LastModifiedDate?: Date
-    LastModifiedUser?: string
-    LastModifiedMessage?: string
-    IsDeleted?: boolean
+  Id: string;
+  Name: string;
+  Description?: string;
+  Nodes: TestEnvNodeInterface[];
+  LastModifiedDate?: Date;
+  LastModifiedUser?: string;
+  LastModifiedMessage?: string;
+  IsDeleted?: boolean;
 }
 
-export { TestEnvInterface, TestEnvNodeInterface }
+export { TestEnvInterface, TestEnvNodeInterface };

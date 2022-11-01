@@ -49,6 +49,7 @@ const globalStore = useGlobalStore();
 const userStore = useUserStore();
 const props = defineProps<{
   TestEnv: TestEnvInterface;
+  UpdateType: string;
 }>();
 
 const saveMessage = ref('');
@@ -69,9 +70,10 @@ function save() {
   const updateTestEnvData: UpdateTestEnvDataInterface = {
     UpdateBy: userStore.Username,
     UpdateMessage: saveMessage.value,
-    UpdateType: 'Update Nodes',
+    UpdateType: props.UpdateType,
   };
   const testEnvHistory: TestEnvHistoryInterface = {
+    Id: '',
     UpdateTestEnvData: updateTestEnvData,
     TestEnv: props.TestEnv,
   };

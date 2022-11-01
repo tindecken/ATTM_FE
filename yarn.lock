@@ -73,10 +73,10 @@
   resolved "https://registry.yarnpkg.com/@positron/stack-trace/-/stack-trace-1.0.0.tgz#14fcc712a530038ef9be1ce6952315a839f466a8"
   integrity sha512-nWlGg+aMfQDhGYa5FtBhZwldeo2MtdjHdxmEQvhBXEnxgD5IhIYl0PHvex8SdwyN7qcSoMykMWdjyAX7ZxkpMw==
 
-"@quasar/app-vite@^1.1.2":
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/@quasar/app-vite/-/app-vite-1.1.2.tgz#51252bdc9f2b2115bfaab3f203bb6e9f892996c8"
-  integrity sha512-jR8QSCLf9VB1DggaqCXpTjXahBiZQa/g2q+U6DuABsVKOajkAjtKmgOziizKwWqNFBH4cfPWX4HZLcGqzn0KWQ==
+"@quasar/app-vite@^1.1.3":
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/@quasar/app-vite/-/app-vite-1.1.3.tgz#fede1691ed176954354e7ce20886e147660de7a9"
+  integrity sha512-YX6lVkjRFNDbYcORiMtNlDz3jlSf7ldF4zGZk8zaW/Q1CfjaLqpSqCmBP4eta6QXz7To0IdabROYKa55D6IDgA==
   dependencies:
     "@quasar/fastclick" "1.1.5"
     "@quasar/vite-plugin" "^1.2.1"
@@ -147,10 +147,10 @@
     update-notifier "^5.1.0"
     validate-npm-package-name "^3.0.0"
 
-"@quasar/extras@^1.15.4":
-  version "1.15.4"
-  resolved "https://registry.yarnpkg.com/@quasar/extras/-/extras-1.15.4.tgz#c3c78416c2c39e4d4e791e8bd4dd6ff4b7e14b14"
-  integrity sha512-GGURiH/K/IZM41RD9hcNG0Zly63sFGFZ97Q+doVMFSGBqNySfVNsb3WFSovOyL5K/Lfnb/sjzslroVIUoDVTKw==
+"@quasar/extras@^1.15.5":
+  version "1.15.5"
+  resolved "https://registry.yarnpkg.com/@quasar/extras/-/extras-1.15.5.tgz#da427761c1c643c2cbe9dfa656817da54acb5686"
+  integrity sha512-JzKKx5/eKAip3X3bZUEJOOWT9NudqjF01gcce6rtyviko49OU4r+ekyJU3QQIKF8ZqnjZ+DpsVpMWBBZnO6hSQ==
 
 "@quasar/fastclick@1.1.5":
   version "1.1.5"
@@ -3794,10 +3794,10 @@ qs@6.10.3:
   dependencies:
     side-channel "^1.0.4"
 
-quasar@^2.9.2:
-  version "2.9.2"
-  resolved "https://registry.yarnpkg.com/quasar/-/quasar-2.9.2.tgz#6e7d50f9c2c5a52b36e4b9bbd7129a440d64fb9c"
-  integrity sha512-Z4QWJDC4vFILKRJJdE0j/jnRTo94A2k403G6LtTiSIRSmV8dUl4YWqqNRH6lQQ01Vwjj06kKtN81fi3ontBt0w==
+quasar@^2.10.1:
+  version "2.10.1"
+  resolved "https://registry.yarnpkg.com/quasar/-/quasar-2.10.1.tgz#843888c73d997a53b3808d7f4f358b1aee3a91f2"
+  integrity sha512-W0SEbTdfFS4xvO5OyTyuJent+11MpjBJUYLga69ZFigRh7SV6wFpGNfCuxAifM0L83bp4rWrL2KGoIjEoDsjOw==
 
 query-string@^5.0.1:
   version "5.1.1"

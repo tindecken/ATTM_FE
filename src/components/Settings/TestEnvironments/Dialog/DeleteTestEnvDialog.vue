@@ -72,6 +72,7 @@ function deleteTestEnv() {
     UpdateType: 'Delete',
   };
   const testEnvHistory: TestEnvHistoryInterface = {
+    Id: '',
     UpdateTestEnvData: updateTestEnvData,
     TestEnv: props.TestEnv,
   };

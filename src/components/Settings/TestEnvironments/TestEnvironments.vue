@@ -64,7 +64,7 @@
       </q-table>
     </div>
     <div class="row inline">
-      <q-btn outline label="New node" color="secondary" class="q-mr-sm" style="width: 110px" @click="addNode()" />
+      <q-btn outline label="New node" color="secondary" class="q-mr-sm" style="width: 110px" @click="addNode()" :disable="selectedTestEnv === null" />
     </div>
   </div>
 </template>
@@ -302,6 +302,7 @@ function saveTestEnv() {
     component: SaveTestEnvDialog,
     componentProps: {
       TestEnv: selectedTestEnv.value,
+      UpdateType: 'Update Nodes',
     },
   })
     .onOk(async (testEnv: TestEnvInterface) => {
@@ -330,6 +331,14 @@ function saveTestEnv() {
 }
 
 async function discard() {
+  if (selectedTestEnv.value == null) {
+    $q.notify({
+      type: 'warning',
+      message: "There's no selected envrionment",
+    });
+    return;
+  }
+  console.log('selectedTestEnv', selectedTestEnv.value);
   const testEnv = await testEnvironmentStore.getTestEnv(selectedTestEnv.value?.Id as string);
   const foundIndex = testEnvs.findIndex((te: TestEnvInterface) => te.Id === selectedTestEnv.value?.Id);
   testEnvs[foundIndex] = testEnv;

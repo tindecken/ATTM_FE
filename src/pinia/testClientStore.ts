@@ -46,7 +46,7 @@ export const useTestClientStore = defineStore('testClient', {
       } catch (error) {
         if (error.isAxiosError) {
           const e: AxiosError = error;
-          throw e.response.data.error;
+          throw e.response.data;
         } else {
           throw error;
         }

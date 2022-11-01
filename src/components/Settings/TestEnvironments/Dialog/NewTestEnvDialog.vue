@@ -77,6 +77,7 @@ function onSubmit() {
     Description: description.value,
     Nodes: [],
     LastModifiedUser: userStore.Username,
+    LastModifiedMessage: '',
   };
   api
     .post(`${config.baseURL}/testenvs/create`, newTestEnv, {

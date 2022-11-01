@@ -183,9 +183,10 @@ async function save() {
       });
     })
     .catch((err) => {
+      console.log('err save test client', err);
       $q.notify({
         type: 'negative',
-        message: `${err}`,
+        message: `${err.title}`,
       });
     });
 }
