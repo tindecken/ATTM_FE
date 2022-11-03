@@ -16,6 +16,7 @@
           <q-tab class="text-primary" name="importBlock" label="Import Block"> </q-tab>
           <q-tab class="text-primary" name="testClients" label="Test Clients"> </q-tab>
           <q-tab class="text-primary" name="testEnvironments" label="Test Environments"> </q-tab>
+          <q-tab class="text-primary" name="appSettings" label="App Settings"> </q-tab>
         </q-tabs>
         <q-tab-panels v-model="selectedTab" animated keep-alive>
           <q-tab-panel name="importBlock">
@@ -26,6 +27,9 @@
           </q-tab-panel>
           <q-tab-panel name="testEnvironments">
             <test-environments></test-environments>
+          </q-tab-panel>
+          <q-tab-panel name="appSettings">
+            <app-settings></app-settings>
           </q-tab-panel>
         </q-tab-panels>
       </div>
@@ -41,11 +45,12 @@ import { useSettingStore } from '../../pinia/settingStore';
 import ImportBlock from './ImportBlock/ImportBlock.vue';
 import TestEnvironments from './TestEnvironments/TestEnvironments.vue';
 import TestClients from './TestClients/TestClients.vue';
+import AppSettings from './AppSettings/AppSettings.vue';
 
 useTitle('Settings');
 const settingStore = useSettingStore();
 const $q = useQuasar();
-const selectedTab = ref('testClients');
+const selectedTab = ref('appSettings');
 onBeforeMount(async () => {
   try {
     await settingStore.getSettings();

@@ -164,10 +164,34 @@ async function discard() {
 async function save() {
   let valid = true;
   testClients.value.forEach((client: TestClientInterface & { rowIndex: number }) => {
-    if (client.Name == '') {
+    if (!client.Name.trim()) {
       $q.notify({
         type: 'negative',
         message: `Row ${client.rowIndex}: Client Name is required.`,
+      });
+      valid = false;
+      return;
+    }
+    if (!client.DevelopFolder.trim()) {
+      $q.notify({
+        type: 'negative',
+        message: `Row ${client.rowIndex}: Develop Folder is required.`,
+      });
+      valid = false;
+      return;
+    }
+    if (!client.RegressionFolder.trim()) {
+      $q.notify({
+        type: 'negative',
+        message: `Row ${client.rowIndex}: Regression Folder is required.`,
+      });
+      valid = false;
+      return;
+    }
+    if (!client.RunnerFolder.trim()) {
+      $q.notify({
+        type: 'negative',
+        message: `Row ${client.rowIndex}: Runner Folder is required.`,
       });
       valid = false;
       return;

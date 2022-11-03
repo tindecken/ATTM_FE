@@ -2,16 +2,14 @@ import { defineStore } from 'pinia';
 import { useUserStore } from '../pinia/userStore';
 import { api } from '../boot/axios';
 import { SettingInterface } from '../Models/Setting';
+import { AxiosError } from 'axios';
 
 export const useSettingStore = defineStore('setting', {
   state: () => ({
     settings: [] as SettingInterface[],
   }),
   getters: {
-    importBlock: (state): SettingInterface =>
-      state.settings.find(
-        (setting: SettingInterface) => setting.Name === 'ImportBlock'
-      ) as SettingInterface,
+    importBlock: (state): SettingInterface => state.settings.find((setting: SettingInterface) => setting.Name === 'ImportBlock') as SettingInterface,
   },
   actions: {
     async getSettings() {
@@ -65,11 +63,29 @@ export const useSettingStore = defineStore('setting', {
       }
     },
     updateSettings_store(setting: SettingInterface): void {
-      const index = this.settings.findIndex(
-        (s: SettingInterface) => s.Id === setting.Id
-      );
+      const index = this.settings.findIndex((s: SettingInterface) => s.Id === setting.Id);
       if (index >= 0) {
         this.settings[index] = setting;
+      }
+    },
+    async getConfigurations() {
+      const userStore = useUserStore();
+      try {
+        const response = await api.get('/Configures/', {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userStore.Token}`,
+          },
+        });
+        const configurations = await response.data;
+        return configurations;
+      } catch (error) {
+        if (error.isAxiosError) {
+          const e: AxiosError = error;
+          throw e.response.data;
+        } else {
+          throw error;
+        }
       }
     },
   },

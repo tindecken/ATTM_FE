@@ -34,6 +34,7 @@ export const useTestClientStore = defineStore('testClient', {
     },
     async saveTestClients(testClients: TestClientInterface[]) {
       try {
+        console.log('testClients', testClients);
         const userStore = useUserStore();
         const response = await api.post('/testclients/save', testClients, {
           headers: {

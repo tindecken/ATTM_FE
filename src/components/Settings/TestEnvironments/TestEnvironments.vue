@@ -298,6 +298,38 @@ function saveTestEnv() {
     });
     return;
   }
+  console.log('selectedTestEnv.value', selectedTestEnv.value);
+  let errors: string[] = [];
+  selectedTestEnv.value.Nodes.forEach((node: TestEnvNodeInterface) => {
+    if (!node.Category) {
+      if (!errors.includes("Category can't be empty")) errors.push("Category can't be empty");
+    }
+    if (!node.Name) {
+      if (!errors.includes("Name can't be empty")) errors.push("Name can't be empty");
+    }
+    if (!node.Value) {
+      if (!errors.includes("Value can't be empty")) errors.push("Value can't be empty");
+    }
+  });
+  if (errors.length > 0) {
+    $q.notify({
+      type: 'warning',
+      message: `${errors.join(' !<br/>')}`,
+      html: true,
+    });
+    return;
+  }
+
+  // Validate: Can't add duplicate Category and Name
+  const removeDuplicated = _.uniqBy(selectedTestEnv.value.Nodes, (obj) => [obj.Category, obj.Name].join());
+  if (selectedTestEnv.value.Nodes.length > removeDuplicated.length) {
+    $q.notify({
+      type: 'warning',
+      message: 'Duplicated Category and Name',
+      html: true,
+    });
+    return;
+  }
   $q.dialog({
     component: SaveTestEnvDialog,
     componentProps: {
