@@ -45,13 +45,13 @@
               {{ props.row.rowIndex }}
             </q-td>
             <q-td key="category" :props="props" @click="globalStore.infoStatus.Info = props.row.Category">
-              <q-input v-model="props.row.Category" dense borderless> </q-input>
+              <q-input v-model="props.row.Category" dense borderless placeholder="*Required"> </q-input>
             </q-td>
             <q-td key="name" :props="props" style="white-space: normal" @click="globalStore.infoStatus.Info = props.row.Name">
-              <q-input v-model="props.row.Name" dense borderless> </q-input>
+              <q-input v-model="props.row.Name" dense borderless placeholder="*Required"> </q-input>
             </q-td>
             <q-td key="value" :props="props" @click="globalStore.infoStatus.Info = props.row.Value">
-              <q-input v-model="props.row.Value" dense borderless> </q-input>
+              <q-input v-model="props.row.Value" dense borderles placeholder="*Required" s> </q-input>
             </q-td>
             <q-td key="description" :props="props" @click="globalStore.infoStatus.Info = props.row.Description">
               <q-input v-model="props.row.Description" dense borderless> </q-input>

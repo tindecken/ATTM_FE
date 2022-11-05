@@ -151,7 +151,7 @@
     </template>
   </q-table>
   <q-separator class="q-mt-sm q-mb-sm" />
-  <q-btn outline color="primary" label="New Step" @click="addNewStep(selectedTestCaseId)" icon="add"></q-btn>
+  <q-btn outline color="primary" label="New Step" @click="addNewStep()" icon="add"></q-btn>
 </template>
 
 <script lang="ts">
@@ -244,15 +244,21 @@ function addNewStep() {
     Description: '',
     Params: [],
     IsDisabled: false,
-    IsComment: false,
     KWFeature: '',
     KWCategory: '',
     Log: '',
     Status: 'NotRun',
+    Keyword: {
+      Name: '',
+      Description: '',
+      Owner: '',
+      Params: null,
+    },
   });
 }
 
 async function viewGenerateCode(testCase: TestCaseInterface) {
+  console.log('viewGeneraeCode testCase', testCase);
   $q.dialog({
     component: ViewGenerateCodeDialog,
     componentProps: {

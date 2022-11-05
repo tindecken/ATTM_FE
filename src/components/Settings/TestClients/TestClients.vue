@@ -18,14 +18,15 @@
             <q-icon name="search" />
           </template>
         </q-input>
-        <q-btn class="q-mr-sm" color="secondary" outline @click="save()">Save</q-btn>
-        <q-btn color="secondary" outline @click="discard()">Discard</q-btn>
+        <q-space></q-space>
+        <q-btn class="q-mr-sm" color="secondary" outline @click="discard()">Discard</q-btn>
+        <q-btn color="secondary" outline @click="save()">Save</q-btn>
       </template>
       <template v-slot:body="props">
         <q-tr :props="props">
           <q-td key="no" :props="props"> {{ props.row.rowIndex }}</q-td>
           <q-td key="name" :props="props" @click="globalStore.infoStatus.Info = props.row.Name">
-            <q-input v-model="props.row.Name" dense borderless> </q-input>
+            <q-input v-model="props.row.Name" dense borderless placeholder="*Required"> </q-input>
           </q-td>
           <q-td key="ipAddress" :props="props" @click="globalStore.infoStatus.Info = props.row.IPAddress">
             <q-input v-model="props.row.IPAddress" dense borderless> </q-input>
@@ -40,13 +41,13 @@
             <q-input type="password" v-model="props.row.Password" dense borderless> </q-input>
           </q-td>
           <q-td key="regressionFolder" :props="props" @click="globalStore.infoStatus.Info = props.row.RegressionFolder">
-            <q-input v-model="props.row.RegressionFolder" dense borderless> </q-input>
+            <q-input v-model="props.row.RegressionFolder" dense borderless placeholder="*Required"> </q-input>
           </q-td>
           <q-td key="developFolder" :props="props" @click="globalStore.infoStatus.Info = props.row.DevelopFolder">
-            <q-input v-model="props.row.DevelopFolder" dense borderless> </q-input>
+            <q-input v-model="props.row.DevelopFolder" dense borderless placeholder="*Required"> </q-input>
           </q-td>
           <q-td key="runnerFolder" :props="props" @click="globalStore.infoStatus.Info = props.row.RunnerFolder">
-            <q-input v-model="props.row.RunnerFolder" dense borderless> </q-input>
+            <q-input v-model="props.row.RunnerFolder" dense borderless placeholder="*Required"> </q-input>
           </q-td>
           <q-td key="description" :props="props" style="white-space: normal" @click="globalStore.infoStatus.Info = props.row.Description">
             <q-input v-model="props.row.Description" dense borderless> </q-input>

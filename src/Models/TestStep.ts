@@ -8,7 +8,6 @@ export interface TestStepInterface {
   Description?: string;
   Params: TestParamInterface[];
   IsDisabled: boolean;
-  IsComment: boolean;
   KWFeature: string;
   KWCategory: string;
   Log?: string;

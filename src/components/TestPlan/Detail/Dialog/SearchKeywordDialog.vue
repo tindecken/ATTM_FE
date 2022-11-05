@@ -188,8 +188,8 @@ export default defineComponent({
         align: 'left',
         field: 'rowIndex',
         sortable: true,
-        style: 'max-width: 40px',
-        headerStyle: 'max-width: 40px',
+        style: 'max-width: 50px',
+        headerStyle: 'max-width: 50px',
       },
       {
         name: 'name',
@@ -228,7 +228,7 @@ export default defineComponent({
         align: 'left',
         label: 'CreatedDate',
         field: 'CreatedDate',
-        sortable: false,
+        sortable: true,
       },
       {
         name: 'use',
