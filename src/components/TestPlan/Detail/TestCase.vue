@@ -253,6 +253,7 @@ function addNewStep() {
       Description: '',
       Owner: '',
       Params: null,
+      TestStep: {},
     },
   });
 }

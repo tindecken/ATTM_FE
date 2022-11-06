@@ -101,6 +101,7 @@ Todo:
   ☐ able to delete regression (set flag isDeleted?) make sure has a notitificase: Danger Zone
   ✔ ViewTestCaseDialog - add bottom bar to show parameter value, able to copy it too. Suggest using bottom prop of Quasar @done(22-06-24 01:11)
   ☐ Tooltip should have font-size: 13px for better vision
+  ☐ bug - when saving test (disable, enable test steps), it doesn't affect the test in treeview, must be refresh to see the change
 Test:
   ✔ one flow from create category, testsuite, testgroup, testcase from beginning @done(21-05-11 23:12)
 API:
