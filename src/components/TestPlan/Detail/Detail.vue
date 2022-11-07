@@ -58,6 +58,7 @@ import { TestCaseHistoryInterface } from '../../../Models/TestCaseHistory';
 import { UpdateTestCaseDataInterface } from '../../../Models/Entities/UpdateTestCaseData';
 import { useUserStore } from '../../../pinia/userStore';
 import { useTestCaseStore } from '../../../pinia/testCaseStore';
+import { useCategoryStore } from '../../../pinia/categoryStore';
 import CloseTestCaseDialog from './Dialog/CloseTestCaseDialog.vue';
 import SaveTestCaseDialog from './Dialog/SaveTestCaseDialog.vue';
 import TestCase from './TestCase.vue';
@@ -65,6 +66,7 @@ import { testCaseColumns } from '../../../components/tableColumns';
 
 const userStore = useUserStore();
 const testCaseStore = useTestCaseStore();
+const categoryStore = useCategoryStore();
 const $q = useQuasar();
 const showByIndex = ref('');
 const columns = ref(testCaseColumns);
@@ -106,10 +108,6 @@ async function closeTab(testcase: TestCaseInterface) {
         break;
       }
       if (originalTestCase.TestSteps[i].IsDisabled !== testcase.TestSteps[i].IsDisabled) {
-        isModified = true;
-        break;
-      }
-      if (originalTestCase.TestSteps[i].IsComment !== testcase.TestSteps[i].IsComment) {
         isModified = true;
         break;
       }
@@ -195,6 +193,7 @@ const saveTestCase = (testCaseId: string) =>
             UpdateTestCaseData: updateTestCaseData,
           };
           const result = await testCaseStore.saveTestCase(testCaseHistory);
+          categoryStore.updateTestCase(currTestCase);
           $q.notify({
             type: 'positive',
             message: result.message,

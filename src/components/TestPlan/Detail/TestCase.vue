@@ -192,6 +192,7 @@ import KeywordEditorDialog from './Dialog/KeywordEditorDialog.vue';
 import SearchKeywordDialog from './Dialog/SearchKeywordDialog.vue';
 import { TestEnvNodeInterface } from '../../../Models/TestEnv';
 import { TestAUTInterface } from '../../../Models/TestAUT';
+import { useCategoryStore } from '../../../pinia/categoryStore';
 
 const props = defineProps<{
   TestCaseProp: TestCaseInterface;
@@ -212,6 +213,7 @@ const selectedTestClient = computed(() => testClientStore.selectedTestClient);
 const selectedTestSteps: Ref<TestStepInterface[]> = ref([]);
 const copiedTestSteps: Ref<TestStepInterface[]> = computed(() => testStepStore.copiedTestSteps);
 const rightClickIndex = ref(-1);
+const categoryStore = useCategoryStore();
 
 function disabledStyle(row: TestStepInterface) {
   if (row.IsDisabled) {
@@ -253,7 +255,6 @@ function addNewStep() {
       Description: '',
       Owner: '',
       Params: null,
-      TestStep: {},
     },
   });
 }
@@ -375,6 +376,7 @@ function saveTestCase() {
           Id: '',
         };
         const result = await testCaseStore.saveTestCase(testCaseHistory);
+        categoryStore.updateTestCase(TestCase.value);
         $q.notify({
           type: 'positive',
           message: result.message,
