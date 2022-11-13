@@ -46,7 +46,7 @@
                   </div>
                 </div>
                 <q-separator color="primary" inset class="q-mt-xs q-mb-xs q-mr-none q-ml-none" />
-                <div class="row">
+                <div class="row" v-if="testStep.Log">
                   <q-space></q-space>
                   <q-btn flat color="primary" icon="content_copy" label="Copy" @click="copy(testStep.Log)" size="sm" />
                 </div>
