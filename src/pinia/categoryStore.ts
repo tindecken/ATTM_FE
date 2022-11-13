@@ -9,7 +9,7 @@ import { TestCaseInterface } from '../Models/TestCase';
 import { TestGroupInterface } from '../Models/TestGroup';
 import { useTestCaseStore } from './testCaseStore';
 import { LastRegressionResultInterface } from '../Models/Entities/LastRegressionResult';
-import { Status } from '../Models/Entities/EnumStatus';
+import { TestStatus } from '../Models/TestStatus';
 
 export const useCategoryStore = defineStore('category', {
   state: () => ({
@@ -211,15 +211,15 @@ export const useCategoryStore = defineStore('category', {
       const tgIndex = tempCat.children[tsIndex].TestGroupIds.findIndex((tgId: string) => tgId === testCase.TestGroupId);
       const tcIndex = tempCat.children[tsIndex].children[tgIndex].children.findIndex((t: TestCaseInterface) => t.Id === testCase.Id);
       switch (lastRegressionResult.Status) {
-        case Status.Passed:
-        case Status.AnalysePassed:
+        case TestStatus.Passed:
+        case TestStatus.AnalysePassed:
           testCase.iconColor = 'positive';
           break;
-        case Status.Failed:
-        case Status.AnalyseFailed:
+        case TestStatus.Failed:
+        case TestStatus.AnalyseFailed:
           testCase.iconColor = 'negative';
           break;
-        case Status.Running:
+        case TestStatus.Running:
           testCase.iconColor = 'warning';
           break;
       }

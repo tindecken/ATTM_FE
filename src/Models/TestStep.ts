@@ -1,5 +1,6 @@
 import { KeywordInterface } from './Keyword';
 import { TestParamInterface } from './TestParam';
+import { TestStatus } from './TestStatus';
 
 export interface TestStepInterface {
   UUID: string;
@@ -11,7 +12,7 @@ export interface TestStepInterface {
   KWFeature: string;
   KWCategory: string;
   Log?: string;
-  Status?: string;
+  Status?: TestStatus;
   StartTime?: Date;
   EndTime?: Date;
 }

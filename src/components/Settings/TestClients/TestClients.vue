@@ -147,7 +147,7 @@ function add() {
     RegressionFolder: '',
     DevelopFolder: '',
     RunnerFolder: '',
-    Status: '',
+    Status: 'Enabled',
   });
   testClients.value = testClients.value.map((tc: TestClientInterface, i: number) => ({
     ...tc,
@@ -201,7 +201,20 @@ async function save() {
   if (!valid) return;
   testClientStore
     .saveTestClients(testClients.value)
-    .then((res) => {
+    .then(async (res) => {
+      // re-get testClients and re-assign selectedTestClient
+      await testClientStore.getTestClients();
+      testClients.value = testClientStore.testClients;
+      testClients.value = testClients.value.map((tc: TestClientInterface, i: number) => ({
+        ...tc,
+        rowIndex: i + 1,
+      }));
+      const selectedTestClientIndex = testClientStore.testClients.findIndex((tc: TestClientInterface) => tc.Id === testClientStore.selectedTestClient.Id);
+      if (selectedTestClientIndex == -1 && testClientStore.testClients.length > 0) {
+        testClientStore.selectedTestClient = testClientStore.testClients[0];
+      } else if (selectedTestClientIndex > -1) {
+        testClientStore.selectedTestClient = testClientStore.testClients[selectedTestClientIndex];
+      }
       $q.notify({
         type: 'positive',
         message: `${res.message}`,

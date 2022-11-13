@@ -1,5 +1,7 @@
+import { TestStatus } from '../TestStatus';
+
 export interface IconToolTipInterface {
-  Status: string;
+  Status: TestStatus;
   Regression: string;
   Build: string;
   Issue: string;

@@ -193,6 +193,7 @@ import SearchKeywordDialog from './Dialog/SearchKeywordDialog.vue';
 import { TestEnvNodeInterface } from '../../../Models/TestEnv';
 import { TestAUTInterface } from '../../../Models/TestAUT';
 import { useCategoryStore } from '../../../pinia/categoryStore';
+import { TestStatus } from '../../../Models/TestStatus';
 
 const props = defineProps<{
   TestCaseProp: TestCaseInterface;
@@ -249,7 +250,7 @@ function addNewStep() {
     KWFeature: '',
     KWCategory: '',
     Log: '',
-    Status: 'NotRun',
+    Status: TestStatus.NotRun,
     Keyword: {
       Name: '',
       Description: '',
@@ -592,7 +593,7 @@ function onInsertTestSteps(number: number) {
       Description: '',
       Params: [],
       IsDisabled: false,
-      IsComment: false,
+      Log: '',
       KWFeature: '',
       KWCategory: '',
     });
@@ -614,7 +615,7 @@ function onInsertPasteTestSteps() {
       Description: '',
       Params: [],
       IsDisabled: false,
-      IsComment: false,
+      Log: '',
       KWFeature: '',
       KWCategory: '',
     });
