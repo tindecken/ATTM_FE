@@ -24,7 +24,7 @@
           </template>
 
           <template v-slot:after>
-            <q-tab-panels v-model="tab" animated swipeable vertical>
+            <q-tab-panels v-model="tab" animated vertical>
               <q-tab-panel name="all">
                 <div style="white-space: pre-wrap">
                   {{ DevRunRecord.Log }}

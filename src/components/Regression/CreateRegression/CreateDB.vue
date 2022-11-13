@@ -12,7 +12,7 @@
       </template>
 
       <template v-slot:after>
-        <q-tab-panels v-model="tab" animated swipeable vertical transition-prev="jump-up" transition-next="jump-up">
+        <q-tab-panels v-model="tab" animated vertical transition-prev="jump-up" transition-next="jump-up">
           <q-tab-panel name="createRegression">
             <div class="text-h6 q-mb-md">
               Status: {{ createRegressionStatus }}

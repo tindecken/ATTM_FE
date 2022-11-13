@@ -1,11 +1,6 @@
 <template>
   <div class="q-pa-md">
-    <q-btn
-      class="q-mb-md"
-      color="primary"
-      @click="getLatestCodeThenGenerateAndBuildProject"
-      label="Get Latest Code, Generate Code and Build Project"
-    />
+    <q-btn class="q-mb-md" color="primary" @click="getLatestCodeThenGenerateAndBuildProject" label="Get Latest Code, Generate Code and Build Project" />
     <q-splitter v-model="splitterModel" style="height: 250px">
       <template v-slot:before>
         <q-tabs v-model="tab" vertical no-caps>
@@ -16,14 +11,7 @@
       </template>
 
       <template v-slot:after>
-        <q-tab-panels
-          v-model="tab"
-          animated
-          swipeable
-          vertical
-          transition-prev="jump-up"
-          transition-next="jump-up"
-        >
+        <q-tab-panels v-model="tab" animated vertical transition-prev="jump-up" transition-next="jump-up">
           <q-tab-panel name="getLatestCode">
             <div class="text-h6 q-mb-md">
               Status: {{ getLatestCodeStatus }}
@@ -103,12 +91,8 @@ export default defineComponent({
     const buildProjectStatus = ref('');
     const buildProjectMessage = ref('');
     const splitterModel = ref(7);
-    const selectedTestCasesDetail = computed(
-      () => createRegressionStore.selectedTestCasesDetail
-    );
-    const selectedTestCases = computed(
-      () => createRegressionStore.selectedTestCases
-    );
+    const selectedTestCasesDetail = computed(() => createRegressionStore.selectedTestCasesDetail);
+    const selectedTestCases = computed(() => createRegressionStore.selectedTestCases);
     console.log('selectedTestCasesDetail', selectedTestCasesDetail);
     function clearStatusAndMessage() {
       getLatestCodeStatus.value = '';
@@ -123,9 +107,7 @@ export default defineComponent({
       tab.value = 'getLatestCode';
       console.log('generateAndBuildProject');
       createRegressionStore.selectedTestCases = [];
-      await createRegressionStore.getAndAddSelectedTestCase(
-        selectedTestCasesDetail.value
-      );
+      await createRegressionStore.getAndAddSelectedTestCase(selectedTestCasesDetail.value);
       console.log('selectedTestCases.value', selectedTestCases.value);
       const getLatestCodeResult: Promise<any> = globalStore.getLatestCode();
 
@@ -138,8 +120,7 @@ export default defineComponent({
             type: 'positive',
             message: 'Get Latest Code success !',
           });
-          const generateDevCodeResult: Promise<any> =
-            globalStore.generateDevCode(selectedTestCases.value);
+          const generateDevCodeResult: Promise<any> = globalStore.generateDevCode(selectedTestCases.value);
           generateDevCodeResult
             .then((g) => {
               tab.value = 'generateCode';
