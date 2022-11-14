@@ -100,8 +100,8 @@
           </q-td>
           <q-td key="log" :props="props" class="q-c-input">
             <div class="row no-wrap">
-              <div class="col-11">
-                <dev-log :DevRunRecord="props.row" class="ellipsis"></dev-log>
+              <div class="col-11" @click="showTestLog(props.row)">
+                {{ props.row.Log }}
               </div>
               <div class="col-1">
                 <q-btn flat round icon="content_copy" size="xs" primary @click="copy(props.row.Log)" class="order-last"></q-btn>
@@ -142,289 +142,286 @@
   </div>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, ref, Ref, onBeforeMount } from 'vue';
+<script setup lang="ts">
+import { computed, ref, Ref, onBeforeMount } from 'vue';
 import { useQuasar } from 'quasar';
 import { DevRunRecordInterface } from '../../Models/DevRunRecord';
 import { UseTimeAgo } from '@vueuse/components';
 import { useClipboard, useTitle } from '@vueuse/core';
 import { useGlobalStore } from '../../pinia/globalStore';
 import { useDevMonitoringStore } from '../../pinia/devMonitoringStore';
-import DevLog from './DevRunning/DevLog.vue';
 import ErrorScreenshot from './DevRunning/ErrorScreenshot.vue';
 import DevQueue from './DevQueue/DevQueue.vue';
 import DevErrorMessageDialog from './Dialog/DevErrorMessageDialog.vue';
+import { TestStatus } from '../../Models/TestStatus';
+import DevLogDialog from './Dialog/DevLogDialog.vue';
 
-export default defineComponent({
-  name: 'DevMonitoring',
-  components: {
-    UseTimeAgo,
-    DevLog,
-    ErrorScreenshot,
-    DevQueue,
+const globalStore = useGlobalStore();
+const devMonitoringStore = useDevMonitoringStore();
+useTitle('Dev Monitoring');
+const $q = useQuasar();
+const { copy } = useClipboard();
+const filterTable = ref('');
+const visibleColumns = ref([
+  'testCaseFullName',
+  'category',
+  'testSuite',
+  'testGroup',
+  'status',
+  'errorMessage',
+  'log',
+  'errorScreenShot',
+  'startAt',
+  'endAt',
+  'executeTime',
+  'runMachine',
+]);
+const columns = ref([
+  {
+    name: 'testCaseFullName',
+    align: 'left',
+    label: 'Test Case',
+    field: 'TestCaseFullName',
+    sortable: true,
+    style: 'min-width: 80px; max-width: 300px',
+    headerStyle: 'min-width: 80px; max-width: 300px',
+    classes: 'ellipsis',
   },
-  setup() {
-    const globalStore = useGlobalStore();
-    const devMonitoringStore = useDevMonitoringStore();
-    useTitle('Dev Monitoring');
-    const $q = useQuasar();
-    const { copy } = useClipboard();
-    const columns = ref([
-      {
-        name: 'testCaseFullName',
-        align: 'left',
-        label: 'Test Case',
-        field: 'TestCaseFullName',
-        sortable: true,
-        style: 'min-width: 80px; max-width: 300px',
-        headerStyle: 'min-width: 80px; max-width: 300px',
-        classes: 'ellipsis',
-      },
-      {
-        name: 'category',
-        label: 'Category',
-        field: 'Category',
-        sortable: true,
-        align: 'left',
-        style: 'min-width: 100px;',
-        headerStyle: 'min-width: 100px',
-        classes: 'ellipsis',
-      },
-      {
-        name: 'testSuite',
-        label: 'Test Suite',
-        field: 'TestSuite',
-        sortable: true,
-        align: 'left',
-        style: 'min-width: 120px;',
-        headerStyle: 'min-width: 120px',
-        classes: 'ellipsis',
-      },
-      {
-        name: 'testGroup',
-        label: 'Test Group',
-        field: 'test',
-        sortable: true,
-        align: 'left',
-        style: 'min-width: 120px;',
-        headerStyle: 'min-width: 120px',
-        classes: 'ellipsis',
-      },
-      {
-        name: 'description',
-        label: 'Description',
-        field: 'Description',
-        sortable: true,
-        align: 'left',
-        style: 'min-width: 135px;',
-        headerStyle: 'min-width: 135px',
-        classes: 'ellipsis',
-      },
-      {
-        name: 'testCaseType',
-        label: 'Type',
-        field: 'TestCaseType',
-        sortable: true,
-        align: 'left',
-        style: 'min-width: 90px;',
-        headerStyle: 'min-width: 90px',
-        classes: 'ellipsis',
-      },
-      {
-        name: 'status',
-        label: 'Status',
-        field: 'Status',
-        sortable: true,
-        align: 'left',
-        style: 'min-width: 70px; max-width: 90px;',
-        headerStyle: 'min-width: 70px; max-width: 90px;',
-        classes: 'ellipsis',
-      },
-      {
-        name: 'team',
-        label: 'Team',
-        field: 'Team',
-        sortable: true,
-        align: 'left',
-        style: 'min-width: 90; max-width: 110px;',
-        headerStyle: 'min-width: 90px; min-width: 110px;',
-        classes: 'ellipsis',
-      },
-      {
-        name: 'errorMessage',
-        label: 'Error Message',
-        field: 'ErrorMessage',
-        sortable: true,
-        align: 'left',
-        style: 'min-width: 135px; max-width: 200px',
-        headerStyle: 'max-width: 200px',
-        classes: 'ellipsis',
-      },
-      {
-        name: 'log',
-        label: 'Running Log',
-        field: 'Log',
-        sortable: true,
-        align: 'left',
-        style: 'min-width: 135px; max-width: 200px',
-        headerStyle: 'max-width: 200px',
-        classes: 'ellipsis',
-      },
-      {
-        name: 'errorScreenShot',
-        label: 'Error ScreenShot',
-        field: 'ErrorScreenshot',
-        sortable: false,
-        align: 'left',
-        style: 'min-width: 100px; max-width: 110px;',
-        headerStyle: 'min-width: 100px; max-width: 110px;',
-      },
-      {
-        name: 'startAt',
-        label: 'Start At',
-        field: 'StartAt',
-        sortable: true,
-        align: 'left',
-        style: 'min-width: 100px; max-width: 120px;',
-        headerStyle: 'min-width: 100px max-width: 120px;',
-        classes: 'ellipsis',
-      },
-      {
-        name: 'endAt',
-        label: 'End At',
-        field: 'EndAt',
-        sortable: true,
-        align: 'left',
-        style: 'min-width: 100px; max-width: 120px;',
-        headerStyle: 'min-width: 100px max-width: 120px;',
-        classes: 'ellipsis',
-      },
-      {
-        name: 'executeTime',
-        label: 'Execute Time',
-        field: 'Execute Time',
-        sortable: true,
-        align: 'left',
-        style: 'min-width: 80px;',
-        headerStyle: 'min-width: 80px',
-        classes: 'ellipsis',
-      },
-      {
-        name: 'workItem',
-        label: 'Work Item',
-        field: 'WorkItem',
-        sortable: true,
-        align: 'left',
-        style: 'min-width: 135px;',
-        headerStyle: 'min-width: 135px',
-        classes: 'ellipsis',
-      },
-      {
-        name: 'runMachine',
-        label: 'Run Machine',
-        field: 'RunMachine',
-        sortable: false,
-        align: 'left',
-        style: 'min-width: 100px;; max-width: 150px;',
-        headerStyle: 'min-width: 100px; max-width: 150px;',
-        classes: 'ellipsis',
-      },
-      {
-        name: 'buffers',
-        label: 'Buffers',
-        field: 'Buffers',
-        sortable: false,
-        align: 'left',
-        style: 'min-width: 135px;',
-        headerStyle: 'min-width: 135px',
-        classes: 'ellipsis',
-      },
-    ]);
-    const isDark = computed(() => globalStore.darkTheme);
-    const selected: Ref<any[]> = ref([]);
-    const devRunRecords: Ref<DevRunRecordInterface[]> = computed(() => devMonitoringStore.devRunRecords);
-    const initialPagination = {
-      sortBy: 'startAt',
-      descending: true,
-      // page: 2,
-      // rowsPerPage: 3,
-      // rowsNumber: xx if getting data from a server
-    };
-    onBeforeMount(async () => {
-      try {
-        await devMonitoringStore.getDevRunRecords();
-        await devMonitoringStore.getInQueueDevRunRecords();
-      } catch (error: any) {
-        $q.notify({
-          type: 'negative',
-          message: `${error}`,
-        });
-      }
+  {
+    name: 'category',
+    label: 'Category',
+    field: 'Category',
+    sortable: true,
+    align: 'left',
+    style: 'min-width: 100px;',
+    headerStyle: 'min-width: 100px',
+    classes: 'ellipsis',
+  },
+  {
+    name: 'testSuite',
+    label: 'Test Suite',
+    field: 'TestSuite',
+    sortable: true,
+    align: 'left',
+    style: 'min-width: 120px;',
+    headerStyle: 'min-width: 120px',
+    classes: 'ellipsis',
+  },
+  {
+    name: 'testGroup',
+    label: 'Test Group',
+    field: 'test',
+    sortable: true,
+    align: 'left',
+    style: 'min-width: 120px;',
+    headerStyle: 'min-width: 120px',
+    classes: 'ellipsis',
+  },
+  {
+    name: 'description',
+    label: 'Description',
+    field: 'Description',
+    sortable: true,
+    align: 'left',
+    style: 'min-width: 135px;',
+    headerStyle: 'min-width: 135px',
+    classes: 'ellipsis',
+  },
+  {
+    name: 'testCaseType',
+    label: 'Type',
+    field: 'TestCaseType',
+    sortable: true,
+    align: 'left',
+    style: 'min-width: 90px;',
+    headerStyle: 'min-width: 90px',
+    classes: 'ellipsis',
+  },
+  {
+    name: 'status',
+    label: 'Status',
+    field: 'Status',
+    sortable: true,
+    align: 'left',
+    style: 'min-width: 70px; max-width: 90px;',
+    headerStyle: 'min-width: 70px; max-width: 90px;',
+    classes: 'ellipsis',
+  },
+  {
+    name: 'team',
+    label: 'Team',
+    field: 'Team',
+    sortable: true,
+    align: 'left',
+    style: 'min-width: 90; max-width: 110px;',
+    headerStyle: 'min-width: 90px; min-width: 110px;',
+    classes: 'ellipsis',
+  },
+  {
+    name: 'errorMessage',
+    label: 'Error Message',
+    field: 'ErrorMessage',
+    sortable: true,
+    align: 'left',
+    style: 'min-width: 135px; max-width: 200px',
+    headerStyle: 'max-width: 200px',
+    classes: 'ellipsis',
+  },
+  {
+    name: 'log',
+    label: 'Running Log',
+    field: 'Log',
+    sortable: true,
+    align: 'left',
+    style: 'min-width: 135px; max-width: 200px',
+    headerStyle: 'max-width: 200px',
+    classes: 'ellipsis',
+  },
+  {
+    name: 'errorScreenShot',
+    label: 'Error ScreenShot',
+    field: 'ErrorScreenshot',
+    sortable: false,
+    align: 'left',
+    style: 'min-width: 100px; max-width: 110px;',
+    headerStyle: 'min-width: 100px; max-width: 110px;',
+  },
+  {
+    name: 'startAt',
+    label: 'Start At',
+    field: 'StartAt',
+    sortable: true,
+    align: 'left',
+    style: 'min-width: 100px; max-width: 120px;',
+    headerStyle: 'min-width: 100px max-width: 120px;',
+    classes: 'ellipsis',
+  },
+  {
+    name: 'endAt',
+    label: 'End At',
+    field: 'EndAt',
+    sortable: true,
+    align: 'left',
+    style: 'min-width: 100px; max-width: 120px;',
+    headerStyle: 'min-width: 100px max-width: 120px;',
+    classes: 'ellipsis',
+  },
+  {
+    name: 'executeTime',
+    label: 'Execute Time',
+    field: 'Execute Time',
+    sortable: true,
+    align: 'left',
+    style: 'min-width: 80px;',
+    headerStyle: 'min-width: 80px',
+    classes: 'ellipsis',
+  },
+  {
+    name: 'workItem',
+    label: 'Work Item',
+    field: 'WorkItem',
+    sortable: true,
+    align: 'left',
+    style: 'min-width: 135px;',
+    headerStyle: 'min-width: 135px',
+    classes: 'ellipsis',
+  },
+  {
+    name: 'runMachine',
+    label: 'Run Machine',
+    field: 'RunMachine',
+    sortable: false,
+    align: 'left',
+    style: 'min-width: 100px;; max-width: 150px;',
+    headerStyle: 'min-width: 100px; max-width: 150px;',
+    classes: 'ellipsis',
+  },
+  {
+    name: 'buffers',
+    label: 'Buffers',
+    field: 'Buffers',
+    sortable: false,
+    align: 'left',
+    style: 'min-width: 135px;',
+    headerStyle: 'min-width: 135px',
+    classes: 'ellipsis',
+  },
+]);
+const isDark = computed(() => globalStore.darkTheme);
+const selected: Ref<any[]> = ref([]);
+const devRunRecords: Ref<DevRunRecordInterface[]> = computed(() => devMonitoringStore.devRunRecords);
+const initialPagination = {
+  sortBy: 'startAt',
+  descending: true,
+  // page: 2,
+  // rowsPerPage: 3,
+  // rowsNumber: xx if getting data from a server
+};
+onBeforeMount(async () => {
+  try {
+    await devMonitoringStore.getDevRunRecords();
+    await devMonitoringStore.getInQueueDevRunRecords();
+  } catch (error: any) {
+    $q.notify({
+      type: 'negative',
+      message: `${error}`,
     });
-    function styleStatus(status: string) {
-      switch (status) {
-        case 'Passed':
-          if (isDark.value) {
-            return 'bg-light-green-10';
-          }
-          return 'bg-light-green-2';
-        case 'Failed':
-          if (isDark.value) {
-            return 'bg-deep-orange-7';
-          }
-          return 'bg-red-2';
-        default:
-          return '';
-      }
-    }
-    function getSelectedString() {
-      return selected.value.length === 0 ? '' : `${selected.value.length} step${selected.value.length > 1 ? 's' : ''} selected.`;
-    }
-    function showErrorMessageDialog(devRunRecord: DevRunRecordInterface) {
-      $q.dialog({
-        component: DevErrorMessageDialog,
-        componentProps: {
-          DevRunRecord: devRunRecord,
-        },
-      })
-        .onOk(() => {
-          // TODO: handle ok
-          console.log('OK');
-        })
-        .onCancel(() => {
-          // TODO
-          console.log('Cancel');
-        })
-        .onDismiss(() => {
-          console.log('Dismiss');
-        });
-    }
-    return {
-      columns,
-      isDark,
-      filterTable: ref(''),
-      getSelectedString,
-      selected,
-      devRunRecords,
-      visibleColumns: ref([
-        'testCaseFullName',
-        'category',
-        'testSuite',
-        'testGroup',
-        'status',
-        'errorMessage',
-        'log',
-        'errorScreenShot',
-        'startAt',
-        'endAt',
-        'executeTime',
-        'runMachine',
-      ]),
-      initialPagination,
-      styleStatus,
-      copy,
-      showErrorMessageDialog,
-    };
-  },
+  }
 });
+function styleStatus(status: TestStatus) {
+  switch (status) {
+    case TestStatus.Passed:
+      if (isDark.value) {
+        return 'bg-light-green-10';
+      }
+      return 'bg-light-green-2';
+    case TestStatus.Failed:
+      if (isDark.value) {
+        return 'bg-deep-orange-7';
+      }
+      return 'bg-red-2';
+    default:
+      return '';
+  }
+}
+function getSelectedString() {
+  return selected.value.length === 0 ? '' : `${selected.value.length} step${selected.value.length > 1 ? 's' : ''} selected.`;
+}
+function showErrorMessageDialog(devRunRecord: DevRunRecordInterface) {
+  $q.dialog({
+    component: DevErrorMessageDialog,
+    componentProps: {
+      DevRunRecord: devRunRecord,
+    },
+  })
+    .onOk(() => {
+      // TODO: handle ok
+      console.log('OK');
+    })
+    .onCancel(() => {
+      // TODO
+      console.log('Cancel');
+    })
+    .onDismiss(() => {
+      console.log('Dismiss');
+    });
+}
+function showTestLog(devRunRecord: DevRunRecordInterface) {
+  $q.dialog({
+    component: DevLogDialog,
+    componentProps: {
+      DevRunRecordProp: devRunRecord,
+    },
+  })
+    .onOk(() => {
+      // TODO
+    })
+    .onCancel(() => {
+      // TODO
+      console.log('Cancel');
+    })
+    .onDismiss(() => {
+      // TODO
+    });
+}
 </script>

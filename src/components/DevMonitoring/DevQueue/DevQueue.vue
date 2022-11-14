@@ -16,13 +16,7 @@
     >
       <template v-slot:top-left>
         <span class="text-h5">Queues</span>
-        <q-input
-          borderless
-          dense
-          debounce="300"
-          v-model="filter"
-          placeholder="Filter"
-        >
+        <q-input borderless dense debounce="300" v-model="filter" placeholder="Filter">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
@@ -30,12 +24,7 @@
       </template>
       <template v-slot:header="props">
         <q-tr :props="props">
-          <q-th
-            v-for="col in props.cols"
-            :key="col.name"
-            :props="props"
-            class="text-bold text-primary"
-          >
+          <q-th v-for="col in props.cols" :key="col.name" :props="props" class="text-bold text-primary">
             {{ col.label }}
           </q-th>
         </q-tr>
@@ -81,13 +70,7 @@ import { useGlobalStore } from '../../../pinia/globalStore';
 
 export default defineComponent({
   name: 'DevQueue',
-  props: {
-    DevRunRecord: {
-      type: Object as PropType<DevRunRecordInterface>,
-      required: true,
-      default: () => ({}),
-    },
-  },
+  props: {},
   components: { UseTimeAgo },
   setup() {
     const globalStore = useGlobalStore();
@@ -164,9 +147,7 @@ export default defineComponent({
         classes: 'ellipsis',
       },
     ]);
-    const inQueueDevRunRecords: Ref<any[]> = computed(
-      () => devMonitoringStore.inQueueDevRunRecords
-    );
+    const inQueueDevRunRecords: Ref<any[]> = computed(() => devMonitoringStore.inQueueDevRunRecords);
     const isDark = computed(() => globalStore.darkTheme);
     const initialPagination = {
       sortBy: 'createAt',

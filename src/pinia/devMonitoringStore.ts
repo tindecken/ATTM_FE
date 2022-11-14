@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { useUserStore } from '../pinia/userStore';
 import { api } from '../boot/axios';
 import { DevRunRecordInterface } from '../Models/DevRunRecord';
+import { AxiosError } from 'axios';
 
 export const useDevMonitoringStore = defineStore('devMonitoring', {
   state: () => ({
@@ -21,8 +22,7 @@ export const useDevMonitoringStore = defineStore('devMonitoring', {
           },
         });
         const responseData = await response.data;
-        const devRunRecords =
-          (await responseData.data) as DevRunRecordInterface[];
+        const devRunRecords = (await responseData.data) as DevRunRecordInterface[];
         this.devRunRecords = devRunRecords;
       } catch (error: any) {
         throw error.response.data;
@@ -39,8 +39,7 @@ export const useDevMonitoringStore = defineStore('devMonitoring', {
         });
         console.log('response getInQueueDevRunRecords', response);
         const responseData = await response.data;
-        const inQueueDevRunRecords =
-          (await responseData.data) as DevRunRecordInterface[];
+        const inQueueDevRunRecords = (await responseData.data) as DevRunRecordInterface[];
         this.inQueueDevRunRecords = inQueueDevRunRecords;
       } catch (error: any) {
         throw error.response.data;
@@ -61,11 +60,30 @@ export const useDevMonitoringStore = defineStore('devMonitoring', {
         throw error.response.data;
       }
     },
+    async getDevRunRecord(devRunRecordId: string) {
+      try {
+        const userStore = useUserStore();
+        const response = await api.get(`/devrunrecords/${devRunRecordId}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userStore.Token}`,
+          },
+        });
+        const responseData = await response.data;
+        return responseData;
+      } catch (error) {
+        console.log('e', error);
+        if (error.isAxiosError) {
+          const e: AxiosError = error;
+          throw e.response.data;
+        } else {
+          throw error;
+        }
+      }
+    },
     updateDevRunRecords(devRunRecord: DevRunRecordInterface) {
-      // findindex
-      const index = this.devRunRecords.findIndex(
-        (item: DevRunRecordInterface) => item.Id === devRunRecord.Id
-      );
+      // find index
+      const index = this.devRunRecords.findIndex((item: DevRunRecordInterface) => item.Id === devRunRecord.Id);
       if (index === -1) {
         this.devRunRecords.unshift(devRunRecord);
       } else {
@@ -76,9 +94,7 @@ export const useDevMonitoringStore = defineStore('devMonitoring', {
       console.log('updateInDevRunRecords', devQueue);
       console.log('state.inQueueDevRunRecords', this.inQueueDevRunRecords);
       // findindex
-      this.inQueueDevRunRecords = this.inQueueDevRunRecords.filter(
-        (item: any) => item.Id !== devQueue.Id
-      );
+      this.inQueueDevRunRecords = this.inQueueDevRunRecords.filter((item: any) => item.Id !== devQueue.Id);
     },
   },
 });

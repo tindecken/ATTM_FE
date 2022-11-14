@@ -1,3 +1,4 @@
+import { TestStatus } from './TestStatus';
 import { TestStepInterface } from './TestStep';
 
 export interface DevRunRecordInterface {
@@ -8,7 +9,7 @@ export interface DevRunRecordInterface {
   TestCaseFullName: string;
   Description: string;
   TestCaseType?: string;
-  Status: string;
+  Status: TestStatus;
   Category?: string;
   TestSuite: string;
   TestGroup: string;
