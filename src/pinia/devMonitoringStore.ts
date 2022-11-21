@@ -81,6 +81,26 @@ export const useDevMonitoringStore = defineStore('devMonitoring', {
         }
       }
     },
+    async getLastDevRunRecordOfTestCase(testCaseId: string) {
+      try {
+        const userStore = useUserStore();
+        const response = await api.get(`/devrunrecords/getlast/${testCaseId}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userStore.Token}`,
+          },
+        });
+        const responseData = await response.data;
+        return responseData;
+      } catch (error) {
+        if (error.isAxiosError) {
+          const e: AxiosError = error;
+          throw e.response.data;
+        } else {
+          throw error;
+        }
+      }
+    },
     updateDevRunRecords(devRunRecord: DevRunRecordInterface) {
       // find index
       const index = this.devRunRecords.findIndex((item: DevRunRecordInterface) => item.Id === devRunRecord.Id);

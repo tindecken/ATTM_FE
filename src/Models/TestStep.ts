@@ -15,4 +15,5 @@ export interface TestStepInterface {
   Status?: TestStatus;
   StartTime?: Date;
   EndTime?: Date;
+  ExecuteTime?: number;
 }

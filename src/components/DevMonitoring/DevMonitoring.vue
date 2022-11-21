@@ -78,7 +78,7 @@
             {{ props.row.TestCaseType }}
           </q-td>
           <q-td key="status" :props="props" class="q-c-input">
-            {{ props.row.Status }}
+            {{ getStatus(props.row.Status) }}
           </q-td>
           <q-td key="team" :props="props" class="q-c-input">
             {{ props.row.Team }}
@@ -423,5 +423,8 @@ function showTestLog(devRunRecord: DevRunRecordInterface) {
     .onDismiss(() => {
       // TODO
     });
+}
+function getStatus(status: TestStatus) {
+  return TestStatus[status];
 }
 </script>

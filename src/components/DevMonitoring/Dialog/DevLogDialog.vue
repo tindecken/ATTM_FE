@@ -4,13 +4,12 @@
       <q-header reveal bordered class="row justify-between bg-secondary">
         <div class="self-center text-subtitle1 q-pl-sm">{{ DevRunRecord.TestCaseCodeName }}: {{ DevRunRecord.TestCaseName }}</div>
         <q-btn flat icon="refresh" label="Refresh" @click="refresh()" />
-        <div>{{ DevRunRecord.Status }}</div>
         <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
           <q-tooltip style="font-size: small">Close</q-tooltip>
         </q-btn>
       </q-header>
       <q-page-container class="q-pa-sm">
-        <q-splitter v-model="splitterModel" style="height: 400px" class="q-mt-xs">
+        <q-splitter v-model="splitterModel" class="q-mt-xs">
           <template v-slot:before>
             <q-tabs v-model="tab" vertical no-caps dense>
               <q-tab name="all" label="All" class="bg-primary text-left q-mb-xs" />
@@ -45,9 +44,10 @@
                   </div>
                 </div>
                 <q-separator color="primary" inset class="q-mt-xs q-mb-xs q-mr-none q-ml-none" />
-                <div class="row" v-if="testStep.Log">
+                <div class="row q-mb-sm" v-if="testStep.Log">
                   <q-space></q-space>
-                  <q-btn flat color="primary" icon="content_copy" label="Copy" @click="copy(testStep.Log)" size="sm" />
+                  <span class="self-center">Execute Time: {{ testStep.ExecuteTime }} seconds</span>
+                  <q-btn flat color="primary" icon="content_copy" label="Copy" @click="copy(testStep.Log)" class="q-ml-sm" size="sm" />
                 </div>
                 <div class="row" style="white-space: pre-wrap">
                   {{ testStep.Log }}
@@ -70,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-import { useDialogPluginComponent } from 'quasar';
+import { useDialogPluginComponent, date } from 'quasar';
 import { DevRunRecordInterface } from '../../../Models/DevRunRecord';
 import { computed, ref } from 'vue';
 import { useClipboard } from '@vueuse/core';
@@ -92,10 +92,15 @@ const $q = useQuasar();
 const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent();
 const { copy } = useClipboard();
 
-const footerInfo = ref('');
 const splitterModel = ref(15);
 const tab = ref('all');
 const DevRunRecord = ref<DevRunRecordInterface>(props.DevRunRecordProp);
+const footerInfo = computed(() => {
+  return `Staus: ${TestStatus[DevRunRecord.value.Status]} - Start At: ${date.formatDate(
+    DevRunRecord.value.StartAt,
+    'YYYY-MM-DD HH:mm:ss'
+  )} - End At: ${date.formatDate(DevRunRecord.value.EndAt, 'YYYY-MM-DD HH:mm:ss')} - Duration: ${DevRunRecord.value.ExecuteTime} seconds`;
+});
 
 function bg_status(status: TestStatus) {
   switch (status) {
@@ -111,10 +116,9 @@ function bg_status(status: TestStatus) {
 }
 function refresh() {
   devMonitoringStore
-    .getDevRunRecord(DevRunRecord.value.Id)
-    .then((res: DevRunRecordInterface) => {
-      console.log('res', res.Status);
-      DevRunRecord.value = res;
+    .getLastDevRunRecordOfTestCase(DevRunRecord.value.TestCaseId)
+    .then((res: any) => {
+      DevRunRecord.value = res.data;
     })
     .catch((error) => {
       $q.notify({

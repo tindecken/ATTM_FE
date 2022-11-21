@@ -36,6 +36,12 @@
       </q-btn>
       <q-btn color="primary" flat icon="undo" class="q-mr-sm" :disable="!canUndo" @click="undo()"> </q-btn>
       <q-btn color="primary" flat icon="redo" class="q-mr-sm" :disable="!canRedo" @click="redo()"> </q-btn>
+      <q-btn color="primary" flat icon="run_circle" class="q-mr-sm" @click="viewDevRunning(TestCase.Id)">
+        <q-tooltip style="font-size: small">View Last Dev Running</q-tooltip>
+      </q-btn>
+      <q-btn color="primary" flat icon="directions_run" class="q-mr-sm" @click="viewRegressionRunning()">
+        <q-tooltip style="font-size: small">View Last Regression Running</q-tooltip>
+      </q-btn>
     </template>
     <template v-slot:header="props">
       <q-tr :props="props">
@@ -194,6 +200,9 @@ import { TestEnvNodeInterface } from '../../../Models/TestEnv';
 import { TestAUTInterface } from '../../../Models/TestAUT';
 import { useCategoryStore } from '../../../pinia/categoryStore';
 import { TestStatus } from '../../../Models/TestStatus';
+import DevLogDialog from '../../DevMonitoring/Dialog/DevLogDialog.vue';
+import { DevRunRecordInterface } from '../../../Models/DevRunRecord';
+import { useDevMonitoringStore } from '../../../pinia/devMonitoringStore';
 
 const props = defineProps<{
   TestCaseProp: TestCaseInterface;
@@ -203,6 +212,7 @@ const TestCase = ref(props.TestCaseProp);
 const filterTable = ref('');
 const { undo, redo, canUndo, canRedo } = useRefHistory(TestCase, { deep: true });
 const globalStore = useGlobalStore();
+const devMonitoringStore = useDevMonitoringStore();
 const $q = useQuasar();
 const isDark = computed(() => globalStore.darkTheme);
 const columns = ref(testCaseColumns);
@@ -760,6 +770,52 @@ function filterMethod(rows: TestStepInterface[], filter: string): TestStepInterf
 }
 function getSelectedString() {
   return selectedTestSteps.value.length === 0 ? '' : `${selectedTestSteps.value.length} step${selectedTestSteps.value.length > 1 ? 's' : ''} selected.`;
+}
+
+function viewDevRunning(testCaseId: string) {
+  // Get last dev running record for testCase
+  devMonitoringStore
+    .getLastDevRunRecordOfTestCase(testCaseId)
+    .then((res) => {
+      console.log('res', res);
+      if (res.data == null) {
+        $q.notify({
+          message: 'No dev running record found.',
+          color: 'info',
+          icon: 'info',
+        });
+        return;
+      }
+      const devRunRecord: DevRunRecordInterface = res.data;
+      $q.dialog({
+        component: DevLogDialog,
+        componentProps: {
+          DevRunRecordProp: devRunRecord,
+        },
+      })
+        .onOk(() => {
+          // TODO
+        })
+        .onCancel(() => {
+          // TODO
+          console.log('Cancel');
+        })
+        .onDismiss(() => {
+          // TODO
+        });
+    })
+    .catch((error) => {
+      $q.notify({
+        type: 'negative',
+        message: error.message ? error.message : error.error,
+      });
+    });
+}
+function viewRegressionRunning() {
+  $q.notify({
+    message: 'Not implemented yet',
+    color: 'warning',
+  });
 }
 </script>
 <style scoped lang="scss">
