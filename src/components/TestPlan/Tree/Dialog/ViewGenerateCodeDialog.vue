@@ -3,7 +3,7 @@
     <q-layout
       view="hHh lpR fFf"
       :class="isDark ? 'bg-grey-9' : 'bg-grey-3'"
-      style="max-height: 900px; min-height: 100px !important; max-width: 1000px"
+      style="max-height: 900px; min-height: 100px !important; max-width: 1250px"
       container
     >
       <q-header reveal bordered class="row justify-between bg-secondary">
@@ -20,7 +20,7 @@
           <q-btn outline icon="content_copy" primary @click="copy(code)" class="q-mt-sm q-ml-md q-mb-sm">Copy</q-btn>
         </div>
         <div class="row">
-          <q-markdown :src="code" class="q-pl-md"></q-markdown>
+          <q-markdown show-copy copy-icon="content_copy" :src="code" class="q-pl-md"></q-markdown>
         </div>
       </q-page-container>
     </q-layout>
@@ -41,6 +41,7 @@ import { useDialogPluginComponent, useQuasar } from 'quasar';
 import { TestCaseInterface } from '../../../../Models/TestCase';
 import { useClipboard } from '@vueuse/core';
 import { useGlobalStore } from '../../../../pinia/globalStore';
+import 'prismjs/components/prism-csharp';
 
 const globalStore = useGlobalStore();
 const { copy } = useClipboard();
@@ -55,7 +56,7 @@ onBeforeMount(async () => {
   const generateDevCodeResult = await globalStore.generateDevCode([props.TestCase]);
   if (generateDevCodeResult.result === 'success') {
     code.value = generateDevCodeResult.message[0].generatedCode.trim();
-    code.value = `\`\`\`js\n${code.value}\n\`\`\``;
+    code.value = `\`\`\`csharp\n${code.value}\n\`\`\``;
   } else {
     $q.notify({
       type: 'negative',
