@@ -159,6 +159,7 @@ import { AddCommentDataInterface } from '../../../../Models/Entities/AddCommentD
 import { SetRegressionQueueDataInterface } from '../../../../Models/Entities/SetRegressionQueueData';
 import { SetRegressionAnalyseStatusDataInterface } from '../../../../Models/Entities/SetRegressionAnalyseStatusData';
 import { useUserStore } from '../../../../pinia/userStore';
+import config from '../../../../config';
 
 export default defineComponent({
   name: 'UpdateDialog',
@@ -225,8 +226,8 @@ export default defineComponent({
       const contentType = 'image/png';
       const byteCharacters = atob(image.substr(`data:${contentType};base64,`.length));
       const byteArrays = [];
-      for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
-        const slice = byteCharacters.slice(offset, offset + 1024);
+      for (let offset = 0; offset < byteCharacters.length; offset += config.screenHeight) {
+        const slice = byteCharacters.slice(offset, offset + config.screenHeight);
 
         const byteNumbers = new Array(slice.length);
         for (let i = 0; i < slice.length; i += 1) {

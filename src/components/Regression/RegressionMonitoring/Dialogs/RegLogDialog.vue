@@ -1,20 +1,16 @@
 <template>
   <q-dialog ref="dialogRef" @hide="onDialogHide" fullHeight>
-    <q-layout
-      class="q-pa-sm"
-      :class="isDark ? 'bg-grey-9' : 'bg-grey-3'"
-      style="max-width: 1200px; min-height: 400px !important;"
-    >
+    <q-layout class="q-pa-sm" :class="isDark ? 'bg-grey-9' : 'bg-grey-3'" style="max-width: 1200px; min-height: 400px !important">
       <div class="row q-mb-sm">
         <span class="text-h6">{{ RegressionTest.TestCaseCodeName }}: {{ RegressionTest.TestCaseName }}</span>
         <q-space />
         <q-btn outline icon="visibility" primary @click="showImage()" class="q-mr-sm">View Screenshot</q-btn>
         <q-btn outline icon="content_copy" primary @click="copy(RegressionTest.TestCaseCodeName)" class="q-mr-sm">TestCase Code Name</q-btn>
-        <q-btn outline icon="content_copy"  primary @click="copy(RegressionTest.TestCaseName)" class="q-mr-sm">TestCase Name</q-btn>
-        <q-btn outline icon="content_copy"  primary @click="copy(RegressionTest.LastRegressionRunRecord?.Log || '')">Log</q-btn>
+        <q-btn outline icon="content_copy" primary @click="copy(RegressionTest.TestCaseName)" class="q-mr-sm">TestCase Name</q-btn>
+        <q-btn outline icon="content_copy" primary @click="copy(RegressionTest.LastRegressionRunRecord?.Log || '')">Log</q-btn>
       </div>
       <q-separator class="q-mb-sm q-mt-sm" />
-      <div style="white-space: pre-wrap;">
+      <div style="white-space: pre-wrap">
         {{ RegressionTest.LastRegressionRunRecord.Log }}
       </div>
     </q-layout>
@@ -23,14 +19,13 @@
 
 <script lang="ts">
 import { useDialogPluginComponent } from 'quasar';
-import { RegressionTestInterface } from 'src/Models/RegressionTest';
-import {
-  defineComponent, computed, PropType,
-} from 'vue';
+import { RegressionTestInterface } from '../../../../Models/RegressionTest';
+import { defineComponent, computed, PropType } from 'vue';
 
-import { useClipboard } from '@vueuse/core'
-import { useGlobalStore } from 'src/pinia/globalStore';
-import { useRegMonitoringStore } from 'src/pinia/regMonitoring';
+import { useClipboard } from '@vueuse/core';
+import { useGlobalStore } from '../../../../pinia/globalStore';
+import { useRegMonitoringStore } from '../../../../pinia/regMonitoring';
+import config from '../../../../config';
 
 export default defineComponent({
   name: 'RegLogDialog',
@@ -46,23 +41,21 @@ export default defineComponent({
     // component will emit through useDialogPluginComponent()
     ...useDialogPluginComponent.emits,
   ],
-  components: { },
+  components: {},
   setup(props) {
-    const globalStore = useGlobalStore()
-    const regMonitoringStore = useRegMonitoringStore()
-    const isDark = computed(() => globalStore.darkTheme)
+    const globalStore = useGlobalStore();
+    const regMonitoringStore = useRegMonitoringStore();
+    const isDark = computed(() => globalStore.darkTheme);
     // REQUIRED; must be called inside of setup()
-    const {
-      dialogRef, onDialogHide, onDialogOK, onDialogCancel,
-    } = useDialogPluginComponent()
-    const { copy } = useClipboard()
+    const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent();
+    const { copy } = useClipboard();
     async function showImage() {
-      const image = await regMonitoringStore.getScreenshot(props.RegressionTest.LastRegressionRunRecord?.ErrorScreenshot)
+      const image = await regMonitoringStore.getScreenshot(props.RegressionTest.LastRegressionRunRecord?.ErrorScreenshot);
       const contentType = 'image/png';
       const byteCharacters = atob(image.substr(`data:${contentType};base64,`.length));
       const byteArrays = [];
-      for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
-        const slice = byteCharacters.slice(offset, offset + 1024);
+      for (let offset = 0; offset < byteCharacters.length; offset += config.screenHeight) {
+        const slice = byteCharacters.slice(offset, offset + config.screenHeight);
 
         const byteNumbers = new Array(slice.length);
         for (let i = 0; i < slice.length; i += 1) {
@@ -93,14 +86,14 @@ export default defineComponent({
       onOKClick() {
         // on OK, it is REQUIRED to
         // call onDialogOK (with optional payload)
-        onDialogOK()
+        onDialogOK();
         // or with payload: onDialogOK({ ... })
         // ...and it will also hide the dialog automatically
       },
 
       // we can passthrough onDialogCancel directly
       onCancelClick: onDialogCancel,
-    }
+    };
   },
 });
 </script>

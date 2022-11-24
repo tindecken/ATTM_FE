@@ -9,6 +9,7 @@ import { defineComponent, PropType } from 'vue';
 
 import { DevRunRecordInterface } from '../../../Models/DevRunRecord';
 import { useDevMonitoringStore } from '../../../pinia/devMonitoringStore';
+import config from '../../../config';
 
 export default defineComponent({
   name: 'ErrorScreenshot',
@@ -23,16 +24,12 @@ export default defineComponent({
   setup(props) {
     const devMonitoringStore = useDevMonitoringStore();
     async function showImage() {
-      const image = await devMonitoringStore.getScreenshot(
-        props.DevRunRecord.ErrorScreenshot as string
-      );
+      const image = await devMonitoringStore.getScreenshot(props.DevRunRecord.ErrorScreenshot as string);
       const contentType = 'image/png';
-      const byteCharacters = atob(
-        image.substr(`data:${contentType};base64,`.length)
-      );
+      const byteCharacters = atob(image.substr(`data:${contentType};base64,`.length));
       const byteArrays = [];
-      for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
-        const slice = byteCharacters.slice(offset, offset + 1024);
+      for (let offset = 0; offset < byteCharacters.length; offset += config.screenHeight) {
+        const slice = byteCharacters.slice(offset, offset + config.screenHeight);
 
         const byteNumbers = new Array(slice.length);
         for (let i = 0; i < slice.length; i += 1) {
