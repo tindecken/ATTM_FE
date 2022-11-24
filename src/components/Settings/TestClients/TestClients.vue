@@ -199,6 +199,7 @@ async function save() {
     }
   });
   if (!valid) return;
+  console.log('testClients.value', testClients.value);
   testClientStore
     .saveTestClients(testClients.value)
     .then(async (res) => {
@@ -209,7 +210,7 @@ async function save() {
         ...tc,
         rowIndex: i + 1,
       }));
-      const selectedTestClientIndex = testClientStore.testClients.findIndex((tc: TestClientInterface) => tc.Id === testClientStore.selectedTestClient.Id);
+      const selectedTestClientIndex = testClientStore.testClients.findIndex((tc: TestClientInterface) => tc.Id === testClientStore.selectedTestClient?.Id);
       if (selectedTestClientIndex == -1 && testClientStore.testClients.length > 0) {
         testClientStore.selectedTestClient = testClientStore.testClients[0];
       } else if (selectedTestClientIndex > -1) {
@@ -224,7 +225,7 @@ async function save() {
       console.log('err save test client', err);
       $q.notify({
         type: 'negative',
-        message: `${err.title}`,
+        message: `${err.title ? err.title : err}`,
       });
     });
 }
