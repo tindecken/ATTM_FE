@@ -12,7 +12,7 @@
         <q-splitter v-model="splitterModel" class="q-mt-xs">
           <template v-slot:before>
             <q-tabs v-model="tab" vertical no-caps dense>
-              <q-tab name="all" label="All" class="bg-primary text-left q-mb-xs" />
+              <q-tab name="all" label="All Steps" class="bg-primary text-left q-mb-xs" />
               <template v-for="testStep in DevRunRecord.TestSteps" :key="testStep.UUID">
                 <q-tab
                   v-if="testStep.Keyword.Name"
