@@ -175,6 +175,7 @@ export default defineComponent({
         UpdateType: 'Change Properties',
       };
       const TestCaseHistory: TestCaseHistoryInterface = {
+        Id: '',
         TestCase: editTestCase.value as TestCaseInterface,
         UpdateTestCaseData,
       };

@@ -29,7 +29,7 @@
         </q-tabs>
 
         <q-tab-panels v-model="selectedTestCaseId" animated keep-alive>
-          <q-tab-panel v-for="tc in openedTCs" :key="tc.Id" :name="tc.Id">
+          <q-tab-panel v-for="tc in openedTCs" :key="`${tc.CodeName}:${tc.Name}`" :name="tc.Id">
             <test-case :TestCaseProp="tc"></test-case>
           </q-tab-panel>
         </q-tab-panels>
@@ -189,6 +189,7 @@ const saveTestCase = (testCaseId: string) =>
             UpdateType: 'Change TestStep',
           };
           const testCaseHistory: TestCaseHistoryInterface = {
+            Id: currTestCase.Id,
             TestCase: currTestCase,
             UpdateTestCaseData: updateTestCaseData,
           };

@@ -245,7 +245,7 @@ async function onEditTestCase(editedTestCase: TestCaseHistoryInterface) {
   } catch (error: any) {
     $q.notify({
       type: 'negative',
-      message: `${error.message}`,
+      message: 'Unable to update test case !',
     });
   }
 }
@@ -633,7 +633,7 @@ async function checkRunner() {
   } catch (error: any) {
     $q.notify({
       type: 'negative',
-      message: `${error}`,
+      message: `${error.error ? error.error : error}`,
     });
   }
 }
@@ -646,6 +646,7 @@ async function onRun() {
     return;
   }
   const tickedNodes = tree.value.getTickedNodes();
+  console.log('tickNodes', tickedNodes);
   const generateCodeResult = await onGenerateDevCode(tickedNodes);
   if (generateCodeResult) {
     const buildProjectResult = await buildProject();

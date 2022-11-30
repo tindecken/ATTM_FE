@@ -13,6 +13,7 @@
           <template v-slot:before>
             <q-tabs v-model="tab" vertical no-caps dense>
               <q-tab name="all" label="All Steps" class="bg-primary text-left q-mb-xs" />
+              <q-tab name="buffer" label="Buffers" class="bg-primary text-left q-mb-xs" />
               <template v-for="testStep in DevRunRecord.TestSteps" :key="testStep.UUID">
                 <q-tab
                   v-if="testStep.Keyword.Name"
@@ -34,6 +35,9 @@
                 <div class="row" style="white-space: pre-wrap">
                   {{ DevRunRecord.Log }}
                 </div>
+              </q-tab-panel>
+              <q-tab-panel name="buffer">
+                <q-table :rows="getBuffers(DevRunRecord.Buffers)" :columns="bufferColumns" row-key="name" dense separator="cell" />
               </q-tab-panel>
               <q-tab-panel v-for="testStep in DevRunRecord.TestSteps" :key="testStep.UUID" :name="testStep.UUID">
                 <div class="container">
@@ -78,6 +82,21 @@ import { useGlobalStore } from '../../../pinia/globalStore';
 import { TestStatus } from '../../../Models/TestStatus';
 import { useDevMonitoringStore } from '../../../pinia/devMonitoringStore';
 import { useQuasar } from 'quasar';
+
+const bufferColumns = [
+  {
+    name: 'key',
+    required: true,
+    label: 'Key',
+    align: 'left',
+    field: 'key',
+    format: (val) => `${val}`,
+    sortable: true,
+    style: 'max-width: 100px',
+    headerStyle: 'max-width: 100px',
+  },
+  { name: 'value', align: 'left', label: 'Value', field: 'value', sortable: true },
+];
 
 const props = defineProps<{
   DevRunRecordProp: DevRunRecordInterface;
@@ -126,6 +145,13 @@ function refresh() {
         message: error.message ? error.message : error.error,
       });
     });
+}
+function getBuffers(buffers: any) {
+  const result: any[] = [];
+  for (const key in buffers) {
+    result.push({ key: key, value: buffers[key] });
+  }
+  return result;
 }
 </script>
 

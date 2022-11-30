@@ -100,7 +100,7 @@
           </q-td>
           <q-td key="log" :props="props" class="q-c-input">
             <div class="row no-wrap">
-              <div class="col-11" @click="showTestLog(props.row)">
+              <div class="col-11 ellipsis" @click="showTestLog(props.row)">
                 {{ props.row.Log }}
               </div>
               <div class="col-1">

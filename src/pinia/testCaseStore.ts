@@ -52,6 +52,7 @@ export const useTestCaseStore = defineStore('testcase', {
       }
     },
     async editTestCase(testCaseHistory: TestCaseHistoryInterface) {
+      console.log('testCaseHistory', testCaseHistory);
       const userStore = useUserStore();
       const categoryStore = useCategoryStore();
       try {
@@ -63,10 +64,12 @@ export const useTestCaseStore = defineStore('testcase', {
           },
         });
         const responseTestCase = (await response.data.data) as TestCaseInterface;
+        console.log('responseTestCase', responseTestCase);
         let testCase = _.cloneDeep(responseTestCase);
         testCase = paintTestCase(testCase);
         categoryStore.updateTestCase(testCase);
-        this.updateOpenedTCs(testCase);
+        this.removeOpenedTCbyTCIds([testCase.Id]);
+        this.setOpenedTCs(testCase);
         return responseTestCase;
       } catch (error: any) {
         throw error.response.data;

@@ -368,6 +368,8 @@ async function runTestCase(TestCase: TestCaseInterface) {
 }
 
 function saveTestCase() {
+  console.log('aaaaaaaaaaaaaaa', TestCase.value);
+  console.log('BBBBBBBBBBBBB', props.TestCaseProp);
   $q.dialog({
     component: SaveTestCaseDialog,
     componentProps: {
@@ -387,6 +389,7 @@ function saveTestCase() {
           Id: '',
         };
         const result = await testCaseStore.saveTestCase(testCaseHistory);
+        console.log('TestCase.value', TestCase.value);
         categoryStore.updateTestCase(TestCase.value);
         $q.notify({
           type: 'positive',
