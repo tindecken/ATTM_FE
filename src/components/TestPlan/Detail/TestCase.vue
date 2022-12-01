@@ -368,8 +368,6 @@ async function runTestCase(TestCase: TestCaseInterface) {
 }
 
 function saveTestCase() {
-  console.log('aaaaaaaaaaaaaaa', TestCase.value);
-  console.log('BBBBBBBBBBBBB', props.TestCaseProp);
   $q.dialog({
     component: SaveTestCaseDialog,
     componentProps: {

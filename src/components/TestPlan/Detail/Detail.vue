@@ -63,6 +63,7 @@ import CloseTestCaseDialog from './Dialog/CloseTestCaseDialog.vue';
 import SaveTestCaseDialog from './Dialog/SaveTestCaseDialog.vue';
 import TestCase from './TestCase.vue';
 import { testCaseColumns } from '../../../components/tableColumns';
+import { isTestCaseModified } from './Utils/utils';
 
 const userStore = useUserStore();
 const testCaseStore = useTestCaseStore();
@@ -80,71 +81,9 @@ const selectedTestCaseId: Ref<string> = computed({
 
 const openedTCs: Ref<TestCaseInterface[]> = computed(() => testCaseStore.openedTCs);
 
-async function closeTab(testcase: TestCaseInterface) {
-  // check if testcase is modified or not
-  let isModified = false;
-  // get testcase from database then verify with current one
-  const originalTestCase = await testCaseStore.getTestCaseById(testcase.Id);
-  console.log('originalTestCase', originalTestCase.TestSteps);
-  if (originalTestCase.TestSteps.length !== testcase.TestSteps.length) {
-    isModified = true;
-  } else {
-    // eslint-disable-next-line no-plusplus
-    for (let i = 0; i < originalTestCase.TestSteps.length; i++) {
-      if (originalTestCase.TestSteps[i].UUID !== testcase.TestSteps[i].UUID) {
-        isModified = true;
-        break;
-      }
-      if (originalTestCase.TestSteps[i].TestAUTId !== testcase.TestSteps[i].TestAUTId) {
-        isModified = true;
-        break;
-      }
-      if (originalTestCase.TestSteps[i].Keyword?.Name !== testcase.TestSteps[i].Keyword?.Name) {
-        isModified = true;
-        break;
-      }
-      if (originalTestCase.TestSteps[i].Description !== testcase.TestSteps[i].Description) {
-        isModified = true;
-        break;
-      }
-      if (originalTestCase.TestSteps[i].IsDisabled !== testcase.TestSteps[i].IsDisabled) {
-        isModified = true;
-        break;
-      }
-      if (originalTestCase.TestSteps[i].KWFeature !== testcase.TestSteps[i].KWFeature) {
-        isModified = true;
-        break;
-      }
-      if (originalTestCase.TestSteps[i].KWCategory !== testcase.TestSteps[i].KWCategory) {
-        isModified = true;
-        break;
-      }
-      if (originalTestCase.TestSteps[i].Params.length !== testcase.TestSteps[i].Params.length) {
-        isModified = true;
-        break;
-      }
-      // eslint-disable-next-line no-plusplus
-      for (let j = 0; j < originalTestCase.TestSteps[i].Params.length; j++) {
-        if (originalTestCase.TestSteps[i].Params[j].Name !== testcase.TestSteps[i].Params[j].Name) {
-          isModified = true;
-          break;
-        }
-        if (originalTestCase.TestSteps[i].Params[j].TestNodePath !== testcase.TestSteps[i].Params[j].TestNodePath) {
-          isModified = true;
-          break;
-        }
-        if (
-          originalTestCase.TestSteps[i].Params[j].TestNodePath === '' &&
-          testcase.TestSteps[i].Params[j].Value &&
-          originalTestCase.TestSteps[i].Params[j].Value !== testcase.TestSteps[i].Params[j].Value
-        ) {
-          isModified = true;
-          break;
-        }
-      }
-    }
-  }
-
+async function closeTab(testCase: TestCaseInterface) {
+  const isModified = await isTestCaseModified(testCase);
+  console.log('isModified', isModified);
   if (isModified) {
     $q.dialog({
       component: CloseTestCaseDialog,
@@ -152,10 +91,10 @@ async function closeTab(testcase: TestCaseInterface) {
       .onOk(async (response: 'Save' | 'Discard') => {
         switch (response) {
           case 'Save':
-            saveTestCase(testcase.Id).then(() => testCaseStore.removeOpenedTC(testcase));
+            saveTestCase(testCase.Id).then(() => testCaseStore.removeOpenedTC(testcase));
             break;
           case 'Discard':
-            testCaseStore.removeOpenedTC(testcase);
+            testCaseStore.removeOpenedTC(testCase);
             break;
           default:
             break;
@@ -168,7 +107,7 @@ async function closeTab(testcase: TestCaseInterface) {
         // TODO
       });
   } else {
-    testCaseStore.removeOpenedTC(testcase);
+    testCaseStore.removeOpenedTC(testCase);
   }
 }
 

@@ -99,6 +99,7 @@ import EditTestSuiteDialog from './Dialog/EditTestSuiteDialog.vue';
 import EditTestGroupDialog from './Dialog/EditTestGroupDialog.vue';
 import IconStatus from './Labels/IconStatus.vue';
 import { LastRegressionResultInterface } from '../../../Models/Entities/LastRegressionResult';
+import { isTestCaseModified } from '../Detail/Utils/utils';
 
 const globalStore = useGlobalStore();
 const categoryStore = useCategoryStore();
@@ -237,6 +238,17 @@ async function onCreateTestCase(testCase: TestCaseInterface) {
 }
 async function onEditTestCase(editedTestCase: TestCaseHistoryInterface) {
   try {
+    if (testCaseStore.openedTCs.some((el: any) => el.Id === editedTestCase.TestCase.Id)) {
+      const testcase = testCaseStore.openedTCs.find((el: any) => el.Id === editedTestCase.Id) as TestCaseInterface;
+      const isModified = isTestCaseModified(testcase);
+      if (isModified) {
+        $q.notify({
+          type: 'negative',
+          message: 'Please save the current test case before editing !',
+        });
+        return;
+      }
+    }
     const editTestCase = await testCaseStore.editTestCase(editedTestCase);
     $q.notify({
       type: 'positive',
