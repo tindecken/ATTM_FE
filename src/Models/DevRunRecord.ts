@@ -21,10 +21,9 @@ export interface DevRunRecordInterface {
   WorkItem?: string;
   ExecuteTime?: number;
   RunMachine?: string;
-  ErrorScreenshot?: string;
-  Screenshot1?: string;
-  Screenshot2?: string;
+  ErrorScreenshotId?: string;
   Comments?: string;
   TestSteps: TestStepInterface[];
   Buffers?: Record<string, string>;
+  IsEvidence?: boolean;
 }

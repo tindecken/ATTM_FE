@@ -9,10 +9,9 @@ export interface RegressionRunRecordInterface {
   EndAt: Date;
   ExecuteTime: number;
   RunMachine: string;
-  ErrorScreenshot: string;
-  Screenshot1: string;
-  Screenhost2: string;
+  ErrorScreenshotId: string;
   Comments: string;
   TestSteps: TestStepInterface[];
   Buffers?: Record<string, string>;
+  IsEvidence?: boolean;
 }

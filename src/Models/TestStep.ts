@@ -16,4 +16,6 @@ export interface TestStepInterface {
   StartTime?: Date;
   EndTime?: Date;
   ExecuteTime?: number;
+  ErrorScreenshotId?: string;
+  ScreenshotIds?: string[];
 }

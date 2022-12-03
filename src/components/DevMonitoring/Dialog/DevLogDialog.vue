@@ -1,27 +1,36 @@
 <template>
-  <q-dialog ref="dialogRef" @hide="onDialogHide" fullHeight>
-    <q-layout view="hHh lpR fFf" :class="isDark ? 'bg-grey-9' : 'bg-grey-3'" style="max-width: 1200px; min-height: 400px !important" container>
+  <q-dialog ref="dialogRef" @hide="onDialogHide" fullHeight :maximized="maximizedToggle">
+    <q-layout view="hHh lpR fFf" :class="isDark ? 'bg-grey-9' : 'bg-grey-3'" style="min-width: 1200px; min-height: 400px !important" container>
       <q-header reveal bordered class="row justify-between bg-secondary">
         <div class="self-center text-subtitle1 q-pl-sm">{{ DevRunRecord.TestCaseCodeName }}: {{ DevRunRecord.TestCaseName }}</div>
         <q-btn flat icon="refresh" label="Refresh" @click="refresh()" />
-        <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
-          <q-tooltip style="font-size: small">Close</q-tooltip>
-        </q-btn>
+        <div>
+          <q-btn class="self-center" dense flat icon="maximize" @click="maximizedToggle = !maximizedToggle">
+            <q-tooltip style="font-size: small">Maximized/Restore</q-tooltip>
+          </q-btn>
+          <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
+            <q-tooltip style="font-size: small">Close</q-tooltip>
+          </q-btn>
+        </div>
       </q-header>
       <q-page-container class="q-pa-sm">
         <q-splitter v-model="splitterModel" class="q-mt-xs">
           <template v-slot:before>
             <q-tabs v-model="tab" vertical no-caps dense>
-              <q-tab name="all" label="All Steps" class="bg-primary text-left q-mb-xs" />
+              <q-tab name="all" class="bg-primary text-left q-mb-xs qtab">
+                <div class="row justify-between" style="width: 100%">
+                  <div>All Steps</div>
+                  <q-icon v-if="DevRunRecord.ErrorScreenshotId" name="image" class="self-center" />
+                </div>
+              </q-tab>
               <q-tab name="buffer" label="Buffers" class="bg-primary text-left q-mb-xs" />
               <template v-for="testStep in DevRunRecord.TestSteps" :key="testStep.UUID">
-                <q-tab
-                  v-if="testStep.Keyword.Name"
-                  :name="testStep.UUID"
-                  :label="testStep.Keyword.Name"
-                  class="text-left q-mb-xs"
-                  :class="bg_status(testStep.Status)"
-                />
+                <q-tab v-if="testStep.Keyword.Name" :name="testStep.UUID" class="q-mb-xs qtab" :class="bg_status(testStep.Status)">
+                  <div class="row justify-between" style="width: 100%">
+                    <div>{{ testStep.Keyword.Name }}</div>
+                    <q-icon v-if="testStep.ErrorScreenshotId || testStep.ScreenshotIds.length > 0" name="image" class="self-center" />
+                  </div>
+                </q-tab>
               </template>
             </q-tabs>
           </template>
@@ -35,6 +44,10 @@
                 <div class="row" style="white-space: pre-wrap">
                   {{ DevRunRecord.Log }}
                 </div>
+                <template v-if="DevRunRecord.ErrorScreenshotId">
+                  <div>Error Screenshot:</div>
+                  <show-screenshot :screenshotId="DevRunRecord.ErrorScreenshotId" class="q-mt-sm q-mb-sm"></show-screenshot>
+                </template>
               </q-tab-panel>
               <q-tab-panel name="buffer">
                 <q-table :rows="getBuffers(DevRunRecord.Buffers)" :columns="bufferColumns" row-key="name" dense separator="cell" />
@@ -53,9 +66,23 @@
                   <span class="self-center">Execute Time: {{ testStep.ExecuteTime }} seconds</span>
                   <q-btn flat color="primary" icon="content_copy" label="Copy" @click="copy(testStep.Log)" class="q-ml-sm" size="sm" />
                 </div>
-                <div class="row" style="white-space: pre-wrap">
-                  {{ testStep.Log }}
+                <div class="row q-mb-sm">
+                  <div style="white-space: pre-wrap">{{ testStep.Log }}</div>
                 </div>
+                <template v-if="testStep.ErrorScreenshotId">
+                  <div>Error Screenshot:</div>
+                  <show-screenshot :screenshotId="testStep.ErrorScreenshotId" class="q-mt-sm q-mb-sm"></show-screenshot>
+                </template>
+
+                <template v-if="testStep.ScreenshotIds.length > 0">
+                  <div>{{ testStep.ScreenshotIds.length }} screenshot(s):</div>
+                  <show-screenshot
+                    v-for="screenShotId in testStep.ScreenshotIds"
+                    :key="screenShotId"
+                    :screenshotId="screenShotId"
+                    class="q-mt-sm q-mb-sm"
+                  ></show-screenshot>
+                </template>
               </q-tab-panel>
             </q-tab-panels>
           </template>
@@ -82,6 +109,8 @@ import { useGlobalStore } from '../../../pinia/globalStore';
 import { TestStatus } from '../../../Models/TestStatus';
 import { useDevMonitoringStore } from '../../../pinia/devMonitoringStore';
 import { useQuasar } from 'quasar';
+import { getScreenshot } from '../Utils/utils';
+import ShowScreenshot from './ShowScreenshot.vue';
 
 const bufferColumns = [
   {
@@ -98,6 +127,7 @@ const bufferColumns = [
   { name: 'value', align: 'left', label: 'Value', field: 'value', sortable: true },
 ];
 
+const maximizedToggle = ref(false);
 const props = defineProps<{
   DevRunRecordProp: DevRunRecordInterface;
 }>();
@@ -108,7 +138,7 @@ const isDark = computed(() => globalStore.darkTheme);
 const devMonitoringStore = useDevMonitoringStore();
 const $q = useQuasar();
 // REQUIRED; must be called inside of setup()
-const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent();
+const { dialogRef, onDialogHide } = useDialogPluginComponent();
 const { copy } = useClipboard();
 
 const splitterModel = ref(15);
@@ -153,9 +183,25 @@ function getBuffers(buffers: any) {
   }
   return result;
 }
+
+async function getScreenshotUrl(screenshotId: string) {
+  let url: any;
+  getScreenshot(screenshotId)
+    .then((blob: any) => {
+      url = URL.createObjectURL(blob);
+      console.log('urllllllllllll', url);
+      return url;
+    })
+    .catch((error: any) => {
+      $q.notify({
+        type: 'negative',
+        message: error.message ? error.message : error.error,
+      });
+    });
+}
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .text-left {
   justify-content: left;
 }
@@ -170,5 +216,9 @@ function getBuffers(buffers: any) {
 }
 .item {
   min-width: 100px;
+}
+.qtab::v-deep .q-tab__content {
+  width: 100%;
+  align-items: flex-start;
 }
 </style>

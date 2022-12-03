@@ -42,7 +42,7 @@
                   primary
                   @click="showImage(regTest)"
                   class="q-mr-sm"
-                  v-if="regTest.LastRegressionRunRecord?.ErrorScreenshot"
+                  v-if="regTest.LastRegressionRunRecord?.ErrorScreenshotId"
                   >View Screenshot</q-btn
                 >
                 <q-btn size="sm" outline icon="content_copy" primary @click="copy(regTest.TestCaseCodeName)" class="q-mr-sm">TestCase Code Name</q-btn>
@@ -222,7 +222,7 @@ export default defineComponent({
       if (form.value !== null) form.value.validate(false);
     }
     async function showImage(regTest: RegressionTestInterface) {
-      const image = await regMonitoringStore.getScreenshot(regTest.LastRegressionRunRecord?.ErrorScreenshot);
+      const image = await regMonitoringStore.getScreenshot(regTest.LastRegressionRunRecord?.ErrorScreenshotId);
       const contentType = 'image/png';
       const byteCharacters = atob(image.substr(`data:${contentType};base64,`.length));
       const byteArrays = [];

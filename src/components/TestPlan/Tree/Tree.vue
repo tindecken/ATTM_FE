@@ -239,8 +239,8 @@ async function onCreateTestCase(testCase: TestCaseInterface) {
 async function onEditTestCase(editedTestCase: TestCaseHistoryInterface) {
   try {
     if (testCaseStore.openedTCs.some((el: any) => el.Id === editedTestCase.TestCase.Id)) {
-      const testcase = testCaseStore.openedTCs.find((el: any) => el.Id === editedTestCase.Id) as TestCaseInterface;
-      const isModified = isTestCaseModified(testcase);
+      const testcase = testCaseStore.openedTCs.find((el: any) => el.Id === editedTestCase.TestCase.Id) as TestCaseInterface;
+      const isModified = await isTestCaseModified(testcase);
       if (isModified) {
         $q.notify({
           type: 'negative',

@@ -267,6 +267,8 @@ function addNewStep() {
       Owner: '',
       Params: null,
     },
+    ErrorScreenshotId: '',
+    ScreenshotIds: [],
   });
 }
 
@@ -607,6 +609,8 @@ function onInsertTestSteps(number: number) {
       Log: '',
       KWFeature: '',
       KWCategory: '',
+      ErrorScreenshotId: '',
+      ScreenshotIds: [],
     });
   }
 }
@@ -629,6 +633,8 @@ function onInsertPasteTestSteps() {
       Log: '',
       KWFeature: '',
       KWCategory: '',
+      ErrorScreenshotId: '',
+      ScreenshotIds: [],
     });
   }
   // paste copiedTestSteps

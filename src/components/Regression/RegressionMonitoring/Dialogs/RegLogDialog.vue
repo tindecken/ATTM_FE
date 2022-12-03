@@ -50,7 +50,7 @@ export default defineComponent({
     const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent();
     const { copy } = useClipboard();
     async function showImage() {
-      const image = await regMonitoringStore.getScreenshot(props.RegressionTest.LastRegressionRunRecord?.ErrorScreenshot);
+      const image = await regMonitoringStore.getScreenshot(props.RegressionTest.LastRegressionRunRecord?.ErrorScreenshotId);
       const contentType = 'image/png';
       const byteCharacters = atob(image.substr(`data:${contentType};base64,`.length));
       const byteArrays = [];

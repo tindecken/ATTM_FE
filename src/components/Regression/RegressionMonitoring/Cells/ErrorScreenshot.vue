@@ -1,5 +1,5 @@
 <template>
-  <div v-if="RegTest.LastRegressionRunRecord?.ErrorScreenshot">
+  <div v-if="RegTest.LastRegressionRunRecord?.ErrorScreenshotId">
     <q-btn @click="showImage()" size="sm" outline> View </q-btn>
   </div>
 </template>
@@ -23,13 +23,9 @@ export default defineComponent({
   setup(props) {
     const regMonitoringStore = useRegMonitoringStore();
     async function showImage() {
-      const image = await regMonitoringStore.getScreenshot(
-        props.RegTest.LastRegressionRunRecord?.ErrorScreenshot
-      );
+      const image = await regMonitoringStore.getScreenshot(props.RegTest.LastRegressionRunRecord?.ErrorScreenshotId);
       const contentType = 'image/png';
-      const byteCharacters = atob(
-        image.substr(`data:${contentType};base64,`.length)
-      );
+      const byteCharacters = atob(image.substr(`data:${contentType};base64,`.length));
       const byteArrays = [];
       for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
         const slice = byteCharacters.slice(offset, offset + 1024);

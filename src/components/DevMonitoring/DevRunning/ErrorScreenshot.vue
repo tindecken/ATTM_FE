@@ -1,53 +1,19 @@
 <template>
-  <div v-if="DevRunRecord.ErrorScreenshot">
-    <q-btn @click="showImage()" size="sm" outline> View </q-btn>
+  <div v-if="DevRunRecord.ErrorScreenshotId">
+    <q-btn @click="showError(DevRunRecord.ErrorScreenshotId)" size="sm" outline> View </q-btn>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from 'vue';
-
+<script setup lang="ts">
+import { PropType } from 'vue';
 import { DevRunRecordInterface } from '../../../Models/DevRunRecord';
-import { useDevMonitoringStore } from '../../../pinia/devMonitoringStore';
-import config from '../../../config';
+import { showErrorScreenShot } from '../Utils/utils';
 
-export default defineComponent({
-  name: 'ErrorScreenshot',
-  props: {
-    DevRunRecord: {
-      type: Object as PropType<DevRunRecordInterface>,
-      required: true,
-      default: () => ({}),
-    },
-  },
-  components: {},
-  setup(props) {
-    const devMonitoringStore = useDevMonitoringStore();
-    async function showImage() {
-      const image = await devMonitoringStore.getScreenshot(props.DevRunRecord.ErrorScreenshot as string);
-      const contentType = 'image/png';
-      const byteCharacters = atob(image.substr(`data:${contentType};base64,`.length));
-      const byteArrays = [];
-      for (let offset = 0; offset < byteCharacters.length; offset += config.screenHeight) {
-        const slice = byteCharacters.slice(offset, offset + config.screenHeight);
-
-        const byteNumbers = new Array(slice.length);
-        for (let i = 0; i < slice.length; i += 1) {
-          byteNumbers[i] = slice.charCodeAt(i);
-        }
-
-        const byteArray = new Uint8Array(byteNumbers);
-
-        byteArrays.push(byteArray);
-      }
-      const blob = new Blob(byteArrays, { type: contentType });
-      const blobUrl = URL.createObjectURL(blob);
-
-      window.open(blobUrl, '_blank');
-    }
-    return {
-      showImage,
-    };
-  },
+const props = defineProps({
+  DevRunRecord: { type: Object as PropType<DevRunRecordInterface>, required: true },
 });
+
+const showError = async (errorScreenshotId: string) => {
+  await showErrorScreenShot(errorScreenshotId);
+};
 </script>
