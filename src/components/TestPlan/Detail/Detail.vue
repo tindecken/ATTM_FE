@@ -83,7 +83,6 @@ const openedTCs: Ref<TestCaseInterface[]> = computed(() => testCaseStore.openedT
 
 async function closeTab(testCase: TestCaseInterface) {
   const isModified = await isTestCaseModified(testCase);
-  console.log('isModified', isModified);
   if (isModified) {
     $q.dialog({
       component: CloseTestCaseDialog,
@@ -91,7 +90,7 @@ async function closeTab(testCase: TestCaseInterface) {
       .onOk(async (response: 'Save' | 'Discard') => {
         switch (response) {
           case 'Save':
-            saveTestCase(testCase.Id).then(() => testCaseStore.removeOpenedTC(testcase));
+            saveTestCase(testCase.Id).then(() => testCaseStore.removeOpenedTC(testCase));
             break;
           case 'Discard':
             testCaseStore.removeOpenedTC(testCase);

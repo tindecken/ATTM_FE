@@ -179,7 +179,6 @@ export default defineComponent({
         TestCase: editTestCase.value as TestCaseInterface,
         UpdateTestCaseData,
       };
-      console.log('onOKClick - EditTestStep', TestCaseHistory);
       onDialogOK(TestCaseHistory);
     }
 

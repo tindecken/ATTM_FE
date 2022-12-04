@@ -93,7 +93,6 @@ export default defineComponent({
     const splitterModel = ref(7);
     const selectedTestCasesDetail = computed(() => createRegressionStore.selectedTestCasesDetail);
     const selectedTestCases = computed(() => createRegressionStore.selectedTestCases);
-    console.log('selectedTestCasesDetail', selectedTestCasesDetail);
     function clearStatusAndMessage() {
       getLatestCodeStatus.value = '';
       getLatestCodeMessage.value = '';
@@ -105,15 +104,12 @@ export default defineComponent({
     async function getLatestCodeThenGenerateAndBuildProject() {
       clearStatusAndMessage();
       tab.value = 'getLatestCode';
-      console.log('generateAndBuildProject');
       createRegressionStore.selectedTestCases = [];
       await createRegressionStore.getAndAddSelectedTestCase(selectedTestCasesDetail.value);
-      console.log('selectedTestCases.value', selectedTestCases.value);
       const getLatestCodeResult: Promise<any> = globalStore.getLatestCode();
 
       getLatestCodeResult
         .then((r) => {
-          console.log('r', r);
           getLatestCodeStatus.value = 'Success';
           getLatestCodeMessage.value = r.message;
           $q.notify({
@@ -126,7 +122,6 @@ export default defineComponent({
               tab.value = 'generateCode';
               generateCodeStatus.value = 'Success';
               g.message.forEach((m: any) => {
-                console.log('m', m);
                 generateCodeMessage.value += `Test Case: ${m.testCase}\r\n\r\n`;
                 generateCodeMessage.value += `${m.generatedCode}\r\n`;
                 generateCodeMessage.value += '------------------\r\n';
@@ -141,7 +136,6 @@ export default defineComponent({
                   tab.value = 'buildProject';
                   buildProjectStatus.value = 'Success';
                   buildProjectMessage.value = b.buildMessage;
-                  console.log('b', b);
                   $q.notify({
                     type: 'positive',
                     message: 'Build Project Success !',

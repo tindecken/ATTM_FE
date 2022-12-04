@@ -125,7 +125,6 @@ const filter = ref('');
 const testEnvHistories: Ref<TestEnvHistoryInterface[]> = ref([]);
 onMounted(async () => {
   try {
-    console.log('props.TestEnv.Id', props.TestEnv.Id);
     testEnvHistories.value = await testEnvironmentStore.getTestEnvHistories(props.TestEnv.Id);
     testEnvHistories.value = testEnvHistories.value.map((value: TestEnvHistoryInterface, i: number) => ({
       ...value,

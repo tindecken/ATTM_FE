@@ -288,7 +288,6 @@ export default defineComponent({
           filteredKeywords.value = filteredKeywords.value.map((kw: KeywordInterface, i: number) => ({ ...kw, rowIndex: i + 1 }));
         })
         .catch((error) => {
-          console.log('error', error);
           $q.notify({
             type: 'negative',
             message: error.message ? error.message : error.error,

@@ -94,7 +94,6 @@ function retryDeploySource(client: TestClientInterface) {
       });
     })
     .catch((e) => {
-      console.log('e', e);
       $q.notify({
         type: 'negative',
         message: `Deploy to client ${client.Name} unsuccess !`,
@@ -127,7 +126,6 @@ function retryUpdateReleaseSetting(client: TestClientInterface) {
       });
     })
     .catch((e) => {
-      console.log('e', e);
       $q.notify({
         type: 'negative',
         message: `Update Regression for client ${client.Name} unsuccess !`,
@@ -144,7 +142,6 @@ function getSelectedString() {
     : `${selectedClients.value.length} record${selectedClients.value.length > 1 ? 's' : ''} selected of ${clients.value.length}`;
 }
 function deployClient() {
-  console.log('deployClient');
   if (selectedClients.value.length === 0) {
     $q.notify({
       type: 'negative',
@@ -197,7 +194,6 @@ function deployClient() {
           });
       })
       .catch((e) => {
-        console.log('e', e);
         $q.notify({
           type: 'negative',
           message: `Deploy to client ${testClient.Name} unsuccess !`,
@@ -206,7 +202,6 @@ function deployClient() {
         cloneClient.DeploySourceStatus = 'Error';
         cloneClient.DeploySourceMessage = e.message;
         selectedClients.value[index] = cloneClient;
-        console.log('cloneClient', cloneClient);
       });
   });
 }

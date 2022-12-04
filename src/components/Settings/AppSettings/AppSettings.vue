@@ -26,11 +26,9 @@ onMounted(async () => {
   settingStore
     .getConfigurations()
     .then((result) => {
-      console.log('result', result);
       configurations.value = JSON.stringify(result.data, null, 2);
     })
     .catch((error) => {
-      console.log('error', error);
       $q.notify({
         type: 'negative',
         message: error.message ? error.message : error.error,

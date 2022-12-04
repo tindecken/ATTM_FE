@@ -4,29 +4,13 @@
       <div class="col-sm-12 col-xs-12 col-md-10 col-lg-6">
         <div class="row">
           <div class="col">
-            <q-input
-              :readonly="readonly"
-              v-model="importBlockSetting.Value"
-              type="textarea"
-              rows="20"
-            />
+            <q-input :readonly="readonly" v-model="importBlockSetting.Value" type="textarea" rows="20" />
           </div>
         </div>
         <div class="row reverse q-mt-md">
           <div>
-            <q-btn
-              outline
-              label="Edit"
-              color="primary"
-              class="q-mr-sm"
-              @click="readonly = false"
-            />
-            <q-btn
-              outline
-              label="Save"
-              color="primary"
-              @click="updateImportBlock()"
-            />
+            <q-btn outline label="Edit" color="primary" class="q-mr-sm" @click="readonly = false" />
+            <q-btn outline label="Save" color="primary" @click="updateImportBlock()" />
           </div>
         </div>
       </div>
@@ -56,9 +40,7 @@ export default defineComponent({
     const settingStore = useSettingStore();
     const $q = useQuasar();
     const readonly = ref(true);
-    const importBlockSetting: Ref<SettingInterface> = computed(
-      () => props.importBlock
-    );
+    const importBlockSetting: Ref<SettingInterface> = computed(() => props.importBlock);
     async function updateImportBlock() {
       try {
         const newSetting: SettingInterface = {
@@ -70,7 +52,6 @@ export default defineComponent({
           UpdatedDateTime: new Date(),
           UpdatedBy: userStore.Username,
         };
-        console.log('newSetting', newSetting);
         const result = await settingStore.updateSetting({
           settingId: importBlockSetting.value.Id,
           setting: newSetting,

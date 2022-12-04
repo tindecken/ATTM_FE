@@ -24,7 +24,6 @@ export const useTestGroupStore = defineStore('testgroup', {
           },
         });
         const responseTestCase = (await response.data) as TestCaseInterface;
-        console.log('responseTestCase', responseTestCase);
         // commit to category module
         categoryStore.createTestCase(responseTestCase);
         return responseTestCase;
@@ -48,14 +47,12 @@ export const useTestGroupStore = defineStore('testgroup', {
           arrRequests.push(request);
         });
         const responses: any = await Promise.all(arrRequests);
-        console.log('responses', responses);
         categoryStore.deleteTestCases(testCases);
         testCases.forEach((tc: TestCaseInterface) => {
           testCaseStore.removeOpenedTC(tc);
         });
         return responses;
       } catch (error: any) {
-        console.log('error.response.data', error.response.data.error);
         throw error.response.data.error;
       }
     },
@@ -70,7 +67,6 @@ export const useTestGroupStore = defineStore('testgroup', {
           },
         });
         const responseTestGroup = (await response.data.data) as TestGroupInterface;
-        console.log('responseTestGroup', responseTestGroup);
         categoryStore.editTestGroup(responseTestGroup);
         return responseTestGroup;
       } catch (error: any) {

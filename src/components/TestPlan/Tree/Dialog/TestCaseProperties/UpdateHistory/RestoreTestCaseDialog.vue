@@ -57,7 +57,6 @@ const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
 const $q = useQuasar();
 
 function restore() {
-  console.log('restoreMessage', restoreMessage.value);
   if (restoreMessage.value === '') {
     $q.notify({
       color: 'negative',
@@ -66,7 +65,6 @@ function restore() {
     });
     return;
   }
-  console.log('restoreMessage', restoreMessage.value);
   onDialogOK(restoreMessage.value);
   onDialogHide();
 }
