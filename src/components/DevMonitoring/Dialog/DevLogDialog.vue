@@ -2,11 +2,13 @@
   <q-dialog ref="dialogRef" @hide="onDialogHide" fullHeight :maximized="maximizedToggle">
     <q-layout view="hHh lpR fFf" :class="isDark ? 'bg-grey-9' : 'bg-grey-3'" style="min-width: 1200px; min-height: 400px !important" container>
       <q-header reveal bordered class="row justify-between bg-secondary">
-        <div class="self-center text-subtitle1 q-pl-sm">{{ DevRunRecord.TestCaseCodeName }}: {{ DevRunRecord.TestCaseName }}</div>
+        <div class="self-center text-subtitle1 q-pl-sm">
+          {{ DevRunRecord.TestCaseCodeName }}: {{ DevRunRecord.TestCaseName }} - {{ TestStatus[DevRunRecord.Status] }}
+        </div>
         <q-btn flat icon="refresh" label="Refresh" @click="refresh()" />
         <div>
           <q-btn class="self-center" dense flat icon="maximize" @click="maximizedToggle = !maximizedToggle">
-            <q-tooltip style="font-size: small">Maximized/Restore</q-tooltip>
+            <q-tooltip style="font-size: small">Maximize/Restore</q-tooltip>
           </q-btn>
           <q-btn class="self-center" dense flat icon="close" @click="onDialogHide">
             <q-tooltip style="font-size: small">Close</q-tooltip>
@@ -45,6 +47,7 @@
                   {{ DevRunRecord.Log }}
                 </div>
                 <template v-if="DevRunRecord.ErrorScreenshotId">
+                  <q-separator class="q-mt-sm q-mb-sm"></q-separator>
                   <div>Error Screenshot:</div>
                   <show-screenshot :screenshotId="DevRunRecord.ErrorScreenshotId" class="q-mt-sm q-mb-sm"></show-screenshot>
                 </template>
@@ -75,6 +78,7 @@
                 </template>
 
                 <template v-if="testStep.ScreenshotIds.length > 0">
+                  <q-separator class="q-mt-sm q-mb-sm"></q-separator>
                   <div>{{ testStep.ScreenshotIds.length }} screenshot(s):</div>
                   <show-screenshot
                     v-for="screenShotId in testStep.ScreenshotIds"
