@@ -128,7 +128,6 @@ onMounted(() => {
     from: date.formatDate(editRegression?.value.StartDate, 'YYYY/MM/DD'),
     to: date.formatDate(editRegression?.value.EndDate, 'YYYY/MM/DD'),
   };
-  console.log('editRegression', editRegression.value);
 });
 function onOKClick() {
   editRegression.value.StartDate = dateRange.value.from;

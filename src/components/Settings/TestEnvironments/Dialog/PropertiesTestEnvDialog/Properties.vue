@@ -74,10 +74,10 @@ function onSubmit() {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     .onOk(() => {})
     .onCancel(() => {
-      console.log('Cancel');
+      // TODO
     })
     .onDismiss(() => {
-      console.log('Called on OK or Cancel');
+      // TODO
     });
 }
 </script>

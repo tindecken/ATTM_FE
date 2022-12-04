@@ -52,7 +52,6 @@ export const useTestCaseStore = defineStore('testcase', {
       }
     },
     async editTestCase(testCaseHistory: TestCaseHistoryInterface) {
-      console.log('testCaseHistory', testCaseHistory);
       const userStore = useUserStore();
       const categoryStore = useCategoryStore();
       try {
@@ -64,7 +63,6 @@ export const useTestCaseStore = defineStore('testcase', {
           },
         });
         const responseTestCase = (await response.data.data) as TestCaseInterface;
-        console.log('responseTestCase', responseTestCase);
         let testCase = _.cloneDeep(responseTestCase);
         testCase = paintTestCase(testCase);
         categoryStore.updateTestCase(testCase);
@@ -211,7 +209,6 @@ export const useTestCaseStore = defineStore('testcase', {
       this.openedTCs[index] = tempTC;
     },
     disableStep(payload: any) {
-      console.log('payload', payload);
       const { testCaseId } = payload;
       const { stepUUID } = payload;
       const index = this.openedTCs.findIndex((el: any) => el.Id === testCaseId);
@@ -219,13 +216,11 @@ export const useTestCaseStore = defineStore('testcase', {
       if (tempTC.TestSteps.length > 0) {
         // incase there's no test steps
         const indexTestStep: number = tempTC.TestSteps.findIndex((ts: TestStepInterface) => ts.UUID === stepUUID);
-        console.log('indexTestStep', indexTestStep);
         if (indexTestStep !== -1) tempTC.TestSteps[indexTestStep].IsDisabled = true;
       }
       this.openedTCs[index] = tempTC;
     },
     enableStep(payload: any) {
-      console.log('payload', payload);
       const { testCaseId } = payload;
       const { stepUUID } = payload;
       const index = this.openedTCs.findIndex((el: any) => el.Id === testCaseId);
@@ -270,11 +265,8 @@ export const useTestCaseStore = defineStore('testcase', {
         const responseData = await response.data;
         return responseData;
       } catch (error) {
-        console.log('e', error);
         if (error.isAxiosError) {
-          console.log('b');
           const e: AxiosError = error;
-          console.log('e', e.response);
           throw e.response.data;
         } else {
           throw error;

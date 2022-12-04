@@ -243,7 +243,6 @@ function testCaseFilterFunc() {
       Name: testCaseFilterText.value,
     };
     regMonitoringStore.findRegressionTest(payload).catch((error) => {
-      console.log('error', error);
       $q.notify({
         type: 'negative',
         message: error.message ? error.message : error.error,

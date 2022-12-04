@@ -272,7 +272,6 @@ function styleStatus(status: string) {
 }
 function showErrorMessageDialog(regTest: RegressionTestInterface) {
   // TODO
-  console.log('regTest', regTest);
 }
 function getSelectedString() {
   return selected.value.length === 0 ? '' : `${selected.value.length} regresion test${selected.value.length > 1 ? 's' : ''} selected.`;
@@ -309,7 +308,6 @@ function toogleRightClick(row: any) {
   }
 }
 function onUpdate() {
-  console.log('oneUpdate');
   $q.dialog({
     component: UpdateDialog,
     componentProps: {
@@ -320,7 +318,6 @@ function onUpdate() {
       // TODO: handle ok
       const { selectedRegression } = regressionStore;
       await regMonitoringStore.getRegressionDetail(selectedRegression?.Id as string);
-      console.log('OK');
     })
     .onCancel(async () => {
       // TODO
@@ -328,7 +325,7 @@ function onUpdate() {
       await regMonitoringStore.getRegressionDetail(selectedRegression?.Id as string);
     })
     .onDismiss(() => {
-      console.log('Dismiss');
+      // TODO
     });
 }
 </script>

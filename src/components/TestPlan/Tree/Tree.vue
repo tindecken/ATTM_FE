@@ -148,7 +148,6 @@ async function fnSelectedNode(target: string) {
           if (resp.data) categoryStore.setLastRegressionResultForTestCase(currentNode, resp.data as LastRegressionResultInterface);
         })
         .catch((error) => {
-          console.log('error', error);
           $q.notify({
             type: 'negative',
             message: error.message ? error.message : error.error,
@@ -264,7 +263,6 @@ async function onEditTestCase(editedTestCase: TestCaseHistoryInterface) {
 async function onEditCategory(editedCategory: CategoryInterface) {
   try {
     const editCategory = await categoryStore.editCategory(editedCategory);
-    console.log('editCategory', editCategory);
     $q.notify({
       type: 'positive',
       message: `Updated category: ${editedCategory.Name} !`,
@@ -313,7 +311,6 @@ function createCategory() {
     .onOk(async (newCategory: CategoryInterface) => {
       try {
         const category = await categoryStore.createCategory(newCategory);
-        console.log('category', category);
         $q.notify({
           type: 'positive',
           message: `Created new category: ${category.Name}`,
@@ -324,7 +321,6 @@ function createCategory() {
           message: `${error}`,
         });
       }
-      console.log('newCategory', newCategory);
     })
     .onCancel(() => {
       // TODO
@@ -351,7 +347,6 @@ function onNewCategory(Category: CategoryInterface) {
     .onOk(async (newCategory: CategoryInterface) => {
       try {
         const category = await categoryStore.createCategory(newCategory);
-        console.log('category', category);
         $q.notify({
           type: 'positive',
           message: `Created new category: ${category.Name}`,
@@ -362,7 +357,6 @@ function onNewCategory(Category: CategoryInterface) {
           message: `${error.message}`,
         });
       }
-      console.log('newCategory', newCategory);
     })
     .onCancel(() => {
       // TODO
@@ -460,7 +454,6 @@ function onEdit(node: CategoryInterface | TestSuiteInterface | TestGroupInterfac
       })
         .onOk((editedTestCase: TestCaseHistoryInterface) => {
           // TODO: handle ok
-          console.log('editedTestCase', editedTestCase);
           void onEditTestCase(editedTestCase);
         })
         .onCancel(() => {
@@ -479,7 +472,6 @@ function onEdit(node: CategoryInterface | TestSuiteInterface | TestGroupInterfac
       })
         .onOk((editedTestGroup: TestGroupInterface) => {
           // TODO: handle ok
-          console.log('editedTestGroup', editedTestGroup);
           void onEditTestGroup(editedTestGroup);
         })
         .onCancel(() => {
@@ -499,7 +491,6 @@ function onEdit(node: CategoryInterface | TestSuiteInterface | TestGroupInterfac
       })
         .onOk((editedTestSuite: TestSuiteInterface) => {
           // TODO: handle ok
-          console.log('editedTestSuite', editedTestSuite);
           void onEditTestSuite(editedTestSuite);
         })
         .onCancel(() => {
@@ -518,7 +509,6 @@ function onEdit(node: CategoryInterface | TestSuiteInterface | TestGroupInterfac
       })
         .onOk((editedCategory: CategoryInterface) => {
           // TODO: handle ok
-          console.log('editedCategory', editedCategory);
           void onEditCategory(editedCategory);
         })
         .onCancel(() => {
@@ -577,7 +567,6 @@ async function copyCodeToClient() {
     });
     return copyCodeToClientResult;
   } catch (error: any) {
-    console.log('error', error);
     $q.notify({
       type: 'negative',
       message: `${error.message}`,
@@ -612,7 +601,6 @@ async function createDevQueue(tickedNodes: any[]) {
       testcases,
       testClient: selectedTestClient.value,
     });
-    console.log('createDevQueueResult', createDevQueueResult);
     $q.notify({
       type: 'positive',
       message: `${createDevQueueResult.count} queue(s) added.`,
@@ -628,7 +616,6 @@ async function createDevQueue(tickedNodes: any[]) {
 async function checkRunner() {
   try {
     const checkRunnerResult = await globalStore.checkautorunner(selectedTestClient.value as TestClientInterface);
-    console.log('checkRunnerResult', checkRunnerResult);
     if (checkRunnerResult.result === 'success' && checkRunnerResult.message.includes('Runner is running')) {
       $q.notify({
         type: 'positive',
@@ -658,7 +645,6 @@ async function onRun() {
     return;
   }
   const tickedNodes = tree.value.getTickedNodes();
-  console.log('tickNodes', tickedNodes);
   const generateCodeResult = await onGenerateDevCode(tickedNodes);
   if (generateCodeResult) {
     const buildProjectResult = await buildProject();
@@ -676,8 +662,6 @@ function onDeleteNodes(node: any) {
   const tickedNodes = tree.value.getTickedNodes();
   // Get actual ticked nodes, this is a Quasar issue, after delete node in tree, it return undefined nodes
   const actualTickedNodes = tickedNodes.filter((n: any) => n !== undefined && n !== null);
-  console.log('tickedNodes', tickedNodes);
-  console.log('actualTickedNodes', actualTickedNodes);
   if (actualTickedNodes.length !== 0) {
     const testCases = actualTickedNodes.filter((n: any) => n && n.nodeType === 'TestCase') as TestCaseInterface[];
     if (testCases.length !== 0) {
@@ -723,7 +707,6 @@ function onDeleteNodes(node: any) {
           .onOk(async () => {
             try {
               const deleteResult = await categoryStore.deleteCategory(category);
-              console.log('deleteResult', deleteResult);
               $q.notify({
                 type: 'positive',
                 message: `${deleteResult.data.message}`,
@@ -753,7 +736,6 @@ function onDeleteNodes(node: any) {
           .onOk(async () => {
             try {
               const deleteResult = await categoryStore.deleteTestSuite(testSuite);
-              console.log('deleteResult', deleteResult);
               $q.notify({
                 type: 'positive',
                 message: `${deleteResult.data.message}`,
@@ -783,7 +765,6 @@ function onDeleteNodes(node: any) {
           .onOk(async () => {
             try {
               const deleteResult = await testSuiteStore.deleteTestGroup(testGroup);
-              console.log('deleteResult', deleteResult);
               $q.notify({
                 type: 'positive',
                 message: `${deleteResult.data.message}`,
@@ -892,7 +873,6 @@ function onViewGenerateCode(node: TestCaseInterface) {
     });
 }
 function onCopyTestCase(testCase: TestCaseInterface) {
-  console.log('a', testCase.TestSteps);
   const copiedTC = _.cloneDeep(testCase);
   copiedTC.CodeName = `${testCase.CodeName}`;
   copiedTC.Id = '';
@@ -905,11 +885,9 @@ function onCopyTestCase(testCase: TestCaseInterface) {
       ...step,
     };
   });
-  console.log('b', copiedTC.TestSteps);
   testCaseStore.copiedTC = copiedTC;
 }
 async function onPasteTestCase(node: any) {
-  console.log('onPasteTestCase', node);
   if (node.nodeType !== 'TestGroup') {
     $q.notify({
       type: 'negative',
@@ -932,7 +910,6 @@ async function onPasteTestCase(node: any) {
   tempTC.CategoryId = testGroup.CategoryId;
   try {
     const createTestCaseResponse = await testGroupStore.createTestCase(tempTC);
-    console.log('createTestCaseResponse', createTestCaseResponse);
   } catch (err: any) {
     $q.notify({
       type: 'negative',

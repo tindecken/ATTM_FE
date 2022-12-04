@@ -46,7 +46,6 @@ export const useTestSuiteStore = defineStore('testsuite', {
         testCaseStore.removeOpenedTCbyTCIds(testGroup.TestCaseIds as string[]);
         return response;
       } catch (error: any) {
-        console.log('error.response.data', error.response.data.error);
         throw error.response.data.error;
       }
     },
@@ -61,7 +60,6 @@ export const useTestSuiteStore = defineStore('testsuite', {
           },
         });
         const responseTestSuite = (await response.data.data) as TestSuiteInterface;
-        console.log('responseTestSuite', responseTestSuite);
         categoryStore.editTestSuite(responseTestSuite);
         return responseTestSuite;
       } catch (error: any) {

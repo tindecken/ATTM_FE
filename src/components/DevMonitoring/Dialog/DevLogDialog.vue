@@ -189,7 +189,6 @@ async function getScreenshotUrl(screenshotId: string) {
   getScreenshot(screenshotId)
     .then((blob: any) => {
       url = URL.createObjectURL(blob);
-      console.log('urllllllllllll', url);
       return url;
     })
     .catch((error: any) => {

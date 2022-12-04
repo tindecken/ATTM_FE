@@ -56,12 +56,10 @@ export const useRegMonitoringStore = defineStore('regMonitoring', {
         });
         const responseData = await response.data;
         const regressionTests = (await responseData.data) as RegressionTestInterface[];
-        console.log('regressionTests', regressionTests);
         this.regTests = regressionTests;
         const categories = regressionTests
           .map((regTest: RegressionTestInterface) => regTest.CategoryName)
           .filter((value, index, self) => self.indexOf(value) === index);
-        console.log('categories', categories);
         this.categorySelections = categories;
         const testSuites = regressionTests
           .map((regTest: RegressionTestInterface) => regTest.TestSuiteFullName)
@@ -81,7 +79,6 @@ export const useRegMonitoringStore = defineStore('regMonitoring', {
           if (e.code === 'ERR_CANCELED') return;
           else throw e.response.data;
         } else {
-          console.log('a', error);
           throw error;
         }
       }
@@ -112,7 +109,6 @@ export const useRegMonitoringStore = defineStore('regMonitoring', {
         });
         const responseData = await response.data;
         const regressionTests = (await responseData.data) as RegressionTestInterface[];
-        console.log('regressionTests', regressionTests);
         this.regTests = regressionTests;
       } catch (error) {
         if (error.isAxiosError) {

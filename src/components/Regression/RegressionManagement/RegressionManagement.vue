@@ -157,7 +157,6 @@ function editRegression(regression: RegressionInterface) {
     },
   })
     .onOk(async (updatedRegression: RegressionInterface) => {
-      console.log('updatedRegression', updatedRegression);
       regressionStore
         .updateRegression(updatedRegression)
         .then(() => {
@@ -172,7 +171,6 @@ function editRegression(regression: RegressionInterface) {
           getRegressions();
         })
         .catch((error) => {
-          console.log('error', error);
           $q.notify({
             type: 'negative',
             message: `${error.message}`,
@@ -180,10 +178,10 @@ function editRegression(regression: RegressionInterface) {
         });
     })
     .onCancel(() => {
-      console.log('Cancel');
+      // TODO
     })
     .onDismiss(() => {
-      console.log('Called on OK or Cancel');
+      // TODO
     });
 }
 function deployRegression(regression: RegressionInterface) {
@@ -194,13 +192,13 @@ function deployRegression(regression: RegressionInterface) {
     },
   })
     .onOk(async (updatedRegression: RegressionInterface) => {
-      console.log('updatedRegression', updatedRegression);
+      // TODO
     })
     .onCancel(() => {
-      console.log('Cancel');
+      // TODO
     })
     .onDismiss(() => {
-      console.log('Called on OK or Cancel');
+      // TODO
     });
 }
 function deleteRegression(regression: RegressionInterface) {
@@ -228,10 +226,10 @@ function deleteRegression(regression: RegressionInterface) {
         });
     })
     .onCancel(() => {
-      console.log('Cancel');
+      // TODO
     })
     .onDismiss(() => {
-      console.log('Called on OK or Cancel');
+      // TODO
     });
 }
 const visibleColumns = ref([

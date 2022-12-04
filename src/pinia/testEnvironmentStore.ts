@@ -36,7 +36,6 @@ export const useTestEnvironmentStore = defineStore('testEnvironment', {
           },
         });
         const testEnv = (await response.data.data) as TestEnvInterface;
-        console.log('getTestEnv', testEnv);
         return testEnv;
       } catch (error: any) {
         throw error.response.data;
@@ -51,8 +50,7 @@ export const useTestEnvironmentStore = defineStore('testEnvironment', {
             Authorization: `Bearer ${userStore.Token}`,
           },
         });
-        const testEnvHistories = (await response.data
-          .data) as TestEnvHistoryInterface[];
+        const testEnvHistories = (await response.data.data) as TestEnvHistoryInterface[];
         return testEnvHistories;
       } catch (error: any) {
         throw error.response.data;

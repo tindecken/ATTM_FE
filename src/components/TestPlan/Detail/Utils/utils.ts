@@ -34,8 +34,6 @@ async function isTestCaseModified(testCase: TestCaseInterface) {
   let isModified = false;
   // get testcase from database then verify with current one
   const originalTestCase = await testCaseStore.getTestCaseById(testCase.Id);
-  console.log('originalTestCase', originalTestCase);
-  console.log('rawTestCase', rawTestCase);
 
   if (originalTestCase.TestSteps.length !== rawTestCase.TestSteps.length) {
     isModified = true;

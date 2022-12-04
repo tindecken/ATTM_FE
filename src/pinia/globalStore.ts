@@ -26,7 +26,6 @@ export const useGlobalStore = defineStore('global', {
             Authorization: `Bearer ${userStore.Token}`,
           },
         });
-        console.log('response', response);
         const responseData = await response.data;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return responseData;
@@ -92,7 +91,6 @@ export const useGlobalStore = defineStore('global', {
             Authorization: `Bearer ${userStore.Token}`,
           },
         });
-        console.log('response', response);
         const responseData = await response.data;
         return responseData;
       } catch (error: any) {
@@ -109,7 +107,6 @@ export const useGlobalStore = defineStore('global', {
             Authorization: `Bearer ${userStore.Token}`,
           },
         });
-        console.log('response', response);
         const responseData = await response.data;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return responseData;
@@ -150,7 +147,6 @@ export const useGlobalStore = defineStore('global', {
     },
     async createDevQueue(payload: any) {
       const userStore = useUserStore();
-      console.log('payload', payload);
       try {
         const response = await api.post('/testproject/createdevqueue', payload, {
           headers: {

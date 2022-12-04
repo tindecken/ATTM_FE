@@ -34,15 +34,11 @@ export default defineComponent({
       })
         .onOk(() => {
           // TODO: handle ok
-          console.log('OK');
         })
         .onCancel(() => {
           // TODO
-          console.log('Cancel');
         })
-        .onDismiss(() => {
-          console.log('Dismiss');
-        });
+        .onDismiss(() => {});
     }
     return {
       showing: ref(false),

@@ -63,12 +63,10 @@ export const useCategoryStore = defineStore('category', {
             Authorization: `Bearer ${userStore.Token}`,
           },
         });
-        console.log('response', response);
         this.deleteTestSuite_updateState(testSuite);
         testCaseStore.removeOpenedTCbyTestSuite(testSuite);
         return response;
       } catch (error: any) {
-        console.log('error.response.data', error.response.data.error);
         throw error.response.data.error;
       }
     },
@@ -82,12 +80,10 @@ export const useCategoryStore = defineStore('category', {
             Authorization: `Bearer ${userStore.Token}`,
           },
         });
-        console.log('response', response);
         this.deleteCategory_updateState(category);
         testCaseStore.removeOpenedTCbyCategory(category);
         return response;
       } catch (error: any) {
-        console.log('error.response.data', error.response.data.error);
         throw error.response.data.error;
       }
     },
@@ -104,7 +100,6 @@ export const useCategoryStore = defineStore('category', {
         this.createCategory_updateState(createdCategory);
         return response.data.data;
       } catch (error: any) {
-        console.log('error.response.data', error.response.data);
         throw error.response.data;
       }
     },
@@ -150,16 +145,12 @@ export const useCategoryStore = defineStore('category', {
     },
     updateTestCase(testCase: TestCaseInterface) {
       const catIndex = this.Categories.findIndex((cat: CategoryInterface) => cat.Id === testCase.CategoryId);
-      console.log('catIndex', catIndex);
       const tempCat = _.cloneDeep(this.Categories[catIndex]);
       // find tsIndex
       const tsIndex = tempCat.children.findIndex((ts: TestSuiteInterface) => ts.Id === testCase.TestSuiteId);
-      console.log('tsIndex', tsIndex);
       // find tgIndex
       const tgIndex = tempCat.children[tsIndex].children.findIndex((tg: TestGroupInterface) => tg.Id === testCase.TestGroupId);
-      console.log('tgIndex', tgIndex);
       const tcIndex = tempCat.children[tsIndex].children[tgIndex].children.findIndex((tc: TestCaseInterface) => tc.Id === testCase.Id);
-      console.log('tcIndex', tcIndex);
       tempCat.children[tsIndex].children[tgIndex].children[tcIndex] = testCase;
       this.Categories[catIndex] = tempCat;
     },
@@ -241,7 +232,6 @@ export const useCategoryStore = defineStore('category', {
         let cat = _.cloneDeep(responseCategory);
         cat = paintCategory(cat);
         const catIndex = this.Categories.findIndex((c: CategoryInterface) => c.Id === cat.Id);
-        console.log('catIndex', catIndex);
         cat.children = this.Categories[catIndex].children;
         this.Categories[catIndex] = cat;
         return responseCategory;

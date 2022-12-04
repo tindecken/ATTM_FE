@@ -396,15 +396,11 @@ function showErrorMessageDialog(devRunRecord: DevRunRecordInterface) {
   })
     .onOk(() => {
       // TODO: handle ok
-      console.log('OK');
     })
     .onCancel(() => {
       // TODO
-      console.log('Cancel');
     })
-    .onDismiss(() => {
-      console.log('Dismiss');
-    });
+    .onDismiss(() => {});
 }
 function showTestLog(devRunRecord: DevRunRecordInterface) {
   $q.dialog({
@@ -418,7 +414,6 @@ function showTestLog(devRunRecord: DevRunRecordInterface) {
     })
     .onCancel(() => {
       // TODO
-      console.log('Cancel');
     })
     .onDismiss(() => {
       // TODO

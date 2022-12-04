@@ -110,11 +110,8 @@ export const useRegressionStore = defineStore('regression', {
         const responseData = await response.data;
         return responseData;
       } catch (error) {
-        console.log('e', error);
         if (error.isAxiosError) {
-          console.log('b');
           const e: AxiosError = error;
-          console.log('e', e.response);
           throw e.response.data;
         } else {
           throw error;

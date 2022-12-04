@@ -14,9 +14,7 @@ const props = defineProps<{
 
 const image = ref<string>('');
 onMounted(async () => {
-  console.log('props.screenshotId', props.screenshotId);
   image.value = await getScreenshot(props.screenshotId);
-  console.log('image.value', image.value);
 });
 
 const openScreenshot = (image: string) => {

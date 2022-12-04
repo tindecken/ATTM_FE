@@ -243,7 +243,6 @@ export default defineComponent({
     onBeforeMount(async () => {
       try {
         const allKeywords = await keywordStore.getKeywords();
-        console.log('keywords', allKeywords);
       } catch (error: any) {
         $q.notify({
           type: 'negative',

@@ -115,9 +115,6 @@ const buildProjectMessage = ref('');
 const selectedTestCasesDetail = computed(() => createRegressionStore.selectedTestCasesDetail);
 const selectedTestCases = computed(() => createRegressionStore.selectedTestCases);
 const defineRegression = computed(() => createRegressionStore.defineRegression);
-console.log('selectedTestCasesDetail', selectedTestCasesDetail);
-console.log('selectedTestCases', selectedTestCases);
-console.log('defineRegression', defineRegression);
 function clearStatusAndMessage() {
   createRegressionStatus.value = '';
   createRegressionMessage.value = '';
@@ -159,7 +156,6 @@ function createDB() {
         .then((t) => {
           tab.value = 'createRegressionTest';
           createRegressionTestStatus.value = 'Success';
-          console.log('t', t);
           t.data.data.forEach((i: RegressionTestInterface) => {
             createRegressionTestMessage.value += `${i.TestCaseFullCodeName}\r\n`;
           });
@@ -184,7 +180,6 @@ function createDB() {
               const buildResult: Promise<any> = globalStore.buildProject();
               buildResult
                 .then((b) => {
-                  console.log('b', b);
                   tab.value = 'buildProject';
                   buildProjectStatus.value = 'Success';
                   buildProjectMessage.value = b.buildMessage;
@@ -221,7 +216,6 @@ function createDB() {
         });
     })
     .catch((e) => {
-      console.log('e', e);
       $q.notify({
         type: 'negative',
         message: `Error while creating regression: ${e}`,

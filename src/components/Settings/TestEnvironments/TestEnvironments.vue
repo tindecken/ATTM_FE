@@ -166,14 +166,13 @@ function newTestEnv() {
       }));
     })
     .onCancel(() => {
-      console.log('Cancel');
+      // TODO
     })
     .onDismiss(() => {
-      console.log('Called on OK or Cancel');
+      // TODO
     });
 }
 function propertiesTestEnv() {
-  console.log('selectedTestEnv.value', selectedTestEnv.value);
   if (selectedTestEnv.value === null || selectedTestEnv.value === undefined) {
     $q.notify({
       type: 'warning',
@@ -205,14 +204,13 @@ function propertiesTestEnv() {
       }));
     })
     .onCancel(() => {
-      console.log('Cancel');
+      // TODO
     })
     .onDismiss(() => {
-      console.log('Called on OK or Cancel');
+      // TODO
     });
 }
 function cloneTestEnv() {
-  console.log('selectedTestEnv.value', selectedTestEnv.value);
   if (selectedTestEnv.value === null || selectedTestEnv.value === undefined) {
     $q.notify({
       type: 'warning',
@@ -236,14 +234,13 @@ function cloneTestEnv() {
       }));
     })
     .onCancel(() => {
-      console.log('Cancel');
+      // TODO
     })
     .onDismiss(() => {
-      console.log('Called on OK or Cancel');
+      // TODO
     });
 }
 function deleteTestEnv() {
-  console.log('selectedTestEnv.value', selectedTestEnv.value);
   if (selectedTestEnv.value === null || selectedTestEnv.value === undefined) {
     $q.notify({
       type: 'warning',
@@ -267,10 +264,7 @@ function deleteTestEnv() {
         });
         return;
       }
-      console.log('foundIndex', foundIndex);
-      console.log('testEnvs before', testEnvs.length);
       _.remove(testEnvs, (te: TestEnvInterface) => te.Id === testEnv.Id);
-      console.log('testEnvs after', testEnvs.length);
 
       if (testEnvs.length > 0) {
         // eslint-disable-next-line prefer-destructuring
@@ -284,10 +278,10 @@ function deleteTestEnv() {
       }
     })
     .onCancel(() => {
-      console.log('Cancel');
+      // TODO
     })
     .onDismiss(() => {
-      console.log('Called on OK or Cancel');
+      // TODO
     });
 }
 function saveTestEnv() {
@@ -298,7 +292,6 @@ function saveTestEnv() {
     });
     return;
   }
-  console.log('selectedTestEnv.value', selectedTestEnv.value);
   let errors: string[] = [];
   selectedTestEnv.value.Nodes.forEach((node: TestEnvNodeInterface) => {
     if (!node.Category) {
@@ -355,10 +348,10 @@ function saveTestEnv() {
       }));
     })
     .onCancel(() => {
-      console.log('Cancel');
+      // TODO
     })
     .onDismiss(() => {
-      console.log('Called on OK or Cancel');
+      // TODO
     });
 }
 
@@ -370,7 +363,6 @@ async function discard() {
     });
     return;
   }
-  console.log('selectedTestEnv', selectedTestEnv.value);
   const testEnv = await testEnvironmentStore.getTestEnv(selectedTestEnv.value?.Id as string);
   const foundIndex = testEnvs.findIndex((te: TestEnvInterface) => te.Id === selectedTestEnv.value?.Id);
   testEnvs[foundIndex] = testEnv;

@@ -132,7 +132,6 @@ const form = ref() as Ref<QForm>;
 const editTestGroup: Ref<TestGroupInterface | null> = ref(null);
 onMounted(() => {
   editTestGroup.value = _.cloneDeep(props.TestGroup);
-  console.log('testGroup', editTestGroup.value);
 });
 function onOKClick() {
   onDialogOK(editTestGroup.value);

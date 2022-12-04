@@ -37,7 +37,6 @@ export const useDevMonitoringStore = defineStore('devMonitoring', {
             Authorization: `Bearer ${userStore.Token}`,
           },
         });
-        console.log('response getInQueueDevRunRecords', response);
         const responseData = await response.data;
         const inQueueDevRunRecords = (await responseData.data) as DevRunRecordInterface[];
         this.inQueueDevRunRecords = inQueueDevRunRecords;
@@ -72,7 +71,6 @@ export const useDevMonitoringStore = defineStore('devMonitoring', {
         const responseData = await response.data;
         return responseData;
       } catch (error) {
-        console.log('e', error);
         if (error.isAxiosError) {
           const e: AxiosError = error;
           throw e.response.data;
@@ -111,8 +109,6 @@ export const useDevMonitoringStore = defineStore('devMonitoring', {
       }
     },
     updateInDevRunRecords(devQueue: any) {
-      console.log('updateInDevRunRecords', devQueue);
-      console.log('state.inQueueDevRunRecords', this.inQueueDevRunRecords);
       // findindex
       this.inQueueDevRunRecords = this.inQueueDevRunRecords.filter((item: any) => item.Id !== devQueue.Id);
     },

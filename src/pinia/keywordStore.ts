@@ -30,11 +30,8 @@ export const useKeywordStore = defineStore('keyword', {
         this.setKeywords(keywordCategories);
         return keywordCategories;
       } catch (error) {
-        console.log('e', error);
         if (error.isAxiosError) {
-          console.log('b');
           const e: AxiosError = error;
-          console.log('e', e.response);
           throw e.response.data;
         } else {
           throw error;

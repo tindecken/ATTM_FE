@@ -273,7 +273,6 @@ function addNewStep() {
 }
 
 async function viewGenerateCode(testCase: TestCaseInterface) {
-  console.log('viewGeneraeCode testCase', testCase);
   $q.dialog({
     component: ViewGenerateCodeDialog,
     componentProps: {
@@ -301,7 +300,6 @@ async function runTestCase(TestCase: TestCaseInterface) {
     return;
   }
   // generate code
-  console.log('generate code');
   try {
   } catch (error) {}
   const generateDevCodeResult: Promise<any> = globalStore.generateDevCode([TestCase]);
@@ -389,7 +387,6 @@ function saveTestCase() {
           Id: '',
         };
         const result = await testCaseStore.saveTestCase(testCaseHistory);
-        console.log('TestCase.value', TestCase.value);
         categoryStore.updateTestCase(TestCase.value);
         $q.notify({
           type: 'positive',
@@ -403,10 +400,10 @@ function saveTestCase() {
       }
     })
     .onCancel(() => {
-      console.log('Cancel');
+      // TODO
     })
     .onDismiss(() => {
-      console.log('Called on OK or Cancel');
+      // TODO
     });
 }
 
@@ -506,7 +503,6 @@ function onBeforeShowDialog(testStep: TestStepInterface) {
     selectedTestSteps.value.push(testStep);
   }
   rightClickIndex.value = TestCase.value.TestSteps.findIndex((ts: TestStepInterface) => ts.UUID === testStep.UUID);
-  console.log('rightClickIndex', rightClickIndex);
 }
 
 function onDisableRows() {
@@ -539,7 +535,6 @@ function onEnableRows() {
 
 function onInsertDescription(testStep: TestStepInterface) {
   // open new AddDescriptionDialog dialog
-  console.log('testStep', testStep);
   $q.dialog({
     component: AddDescriptionDialog,
   })
@@ -585,10 +580,8 @@ function onCutTestSteps() {
 function onPasteTestSteps() {
   if (copiedTestSteps.value.length === 0) return;
   copiedTestSteps.value.forEach((copyTS: TestStepInterface) => {
-    console.log('before', rightClickIndex.value);
     TestCase.value.TestSteps[rightClickIndex.value] = copyTS;
     rightClickIndex.value += 1;
-    console.log('after', rightClickIndex.value);
   });
 }
 
@@ -660,7 +653,6 @@ function changeKeyword(testStep: TestStepInterface, newKeyword: FlatKeywordInter
 }
 
 function editTestStep(testStep: TestStepInterface) {
-  console.log('editTestStep', TestCase.value, testStep);
   $q.dialog({
     component: KeywordEditorDialog,
     componentProps: {
@@ -669,7 +661,6 @@ function editTestStep(testStep: TestStepInterface) {
     },
   })
     .onOk((testStepUpdated: TestStepInterface) => {
-      console.log('testStep updated', testStepUpdated);
       const stepIndex = TestCase.value.TestSteps.findIndex((ts: TestStepInterface) => ts.UUID === testStepUpdated.UUID);
       if (stepIndex === -1) return;
       TestCase.value.TestSteps[stepIndex] = testStepUpdated;
@@ -691,7 +682,6 @@ function searchKeyword(testStep: TestStepInterface) {
     },
   })
     .onOk((testStepUpdated: TestStepInterface) => {
-      console.log('testStep updated', testStepUpdated);
       const stepIndex = TestCase.value.TestSteps.findIndex((ts: TestStepInterface) => ts.UUID === testStepUpdated.UUID);
       if (stepIndex === -1) return;
       TestCase.value.TestSteps[stepIndex].Params = [];
@@ -729,8 +719,6 @@ function updateTestEnvValue(testStep: TestStepInterface, paramIndex: number, tes
   TestCase.value.TestSteps[stepIndex].Params[paramIndex].Value = testEnvNode.Value;
 }
 function onUseTestEnv(testStep: TestStepInterface, index: number) {
-  console.log('testStep', testStep);
-  console.log('index', index);
   $q.dialog({
     component: TestEnvironmentDialog,
   })
@@ -784,7 +772,6 @@ function viewDevRunning(testCaseId: string) {
   devMonitoringStore
     .getLastDevRunRecordOfTestCase(testCaseId)
     .then((res) => {
-      console.log('res', res);
       if (res.data == null) {
         $q.notify({
           message: 'No dev running record found.',
@@ -805,7 +792,6 @@ function viewDevRunning(testCaseId: string) {
         })
         .onCancel(() => {
           // TODO
-          console.log('Cancel');
         })
         .onDismiss(() => {
           // TODO

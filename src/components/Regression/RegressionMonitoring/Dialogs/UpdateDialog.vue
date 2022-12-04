@@ -212,9 +212,7 @@ export default defineComponent({
       onDialogOK(description.value);
     }
     function onChangeClient(value: TestClientInterface) {
-      console.log('value', value);
       selectedClient.value = value;
-      console.log('selectedClient.value', selectedClient.value);
     }
 
     function validateForm() {
@@ -247,7 +245,6 @@ export default defineComponent({
       const index = RegTests.value.findIndex((regTest: RegressionTestInterface) => regTest.Id === regressionTestId);
       if (index >= 0) {
         selectedRegTest.value = RegTests.value[index];
-        console.log('selectedRegTest', selectedRegTest.value);
       }
     }
     function addCommentForAll() {
@@ -264,7 +261,6 @@ export default defineComponent({
       const updateComment: Promise<any> = regressionStore.addCommentForRegressionTests(commentData);
       void updateComment
         .then((r) => {
-          console.log('updateComment', r);
           RegTests.value.forEach((regTest: RegressionTestInterface) => {
             r.data.data.forEach((rt: RegressionTestInterface) => {
               if (rt.Id === regTest.Id) {
@@ -295,7 +291,6 @@ export default defineComponent({
       const updateComment: Promise<any> = regressionStore.addCommentForRegressionTests(commentData);
       void updateComment
         .then((r) => {
-          console.log('updateComment', r);
           if (selectedRegTest.value !== null) {
             const index = RegTests.value.findIndex((regTest: RegressionTestInterface) => regTest.Id === selectedRegTest.value?.Id);
             if (index >= 0) {
@@ -329,7 +324,6 @@ export default defineComponent({
       const setQueueResult: Promise<any> = regressionStore.setRegressionQueue(regressionQueueData);
       void setQueueResult
         .then((r: any) => {
-          console.log('setQueueResult', r);
           RegTests.value.forEach((regTest: RegressionTestInterface) => {
             r.data.data.forEach((rt: RegressionTestInterface) => {
               if (rt.Id === regTest.Id) {

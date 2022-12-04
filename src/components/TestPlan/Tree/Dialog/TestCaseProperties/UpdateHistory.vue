@@ -214,10 +214,10 @@ function restore(testCaseHistory: TestCaseHistoryInterface) {
       }
     })
     .onCancel(() => {
-      console.log('Cancel');
+      // TODO
     })
     .onDismiss(() => {
-      console.log('Called on OK or Cancel');
+      // TODO
     });
 }
 function view(testCaseHistory: TestCaseHistoryInterface) {
@@ -253,10 +253,10 @@ function view(testCaseHistory: TestCaseHistoryInterface) {
       }
     })
     .onCancel(() => {
-      console.log('Cancel');
+      // TODO
     })
     .onDismiss(() => {
-      console.log('Called on OK or Cancel');
+      // TODO
     });
 }
 function compare(testCaseHistory: TestCaseHistoryInterface) {

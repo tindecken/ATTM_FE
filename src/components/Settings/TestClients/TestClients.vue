@@ -132,7 +132,6 @@ function deleteClient(client: TestClientInterface) {
 }
 function checkDeploy(client: TestClientInterface) {
   // TODO
-  console.log('client', client);
 }
 function add() {
   // TODO
@@ -199,7 +198,6 @@ async function save() {
     }
   });
   if (!valid) return;
-  console.log('testClients.value', testClients.value);
   testClientStore
     .saveTestClients(testClients.value)
     .then(async (res) => {
@@ -222,7 +220,6 @@ async function save() {
       });
     })
     .catch((err) => {
-      console.log('err save test client', err);
       $q.notify({
         type: 'negative',
         message: `${err.title ? err.title : err}`,

@@ -192,13 +192,11 @@ export default defineComponent({
     }
 
     function okClick() {
-      console.log('Description', testStep.value.Description);
       onDialogOK(testStep.value);
       onDialogHide();
     }
 
     function unUseTestEnv(pr: TestParamInterface) {
-      console.log('row', pr);
       const prIndex = testStep.value.Params.findIndex((p: TestParamInterface) => p.Name === pr.Name);
       if (prIndex === -1) return;
       testStep.value.Params[prIndex].Value = pr.Value;

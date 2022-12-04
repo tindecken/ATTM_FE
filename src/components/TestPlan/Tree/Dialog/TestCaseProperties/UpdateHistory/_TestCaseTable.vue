@@ -129,10 +129,6 @@ const columns = ref(testCaseColumns);
 const paramErrorMessage = ref('');
 const footerInfo = ref('');
 
-function abc(event: any) {
-  console.log(event.target.value);
-}
-
 function getTestAUT(testAUTId: string) {
   const testAut = testAUTs.value.find((aut: TestAUTInterface) => aut.Id === testAUTId);
   return testAut.Name;
