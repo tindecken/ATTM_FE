@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div :style="`width: ${width}; height: ${height};`">
     <q-table
       :class="[isDark ? 'sticky-header-dark' : 'sticky-header-light']"
       dense
-      :rows="TestCase.TestSteps"
+      :rows="TestCaseHistory.TestCase.TestSteps"
       :columns="columns"
       row-key="UUID"
       :hide-pagination="true"
@@ -15,6 +15,12 @@
       :filter-method="filterMethod"
     >
       <template v-slot:top-left>
+        <span class="row">Test Case: {{ TestCaseHistory.TestCase.CodeName }} - {{ TestCaseHistory.TestCase.Name }}</span>
+        <span class="row">Update Type: {{ TestCaseHistory.UpdateTestCaseData.UpdateType }}</span>
+        <span class="row">Update Message: {{ TestCaseHistory.UpdateTestCaseData.UpdateMessage }}</span>
+        <span class="row">Update By: {{ TestCaseHistory.UpdateTestCaseData.UpdateBy }}</span>
+        <span class="row">Update Date: {{ date.formatDate(TestCaseHistory.UpdateTestCaseData.UpdateDate, 'YYYY-MM-DD HH:mm:ss') }}</span>
+
         <q-input dense debounce="300" v-model="filterTable" placeholder="Filter" class="q-mr-sm">
           <template v-slot:append>
             <q-icon name="search" />
@@ -84,11 +90,6 @@
         </q-tr>
       </template>
     </q-table>
-    <q-footer bordered class="bg-secondary text-white" style="height: 24px; width: -webkit-fill-available">
-      <div class="row inline justify-between items-center">
-        <span @click="copy(footerInfo)" class="q-pl-sm">{{ footerInfo }}</span>
-      </div>
-    </q-footer>
   </div>
 </template>
 
@@ -107,15 +108,18 @@ import { useQuasar } from 'quasar';
 import { useGlobalStore } from '../../../../../../pinia/globalStore';
 import { useTestEnvironmentStore } from '../../../../../../pinia/testEnvironmentStore';
 import { testCaseColumns } from '../../../../../tableColumns';
-import { TestCaseInterface } from '../../../../../../Models/TestCase';
 import { TestAUTInterface } from '../../../../../../Models/TestAUT';
 import { TestStepInterface } from '../../../../../../Models/TestStep';
 import { TestParamInterface } from '../../../../../../Models/TestParam';
 import { getValueType } from '../../../../../TestPlan/Detail/Utils/utils';
 import { TestEnvInterface, TestEnvNodeInterface } from '../../../../../../Models/TestEnv';
+import { TestCaseHistoryInterface } from '../../../../../../Models/TestCaseHistory';
+import { date } from 'quasar';
 
 const props = defineProps<{
-  TestCase: TestCaseInterface;
+  TestCaseHistory: TestCaseHistoryInterface;
+  width: string;
+  height: string;
 }>();
 
 const { copy } = useClipboard();
@@ -234,9 +238,10 @@ function ParamErrorMessage(ts: TestStepInterface, prIndex: number) {
 
 function valueStyle(testStep: TestStepInterface, index: number) {
   if (testStep) {
-    const testStepIndex = props.TestCase.TestSteps.findIndex((ts: TestStepInterface) => ts.UUID === testStep.UUID);
+    const testStepIndex = props.TestCaseHistory.TestCase.TestSteps.findIndex((ts: TestStepInterface) => ts.UUID === testStep.UUID);
     if (testStepIndex != -1)
-      if (props.TestCase.TestSteps[testStepIndex].Params[index - 1]) return getValueType(props.TestCase.TestSteps[testStepIndex].Params[index - 1]);
+      if (props.TestCaseHistory.TestCase.TestSteps[testStepIndex].Params[index - 1])
+        return getValueType(props.TestCaseHistory.TestCase.TestSteps[testStepIndex].Params[index - 1]);
   }
   return '';
 }

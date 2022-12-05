@@ -8,7 +8,7 @@
         </q-btn>
       </q-header>
       <q-page-container class="items-stretch">
-        <test-case-table :TestCase="TestCaseHistory.TestCase"></test-case-table>
+        <test-case-table :TestCaseHistory="TestCaseHistory"></test-case-table>
       </q-page-container>
     </q-layout>
   </q-dialog>
