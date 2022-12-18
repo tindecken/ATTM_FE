@@ -38,7 +38,9 @@ export default defineComponent({
         .onCancel(() => {
           // TODO
         })
-        .onDismiss(() => {});
+        .onDismiss(() => {
+          // TODO
+        });
     }
     return {
       showing: ref(false),

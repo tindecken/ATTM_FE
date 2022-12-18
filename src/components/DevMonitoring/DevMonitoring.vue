@@ -400,7 +400,9 @@ function showErrorMessageDialog(devRunRecord: DevRunRecordInterface) {
     .onCancel(() => {
       // TODO
     })
-    .onDismiss(() => {});
+    .onDismiss(() => {
+      // TODO
+    });
 }
 function showTestLog(devRunRecord: DevRunRecordInterface) {
   $q.dialog({

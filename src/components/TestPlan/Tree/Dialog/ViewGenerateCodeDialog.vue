@@ -3,7 +3,7 @@
     <q-layout
       view="hHh lpR fFf"
       :class="isDark ? 'bg-grey-9' : 'bg-grey-3'"
-      style="max-height: 900px; min-height: 100px !important; max-width: 1250px"
+      style="max-height: 900px; min-height: 100px !important; max-width: 1000px"
       container
     >
       <q-header reveal bordered class="row justify-between bg-secondary">
