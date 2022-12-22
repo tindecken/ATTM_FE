@@ -2,49 +2,23 @@
   <q-layout view="hHh LpR fFf">
     <q-header bordered class="bg-primary text-white">
       <q-toolbar style="height: 24px">
-        <q-btn
-          dense
-          flat
-          round
-          icon="menu"
-          @click="leftDrawerOpen = !leftDrawerOpen"
-        />
-        <q-toolbar-title>
-          Auto Test Management {{ $q.version }}
-        </q-toolbar-title>
-        <span>{{ currentUser }}</span>
-        <q-btn flat round icon="exit_to_app" @click="logout" />
-        <q-btn
-          dense
-          flat
-          round
-          icon="menu"
-          @click="rightDrawerOpen = !rightDrawerOpen"
-        />
+        <q-btn dense flat round icon="menu" @click="leftDrawerOpen = !leftDrawerOpen" />
+        <q-toolbar-title> Auto Test Management {{ $q.version }} </q-toolbar-title>
+        <q-btn dense flat round icon="menu" @click="rightDrawerOpen = !rightDrawerOpen" />
+        <user></user>
       </q-toolbar>
     </q-header>
     <q-drawer v-model="leftDrawerOpen" side="left" bordered :width="180">
       <left-drawer></left-drawer>
     </q-drawer>
-    <q-drawer
-      v-model="rightDrawerOpen"
-      side="right"
-      overlay
-      bordered
-      :width="850"
-    >
+    <q-drawer v-model="rightDrawerOpen" side="right" overlay bordered :width="850">
       <right-drawer></right-drawer>
     </q-drawer>
 
     <q-page-container>
       <router-view />
     </q-page-container>
-    <q-footer
-      reveal
-      bordered
-      class="text-white row inline justify-between"
-      style="height: 24px"
-    >
+    <q-footer reveal bordered class="text-white row inline justify-between" style="height: 24px">
       <information-footer></information-footer>
       <div class="row inline">
         <test-client-footer></test-client-footer>
@@ -68,6 +42,7 @@ import TestClientFooter from './Footer/TestClientFooter.vue';
 import InformationFooter from './Footer/InformationFooter.vue';
 import config from '../config';
 import { useUserStore } from '../pinia/userStore';
+import User from './User.vue';
 
 export default defineComponent({
   name: 'Home',
@@ -77,6 +52,7 @@ export default defineComponent({
     EnvFooter,
     TestClientFooter,
     InformationFooter,
+    User,
   },
   setup() {
     const userStore = useUserStore();
@@ -86,16 +62,8 @@ export default defineComponent({
     const leftDrawerOpen = ref(false);
     const rightDrawerOpen = ref(false);
     const currentUser = ref('');
-    const logout = () => {
-      userStore.$reset();
-      const redirectUrl = `/${$route.query.redirect || 'login'}`;
-      void $router.replace(redirectUrl);
-    };
-    currentUser.value = userStore.Username;
     onMounted(() => {
-      const connection = new signalR.HubConnectionBuilder()
-        .withUrl(`${config.socketServer}`)
-        .build();
+      const connection = new signalR.HubConnectionBuilder().withUrl(`${config.socketServer}`).build();
 
       connection.on('DevRunningInfo', (devRunRecord: DevRunRecordInterface) => {
         devMonitoringStore.updateDevRunRecords(devRunRecord);
@@ -117,7 +85,6 @@ export default defineComponent({
       leftDrawerOpen,
       rightDrawerOpen,
       currentUser,
-      logout,
     };
   },
 });
