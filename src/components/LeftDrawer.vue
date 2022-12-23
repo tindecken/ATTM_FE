@@ -6,6 +6,12 @@
       </q-item-section>
       <q-item-section>Test Plan</q-item-section>
     </q-item>
+    <q-item clickable v-ripple class="cursor-pointer" router-link to="/keyword">
+      <q-item-section avatar>
+        <q-avatar rounded color="primary" text-color="white" icon="bug_report" />
+      </q-item-section>
+      <q-item-section>Keyword</q-item-section>
+    </q-item>
     <q-item clickable v-ripple class="cursor-pointer" router-link to="/devmonitoring">
       <q-item-section avatar>
         <q-avatar rounded color="primary" text-color="white" icon="webhook" />

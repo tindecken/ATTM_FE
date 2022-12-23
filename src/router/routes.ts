@@ -24,6 +24,13 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: '/keyword',
+        component: () => import('components/Keyword/Keyword.vue'),
+        meta: {
+          requiresAuth: true,
+        },
+      },
+      {
         path: '/devmonitoring',
         component: () => import('components/DevMonitoring/DevMonitoring.vue'),
         meta: {

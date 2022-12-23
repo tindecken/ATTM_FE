@@ -42,7 +42,7 @@ import TestClientFooter from './Footer/TestClientFooter.vue';
 import InformationFooter from './Footer/InformationFooter.vue';
 import config from '../config';
 import { useUserStore } from '../pinia/userStore';
-import User from './User.vue';
+import User from './User/User.vue';
 
 export default defineComponent({
   name: 'Home',

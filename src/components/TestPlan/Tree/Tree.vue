@@ -481,7 +481,6 @@ function onEdit(node: CategoryInterface | TestSuiteInterface | TestGroupInterfac
           // TODO
         });
       break;
-      break;
     case 'TestSuite':
       $q.dialog({
         component: EditTestSuiteDialog,
