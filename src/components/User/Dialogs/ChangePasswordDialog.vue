@@ -73,6 +73,8 @@ import { useUserStore } from '../../../pinia/userStore';
 import { useGlobalStore } from '../../../pinia/globalStore';
 import { QForm, useDialogPluginComponent } from 'quasar';
 import { useRoute, useRouter } from 'vue-router';
+import { ChangePasswordDataInterface} from '../../../Models/Entities/ChangePasswordData';
+
 const isPwd = ref(true);
 const isFormValid = ref(false);
 const form = ref() as Ref<QForm>;
@@ -80,14 +82,37 @@ const currentPassword = ref('');
 const newPassword = ref('');
 const confirmPassword = ref('');
 const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent();
+const emits = defineEmits([...useDialogPluginComponent.emits]);
 const globalStore = useGlobalStore();
 const isDark = computed(() => globalStore.darkTheme);
 const $route = useRoute();
 const $router = useRouter();
 const userStore = useUserStore();
 const $q = useQuasar();
+
+
 function changePassword() {
-  // TODO
+  const changePasswordData = {
+    UserId: userStore.Id,
+    CurrentPassword: currentPassword.value,
+    NewPassword: newPassword.value,
+    ConfirmNewPassword: confirmPassword.value,
+  } as ChangePasswordDataInterface;
+  userStore.changePassword(changePasswordData)
+    .then(() => {
+      $q.notify({
+        type: 'positive',
+        message: 'Change password success !',
+      });
+      onDialogOK()
+    })
+    .catch((error) => {
+      console.log('error', error);
+      $q.notify({
+        type: 'negative',
+        message: error.message ? error.message : error.error,
+      });
+  });
 }
 function validateForm() {
   if (form.value !== null) form.value.validate(false);

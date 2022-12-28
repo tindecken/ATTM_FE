@@ -34,7 +34,7 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { defineComponent, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useTitle } from '@vueuse/core';
@@ -44,37 +44,19 @@ import SelectTestCase from './SelectTestCase.vue';
 import BuildProject from './BuildProject.vue';
 import CreateDb from './CreateDB.vue';
 
-export default defineComponent({
-  name: 'CreateRegression',
-  components: {
-    DeploySource,
-    DefineRegression,
-    SelectTestCase,
-    BuildProject,
-    CreateDb,
-  },
-  setup() {
-    useTitle('Create Regression');
-    const $route = useRoute();
-    const $router = useRouter();
-    const stepperRef = ref(null);
-    const currentStep = ref('defineRegression');
-    const isStepValid = ref(false);
-    function validateForm(isValid: boolean) {
-      isStepValid.value = isValid;
-    }
-    function finish() {
-      // Go to regression page
-      const redirectUrl = `/${$route.query.redirect || 'regression'}`;
-      void $router.replace(redirectUrl);
-    }
-    return {
-      currentStep,
-      isStepValid,
-      validateForm,
-      stepperRef,
-      finish,
-    };
-  },
-});
+useTitle('Create Regression');
+const $route = useRoute();
+const $router = useRouter();
+const stepperRef = ref(null);
+const currentStep = ref('defineRegression');
+const isStepValid = ref(false);
+function validateForm(isValid: boolean) {
+  isStepValid.value = isValid;
+}
+function finish() {
+  // Go to regression page
+  const redirectUrl = `/${$route.query.redirect || 'regression'}`;
+  void $router.replace(redirectUrl);
+}
+
 </script>

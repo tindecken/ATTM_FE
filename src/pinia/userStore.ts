@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia';
 import { UserInterface } from '../Models/User';
 import { api } from '../boot/axios';
+import {ChangePasswordDataInterface} from '../Models/Entities/ChangePasswordData';
+import {AxiosError} from 'axios';
 
 const user: UserInterface = {
   Id: '',
@@ -50,5 +52,26 @@ export const useUserStore = defineStore('user', {
     logout() {
       this.$reset();
     },
+    async changePassword(payload: ChangePasswordDataInterface) {
+      try {
+        const userStore = useUserStore();
+        const response = await api.post('/users/changepassword', payload, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userStore.Token}`,
+          },
+        });
+        const responseData = await response.data;
+        return responseData;
+      } catch (error) {
+        console.log('e', error);
+        if (error.isAxiosError) {
+          const e: AxiosError = error;
+          throw e.response.data;
+        } else {
+          throw error;
+        }
+      }
+    }
   },
 });

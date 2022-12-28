@@ -52,9 +52,8 @@
           :filter="kwFilter"
           separator="cell"
           :visible-columns="keywordVisibleColumns"
-          :pagination="initialPagination"
-          :hide-pagination="true"
-          :rows-per-page-options="[0]"
+          :pagination="keywordPagination"
+          :hide-pagination="false"
         >
           <template v-slot:top>
             <div class="col-2 q-table__title">Keywords</div>
@@ -91,6 +90,32 @@
             </q-tr>
           </template>
         </q-table>
+        <q-separator class="q-mb-sm q-mt-sm" />
+        <div class="row">
+          <div class="col">
+            <q-table dense title="Parameters" :rows="params" :columns="paramColumns" row-key="name" :hide-pagination="false" separator="cell" :pagination="paramPagination">
+              <template v-slot:top-left>
+                <div class="col-2 q-table__title">{{ paramTitle }}</div>
+              </template>
+              <template v-slot:body="props">
+                <q-tr :props="props">
+                  <q-td key="no" :props="props" class="q-c-input">
+                    {{ props.row.rowIndex }}
+                  </q-td>
+                  <q-td key="name" :props="props" class="q-c-input">
+                    <span class="q-pl-sm">{{ props.row.Name }}</span>
+                  </q-td>
+                  <q-td key="description" :props="props" style="white-space: normal" class="q-c-input">
+                    <span class="q-pl-sm">{{ props.row.Description }}</span>
+                  </q-td>
+                  <q-td key="example" :props="props" class="q-c-input" style="white-space: normal">
+                    <span class="q-pl-sm">{{ props.row.ExampleValue }}</span>
+                  </q-td>
+                </q-tr>
+              </template>
+            </q-table>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -98,7 +123,7 @@
 <script setup lang="ts">
 import { defineComponent, ref, PropType, Ref, onBeforeMount, computed } from 'vue';
 import _ from 'lodash';
-import { QSelect, useDialogPluginComponent, useQuasar } from 'quasar';
+import {QPagination, QPaginationProps, QSelect, useDialogPluginComponent, useQuasar} from 'quasar';
 import { TestStepInterface } from '../../Models/TestStep';
 import { TestCaseInterface } from '../../Models/TestCase';
 import { useClipboard } from '@vueuse/core';
@@ -107,9 +132,10 @@ import { useKeywordStore } from '../../pinia/keywordStore';
 import { KeywordInterface } from '../../Models/Keyword';
 import { KeywordFeatureInterface } from '../../Models/KeywordFeature';
 import { KeywordCategoryInterface } from '../../Models/KeywordCategory';
+import {TestParamInterface} from '../../Models/TestParam';
+import { useTitle } from '@vueuse/core';
 const globalStore = useGlobalStore();
 const keywordStore = useKeywordStore();
-const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent();
 const { copy } = useClipboard();
 const $q = useQuasar();
 const footerInfoLeft = ref('');
@@ -127,13 +153,9 @@ const selected = ref([]);
 const kwFilter = ref('');
 const isShowOwner = ref(true);
 const isShowCreatedDate = ref(false);
-const initialPagination = {
-  sortBy: 'startAt',
-  descending: true,
-  // page: 2,
-  // rowsPerPage: 3,
-  // rowsNumber: xx if getting data from a server
-};
+const params: Ref<TestParamInterface[]> = ref([]);
+const paramTitle = ref('Params');
+useTitle('Keyword');
 const isDark = computed(() => globalStore.darkTheme);
 const keywordColumns = [
   {
@@ -191,6 +213,51 @@ const keywordColumns = [
     label: '',
     field: 'viewCode',
     sortable: false,
+  },
+];
+const paramPagination = {
+  page: 1,
+  rowsPerPage: 20,
+};
+const keywordPagination = {
+  page: 1,
+  rowsPerPage: 20,
+};
+const paramColumns = [
+  {
+    name: 'no',
+    required: true,
+    label: 'No',
+    align: 'left',
+    field: 'rowIndex',
+    sortable: false,
+    style: 'width: 20px; min-width: 20px',
+    headerStyle: 'width: 20px; min-width: 20px',
+  },
+  {
+    name: 'name',
+    required: true,
+    label: 'Name',
+    align: 'left',
+    field: 'Name',
+    format: (val: any) => `${val}`,
+    sortable: false,
+  },
+  {
+    name: 'description',
+    align: 'left',
+    label: 'Description',
+    field: 'Description',
+    sortable: false,
+  },
+  {
+    name: 'example',
+    align: 'left',
+    label: 'Example Value',
+    field: 'ExampleValue',
+    sortable: false,
+    style: 'max-width: 100px',
+    headerStyle: 'max-width: 100px',
   },
 ];
 const keywordVisibleColumns: Ref<string[]> = ref(['no', 'name', 'description', 'owner', 'updatedMessage', 'createdDate', 'viewCode']);
@@ -270,7 +337,7 @@ function onFeatureChange(newKeywordFeature: KeywordFeatureInterface | null) {
     // No Feature is selected
     // Load all keyword that contains category
     const kwCategory = keywordCategories.value.find((kwCat: KeywordCategoryInterface) => kwCat.Name === selectedKeywordCategory.value?.Name);
-    if (kwCategory !== undefined && kwCategory.Features) {
+    if (undefined !== kwCategory && kwCategory.Features) {
       kwCategory.Features.forEach((kwFeature: KeywordFeatureInterface) => {
         if (kwFeature.Keywords) {
           kwFeature.Keywords.forEach((keyword: KeywordInterface) => {
@@ -337,9 +404,21 @@ function filterFeature(val: string, update: any) {
     );
   }, 100);
 }
-
+function showParams(selectedKw: KeywordInterface) {
+  params.value = [];
+  selectedKw.Params.forEach((p: any) => {
+    params.value.push(p);
+  });
+  params.value = params.value.map((pr: TestParamInterface, i: number) => ({
+    ...pr,
+    rowIndex: i + 1,
+  }));
+  // params.value = params.value.map((v: any, i: number) => ({ ...v, rowIndex: i + 1 }))
+}
 function onSelectKeyword(kw: KeywordInterface) {
   selectedKeyword.value = kw;
+  paramTitle.value = kw.Name
+  showParams(selectedKeyword.value);
 }
 function viewCode(keyword: KeywordInterface) {
   $q.notify({
@@ -347,6 +426,8 @@ function viewCode(keyword: KeywordInterface) {
     message: 'Not implemented yet',
   });
 }
+
+
 </script>
 <style scoped lang="scss">
 :deep(td.q-c-input) {

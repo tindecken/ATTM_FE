@@ -4,7 +4,7 @@
       <q-toolbar style="height: 24px">
         <q-btn dense flat round icon="menu" @click="leftDrawerOpen = !leftDrawerOpen" />
         <q-toolbar-title> Auto Test Management {{ $q.version }} </q-toolbar-title>
-        <q-btn dense flat round icon="menu" @click="rightDrawerOpen = !rightDrawerOpen" />
+<!--        <q-btn dense flat round icon="menu" @click="rightDrawerOpen = !rightDrawerOpen" />-->
         <user></user>
       </q-toolbar>
     </q-header>
@@ -12,7 +12,6 @@
       <left-drawer></left-drawer>
     </q-drawer>
     <q-drawer v-model="rightDrawerOpen" side="right" overlay bordered :width="850">
-      <right-drawer></right-drawer>
     </q-drawer>
 
     <q-page-container>
@@ -36,7 +35,6 @@ import * as signalR from '@microsoft/signalr';
 import { DevRunRecordInterface } from '../Models/DevRunRecord';
 import { useDevMonitoringStore } from '../pinia/devMonitoringStore';
 import LeftDrawer from './LeftDrawer.vue';
-import RightDrawer from './RightDrawer.vue';
 import EnvFooter from './Footer/EnvFooter.vue';
 import TestClientFooter from './Footer/TestClientFooter.vue';
 import InformationFooter from './Footer/InformationFooter.vue';
@@ -48,7 +46,6 @@ export default defineComponent({
   name: 'Home',
   components: {
     LeftDrawer,
-    RightDrawer,
     EnvFooter,
     TestClientFooter,
     InformationFooter,

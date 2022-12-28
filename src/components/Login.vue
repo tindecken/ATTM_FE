@@ -54,6 +54,7 @@ import { defineComponent, ref } from 'vue';
 import { useQuasar } from 'quasar';
 import { useRoute, useRouter } from 'vue-router';
 import { useUserStore } from '../pinia/userStore';
+import {AxiosError} from 'axios';
 
 export default defineComponent({
   name: 'Login',
@@ -80,10 +81,10 @@ export default defineComponent({
           message: 'Login success !',
         });
       } catch (error: any) {
-        err.value = error.data.message || 'Failed to authenticate, try later.';
+        console.log('error', error.value)
         $q.notify({
           type: 'warning',
-          message: err.value,
+          message: `${error}`,
         });
       }
     };

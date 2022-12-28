@@ -1,6 +1,6 @@
 <template>
   <div class="q-pa-md">
-    <q-form greedy ref="form" class="q-gutter-md" style="max-width: 800px" @validation-success="isFormValid = true" @validation-error="isFormValid = false">
+    <q-form autofocus greedy ref="form" class="q-gutter-md" style="max-width: 800px" @validation-success="isFormValid = true" @validation-error="isFormValid = false">
       <div class="flex row space-between">
         <div class="col-4">
           <div class="row">
@@ -8,7 +8,6 @@
               no-error-icon
               outlined
               dense
-              autofocus
               v-model="name"
               @blur="validateForm()"
               label="Regression Name *"
