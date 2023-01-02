@@ -87,6 +87,9 @@
               <q-td key="viewCode" :props="props">
                 <q-btn size="sm" outline @click="viewCode(props.row)">View Code</q-btn>
               </q-td>
+              <q-td key="viewCode" :props="props">
+                <q-btn size="sm" outline @click="viewUsage(props.row)">View Usage</q-btn>
+              </q-td>
             </q-tr>
           </template>
         </q-table>
@@ -134,6 +137,9 @@ import { KeywordFeatureInterface } from '../../Models/KeywordFeature';
 import { KeywordCategoryInterface } from '../../Models/KeywordCategory';
 import {TestParamInterface} from '../../Models/TestParam';
 import { useTitle } from '@vueuse/core';
+import ViewKeywordCodeDialog from './Dialogs/ViewKeywordCodeDialog.vue';
+import ViewGenerateCodeDialog from 'components/TestPlan/Tree/Dialog/ViewGenerateCodeDialog.vue';
+
 const globalStore = useGlobalStore();
 const keywordStore = useKeywordStore();
 const { copy } = useClipboard();
@@ -213,6 +219,12 @@ const keywordColumns = [
     label: '',
     field: 'viewCode',
     sortable: false,
+  },{
+    name: 'viewUsage',
+    align: 'left',
+    label: '',
+    field: 'viewUsage',
+    sortable: false,
   },
 ];
 const paramPagination = {
@@ -260,7 +272,7 @@ const paramColumns = [
     headerStyle: 'max-width: 100px',
   },
 ];
-const keywordVisibleColumns: Ref<string[]> = ref(['no', 'name', 'description', 'owner', 'updatedMessage', 'createdDate', 'viewCode']);
+const keywordVisibleColumns: Ref<string[]> = ref(['no', 'name', 'description', 'owner', 'updatedMessage', 'createdDate', 'viewCode', 'viewUsage']);
 
 onBeforeMount(async () => {
   try {
@@ -420,7 +432,24 @@ function onSelectKeyword(kw: KeywordInterface) {
   paramTitle.value = kw.Name
   showParams(selectedKeyword.value);
 }
-function viewCode(keyword: KeywordInterface) {
+function viewCode(row: any) {
+  $q.dialog({
+    component: ViewKeywordCodeDialog,
+    componentProps: {
+      data: row
+    },
+  })
+    .onOk(() => {
+      // TODO
+    })
+    .onCancel(() => {
+      // TODO
+    })
+    .onDismiss(() => {
+      // TODO
+    });
+}
+function viewUsage(keyword: KeywordInterface) {
   $q.notify({
     type: 'info',
     message: 'Not implemented yet',

@@ -55,6 +55,7 @@ import { useQuasar } from 'quasar';
 import { useRoute, useRouter } from 'vue-router';
 import { useUserStore } from '../pinia/userStore';
 import {AxiosError} from 'axios';
+import {ResponseDataInterface} from '../Models/Entities/ResponseData';
 
 export default defineComponent({
   name: 'Login',
@@ -72,21 +73,21 @@ export default defineComponent({
         Username: username.value,
         Password: password.value,
       };
-      try {
-        await userStore.login(actionPayload);
-        const redirectUrl = `/${$route.query.redirect || 'home'}`;
-        void $router.replace(redirectUrl);
-        $q.notify({
-          type: 'positive',
-          message: 'Login success !',
-        });
-      } catch (error: any) {
-        console.log('error', error.value)
-        $q.notify({
-          type: 'warning',
-          message: `${error}`,
-        });
-      }
+      userStore.login(actionPayload)
+        .then((response: ResponseDataInterface) => {
+          const redirectUrl = `/${$route.query.redirect || 'home'}`;
+          void $router.replace(redirectUrl);
+          $q.notify({
+            type: 'positive',
+            message: response.Message,
+          });
+        }).catch((error: ResponseDataInterface) => {
+          console.log('error', error);
+          $q.notify({
+            type: 'negative',
+            message: error.Message
+          });
+        })
     };
     function onReset() {
       username.value = '';

@@ -3,6 +3,7 @@ import { UserInterface } from '../Models/User';
 import { api } from '../boot/axios';
 import {ChangePasswordDataInterface} from '../Models/Entities/ChangePasswordData';
 import {AxiosError} from 'axios';
+import {ResponseDataInterface} from '../Models/Entities/ResponseData';
 
 const user: UserInterface = {
   Id: '',
@@ -28,26 +29,34 @@ export const useUserStore = defineStore('user', {
   },
   actions: {
     async login(payload: any) {
-      const response = await api.post(
-        '/users/authenticate',
-        {
-          Username: payload.Username,
-          Password: payload.Password,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
+      try {
+        const axiosResponse = await api.post(
+          '/users/authenticate',
+          {
+            Username: payload.Username,
+            Password: payload.Password,
           },
-        }
-      );
-      const responseData = await response.data;
-      this.$patch({
-        Token: responseData.Token,
-        Username: responseData.Username,
-        Email: responseData.Email,
-        Role: responseData.Role,
-        Id: responseData.Id,
-      });
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        const response = await axiosResponse.data;
+        this.$patch({
+          Token: response.Data?.Token,
+          Username: response.Data?.Username,
+          Email: response.Data?.Email,
+          Role: response.Data?.Role,
+          Id: response.Data?.Id,
+        });
+        return response as ResponseDataInterface
+      }catch (error) {
+        if (error.isAxiosError) {
+          const e: AxiosError = error;
+          throw e.response.data as ResponseDataInterface;
+        } else throw error;
+      }
     },
     logout() {
       this.$reset();
@@ -55,22 +64,19 @@ export const useUserStore = defineStore('user', {
     async changePassword(payload: ChangePasswordDataInterface) {
       try {
         const userStore = useUserStore();
-        const response = await api.post('/users/changepassword', payload, {
+        const axiosResponse = await api.post('/users/changepassword', payload, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${userStore.Token}`,
           },
         });
-        const responseData = await response.data;
-        return responseData;
+        const responseData = await axiosResponse.data;
+        return responseData as ResponseDataInterface;
       } catch (error) {
-        console.log('e', error);
         if (error.isAxiosError) {
           const e: AxiosError = error;
           throw e.response.data;
-        } else {
-          throw error;
-        }
+        } else throw error;
       }
     }
   },

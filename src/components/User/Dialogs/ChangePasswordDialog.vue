@@ -74,6 +74,7 @@ import { useGlobalStore } from '../../../pinia/globalStore';
 import { QForm, useDialogPluginComponent } from 'quasar';
 import { useRoute, useRouter } from 'vue-router';
 import { ChangePasswordDataInterface} from '../../../Models/Entities/ChangePasswordData';
+import {ResponseDataInterface} from '../../../Models/Entities/ResponseData';
 
 const isPwd = ref(true);
 const isFormValid = ref(false);
@@ -99,18 +100,18 @@ function changePassword() {
     ConfirmNewPassword: confirmPassword.value,
   } as ChangePasswordDataInterface;
   userStore.changePassword(changePasswordData)
-    .then(() => {
+    .then((responseData: ResponseDataInterface) => {
       $q.notify({
         type: 'positive',
-        message: 'Change password success !',
+        message: responseData.Message,
       });
       onDialogOK()
     })
-    .catch((error) => {
+    .catch((error: ResponseDataInterface) => {
       console.log('error', error);
       $q.notify({
         type: 'negative',
-        message: error.message ? error.message : error.error,
+        message: error.Message,
       });
   });
 }

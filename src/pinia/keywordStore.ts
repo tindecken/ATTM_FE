@@ -6,6 +6,8 @@ import { KeywordCategoryInterface } from '../Models/KeywordCategory';
 import { api } from '../boot/axios';
 import { KeywordFeatureInterface } from '../Models/KeywordFeature';
 import { AxiosError } from 'axios';
+import {ResponseDataInterface} from '../Models/Entities/ResponseData';
+import {CategoryFeatureKeywordDataInterface} from '../Models/Entities/CategoryFeatureKeywordData';
 
 export const useKeywordStore = defineStore('keyword', {
   state: () => ({
@@ -36,6 +38,24 @@ export const useKeywordStore = defineStore('keyword', {
         } else {
           throw error;
         }
+      }
+    },
+    async getKeywordCode(payload: CategoryFeatureKeywordDataInterface) {
+      try {
+        const userStore = useUserStore();
+        const axiosResponse = await api.post('/keywords/getkeywordcode', payload, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userStore.Token}`,
+          },
+        });
+        const responseData = await axiosResponse.data;
+        return responseData as ResponseDataInterface;
+      } catch (error) {
+        if (error.isAxiosError) {
+          const e: AxiosError = error;
+          throw e.response.data;
+        } else throw error;
       }
     },
     setKeywords(keywordCategories: KeywordCategoryInterface[]) {
