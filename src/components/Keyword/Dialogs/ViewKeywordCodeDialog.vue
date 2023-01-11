@@ -73,7 +73,6 @@ onBeforeMount(async () => {
       index.value = responseData.Data.Index
       filePath.value = responseData.Data.File
       code.value = responseData.Data.Code;
-      console.log(code.value)
       code.value = `\`\`\`csharp\n${code.value}\n\`\`\``;
     })
     .catch((error: ResponseDataInterface) => {
